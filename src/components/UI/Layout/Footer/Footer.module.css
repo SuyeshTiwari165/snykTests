@@ -1,0 +1,13 @@
+.Footer {
+  text-align: right;
+  padding: 20px 25px 20px 10px;
+  box-shadow: 0px 0px 11px #e4e4e4 !important;
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.2;
+  vertical-align: middle;
+  padding-left: 5px;
+  color: #707070;
+  font-family: 'Roboto', sans-serif !important;
+  background-color: #eff6fd;
+}

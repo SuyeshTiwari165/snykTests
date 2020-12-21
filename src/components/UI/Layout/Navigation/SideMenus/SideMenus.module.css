@@ -1,0 +1,80 @@
+.List {
+  display: inline-block;
+  width: 100%;
+  padding: 0px !important;
+}
+
+.ListItemIcon {
+  margin-right: 20px;
+}
+
+.ListItemIcon img {
+  width: 26px;
+  height: 26px;
+}
+
+.IconItem {
+  border-radius: 12px !important;
+  /* padding: 7px !important; */
+  margin: auto !important;
+}
+
+.SelectedItem.OpenItem, .SelectedItem.OpenItem:hover, .OpenItem:hover {
+  border: 1px solid #0051A8 !important;
+  background-color: #EFF6FD !important;
+}
+
+.OpenItem {
+  width: calc(100% - 30px) !important;
+  padding: 5px 5px !important;
+  padding-bottom: 0px !important;
+  margin: 8px 15px !important;
+  border: 1px solid transparent !important;
+}
+.OpenItem +div ul{
+  margin-left:15px;
+}
+.ClosedItem {
+  /* width: calc(100% - 30px) !important; */
+  padding: 5px !important;
+  /* margin: 8px 15px !important; */
+  box-shadow: inset 0px 11px 8px -10px #CCC !important;
+  padding:13px !important;
+}
+
+.ClosedItem.IconItem {
+  border-radius: 0px !important;
+  /* padding: 7px !important; */
+  margin: auto !important;
+}
+
+.SelectedItem.ClosedItem, .SelectedItem.ClosedItem:hover, .ClosedItem:hover {
+  /* border: 1px solid #0051A8 !important; */
+  background-color: #EFF6FD !important;
+  padding:13px !important;
+  box-shadow: inset 0px 11px 8px -10px #CCC !important;
+}
+
+.ListItemIcon.ClosedItem {
+  margin: 0 auto !important;
+}
+
+.Text {
+  color: #002F60;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif !important;
+  margin-top: 1px !important;
+}
+.Text + svg {
+  font-size: 20px !important;
+    color: #002f60 !important;
+}
+.SelectedText, .OpenItem:hover .UnselectedText {
+  color: #0051A8;
+}
+
+.UnselectedText {
+  color: #002F60;
+}
+

@@ -1,0 +1,28 @@
+.AlertboxPaper {
+  border-radius: 24px !important;
+  margin-top: 66px !important;
+  /* WIDTH:50%; */
+}
+
+.ScrollPaper {
+  align-items: unset !important;
+}
+.Alertbox {
+  max-width: 80%;
+  min-width: 50% !important;
+  margin: 0 auto;
+  max-height: 550px;
+  height: unset !important;
+}
+
+.AlertActions {
+  padding-left: 24px !important;
+  padding-bottom: 24px !important;
+}
+
+.AlertTitle {
+  color: #073f24;
+  padding-top: 24px !important;
+  text-align: center;
+  padding-bottom: 8px !important;
+}

@@ -1,0 +1,26 @@
+{
+    "companyProfile": {
+        "name": "Company Info",
+        "value": "0"
+    },
+    "mainOffice": {
+        "name": "Main Office",
+        "value": "1"
+    },
+    "otherOffice": {
+        "name": "Other Office",
+        "value": "2"
+    },
+    "customer": {
+        "name": "Customer",
+        "value": "3"
+    },
+    "review": {
+        "name": "Review",
+        "value": "4"
+    },
+    "workplan": {
+        "name": "Summary",
+        "value": "5"
+    }
+}
