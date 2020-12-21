@@ -1,0 +1,12 @@
+.CenterItems {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  flex-direction: column;
+  min-height: 768px;
+}
+
+.LoadingPadding {
+  padding-top: 100px;
+}

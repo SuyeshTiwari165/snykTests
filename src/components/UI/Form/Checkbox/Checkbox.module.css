@@ -1,0 +1,19 @@
+.Checkbox {
+  display: flex;
+}
+
+.Label {
+  width: 50%;
+  align-self: center;
+  font-weight: bold;
+}
+.Label + span {
+  padding: 0px 7px 0px 0px;
+}
+.Checkbox + span{
+  color : #707070;
+}
+
+.Checkbox svg {
+  color: #0051a8;
+}

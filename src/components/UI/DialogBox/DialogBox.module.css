@@ -1,0 +1,44 @@
+.DialogboxPaper {
+  border-radius: 24px !important;
+  margin-top: 66px !important;
+  /* WIDTH:50%; */
+  /* width: 500px !important; */
+  border-bottom: 1px solid #0051A8 !important;
+  width: auto !important;
+    max-width: 800px !important;
+    height: auto !important
+}
+
+.ScrollPaper {
+  align-items: unset !important;
+}
+
+.Dialogbox {
+  max-width: 80%;
+  min-width: 50% !important;
+  margin: 0 auto;
+  max-height: 550px;
+  /* height: unset !important; */
+}
+
+.DialogActions {
+  padding: 16px !important;
+  border-top: 1px solid #0051A8;
+}
+
+.DialogTitle, .DialogBody {
+  padding: 0px !important;
+}
+
+DialogTitle>* {
+  font-size: 24px !important
+}
+
+.ReactRootDialog {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.DialogBody form {
+  padding: 16px !important;
+  margin: 10px auto 0 auto;
+}

@@ -1,0 +1,146 @@
+.Container {
+  width: 100%;
+  height: 100vh;
+}
+
+.Registration {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  vertical-align: middle;
+}
+
+.Errors {
+  color: red;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 15px;
+  margin-top: 0px;
+  font-size: 14px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.Margin {
+  margin: 4px;
+}
+
+.ErrorText {
+  font-size: 15px;
+  margin: 0px;
+}
+
+.Box {
+  margin-top: 5vh;
+  height: auto;
+  width: 400px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-color: #0051A8;
+  border-style: solid;
+  border-width: 1px;
+  max-width: 350px !important;
+  padding: 20px !important;
+  width: 90% !important;
+}
+
+.BoxTitle {
+  color: #12183d;
+  justify-content: start;
+  margin-bottom: 10px;
+  margin-top: 32px;
+  margin-left: 32px;
+  font-weight: bold;
+}
+
+.CenterBox {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.OrText {
+  color: #93a29b;
+  font-weight: bolder;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.Registration a {
+  color: #0051A8;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+.Registration a:visited {
+  color: #0051A8;
+}
+
+/* .Registration hr {
+  margin-top: 32px;
+  margin-left: 18px;
+  margin-right: 18px;
+  height: 1px;
+  width: 142px;
+  border-color: #eaedec;
+  background-color: #eaedec;
+  color: #eaedec;
+  border-style: solid;
+} */
+
+.Or {
+  display: flex;
+  flex-direction: row;
+}
+
+.RegistrationLogo {
+  color: #0051A8;
+  font-size: 28px;
+}
+
+.InputField {
+  border-color: #0051A8 !important;
+  border-radius: 12px !important;
+  border-width: 2px !important;
+  width: 320px;
+  height: auto;
+  font-size: 14px !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.FormLabel {
+  color: #93a29b !important;
+}
+
+.IconButton {
+  color: #93a29b;
+}
+
+.FormHelperText {
+  color: red !important;
+  margin-top: 2px !important;
+  line-height: 1.2 !important;
+}
+
+.ContinueButton {
+  background-color: #0051A8 !important;
+  border: solid 1px #0051A8 !important;
+  width: 345px;
+  border-radius: 12px !important;
+  margin-top: 0px;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.TitleText {
+  font-weight: bold !important;
+}
+
+.ErrorMessage {
+  color: red;
+}

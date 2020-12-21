@@ -1,0 +1,11 @@
+.Main {
+  width: 100%;
+  padding: 35px;
+}
+
+.mainContainer {
+  display: flex;
+  background-color: #EFF6FD;
+  box-shadow: inset 18px 0px 25px -35px rgba(0, 0, 0, 0.45);
+  min-height: calc(100vh - 101px);
+}
