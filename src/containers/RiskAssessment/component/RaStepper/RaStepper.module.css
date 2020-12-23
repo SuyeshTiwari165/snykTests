@@ -1,0 +1,23 @@
+.root{
+  padding: 0;
+}
+.ReactStepper {
+  padding: 0px !important;
+  background-color: transparent !important;
+}
+.ReactStep {
+  padding: 0px !important;
+  width: auto !important;
+  margin: 0px 15px 15px 0px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex: none !important;
+}
+
+.ReactStep button:disabled{
+  border:1px solid #707070 !important;
+  background-color: #fff;
+  color: #707070;
+  font-weight: normal !important;
+  opacity: 0.65;
+}

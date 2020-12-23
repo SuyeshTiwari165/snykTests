@@ -8,10 +8,10 @@ import Dashboard from "./containers/AdminPanel/Dashboard/Dashboard";
 // import Customer from "./containers/Customer/Customer";
 // import Review from "./containers/Review/Review";
 // import Compliance from "./containers/Workplan/Compliance/Compliance";
-// import Target from "./containers/RiskAssessment/Target/Target";
-// import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
-// import ReportStatus from "./containers/RiskAssessment/ReportStatus/ReportStatus";
-// import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
+import Target from "./containers/RiskAssessment/Target/Target";
+import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
+import ReportStatus from "./containers/RiskAssessment/ReportStatus/ReportStatus";
+import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
 import Logout from "./containers/Auth/Logout/Logout";
 import PartnerUser from "./containers/AdminPanel/Partner/PartnerUser/PartnerUser";
 import PartnerUserForm from "./containers/AdminPanel/PartnerUserForm/PartnerUserForm";
@@ -26,10 +26,26 @@ const defaultRedirect = () => <Redirect to={routeConstants.DASHBOARD} />;
 
 export const AuthRoutes = (
   <Switch>
-    <LayoutRoute path={routeConstants.PARTNER_USER_FORM} exact component={PartnerUserForm} />
-    <LayoutRoute path={routeConstants.PARTNER_USER_FORM_ADD} exact component={PartnerUserForm} />
-    <LayoutRoute path={routeConstants.PARTNER_USER_FORM_EDIT + ":id" }exact component={PartnerUserForm} />
-    <LayoutRoute path={routeConstants.PARTNER_USER_FORM_EDIT+ "/:id "} exact component={PartnerUserForm} />
+    <LayoutRoute
+      path={routeConstants.PARTNER_USER_FORM}
+      exact
+      component={PartnerUserForm}
+    />
+    <LayoutRoute
+      path={routeConstants.PARTNER_USER_FORM_ADD}
+      exact
+      component={PartnerUserForm}
+    />
+    <LayoutRoute
+      path={routeConstants.PARTNER_USER_FORM_EDIT + ":id"}
+      exact
+      component={PartnerUserForm}
+    />
+    <LayoutRoute
+      path={routeConstants.PARTNER_USER_FORM_EDIT + "/:id "}
+      exact
+      component={PartnerUserForm}
+    />
     <LayoutRoute path={routeConstants.DASHBOARD} exact component={Dashboard} />
     {/* <LayoutRoute path={routeConstants.CLIENT} exact component={Client} />
     <LayoutRoute
@@ -74,14 +90,14 @@ export const AuthRoutes = (
       path={routeConstants.COMPLIANCE + "/view"}
       exact
       component={Views}
-    />
-    <LayoutRoute path={routeConstants.TARGET} exact component={Target} /> */}
-    {/* <LayoutRoute
+    /> */}
+    <LayoutRoute path={routeConstants.TARGET} exact component={Target} />
+    <LayoutRoute
       path={routeConstants.TASK_DETAILS}
       exact
       component={TaskDetails}
-    /> */}
-    {/* <LayoutRoute
+    />
+    <LayoutRoute
       path={routeConstants.REPORT_STATUS}
       exact
       component={ReportStatus}
@@ -90,7 +106,7 @@ export const AuthRoutes = (
       path={routeConstants.RA_REPORT_LISTING}
       exact
       component={RaReportListing}
-    /> */}
+    />
     <Route path="/" render={defaultRedirect} />
   </Switch>
 );
