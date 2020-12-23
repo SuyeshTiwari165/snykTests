@@ -55,6 +55,12 @@ export const sideDrawerAdminMenus = [
     icon: "partners",
     pathList: [routeConstants.ADD_PARTNER],
   },
+  {
+    title: "Risk Assessmnt",
+    path: routeConstants.RA_REPORT_LISTING,
+    icon: "documents",
+    pathList: [routeConstants.RA_REPORT_LISTING],
+  },
   // {
   //   title: "Admin",
   //   type: "admin",
