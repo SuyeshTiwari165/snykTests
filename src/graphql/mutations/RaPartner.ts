@@ -13,6 +13,16 @@ mutation createPartner($input: PartnerInput!) {
 }
 `;
 
+export const UPDATE_PARTNER = gql`
+mutation updatePartner($id: Int, $partnerdata: PartnerInput!) {
+  updatePartner(id: $id, input: $partnerdata) {
+    partnerFiled {
+      partnerName
+      emailId
+    }
+  }
+}
 
+`;
 
 

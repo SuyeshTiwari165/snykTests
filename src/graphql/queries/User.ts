@@ -33,18 +33,19 @@ export const GET_ROLE = gql`
 `; 
 
 export const GET_ADMIN_USER = gql`
-query {
-  getAuthUserDetails{
-  edges{
-    node{
-      id
-      password
-      isSuperuser
-      username
+query getUserDetails($userid: String!) {
+  getUserDetails(username: $userid) {
+    edges {
+      node {
+        firstName
+        lastName
+        username
+        isSuperuser
+      }
     }
   }
 }
-}
+
 `;
 
 export const GET_ROLE_BASED_USER = gql `

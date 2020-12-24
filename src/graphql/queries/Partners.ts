@@ -9,6 +9,7 @@ query getPartnerusers {
         partnerName
         emailId
         mobileNumber
+        address
       }
     }
   }

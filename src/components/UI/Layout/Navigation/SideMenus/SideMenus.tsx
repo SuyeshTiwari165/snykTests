@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import clsx from "clsx";
-import { CompanyUser } from "../../../../../common/Roles";
+import { CompanyUser, SuperUser } from "../../../../../common/Roles";
 import * as routeConstants from '../../../../../common/RouteConstants';
 import {
   sideDrawerMenus,
@@ -29,8 +29,8 @@ const SideMenus: React.SFC<SideMenusProps> = (props) => {
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
-  if (user.user) {
-    userRole = user.user.role.name || undefined;
+  if (user) {
+    userRole = user.isSuperuser == true ? SuperUser : CompanyUser;
   }
 
   const menuList = sideDrawerMenus.map((menu, i) => {

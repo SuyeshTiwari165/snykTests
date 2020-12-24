@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { AddEditForm } from './AddEditForm';
+import Client from './Client';
 
-describe('<AddEditForm />', () => {
+describe('<Client />', () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<AddEditForm />);
+    component = shallow(<Client />);
   });
 
   test('It should mount', () => {

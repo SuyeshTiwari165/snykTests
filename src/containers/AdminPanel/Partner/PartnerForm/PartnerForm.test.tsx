@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from '../../PartnerUser/node_modules/enzyme';
-import Partner from './Partner';
+import PartnerUser from './PartnerUser';
 
-describe('<Partner />', () => {
+describe('<PartnerUser />', () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<Partner />);
+    component = shallow(<PartnerUser />);
   });
 
   test('It should mount', () => {
