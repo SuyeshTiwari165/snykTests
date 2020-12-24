@@ -61,6 +61,7 @@ export const Target: React.FC = (props: any) => {
   const [scanConfigList, setScanConfigList] = useState<any>([]);
 
   //static values for partner and client are given.
+
   const partnerId = 1;
   const clientId = 2;
   const targetName = props["location"].state
@@ -69,6 +70,11 @@ export const Target: React.FC = (props: any) => {
 
   // const [newData, setNewData] = useState();
   const [editDataId, setEditDataId] = useState<Number | null>();
+  if (props.location.state) {
+    if (editDataId === null && props.location.state.editData === true) {
+      setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
+    }
+  }
 
   //show password
   const [showPassword, setShowPassword] = useState(false);
@@ -240,14 +246,28 @@ export const Target: React.FC = (props: any) => {
             errMessage: "",
           }));
           setEditDataId(null);
+          localStorage.setItem("name", JSON.stringify(name));
+          localStorage.setItem(
+            "targetId",
+            JSON.stringify(userRes.data.updateTarget.targetField.id)
+          );
+          localStorage.setItem("ipRange", JSON.stringify(ipRange));
+          localStorage.setItem("userName", JSON.stringify(userName));
+          localStorage.setItem("password", JSON.stringify(password));
+          localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
           setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          let data = {};
+          if (scanConfigList) {
+            data = { scanConfigList: scanConfigList };
+          }
           if (targetName !== null) {
             history.push({
               pathname: routeConstant.TASK_DETAILS,
               state: { targetName: targetName },
             });
           } else {
-            history.push(routeConstant.TASK_DETAILS);
+            history.push(routeConstant.TASK_DETAILS, data);
           }
         })
         .catch((err) => {

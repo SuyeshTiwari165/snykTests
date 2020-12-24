@@ -43,20 +43,20 @@ function App() {
   let routes;
 
   if (authenticated) {
-    if (user.isSuperuser !== true ) {
+    if (user.isSuperuser !== true) {
       routes = <div>{AuthRoutes}</div>;
     }
     if (user.isSuperuser === true) {
-    routes = <div>{AdminRoutes}</div>;
+      routes = <div>{AdminRoutes}</div>;
     }
-    } else if (!authenticated) {
-      routes = (
-        <Switch>
-          <Route path="/login" exact component={Login} />
-          <Route path="/registration" exact component={Registration} />
-          <Route path="/" render={() => <Redirect to="/login" />} />
-        </Switch>
-      );
+  } else if (!authenticated) {
+    routes = (
+      <Switch>
+        <Route path="/login" exact component={Login} />
+        <Route path="/registration" exact component={Registration} />
+        <Route path="/" render={() => <Redirect to="/login" />} />
+      </Switch>
+    );
   }
 
   return (

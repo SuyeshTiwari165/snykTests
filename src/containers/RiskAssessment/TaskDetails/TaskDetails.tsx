@@ -100,13 +100,13 @@ export const TaskDetails: React.FC = (props: any) => {
   //queries
   const [createTask] = useMutation(CREATE_TASK);
 
-  if (
-    scanListCheckBox !== null &&
-    scanListCheckBox.length !== 0 &&
-    scanConfig.length === 0
-  ) {
-    setScanConfig(scanListCheckBox);
-  }
+  // if (
+  //   scanListCheckBox !== null &&
+  //   scanListCheckBox.length !== 0 &&
+  //   scanConfig.length === 0
+  // ) {
+  //   setScanConfig(scanListCheckBox);
+  // }
 
   const {
     data: dataScanConfig,
@@ -209,7 +209,8 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    history.push(routeConstant.TARGET);
+    let data = { editData: true };
+    history.push(routeConstant.TARGET, data);
   };
 
   const handleAlertClose = () => {
