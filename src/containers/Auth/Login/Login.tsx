@@ -58,7 +58,18 @@ export const Login: React.FC<LoginProps> = () => {
   const classes = useStyles();
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const [getAdminRole, { data: dataAD, loading: loadingAD }] = useLazyQuery(
-    GET_ADMIN_USER
+    GET_ADMIN_USER, {
+    onCompleted: (data: any) => {
+      console.log("data", data.getUserDetails.edges[0].node.isSuperuser)
+      localStorage.setItem("user", JSON.stringify(data.getUserDetails.edges[0].node));
+      if (data.getUserDetails.edges[0].node.isSuperuser == true) {
+        window.location.replace(routeConstants.ADMIN_DASHBOARD);
+      } else {
+        window.location.replace(routeConstants.DASHBOARD);
+      }
+    },
+    fetchPolicy: "cache-and-network",
+  }
   );
   const handlePasswordChange = () => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -109,41 +120,10 @@ export const Login: React.FC<LoginProps> = () => {
     return foundErrors;
   };
 
-  // const {data: dataCO, error:adminError, loading: loadingCO}  = useLazyQuery(GET_ADMIN_USER);
-
-
-  useEffect(() => {
-    getAdminRole()
-    //   if (dataCO) {
-    //     let AdminSession: Object = {};
-    //     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    // if (user.user.role.name === CompanyUser) {
-    //   localStorage.setItem("contact", JSON.stringify(dataCO.contacts[0]));
-    //   window.location.replace(routeConstants.DASHBOARD);
-    // } else {
-    //   localStorage.setItem("contact", JSON.stringify(dataCO.contacts[0]));
-    //   // localStorage.setItem("contact", AdminSession);
-    //   window.location.replace(routeConstants.ADMIN_DASHBOARD);
-    // }
-    //   }
-  }, []);
-
-  // const [getIndividual, { data: iData, loading: iLoading }] = useLazyQuery(
-  //   GET_INDIVIDUAL,
-  //   {
-  //     fetchPolicy: "cache-and-network",
-  //     onCompleted: () => {
-  //       console.log("getIndividuals");
-  //     },
-  //   }
-  // );
-
   if (loadingAD || showLoading) {
     return <Loading />;
   }
-  if (dataAD) {
-    console.log("dataAD", dataAD.getAuthUserDetails.edges[0].node.username)
-  }
+
   const onLogin = () => {
     handleInputErrors();
     if (!handleInputErrors()) {
@@ -155,20 +135,12 @@ export const Login: React.FC<LoginProps> = () => {
         },
       })
         .then((userRes) => {
-          console.log("dataAD", dataAD.getAuthUserDetails.edges[0].node.username)
-          // console.log("userRes", userRes.data.tokenAuth.payload.username)
+          getAdminRole({
+            variables: {
+              userid: userRes.data.tokenAuth.payload.username
+            }
+          })
           localStorage.setItem("session", userRes.data.tokenAuth.token);
-          localStorage.setItem("user",JSON.stringify(dataAD.getAuthUserDetails.edges[0].node));
-          if (userRes.data.tokenAuth.payload.username === dataAD.getAuthUserDetails.edges[0].node.username) {
-            window.location.replace(routeConstants.ADMIN_DASHBOARD);
-          } else {
-            window.location.replace(routeConstants.DASHBOARD);
-          }
-          setUserId(userRes.data.login.user.id);
-
-         
-          
-
         })
         .catch((Error) => {
           setInvalidLogin(true);
@@ -187,16 +159,8 @@ export const Login: React.FC<LoginProps> = () => {
               <div className={styles.cyberComplianceLogo}>
                 RA In a Box
               </div>
-              {/* <div className={styles.LoginTitle}>
-                <Typography variant="h4" className={classes.titleText}>
-                  Login
-                </Typography>
-              </div> */}
               <div className={styles.Margin}>
                 <FormControl className={styles.TextField} variant="outlined">
-                  {/* <InputLabel classes={{ root: styles.FormLabel }}>
-                    Email Address
-                  </InputLabel> */}
                   <Input
                     type="email"
                     label="Email Address"
@@ -215,21 +179,6 @@ export const Login: React.FC<LoginProps> = () => {
                   >
                     E-mail
                   </Input>
-                  {/* <OutlinedInput
-                    classes={{
-                      root: styles.InputField,
-                      notchedOutline: styles.InputField,
-                      focused: styles.InputField,
-                    }}
-                    data-testid="email-id"
-                    error={emailError}
-                    id="email-id"
-                    label="Your email"
-                    value={email}
-                    type="email"
-                    required
-                    onChange={handleEmailChange()}
-                  /> */}
                   {emailError ? (
                     <FormHelperText classes={{ root: styles.FormHelperText }}>
                       Please enter valid email address.
@@ -296,12 +245,6 @@ export const Login: React.FC<LoginProps> = () => {
                 Login
               </Button>
             </div>
-            {/* <div className={styles.Or}>
-              <div className={styles.OrText}>OR</div>
-            </div>
-            <div>
-               <Link to="/registration">CREATE A NEW ACCOUNT</Link> 
-            </div> */}
           </form>
         </Grid>
       </Card>

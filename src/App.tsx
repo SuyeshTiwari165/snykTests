@@ -43,10 +43,10 @@ function App() {
   let routes;
 
   if (authenticated) {
-    if (CompanyUser === CompanyUser) {
+    if (user.isSuperuser !== true ) {
       routes = <div>{AuthRoutes}</div>;
     }
-    if (user !== CompanyUser) {
+    if (user.isSuperuser === true) {
     routes = <div>{AdminRoutes}</div>;
     }
     } else if (!authenticated) {

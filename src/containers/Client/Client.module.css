@@ -1,0 +1,92 @@
+.paper {
+  margin-bottom: 20px;
+  padding: 28px 25px 17px 25px;
+  background-color: #fff;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-radius: 20px !important;
+  border: 1px solid #0051a8;
+  position: relative;
+}
+
+.FilterWrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+  align-items: flex-end;
+}
+
+.FilterInput {
+  margin-bottom: 15px;
+  text-align: right;
+}
+
+.FilterSearchButton {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.FilterResetButton {
+  margin-bottom: 10px;
+}
+
+.FilterAddWrap {
+  float: right;
+  margin-top: 20px;
+}
+
+.FilterResetButton button {
+  background-color: transparent !important;
+  border: 0px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  box-shadow: none !important;
+}
+
+.FilterResetButton button span {
+  font-weight: 600 !important;
+}
+
+th:first-child {
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+}
+
+th:last-child {
+  border-top-right-radius: 60px;
+  border-bottom-right-radius: 60px;
+}
+
+th {
+  padding: 8px !important;
+  border-bottom: none !important;
+  line-height:1.5 !important;
+  font-size:12px !important;
+  color: #002f60;
+  font-weight:600 !important;
+}
+
+table>thead {
+  background-color: transparent !important;
+}
+
+.ScrollTable>div {
+  max-height: calc(100vh - 351px) !important;
+  overflow-x: auto !important;
+}
+
+td button {
+  padding: 0px 10px !important;
+  color: #0072ed !important;
+}
+
+td {
+  padding: 8px !important;
+  line-height:1.846 !important;
+  color: #707070 !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+}
+tfoot {
+  border-top: 1px solid #eee;
+}

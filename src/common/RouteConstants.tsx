@@ -11,7 +11,10 @@ export const RA_REPORT_LISTING = "/report-listing";
 //------------ADMIN ROUTES---------------//
 export const ADMIN_DASHBOARD = "/admin-dashboard";
 export const TEMPLATE = "/admin-template";
-export const ADD_PARTNER = "/add-partner";
+export const ADD_PARTNER = "/partners";
+export const PARTNER_FORM = "/partner-form";
+export const PARTNER_FORM_ADD = "/partner-form/add";
+export const PARTNER_FORM_EDIT = "/partner-form/edit/";
 export const PARTNER_USER = "/partner-user";
 export const PARTNER_USER_FORM = "/partner-user-form";
 export const PARTNER_USER_FORM_ADD = "/partner-user-form/add";
