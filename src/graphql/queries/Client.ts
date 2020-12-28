@@ -1,16 +1,15 @@
 import { gql } from "@apollo/client";
 
 export const GET_CLIENT = gql`
-query{
-  getClient{
+query getCients($partnerId: Int!){
+  getClient (partnerId:$partnerId){
     edges{
       node{
         emailId
         partnerId
         mobileNumber
         address
-        ipRange
-        pgClientId
+        id
         clientName
       }
     }

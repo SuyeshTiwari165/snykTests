@@ -15,6 +15,7 @@ import Grid from "@material-ui/core/Grid";
 import * as validations from "../../../common/validateRegex";
 import clsx from "clsx";
 import { USER_LOGIN } from "../../../graphql/mutations/User";
+import { GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import Input from "../../../components/UI/Form/Input/Input";
@@ -57,6 +58,15 @@ export const Login: React.FC<LoginProps> = () => {
   const [foundErrors, setFoundError] = useState(false);
   const classes = useStyles();
   const [showLoading, setShowLoading] = useState<boolean>(false);
+  const [getPartnerId, { data: dataPId, loading: loadingPId }] = useLazyQuery(
+    GET_PARTNER_ID_USER, {
+    onCompleted: (data: any) => {
+      localStorage.setItem("partnerData", JSON.stringify(data.getPartnerUserDetails.edges[0].node));
+      window.location.replace(routeConstants.DASHBOARD);
+    },
+    fetchPolicy: "cache-and-network",
+  }
+  );
   const [getAdminRole, { data: dataAD, loading: loadingAD }] = useLazyQuery(
     GET_ADMIN_USER, {
     onCompleted: (data: any) => {
@@ -65,7 +75,11 @@ export const Login: React.FC<LoginProps> = () => {
       if (data.getUserDetails.edges[0].node.isSuperuser == true) {
         window.location.replace(routeConstants.ADMIN_DASHBOARD);
       } else {
-        window.location.replace(routeConstants.DASHBOARD);
+        getPartnerId({
+          variables: {
+            userId: data.getUserDetails.edges[0].node.username,
+          },
+        })
       }
     },
     fetchPolicy: "cache-and-network",

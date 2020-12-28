@@ -2,6 +2,10 @@ export const LOGIN_URL = "/login";
 export const LOGOUT_URL = "/logout";
 export const DASHBOARD = "/dashboard";
 export const CLIENT = "/client";
+export const CLIENT_FORM = "/client-form";
+export const CLIENT_FORM_ADD = "/client-form/add";
+export const CLIENT_FORM_EDIT = "/client-form/edit/";
+
 
 //------------RA ROUTES---------------//
 export const TARGET = "/target";
