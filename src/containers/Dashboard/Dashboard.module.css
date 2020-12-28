@@ -1,0 +1,105 @@
+.Dashboard {}
+
+.GridBox {
+    background-color: #fff !important;
+    border: 1px solid #0051A8 !important;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12) !important;
+    border-radius: 20px !important;
+    padding: 15px !important;
+    margin-bottom: 35px !important;
+}
+
+.dash_block {
+    display: inline-block !important;
+    background-color: #fff;
+    border: 1px solid #0051A8;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
+    border-radius: 20px;
+    justify-content: center;
+    vertical-align: top;
+    text-align: center;
+    width: 100%;
+    min-height: 150px;
+}
+
+.recentTypo {
+    position: relative;
+    top: 25px;
+}
+
+.tableGrid {
+    background-color: #fff !important;
+    border: 1px solid #0051A8 !important;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12) !important;
+    border-radius: 20px !important;
+    padding: 15px !important;
+    margin-bottom: 35px !important;
+}
+
+.partnerButton {
+    margin-top: 30px;
+    text-align: center;
+    width: 250px;
+}
+
+.partnerButton button {
+    width: 124px;
+}
+
+.partnerButton button svg {
+    margin-right: 5px;
+}
+
+.partnerButton a {
+    text-decoration: none;
+}
+
+.dash_head {
+    font-size: 20px !important;
+    margin-top: 40px !important;
+    margin-bottom: 15px !important;
+    color: #002F60 !important;
+}
+
+.dash_count {
+    font-size: 30px !important;
+    margin-top: 20px !important;
+    margin-bottom: 30px !important;
+    font-weight: bold;
+}
+
+th:first-child {
+    border-top-left-radius: 60px;
+    border-bottom-left-radius: 60px;
+}
+
+th:last-child {
+    border-top-right-radius: 60px;
+    border-bottom-right-radius: 60px;
+}
+
+th {
+    padding: 8px !important;
+    border-bottom: none !important;
+    line-height: 1.5 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #002f60;
+}
+
+td {
+    padding: 8px !important;
+    line-height: 1.846 !important;
+    color: #707070 !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+}
+
+table>thead {
+    background-color: transparent !important;
+}
+
+th:last-child {
+    width: 25% !important;
+    text-align: center !important;
+}

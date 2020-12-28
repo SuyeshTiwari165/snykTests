@@ -1,7 +1,7 @@
 import React from "react";
 // import { BrowserRouter as  Router, Route, Link, Switch } from "react-router-dom";
 import { Switch, Route, RouteComponentProps, Redirect } from "react-router";
-import Dashboard from "./containers/AdminPanel/Dashboard/Dashboard";
+import Dashboard from "./containers/Dashboard/Dashboard";
 import Target from "./containers/RiskAssessment/Target/Target";
 import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
 import ReportStatus from "./containers/RiskAssessment/ReportStatus/ReportStatus";
@@ -11,7 +11,8 @@ import PartnerUser from "./containers/AdminPanel/PartnerUser/PartnerUser/Partner
 import PartnerUserForm from "./containers/AdminPanel/PartnerUser/PartnerUserForm/PartnerUserForm";
 import PartnerForm from "./containers/AdminPanel/Partner/PartnerForm/PartnerForm";
 import * as routeConstants from "./common/RouteConstants";
-import Client from "./containers/Client/Client";
+import Client from "./containers/Client/Client/Client";
+import ClientForm from "./containers/Client/ClientForm/ClientForm";
 import TopStepperRoute from "./common/TopStepperRoute";
 import LayoutRoute from "./common/LayoutRoute";
 
@@ -38,6 +39,26 @@ export const AuthRoutes = (
       path={routeConstants.PARTNER_USER_FORM_EDIT + "/:id "}
       exact
       component={PartnerUserForm}
+    />
+     <LayoutRoute
+      path={routeConstants.CLIENT_FORM}
+      exact
+      component={ClientForm}
+    />
+    <LayoutRoute
+      path={routeConstants.CLIENT_FORM_ADD}
+      exact
+      component={ClientForm}
+    />
+    <LayoutRoute
+      path={routeConstants.CLIENT_FORM_EDIT + ":id"}
+      exact
+      component={ClientForm}
+    />
+    <LayoutRoute
+      path={routeConstants.CLIENT_FORM_EDIT + "/:id "}
+      exact
+      component={ClientForm}
     />
     <LayoutRoute path={routeConstants.DASHBOARD} exact component={Dashboard} />
     <LayoutRoute path={routeConstants.CLIENT} exact component={Client} />

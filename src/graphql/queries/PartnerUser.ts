@@ -1,14 +1,14 @@
 import { gql } from '@apollo/client';
 
 export const GET_PARTNER_USER = gql`
-query getPartnerUserDetails($partner: Int!){
-  getPartnerUserDetails(partnerId:$partner){
-    edges{
-      node{
+query getPartnerUserDetails($partner: Int!,$userType:String) {
+  getPartnerUserDetails(partnerId: $partner,userType:$userType) {
+    edges {
+      node {
         id
         partnerId
         clientId
-        userId{
+        userId {
           username
           firstName
           lastName
@@ -18,9 +18,32 @@ query getPartnerUserDetails($partner: Int!){
         vatUserId
       }
     }
-
   }
 }
+
+
+`;
+export const GET_PARTNER_USERS= gql`
+query getPartnerUserDetails {
+  getPartnerUserDetails {
+    edges {
+      node {
+        id
+        partnerId
+        clientId
+        userId {
+          username
+          firstName
+          lastName
+        }
+        userType
+        mobileNumber
+        vatUserId
+      }
+    }
+  }
+}
+
 
 `;
 
@@ -65,22 +88,4 @@ query getPartnerUserDetails($userId: String!){
 
   }
 }
-`;
-
-export const GET_PARTNER_USERS = gql`
-query getUserDetails {
-  getUserDetails {
-    edges {
-      node {
-        id
-        firstName
-        lastName
-        username
-        email
-      }
-    }
-  }
-}
-
-
 `;

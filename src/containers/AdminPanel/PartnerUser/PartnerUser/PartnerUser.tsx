@@ -82,7 +82,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     email: "",
     phoneNumber: "",
   });
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
+ 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   let partnerdata: any;
   if (propsData.location.state !== null) {
@@ -124,6 +124,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
         getpartnerUserDataforCompuser({
           variables: {
             partner: data.getPartnerUserDetails.edges[0].node.partnerId,
+            userType: 'Partner'
           },
         })
       }

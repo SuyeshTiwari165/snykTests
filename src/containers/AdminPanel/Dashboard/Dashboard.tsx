@@ -26,6 +26,8 @@ import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 // } from "../../../graphql/queries/Individual";
 // import { GET_PARTNER_SUBSCRIPTION } from "../../../graphql/queries/PartnerSubscription";
 // import { GET_ROLE_BASED_USER } from "../../../graphql/queries/User";
+import { GET_PARTNER } from "../../../graphql/queries/Partners";
+import { GET_PARTNER_USERS, GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
 import { useHistory } from "react-router-dom";
 import * as routeConstant from "../../../common/RouteConstants";
 import moment from "moment";
@@ -96,6 +98,25 @@ export const Dashboard: React.FC = (props: any) => {
   //     setPartnerCount(partnerData.organizations.length);
   //   }
   // });
+  const { data: Org, loading: loadOrg } = useQuery(
+    GET_PARTNER,
+    {
+      onCompleted: (data: any) => {
+        createTableDataObject(data.getPartner.edges);
+        setPartnerCount(data.getPartner.edges.length);
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
+  const { data: partnerUsers, loading: loadPartnerUsers } = useQuery(
+    GET_PARTNER_USERS,
+    {
+      onCompleted: (data: any) => {
+        setPartnerUserCount(data.getPartnerUserDetails.edges.length);
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
   //table
   const column = [
@@ -109,19 +130,33 @@ export const Dashboard: React.FC = (props: any) => {
       let obj: any = {};
       // obj["clientId"] = element.contact_id.id;
       // obj["partner"] = element.contact_id.name;
-         obj["id"] = element.contact_id.id;
-      obj["partner"] = element.contact_id.name;
-      obj["email"] = element.contact_id.email;
-      obj["phone"] = element.contact_id.phone;
-      obj["address"] = element.contact_id.address;
-      obj["partnerOrgId"] = element.id;
-      obj["createdon"] = moment(element.contact_id.created_at).format(
-        "MM/DD/YYYY hh:mm a"
-      );
+      // obj["id"] = element.contact_id.id;
+      obj["partner"] = element.node.partnerName;
+      obj["email"] = element.node.emailId;
+      obj["phone"] = element.node.mobileNumber;
+      obj["address"] = element.node.address;
+      obj["partnerOrgId"] = element.node.id;
+      // obj["createdon"] = moment(element.contact_id.created_at).format(
+      //   "MM/DD/YYYY hh:mm a"
+      // );
       arr.push(obj);
     });
     setNewData(arr.slice(0, 5));
   };
+  // const createTableDataObject = (data: any) => {
+  //   let arr: any = [];
+  //   data.map((element: any, index: any) => {
+  //     let obj: any = {};
+  //     obj["partner_id"] = element.node.id;
+  //     obj["name"] = element.node.partnerName;
+  //     obj["email"] = element.node.emailId;
+  //     obj["phone"] = element.node.mobileNumber;
+  //     obj["address"] = element.node.address;
+  //     arr.push(obj);
+  //   });
+  //   setNewData(arr);
+  // };
+
 
   const handleClickOpen = () => {
     let data: any = { showAddClient: true };
@@ -130,7 +165,7 @@ export const Dashboard: React.FC = (props: any) => {
 
   const partnerClickOpen = () => {
     let data: any = { "AddPartner": true };
-    history.push(routeConstant.ADD_PARTNER,data);
+    history.push(routeConstant.ADD_PARTNER, data);
   };
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
@@ -141,7 +176,7 @@ export const Dashboard: React.FC = (props: any) => {
     if (param === "View") {
     }
     if (param === "Edit") {
-      history.push(routeConstant.ADD_PARTNER,rowData);
+      history.push(routeConstant.ADD_PARTNER, rowData);
     }
     if (param === "Delete") {
     }
@@ -238,7 +273,7 @@ export const Dashboard: React.FC = (props: any) => {
             options={{
               headerStyle: {
                 backgroundColor: "#EFF6FD",
-                color: "#002F60" 
+                color: "#002F60"
               },
               actionsColumnIndex: -1,
               paging: false,
