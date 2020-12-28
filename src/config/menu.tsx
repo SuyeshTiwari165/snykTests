@@ -17,12 +17,7 @@ export const sideDrawerMenus = [
     title: "Clients",
     path: routeConstants.CLIENT,
     icon: "users",
-    pathList: [
-      routeConstants.TASK_DETAILS,
-      routeConstants.TARGET,
-      routeConstants.REPORT_STATUS,
-      routeConstants.RA_REPORT_LISTING,
-    ],
+    pathList: [routeConstants.CLIENT],
   },
   {
     title: "Users",
@@ -33,6 +28,12 @@ export const sideDrawerMenus = [
       routeConstants.PARTNER_USER_FORM_EDIT,
       routeConstants.PARTNER_USER_FORM,
     ],
+  },
+  {
+    title: "Risk Assessmnt",
+    path: routeConstants.RA_REPORT_LISTING,
+    icon: "documents",
+    pathList: [routeConstants.RA_REPORT_LISTING],
   },
   //   {
   //   title: "Risk Assessmnt",
@@ -61,12 +62,7 @@ export const sideDrawerAdminMenus = [
     icon: "partners",
     pathList: [routeConstants.ADD_PARTNER],
   },
-  // {
-  //   title: "Risk Assessmnt",
-  //   path: routeConstants.RA_REPORT_LISTING,
-  //   icon: "documents",
-  //   pathList: [routeConstants.RA_REPORT_LISTING],
-  // },
+
   // {
   //   title: "Admin",
   //   type: "admin",

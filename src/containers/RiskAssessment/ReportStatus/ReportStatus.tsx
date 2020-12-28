@@ -39,7 +39,6 @@ export const ReportStatus: React.FC = (props: any) => {
 
   const staticClientId = 2;
   const targetName = props["location"].state.targetName;
-  console.log("var var", targetName, staticClientId);
   const {
     data: dataReportListing,
     error: errorReportListing,
@@ -70,7 +69,6 @@ export const ReportStatus: React.FC = (props: any) => {
     if (dataReportListing) {
       let temp: any = {};
       temp = convertTableData(dataReportListing.getReportStatus.edges);
-      console.log("data status", dataReportListing.getReportStatus.edges);
       setNewData(temp);
     }
   }, [dataReportListing]);

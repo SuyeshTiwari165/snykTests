@@ -37,7 +37,6 @@ mutation updateTarget($input: TargetInput!,$id:Int!){
       partner{
         id
         partnerName
-
       }
       client{
         id
