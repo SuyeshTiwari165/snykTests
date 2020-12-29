@@ -217,17 +217,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
   };
 
   const backToList = () => {
-    if (
-      propsData &&
-      propsData.location.state &&
-      propsData.location.state.propsData &&
-      propsData.location.state.propsData.from &&
-      propsData.location.state.propsData.from === "admin-partner-user"
-    ) {
-      history.push(routeConstant.PARTNER_USER, propsData.location.state);
-    } else {
-      history.push(routeConstant.PARTNER_USER, propsData.location.state);
-    }
+    history.push(routeConstant.PARTNER_USER, propsData.location.state);
   };
   const handleInputErrors = () => {
     let foundErrors = false;
@@ -331,6 +321,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
         }
       }
     }).then((response: any) => {
+      console.log("response",response)
       backToList();
     })
   };

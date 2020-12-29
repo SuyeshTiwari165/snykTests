@@ -82,7 +82,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     email: "",
     phoneNumber: "",
   });
- 
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   let partnerdata: any;
   if (propsData.location.state !== null) {
@@ -112,8 +112,8 @@ export const PartnerUser: React.FC = (propsData: any) => {
     onCompleted: (data: any) => {
       setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
       createTableDataObject(data.getPartnerUserDetails.edges);
-      },
-      fetchPolicy: "cache-and-network",
+    },
+    fetchPolicy: "cache-and-network",
   });
 
   const [getpartnerIDbyUserID, { data: PartnerIDData, loading: loadPartnerID }] = useLazyQuery(
@@ -140,24 +140,26 @@ export const PartnerUser: React.FC = (propsData: any) => {
     fetchPolicy: "cache-and-network",
   }
   );
-  console.log("Props", propsData.location.state)
   useEffect(() => {
-    if (propsData.location.state && propsData.location.state.partner_id) {
+    if (propsData.location.state && propsData.location.state !== null && propsData.location.state.partner_id) {
       getpartnerUserData({
         variables: {
           partner: propsData.location.state.partner_id,
+          userType: 'Partner'
+
         },
       })
     } else if (propsData.location.state && propsData.location.state.propData) {
       getpartnerUserData({
         variables: {
           partner: propsData.location.state.propData.partner_id,
+          userType: 'Partner'
         },
       })
     } else {
       getpartnerIDbyUserID({
         variables: {
-          userId: user.username,
+          userId: user.isSuperuser == true ? propsData.location.state.email : user.username,
         },
       })
     }

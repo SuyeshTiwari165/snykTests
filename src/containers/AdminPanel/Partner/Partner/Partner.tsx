@@ -34,11 +34,6 @@ import { GET_PARTNER } from "../../../../graphql/queries/Partners";
 import * as validations from "../../../../common/validateRegex";
 
 export const Partner: React.FC = (props: any) => {
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [partnerName, setPartnerName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
   const [newData, setNewData] = useState<any>([]);
   const [rowData, setRowData] = useState<any>();
   const [partnerSubsID, setPartnerSubsID] = useState<any>();
@@ -114,36 +109,6 @@ export const Partner: React.FC = (props: any) => {
     }));
   };
 
-  const handleInputErrors = () => {
-    let foundErrors = false;
-    if (!partnerName) {
-      let err = "Required";
-      setIsError((error: any) => ({
-        ...error,
-        partnerName: err,
-      }));
-      foundErrors = true;
-    }
-    if (!email) {
-      let errors = "Required";
-      setIsError((error: any) => ({
-        ...error,
-        email: errors,
-      }));
-      foundErrors = true;
-    }
-    if (email && !validations.EMAIL_REGEX.test(email)) {
-      let errors = "Please enter valid email address.";
-      setIsError((error: any) => ({
-        ...error,
-        email: errors,
-      }));
-      foundErrors = true;
-    }
-
-    return foundErrors;
-  };
-
   const handleClickAdd = (rowData: any) => {
     let viewdata: any = rowData;
     history.push(routeConstant.PARTNER_USER, viewdata);
@@ -169,7 +134,6 @@ export const Partner: React.FC = (props: any) => {
       <Typography component="h5" variant="h1">
         Partner
       </Typography>
-      {/* {!openEdit ? ( */}
       <Grid className={styles.TableWrap}>
         <Grid container>
           <Grid item xs={6} sm={9} className={styles.FilterWrap}>
@@ -265,88 +229,6 @@ export const Partner: React.FC = (props: any) => {
           />
         </Paper>
       </Grid>
-      {/* ) : (
-          <AddEditForm
-            handleOk={handleSubmit}
-            // disabled={submitDisabled}
-            handleCancel={backToList}
-          >
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                {formState.isFailed ? (
-                  <Alert
-                    severity="error"
-                    action={
-                      <IconButton
-                        aria-label="close"
-                        color="inherit"
-                        size="small"
-                        onClick={handleAlertClose}
-                      >
-                        <CloseIcon fontSize="inherit" />
-                      </IconButton>
-                    }
-                  >
-                    {FAILED}
-                    {formState.errMessage}
-                  </Alert>
-                ) : null}
-              </Grid>
-              <Grid item xs={6}>
-                <Input
-                  type="text"
-                  label="Partner Name*"
-                  name="partnerName"
-                  value={partnerName}
-                  onChange={handleChange}
-                  error={isError.partnerName}
-                  helperText={isError.partnerName}
-                >
-                  Partner Name
-              </Input>
-              </Grid>
-              <Grid item xs={6}>
-                <Input
-                  type="text"
-                  label="Email*"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                  error={isError.email}
-                  helperText={isError.email}
-                >
-                  E-mail
-              </Input>
-              </Grid>
-              <Grid item xs={6}>
-                <Input
-                  type="text"
-                  label="Phone Number"
-                  name="phoneNumber"
-                  value={phoneNumber}
-                  onChange={handleChange}
-                  error={isError.phoneNumber}
-                  helperText={isError.phoneNumber}
-                >
-                  Phone Number
-              </Input>
-              </Grid>
-              <Grid item xs={6}>
-                <Input
-                  type="text"
-                  label="Address"
-                  name="address"
-                  value={address}
-                  onChange={handleChange}
-                  error={isError.address}
-                  helperText={isError.address}
-                >
-                  Address
-              </Input>
-              </Grid>
-            </Grid>
-          </AddEditForm>
-        )} */}
     </React.Fragment>
   );
 };
