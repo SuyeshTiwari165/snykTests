@@ -24,6 +24,7 @@ import { useHistory } from "react-router-dom";
 export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
   const [newData, setNewData] = useState();
+  const clientInfo = props.location.state.clientInfo;
 
   //table
   const columns = [
@@ -37,7 +38,7 @@ export const ReportStatus: React.FC = (props: any) => {
   const title = "Listing of Report Status";
   const [orderBy, setOrderBy] = useState<String>();
 
-  const staticClientId = 2;
+  const staticClientId = clientInfo.clientId;
   const targetName = props["location"].state.targetName;
   const {
     data: dataReportListing,
@@ -117,7 +118,9 @@ export const ReportStatus: React.FC = (props: any) => {
     setOrderBy(orderBy);
   };
   const handleBack = () => {
-    history.push(routeConstant.RA_REPORT_LISTING);
+    let data = {};
+    data = { clientInfo: clientInfo };
+    history.push(routeConstant.RA_REPORT_LISTING, data);
   };
 
   return (

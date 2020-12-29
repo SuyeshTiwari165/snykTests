@@ -61,13 +61,14 @@ export const Target: React.FC = (props: any) => {
   const [scanConfigList, setScanConfigList] = useState<any>([]);
 
   //static values for partner and client are given.
-
-  const partnerId = 1;
-  const clientId = 2;
+  const clientInfo = props.location.state.clientInfo;
+  const partnerId = parseInt(clientInfo.partnerId);
+  const clientId = parseInt(clientInfo.clientId);
   const targetName = props["location"].state
     ? props["location"].state.targetName
+      ? props["location"].state.targetName
+      : null
     : null;
-
   // const [newData, setNewData] = useState();
   const [editDataId, setEditDataId] = useState<Number | null>();
   if (props.location.state) {
@@ -187,6 +188,7 @@ export const Target: React.FC = (props: any) => {
       getTaskData({
         variables: {
           targetName: targetName,
+          client_ClientName: clientInfo.name,
         },
       });
     }
@@ -271,16 +273,17 @@ export const Target: React.FC = (props: any) => {
           setRaStepper(client, stepper.Task.name, stepper.Task.value);
           let data = {};
           if (scanConfigList) {
-            data = { scanConfigList: scanConfigList };
+            data = { scanConfigList: scanConfigList, clientInfo: clientInfo };
           }
-          if (targetName !== null) {
-            history.push({
-              pathname: routeConstant.TASK_DETAILS,
-              state: { targetName: targetName },
-            });
-          } else {
-            history.push(routeConstant.TASK_DETAILS, data);
-          }
+          // if (targetName !== null) {
+          //   history.push({
+          //     pathname: routeConstant.TASK_DETAILS,
+          //     state: { targetName: targetName },
+          //   });
+          //   console.log("normal push", targetName);
+          // } else {
+          history.push(routeConstant.TASK_DETAILS, data);
+          // }
         })
         .catch((err) => {
           console.log("error", err.message);
@@ -340,7 +343,7 @@ export const Target: React.FC = (props: any) => {
           localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
           let data = {};
           if (scanConfigList) {
-            data = { scanConfigList: scanConfigList };
+            data = { scanConfigList: scanConfigList, clientInfo: clientInfo };
           }
           history.push(routeConstant.TASK_DETAILS, data);
         })
@@ -368,7 +371,7 @@ export const Target: React.FC = (props: any) => {
 
   const handleBack = () => {
     let data = {};
-    data = { refetchData: true };
+    data = { refetchData: true, clientInfo: clientInfo };
     history.push(routeConstant.RA_REPORT_LISTING, data);
     localStorage.removeItem("name");
     localStorage.removeItem("targetId");

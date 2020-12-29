@@ -29,12 +29,6 @@ export const sideDrawerMenus = [
       routeConstants.PARTNER_USER_FORM,
     ],
   },
-  {
-    title: "Risk Assessmnt",
-    path: routeConstants.RA_REPORT_LISTING,
-    icon: "documents",
-    pathList: [routeConstants.RA_REPORT_LISTING],
-  },
   //   {
   //   title: "Risk Assessmnt",
   //   path: routeConstants.RA_REPORT_LISTING,
