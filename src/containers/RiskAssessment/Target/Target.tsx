@@ -78,6 +78,8 @@ export const Target: React.FC = (props: any) => {
 
   //show password
   const [showPassword, setShowPassword] = useState(false);
+  const [showVpnPassword, setShowVpnPassword] = useState(false);
+  const startDate = new Date();
 
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
@@ -109,12 +111,22 @@ export const Target: React.FC = (props: any) => {
         setIpRange(data.getTarget.edges[0].node.host);
         setUserName(
           data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.username
+            ? data.getTarget.edges[0].node.vatCredentials.domainUsername
             : null
         );
         setPassword(
           data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.password
+            ? data.getTarget.edges[0].node.vatCredentials.domainPassword
+            : null
+        );
+        setVpnUserName(
+          data.getTarget.edges[0].node.vatCredentials
+            ? data.getTarget.edges[0].node.vatCredentials.vpnUsername
+            : null
+        );
+        setVpnPassword(
+          data.getTarget.edges[0].node.vatCredentials
+            ? data.getTarget.edges[0].node.vatCredentials.vpnPassword
             : null
         );
       }
@@ -299,6 +311,7 @@ export const Target: React.FC = (props: any) => {
         winPassword: password,
         vpnUsername: vpnUserName,
         vpnPassword: vpnPassword,
+        startDate: startDate,
       };
       createTarget({
         variables: {
@@ -440,6 +453,10 @@ export const Target: React.FC = (props: any) => {
     setShowPassword(!showPassword);
   };
 
+  const handleClickShowVpnPassword = () => {
+    setShowVpnPassword(!showVpnPassword);
+  };
+
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -566,7 +583,7 @@ export const Target: React.FC = (props: any) => {
             VPN User Name
           </Input>
         </Grid>
-        <Grid item xs={6}>
+        {/* <Grid item xs={6}>
           <Input
             type="text"
             label="VPN Password"
@@ -578,6 +595,46 @@ export const Target: React.FC = (props: any) => {
           >
             VPN Password
           </Input>
+        </Grid> */}
+        <Grid item xs={6}>
+          <FormControl className={styles.TextField} variant="outlined">
+            <InputLabel classes={{ root: styles.FormLabel }}>
+              VPN Password
+            </InputLabel>
+            <OutlinedInput
+              classes={{
+                root: styles.InputField,
+                notchedOutline: styles.InputField,
+                focused: styles.InputField,
+              }}
+              type={showVpnPassword ? "text" : "password"}
+              label="VPN Password"
+              value={vpnPassword}
+              onChange={handleVpnPasswordChange}
+              required
+              error={isError.vpnPassword}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowVpnPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showVpnPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {isError.vpnPassword ? (
+              <FormHelperText
+                error={isError.vpnPassword}
+                classes={{ root: styles.FormHelperText }}
+              >
+                Please enter a password.
+              </FormHelperText>
+            ) : null}
+          </FormControl>
         </Grid>
         <Grid item xs={1} className={styles.backToListButton}>
           <Button

@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const GET_TARGET = gql`
 query getTarget($targetName: String, $host: String) {
-  getTarget(targetName_Icontains: $targetName, host_Icontains: $host) {
+  getTarget(targetName: $targetName, host_Icontains: $host) {
     edges {
       node {
         id
@@ -19,8 +19,10 @@ query getTarget($targetName: String, $host: String) {
         host
         vatCredentials {
           id
-          username
-          password
+          vpnUsername
+          domainUsername
+          vpnPassword
+          domainPassword
         }
       }
     }
