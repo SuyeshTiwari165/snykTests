@@ -46,7 +46,6 @@ export const RaReportListing: React.FC = (props: any) => {
       clientid: staticClientId,
     },
   });
-  console.log("RL data", dataReportListing);
 
   useEffect(() => {
     if (dataReportListing) {
