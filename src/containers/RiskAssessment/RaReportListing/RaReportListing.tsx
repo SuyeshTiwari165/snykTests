@@ -125,12 +125,12 @@ export const RaReportListing: React.FC = (props: any) => {
   };
   const handleDownload = (rowData: any) => {
     let intTargetId = parseInt(rowData.targetId);
-    // const DocUrl =
-    //RA_REPORT_DOWNLOAD + "cid=" + propsClientId + "&tid=" + intTargetId;
-    //window.open(DocUrl);
-    window.open(
-      "https://ra-in-a-box.wastaging.com/reports/download_report/?cid=2&tid=24"
-    );
+    const DocUrl =
+      RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
+    window.open(DocUrl);
+    // window.open(
+    //   "https://ra-in-a-box.wastaging.com/reports/download_report/?cid=2&tid=24"
+    // );
   };
 
   const handleAddNewReport = () => {
