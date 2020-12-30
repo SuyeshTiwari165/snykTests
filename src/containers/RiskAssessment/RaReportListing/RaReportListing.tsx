@@ -19,7 +19,10 @@ import { useHistory } from "react-router-dom";
 import { RA_REPORT_DOWNLOAD } from "../../../config/index";
 
 export const RaReportListing: React.FC = (props: any) => {
-  // console.log("------Row data in props RAReportListing", props.location.state);
+  // console.log(
+  //   "------Row data in props RAReportListing",
+  //   props.location.state.clientInfo.clientId
+  // );
   const history = useHistory();
   const [newData, setNewData] = useState();
 
@@ -33,7 +36,8 @@ export const RaReportListing: React.FC = (props: any) => {
   const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
   //static values
-  const staticClientId = 2;
+  const propsClientId = parseInt(props.location.state.clientInfo.clientId);
+  const clientInfo = props.location.state.clientInfo;
 
   //filter query condition declaration
   const {
@@ -43,7 +47,7 @@ export const RaReportListing: React.FC = (props: any) => {
     refetch: refetchReportListing,
   } = useQuery(GET_REPORT_LISTING, {
     variables: {
-      clientid: staticClientId,
+      clientid: propsClientId,
     },
   });
 
@@ -109,28 +113,30 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleClickView = (rowData: any) => {
     history.push({
       pathname: routeConstant.REPORT_STATUS,
-      state: { targetName: rowData.target },
+      state: { targetName: rowData.target, clientInfo: clientInfo },
     });
   };
 
   const handleClickOpen = (rowData: any) => {
     history.push({
       pathname: routeConstant.TARGET,
-      state: { targetName: rowData.target },
+      state: { targetName: rowData.target, clientInfo: clientInfo },
     });
   };
   const handleDownload = (rowData: any) => {
     let intTargetId = parseInt(rowData.targetId);
-    // const DocUrl =
-    //RA_REPORT_DOWNLOAD + "cid=" + staticClientId + "&tid=" + intTargetId;
-    //window.open(DocUrl);
-    window.open(
-      "https://ra-in-a-box.wastaging.com/reports/download_report/?cid=2&tid=24"
-    );
+    const DocUrl =
+      RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
+    window.open(DocUrl);
+    // window.open(
+    //   "https://ra-in-a-box.wastaging.com/reports/download_report/?cid=2&tid=24"
+    // );
   };
 
   const handleAddNewReport = () => {
-    history.push(routeConstant.TARGET);
+    let data = {};
+    data = { clientInfo: clientInfo };
+    history.push(routeConstant.TARGET, data);
   };
 
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {

@@ -47,6 +47,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   // const classes = useStyles(theme);
+  const clientInfo = props.location.state.clientInfo;
   const targetName = JSON.parse(localStorage.getItem("name") || "{}");
   let scanConfigListItems = props.location.state
     ? props.location.state.scanConfigList
@@ -71,8 +72,8 @@ export const TaskDetails: React.FC = (props: any) => {
 
   //static values for partner and client are given.
   const tempScheduleDate = new Date().toISOString();
-  const partnerId = 1;
-  const clientId = 2;
+  const partnerId = parseInt(clientInfo.partnerId);
+  const clientId = parseInt(clientInfo.clientId);
 
   //table
   const columns = [
@@ -101,6 +102,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const [createTask] = useMutation(CREATE_TASK);
 
   if (
+    scanListCheckBox !== undefined &&
     scanListCheckBox !== null &&
     scanListCheckBox.length !== 0 &&
     scanConfig.length === 0
@@ -113,7 +115,13 @@ export const TaskDetails: React.FC = (props: any) => {
     error: errorScanConfig,
     loading: loadingScanConfig,
     refetch: refetchScanConfig,
-  } = useQuery(GET_SCAN_CONFIG);
+  } = useQuery(GET_SCAN_CONFIG, {
+    variables: {
+      clientId: clientId,
+    },
+
+    fetchPolicy: "cache-and-network",
+  });
 
   const checkValidation = () => {
     if (
@@ -181,7 +189,7 @@ export const TaskDetails: React.FC = (props: any) => {
         }));
         setShowForm(false);
         let data = {};
-        data = { refetchData: true };
+        data = { refetchData: true, clientInfo: clientInfo };
         history.push(routeConstant.RA_REPORT_LISTING, data);
         localStorage.removeItem("name");
         localStorage.removeItem("targetId");
@@ -209,7 +217,11 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    let data = { editData: true };
+    // if (scanListCheckBox.length > 0) {
+    //   let data = { editData: true, scanListShow: true, clientInfo: clientInfo };
+    //   history.push(routeConstant.TARGET, data);
+    // }
+    let data = { editData: true, clientInfo: clientInfo };
     history.push(routeConstant.TARGET, data);
   };
 
