@@ -92,7 +92,26 @@ export const Client: React.FC = (props: any) => {
           partnerId: partner.partnerId
         },
       });
+    if (props.location.state && props.location.state !== null && props.location.state.formState) {
+      setFormState(props.location.state.formState);
+    }
   }, []);
+  
+  useEffect(() => {
+    if (props.location.state && props.location.state !== null && props.location.state.formState) {
+      setFormState(props.location.state.formState);
+    }
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
@@ -139,11 +158,8 @@ export const Client: React.FC = (props: any) => {
   };
 
   const handleClickOpen = (rowData: any) => {
-
-    history.push(routeConstant.CLIENT_FORM_ADD);
-
     // let partnerData: any = { "partner_id": partnerID }
-
+    history.push(routeConstant.CLIENT_FORM_ADD, props.location.state);
   };
 
   if ( ipLoading) return <Loading />;
