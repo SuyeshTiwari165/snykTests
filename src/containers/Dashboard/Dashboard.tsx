@@ -15,7 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import { GET_CLIENT } from "../../graphql/queries/Client";
+import { GET_CLIENTS } from "../../graphql/queries/Client";
 import { useHistory } from "react-router-dom";
 import logout from "../../containers/Auth/Logout/Logout";
 import * as routeConstant from "../../common/RouteConstants";
@@ -36,7 +36,7 @@ export const Dashboard: React.FC = () => {
   const [
     getClients,
     { data: ipData, loading: ipLoading },
-  ] = useLazyQuery(GET_CLIENT, {
+  ] = useLazyQuery(GET_CLIENTS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       createTableDataObject(data.getClient.edges)
@@ -68,8 +68,7 @@ export const Dashboard: React.FC = () => {
       obj["clientOrgId"] = element.id;
       arr.push(obj);
     });
-    setNewData(arr.sort(function (a: any, b: any) {
-    }));
+    setNewData(arr.slice(0, 5));
   };
 
   //table

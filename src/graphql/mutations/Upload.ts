@@ -21,11 +21,10 @@ export const UPLOAD_FILE = gql`
   }
 `;
 
-// mutation uploadFile($file: Upload!) {
-//   upload(file: $file) {
-//     id
-//     name
-//     hash
-//     url
-//   }
-// }
+export const UPLOAD_VPN_FILE = gql`
+  mutation uploadFile($input: FileUploadInput!) {
+    uploadFile(input: $input) {
+      success
+    }
+  }
+`;

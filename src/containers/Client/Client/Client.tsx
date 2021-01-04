@@ -16,13 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-// import {
-//   CREATE_CONTACT,
-//   UPDATE_CONTACT,
-// } from "../../../graphql/mutations/Contacts";
 import { CREATE_CLIENT, UPDATE_CLIENT } from "../../../graphql/mutations/Clients";
-// import { GET_ORGANIZATION } from "../../graphql/queries/Organization";
-// import { GET_CONTACT_INFO } from "../../graphql/queries/Contact";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EditIcon from "@material-ui/icons/Edit";
@@ -32,7 +26,7 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import logout from "../../Auth/Logout/Logout";
-import { GET_CLIENT } from "../../../graphql/queries/Client";
+import { GET_CLIENTS } from "../../../graphql/queries/Client";
 // import { GET_PARTNER_SUBSCRIPTION } from "../../graphql/queries/PartnerSubscription";
 import {
   SUCCESS,
@@ -46,11 +40,8 @@ import moment from "moment";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [name, setName] = useState("");
-  const [ContactId, setContactId] = useState("");
-  const [OrgId, setOrgId] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [newData, setNewData] = useState([]);
@@ -58,13 +49,6 @@ export const Client: React.FC = (props: any) => {
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  useEffect(() => {
-    if (props.location.state && props.location.state != null && props.location.state.showAddClient) {
-      setOpenEdit(true)
-    } else {
-      setOpenEdit(false)
-    }
-  }, [])
 
   //table
   const column = [
@@ -92,7 +76,7 @@ export const Client: React.FC = (props: any) => {
   const [
     getClients,
     { data: ipData, loading: ipLoading },
-  ] = useLazyQuery(GET_CLIENT, {
+  ] = useLazyQuery(GET_CLIENTS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       createTableDataObject(data.getClient.edges)
@@ -123,7 +107,6 @@ export const Client: React.FC = (props: any) => {
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
       obj["clientId"] = element.node.id;
       obj["partnerId"] = element.node.partnerId;
-      obj["clientOrgId"] = element.id;
       arr.push(obj);
     });
     setNewData(arr.sort(function (a: any, b: any) {
@@ -147,12 +130,23 @@ export const Client: React.FC = (props: any) => {
     }));
   };
 
-  const handleClickOpen = (rowData: any) => {
+  const handleClickEdit = (rowData: any) => {
+
+    history.push(routeConstant.CLIENT_FORM_ADD, rowData);
+
     // let partnerData: any = { "partner_id": partnerID }
-    history.push(routeConstant.CLIENT_FORM_ADD, props.location.state);
+
   };
 
-  // if (loadingOrg || iLoading || ipLoading) return <Loading />;
+  const handleClickOpen = (rowData: any) => {
+
+    history.push(routeConstant.CLIENT_FORM_ADD);
+
+    // let partnerData: any = { "partner_id": partnerID }
+
+  };
+
+  if ( ipLoading) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (
@@ -248,23 +242,6 @@ export const Client: React.FC = (props: any) => {
     return foundErrors;
   };
 
-  const handleSubmit = () => {
-
-  };
-
-  const backToList = () => {
-    history.push(routeConstant.CLIENT);
-    setIsError({ error: null });
-    setOpenEdit(false);
-    setRowData(false);
-    setOrgId("");
-    setContactId("");
-    setName("");
-    setEmail("");
-    setPhoneNumber("");
-    setCreateFlag(false);
-  };
-
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData };
     if (param === "RA") {
@@ -273,7 +250,7 @@ export const Client: React.FC = (props: any) => {
     if (param === "View") {
     }
     if (param === "Edit") {
-      handleClickOpen(rowData);
+      handleClickEdit(rowData);
     }
     if (param === "Delete") {
     }
@@ -284,11 +261,6 @@ export const Client: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        {!openEdit ? "Clients" :
-          <div>
-            {rowData ? "Edit Client " : "Add Client"}
-            {/* {rowData ? rowData.name : null} */}
-          </div>}
       </Typography>
       <Grid>
         <Grid container>

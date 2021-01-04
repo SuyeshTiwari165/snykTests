@@ -165,6 +165,8 @@ export const PartnerUser: React.FC = (propsData: any) => {
     }
   }, []);
 
+  if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <Loading />;
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {

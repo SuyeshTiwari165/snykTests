@@ -16,16 +16,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-// import { CREATE_CONTACT } from "../../../graphql/mutations/Contacts";
-// import { CREATE_ORG } from "../../../graphql/mutations/Organization";
-// import { GET_ORGANIZATION } from "../../../graphql/queries/Organization";
-// import { GET_CONTACT_INFO } from "../../../graphql/queries/Contact";
-// import {
-//   GET_INDIVIDUAL,
-//   GET_INDIVIDUAL_COUNT
-// } from "../../../graphql/queries/Individual";
-// import { GET_PARTNER_SUBSCRIPTION } from "../../../graphql/queries/PartnerSubscription";
-// import { GET_ROLE_BASED_USER } from "../../../graphql/queries/User";
 import { GET_PARTNER } from "../../../graphql/queries/Partners";
 import { GET_PARTNER_USERS, GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
 import { useHistory } from "react-router-dom";
@@ -46,58 +36,7 @@ export const Dashboard: React.FC = (props: any) => {
 
   console.log("---contact-", contact);
   const history = useHistory();
-  // Fetch Partner Data
-  // const { data: Org,error: iError, loading: loadOrg } = useQuery(GET_ORGANIZATION, {
-  //   variables: {
-  //     where: { subtype: "Partner" },
-  //     sort: "created_at:desc"
-  //   },
-  //   onCompleted: (data: any) => {
-  //     createTableDataObject(data.organizations);
-  //     let contact_id_array = data.organizations.map(
-  //       (val: any) => val.contact_id.id
-  //     );
-  //     getPartnerSubs({
-  //       variables: {
-  //         where: { contact_id_in: contact_id_array }
-  //       }
-  //     });
-  //   },
-  //   fetchPolicy: "cache-and-network"
-  // });
 
-  // const [getPartnerSubs, { data: dataSubs, loading: loadSubs }] = useLazyQuery(
-  //   GET_PARTNER_SUBSCRIPTION,
-  //   {
-  //     onCompleted: (data: any) => {},
-  //     fetchPolicy: "cache-and-network"
-  //   }
-  // );
-
-  // Fetch all Partner user Count
-  // const { data: allPartnerCount } = useQuery(GET_ROLE_BASED_USER, {
-  //   variables: {
-  //     where: { role: { name: CompanyUser } }
-  //   },
-  //   onCompleted: data => {
-  //     console.log("All Partner User Based on Role ID", allPartnerCount);
-  //     setPartnerUserCount(allPartnerCount.users.length);
-  //   }
-  // });
-  // Fetch Partners
-  // const {
-  //   data: partnerData,
-  //   error: errorOrg1,
-  //   loading: loadingOrg1
-  // } = useQuery(GET_ORGANIZATION, {
-  //   fetchPolicy: "cache-and-network",
-  //   variables: {
-  //     where: { subtype: "Partner" }
-  //   },
-  //   onCompleted: () => {
-  //     setPartnerCount(partnerData.organizations.length);
-  //   }
-  // });
   const { data: Org, loading: loadOrg } = useQuery(
     GET_PARTNER,
     {
@@ -128,35 +67,15 @@ export const Dashboard: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
       let obj: any = {};
-      // obj["clientId"] = element.contact_id.id;
-      // obj["partner"] = element.contact_id.name;
-      // obj["id"] = element.contact_id.id;
       obj["partner"] = element.node.partnerName;
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
       obj["partnerOrgId"] = element.node.id;
-      // obj["createdon"] = moment(element.contact_id.created_at).format(
-      //   "MM/DD/YYYY hh:mm a"
-      // );
       arr.push(obj);
     });
     setNewData(arr.slice(0, 5));
   };
-  // const createTableDataObject = (data: any) => {
-  //   let arr: any = [];
-  //   data.map((element: any, index: any) => {
-  //     let obj: any = {};
-  //     obj["partner_id"] = element.node.id;
-  //     obj["name"] = element.node.partnerName;
-  //     obj["email"] = element.node.emailId;
-  //     obj["phone"] = element.node.mobileNumber;
-  //     obj["address"] = element.node.address;
-  //     arr.push(obj);
-  //   });
-  //   setNewData(arr);
-  // };
-
 
   const handleClickOpen = () => {
     let data: any = { showAddClient: true };
@@ -203,21 +122,8 @@ export const Dashboard: React.FC = (props: any) => {
               <div className={styles.dash_head}>Partners</div>
               <div className={styles.dash_count}>{partnerCount}</div>
             </div>
-            {/* <Typography variant="h1" component="div">
-              Partners
-            </Typography>
-            <Typography variant="h1" component="div">
-              {partnerCount}
-            </Typography> */}
           </Grid>
-
           <Grid item xs={6} className={styles.FilterAddWrap}>
-            {/* <Typography variant="h1" component="div">
-              Partner User
-            </Typography>
-            <Typography variant="h1" component="div">
-              {partnerUserCount}
-            </Typography> */}
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Partner User</div>
               <div className={styles.dash_count}>{partnerUserCount}</div>
@@ -230,12 +136,10 @@ export const Dashboard: React.FC = (props: any) => {
               variant="contained"
               onClick={partnerClickOpen}
             >
-              {/* <AddCircleIcon /> */}
               &nbsp; Partner
             </Button>
           </div>
         </Grid>
-        {/* </Container> */}
       </React.Fragment>
       <Grid className={styles.recentTypo} item xs={6}>
         <Typography component="h2" variant="h1" gutterBottom>
