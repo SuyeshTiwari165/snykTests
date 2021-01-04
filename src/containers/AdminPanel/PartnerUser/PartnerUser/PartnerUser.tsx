@@ -141,6 +141,9 @@ export const PartnerUser: React.FC = (propsData: any) => {
   }
   );
   useEffect(() => {
+    if (propsData.location.state && propsData.location.state !== null && propsData.location.state.formState) {
+      setFormState(propsData.location.state.formState);
+    }
     if (propsData.location.state && propsData.location.state !== null && propsData.location.state.partner_id) {
       getpartnerUserData({
         variables: {
@@ -164,6 +167,18 @@ export const PartnerUser: React.FC = (propsData: any) => {
       })
     }
   }, []);
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
 
   if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <Loading />;
 
@@ -190,14 +205,14 @@ export const PartnerUser: React.FC = (propsData: any) => {
 
 
   const handleAlertClose = () => {
-    //   setFormState((formState) => ({
-    //     ...formState,
-    //     isSuccess: false,
-    //     isUpdate: false,
-    //     isDelete: false,
-    //     isFailed: false,
-    //     errMessage: "",
-    //   }));
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: "",
+      }));
   };
 
   const handleClickOpen = () => {
