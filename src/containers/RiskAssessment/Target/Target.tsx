@@ -395,9 +395,11 @@ export const Target: React.FC = (props: any) => {
       uploadFile({
         variables: {
           input: {
-            "client": 17,
+            "client": props.location.state.clientInfo.clientId,
             "targetName": "FileVPNUpload",
-            file: res
+            file: res,
+            "vpnUsername": "pii.openvas123",
+            "vpnPassword": "W@ccess"
           }
         }
       })
