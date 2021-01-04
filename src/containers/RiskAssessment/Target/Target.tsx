@@ -43,6 +43,7 @@ import { setRaStepper } from "../common/SetRaStepper";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
+import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -59,6 +60,7 @@ export const Target: React.FC = (props: any) => {
   const [vpnUserName, setVpnUserName] = useState<String>("");
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
+  const [selectedFile, setSelectedFile] = useState(null)
 
   //static values for partner and client are given.
   const clientInfo = props.location.state.clientInfo;
@@ -102,6 +104,7 @@ export const Target: React.FC = (props: any) => {
 
   //queries
   const [createTarget] = useMutation(CREATE_TARGET);
+  const [uploadFile] = useMutation(UPLOAD_VPN_FILE);
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [
     getTargetData,
@@ -367,6 +370,41 @@ export const Target: React.FC = (props: any) => {
           }));
         });
     }
+  };
+
+  const onChangeHandler = (event: any) => {
+    setSelectedFile(event.target.files[0])
+  };
+
+  const getBase64 = (file: any, cb: any) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      cb(reader.result)
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  };
+
+  const onClickHandler = (event: any) => {
+    let idCardBase64 = '';
+    getBase64(selectedFile, (result: any) => {
+      idCardBase64 = result;
+      var res = result.slice(result.indexOf(",") + 1);
+      uploadFile({
+        variables: {
+          input: {
+            "client": 17,
+            "targetName": "FileVPNUpload",
+            file: res
+          }
+        }
+      })
+      console.log(result)
+
+      console.log(res)
+    });
   };
 
   const handleBack = () => {
@@ -638,6 +676,26 @@ export const Target: React.FC = (props: any) => {
               </FormHelperText>
             ) : null}
           </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <form>
+            <Grid item xs={6}>
+              <Grid item xs={6}>
+                <input type="file" name="file" onChange={onChangeHandler} />
+              </Grid>
+
+              <Grid item xs={1} classes={{ root: styles.FormLabel }}>
+                <Button
+                  type="button"
+                  color="primary"
+                  variant={"contained"}
+                  onClick={onClickHandler}
+                >
+                  Upload
+              </Button>
+              </Grid>
+            </Grid>
+          </form>
         </Grid>
         <Grid item xs={1} className={styles.backToListButton}>
           <Button

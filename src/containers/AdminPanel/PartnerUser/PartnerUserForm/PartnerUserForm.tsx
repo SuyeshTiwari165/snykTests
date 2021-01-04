@@ -29,25 +29,6 @@ import {
 } from "@apollo/client";
 import AutoCompleteDropDown from "../../../../components/UI/Form/Autocomplete/Autocomplete";
 import * as validations from "../../../../common/validateRegex";
-
-// import {
-//   CREATE_CONTACT,
-//   UPDATE_CONTACT,
-// } from "../../../graphql/mutations/Contacts";
-// import { CREATE_USER, UPDATE_USER } from "../../../graphql/mutations/User";
-// import {
-//   CREATE_INDIVIDUAL,
-//   UPDATE_INDIVIDUAL,
-// } from "../../../graphql/mutations/Individual";
-// import {
-//   GET_ROLE,
-//   GET_USER,
-//   GET_ROLE_BASED_USER,
-// } from "../../../graphql/queries/User";
-// import { CompanyUser } from "../../../common/Roles";
-// import { GET_ORGANIZATION } from "../../../graphql/queries/Organization";
-// import { GET_CONTACT_INFO } from "../../../graphql/queries/Contact";
-// import { GET_INDIVIDUAL } from "../../../graphql/queries/Individual";
 import logout from "../../../Auth/Logout/Logout";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { useHistory } from "react-router-dom";
@@ -297,7 +278,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           partnerId: propsData.location.state.partner_id,
           firstName: firstName,
           lastName: lastName,
-          username: email,
+          username: email.toLowerCase(),
           password: password,
           mobileNumber: phoneNumber
         }
@@ -307,23 +288,39 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     })
   };
 
-
   const updateIntoUser = () => {
-    updatePartnerUser({
-      variables: {
-        id: partnerUserID,
-        userdata: {
-          firstName: firstName,
-          lastName: lastName,
-          username: email,
-          password: password,
-          mobileNumber: phoneNumber
+    if (password) {
+      updatePartnerUser({
+        variables: {
+          id: partnerUserID,
+          userdata: {
+            firstName: firstName,
+            lastName: lastName,
+            username: email.toLowerCase(),
+            password: password,
+            mobileNumber: phoneNumber
+          }
         }
-      }
-    }).then((response: any) => {
-      console.log("response",response)
-      backToList();
-    })
+      }).then((response: any) => {
+        console.log("response", response)
+        backToList();
+      })
+    }else {
+      updatePartnerUser({
+        variables: {
+          id: partnerUserID,
+          userdata: {
+            firstName: firstName,
+            lastName: lastName,
+            username: email.toLowerCase(),
+            mobileNumber: phoneNumber
+          }
+        }
+      }).then((response: any) => {
+        console.log("response", response)
+        backToList();
+      })
+    }
   };
 
   const handleMouseDownPassword = (

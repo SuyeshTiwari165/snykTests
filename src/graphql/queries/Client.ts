@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_CLIENT = gql`
+export const GET_CLIENTS = gql`
 query getCients($partnerId: Int!){
   getClient (partnerId:$partnerId){
     edges{
@@ -11,6 +11,21 @@ query getCients($partnerId: Int!){
         address
         id
         clientName
+      }
+    }
+  }
+}
+`;
+
+export const GET_CLIENT = gql`
+query getClient($clientName: String!) {
+  getClient(clientName: $clientName) {
+    edges {
+      node {
+        id
+        clientName
+        emailId
+        mobileNumber
       }
     }
   }

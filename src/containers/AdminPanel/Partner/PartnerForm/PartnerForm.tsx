@@ -93,7 +93,16 @@ export const PartnerForm: React.FC = (props: any) => {
       setAddress(param.address);
     }
   }, [param]);
-
+  if (loadPartner) return <Loading />;
+  if (errorPartner) {
+    let error = { message: "Error" };
+    return (
+      <div className="error">
+        Error!
+        {Logout()}
+      </div>
+    )
+  }
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {

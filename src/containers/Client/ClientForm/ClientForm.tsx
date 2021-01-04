@@ -26,6 +26,7 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import logout from "../../Auth/Logout/Logout";
+import { GET_CLIENT } from "../../../graphql/queries/Client";
 import {
   SUCCESS,
   UPDATE,
@@ -41,11 +42,11 @@ export const Client: React.FC = (props: any) => {
   const contact = JSON.parse(localStorage.getItem("contact") || "{}");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [name, setName] = useState("");
-  const [ContactId, setContactId] = useState("");
+  // const [ContactId, setContactId] = useState("");
   const [OrgId, setOrgId] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [newData, setNewData] = useState([]);
+  const [loader, setLoader] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [CCsubscription, setCCsubscription] = useState(false);
   const [RAsubscription, setRAsubscription] = useState(false);
@@ -60,13 +61,38 @@ export const Client: React.FC = (props: any) => {
     }
   }, [])
 
+  const [
+    getClients,
+    { data: ipData, loading: ipLoading },
+  ] = useLazyQuery(GET_CLIENT, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      console.log("data", data)
+      setEmail(data.getClient.edges[0].node.emailId)
+      setName(data.getClient.edges[0].node.clientName)
+      setPhoneNumber(data.getClient.edges[0].node.mobileNumber)
+      // createTableDataObject(data.getClient.edges)
+    },
+  });
+
+
+  useEffect(() => {
+    console.log("---partner,", partner);
+    if (partner && props.location.state)
+      getClients({
+        variables: {
+          clientName: props.location.state.name
+        },
+      });
+  }, []);
+
   //table
   const column = [
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Phone", field: "phone" },
     { title: "Created on", field: "createdon" },
-  ];  
+  ];
 
   const [isError, setIsError] = useState<any>({
     address: "",
@@ -81,8 +107,9 @@ export const Client: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
-  
-  const [createClient, { data }] = useMutation(CREATE_CLIENT);
+
+  const [createClient, { data: createDataCL }] = useMutation(CREATE_CLIENT);
+  const [updateClient, { data: updateDataCL }] = useMutation(UPDATE_CLIENT);
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
@@ -94,41 +121,9 @@ export const Client: React.FC = (props: any) => {
       errMessage: "",
     }));
   };
-  console.log("props",props)
-  const handleClickOpen = (rowData: any) => {
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: false,
-      errMessage: "",
-    }));
-    if (rowData) {
-      if (rowData.name) {
-        setRowData(true);
-        setName(rowData.name);
-      }
-      if (rowData.clientId) {
-        setContactId(rowData.clientId);
-      }
-      if (rowData.clientOrgId) {
-        setOrgId(rowData.clientOrgId);
-      }
-      if (rowData.email && rowData.email != "-") {
-        setEmail(rowData.email);
-      }
-      if (rowData.phone && rowData.phone != "-") {
-        setPhoneNumber(rowData.phone);
-      }
-    }
-    // setName("");
-    // setEmail("");
-    // setPhoneNumber(phone);
-    setOpenEdit(true);
-  };
+  console.log("props", props)
 
-  // if (loadingOrg || iLoading || ipLoading) return <Loading />;
+  if (ipLoading || loader) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (
@@ -235,6 +230,7 @@ export const Client: React.FC = (props: any) => {
   };
 
   const insertIntoPartner = () => {
+    setLoader(true)
     createClient({
       variables: {
         input: {
@@ -245,25 +241,26 @@ export const Client: React.FC = (props: any) => {
         }
       },
     }).then((res: any) => {
-      console.log("res", res)
+      setLoader(false)
       backToList();
     })
   };
 
   const updateIntoPartner = () => {
-    // updateClient({
-    //   variables: {
-    //     input: {
-    //       partnerId: 4,
-    //       clientName: name,
-    //       mobileNumber: phoneNumber,
-    //       emailId: email
-    //     }
-    //   },
-    // }).then((res: any) => {
-    //   console.log("res", res)
-    //   backToList();
-    // })
+    if (props.location.state)
+    setLoader(true)
+      updateClient({
+        variables: {
+          id: props.location.state.clientId,
+          ClientInput: {
+            mobileNumber: phoneNumber,
+            emailId: email
+          }
+        },
+      }).then((res: any) => {
+        setLoader(false)
+        backToList();
+      })
   }
 
   const backToList = () => {
@@ -272,7 +269,7 @@ export const Client: React.FC = (props: any) => {
     setOpenEdit(false);
     setRowData(false);
     setOrgId("");
-    setContactId("");
+    // setContactId("");
     setName("");
     setEmail("");
     setPhoneNumber("");

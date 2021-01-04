@@ -14,11 +14,12 @@ mutation createCient($input: ClientInput!) {
 `;
 
 export const UPDATE_CLIENT = gql`
-mutation updatePartner($id: Int, $partnerdata: PartnerInput!) {
-  updatePartner(id: $id, input: $partnerdata) {
-    partnerFiled {
-      partnerName
-      emailId
+mutation updateClient($id: Int!, $ClientInput: ClientInput!) {
+  updateClient(id: $id, input: $ClientInput) {
+    clientFiled {
+      partnerId
+      clientName
+      id
     }
   }
 }

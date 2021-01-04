@@ -17,6 +17,8 @@ import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import { RA_REPORT_DOWNLOAD } from "../../../config/index";
+import { saveAs } from "file-saver";
+// import {Data} from "../../../Switch.zip"
 
 export const RaReportListing: React.FC = (props: any) => {
   // console.log(
@@ -127,12 +129,16 @@ export const RaReportListing: React.FC = (props: any) => {
     let intTargetId = parseInt(rowData.targetId);
     const DocUrl =
       RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
-    window.open(DocUrl);
-    // window.open(
-    //   "https://ra-in-a-box.wastaging.com/reports/download_report/?cid=2&tid=24"
-    // );
+    fetch(DocUrl, {
+      method: "GET",
+    })
+      .then((response: any) => {
+        response.blob().then((blobData: any) => {
+          saveAs(blobData, "RA_Report");
+        })
+      });
   };
-
+ 
   const handleAddNewReport = () => {
     let data = {};
     data = { clientInfo: clientInfo };
