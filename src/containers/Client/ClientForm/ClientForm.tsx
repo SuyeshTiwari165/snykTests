@@ -99,6 +99,33 @@ export const Client: React.FC = (props: any) => {
   const [createClient, { data: createDataCL }] = useMutation(CREATE_CLIENT);
   const [updateClient, { data: updateDataCL }] = useMutation(UPDATE_CLIENT);
 
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+    if (formState.isSuccess === true || formState.isUpdate === true) {
+      if (props.location.state != null) {
+        props.location.state.formState = formState;
+        backToList();
+      }
+      if(props.location.state === null ||props.location.state === undefined) {
+        props.location.state = [];
+        props.location.state.from = "partner-user"
+        // if(formState != null || formState != undefined) {
+        props.location.state = formState;
+        console.log("NOPROPS")
+        backToList();
+      //   }
+      }
+    }
+  }, [formState]);
   const handleAlertClose = () => {
     setFormState((formState) => ({
       ...formState,
@@ -109,7 +136,6 @@ export const Client: React.FC = (props: any) => {
       errMessage: "",
     }));
   };
-  console.log("props", props)
 
   if (ipLoading || loader) return <Loading />;
   // if (iError) {
@@ -122,6 +148,7 @@ export const Client: React.FC = (props: any) => {
   //   )
   // }
 
+  
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "Name") {
       setName(event.target.value);
@@ -230,8 +257,38 @@ export const Client: React.FC = (props: any) => {
       },
     }).then((res: any) => {
       setLoader(false)
-      backToList();
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + name + " " ,
+      }));
+      // backToList();
     })
+    .catch((err) => {
+      setLoader(false)
+      let error = err.message;
+      if (
+        error.includes(
+          "duplicate key value violates unique constraint"
+        )
+      ) {
+        error = " Client Name Already Exists ";
+      }
+       else {
+        error = err.message;
+      }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
   };
 
   const updateIntoClient = () => {
@@ -253,10 +310,12 @@ export const Client: React.FC = (props: any) => {
   }
 
   const backToList = () => {
-    history.push(routeConstant.CLIENT);
+    history.push(routeConstant.CLIENT,props.location.state);
     setIsError({ error: null });
     setOpenEdit(false);
     setRowData(false);
+    // setOrgId("");
+    // setContactId("");
     setName("");
     setEmail("");
     setPhoneNumber("");

@@ -123,6 +123,25 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       })
   }, []);
 
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+    if (formState.isSuccess === true || formState.isUpdate === true) {
+      console.log("propsData",propsData);
+      if (propsData.location.state != null) {
+        propsData.location.state.formState = formState;
+        backToList();
+      }
+    }
+  }, [formState]);
 
   if (loadPartner) return <Loading />;
   // if (errorOrg) {
@@ -284,8 +303,36 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
         }
       }
     }).then((response: any) => {
-      backToList();
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + firstName + " " + lastName + " ",
+      }));
+      // backToList();
     })
+    .catch((err) => {
+      let error = err.message;
+      if (
+        error.includes(
+          "duplicate key value violates unique constraint"
+        )
+      ) {
+        error = " Email already exists.";
+      } else {
+        error = err.message;
+      }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
   };
 
   const updateIntoUser = () => {
@@ -302,8 +349,16 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           }
         }
       }).then((response: any) => {
-        console.log("response", response)
-        backToList();
+      console.log("response",response)
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: true,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + firstName + " " + lastName + " ",
+      }));
+      // backToList();
       })
     }else {
       updatePartnerUser({
