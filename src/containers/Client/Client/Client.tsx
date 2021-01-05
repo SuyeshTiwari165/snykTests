@@ -154,7 +154,6 @@ export const Client: React.FC = (props: any) => {
     history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
 
     // let partnerData: any = { "partner_id": partnerID }
-
   };
 
   const handleClickOpen = (rowData: any) => {

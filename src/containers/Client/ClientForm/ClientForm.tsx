@@ -99,6 +99,17 @@ export const Client: React.FC = (props: any) => {
   const [createClient, { data: createDataCL }] = useMutation(CREATE_CLIENT);
   const [updateClient, { data: updateDataCL }] = useMutation(UPDATE_CLIENT);
 
+  const handleAlertClose = () => {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: "",
+    }));
+  };
+
   useEffect(() => {
     if (
       formState.isDelete === true ||
@@ -120,23 +131,11 @@ export const Client: React.FC = (props: any) => {
         props.location.state.from = "partner-user"
         // if(formState != null || formState != undefined) {
         props.location.state = formState;
-        console.log("NOPROPS")
         backToList();
       //   }
       }
     }
   }, [formState]);
-  const handleAlertClose = () => {
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: false,
-      errMessage: "",
-    }));
-  };
-
   if (ipLoading || loader) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
@@ -314,8 +313,6 @@ export const Client: React.FC = (props: any) => {
     setIsError({ error: null });
     setOpenEdit(false);
     setRowData(false);
-    // setOrgId("");
-    // setContactId("");
     setName("");
     setEmail("");
     setPhoneNumber("");
