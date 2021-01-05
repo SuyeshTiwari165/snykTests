@@ -138,14 +138,16 @@ export const Dashboard: React.FC = () => {
               </Link>
             </div>
             <div className={styles.partnerButton}>
+            <Link to={routeConstant.CLIENT_FORM_ADD}>
               <Button
                 color="primary"
                 variant="contained"
-                onClick={handleClickOpen}
+                // onClick={handleClickOpen}
               >
                 <AddCircleIcon />
                  Client
               </Button>
+              </Link>
             </div>
           </Grid>
         </Grid>
