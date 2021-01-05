@@ -150,11 +150,8 @@ export const Client: React.FC = (props: any) => {
   };
 
   const handleClickEdit = (rowData: any) => {
-
     history.push(routeConstant.CLIENT_FORM_ADD, rowData);
-
     // let partnerData: any = { "partner_id": partnerID }
-
   };
 
   const handleClickOpen = (rowData: any) => {
