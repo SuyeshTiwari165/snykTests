@@ -76,7 +76,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     email: "",
     phoneNumber: "",
   });
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
+  const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   let partnerdata: any;
   if (propsData.location.state !== null) {
     partnerdata = propsData.location.state
@@ -135,7 +135,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       }, ALERT_MESSAGE_TIMER);
     }
     if (formState.isSuccess === true || formState.isUpdate === true) {
-      console.log("propsData",propsData);
+      console.log("propsData", propsData);
       if (propsData.location.state != null) {
         propsData.location.state.formState = formState;
         backToList();
@@ -294,7 +294,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     createPartnerUser({
       variables: {
         input: {
-          partnerId: propsData.location.state.partner_id,
+          partnerId: partner.partnerId ? partner.partnerId : propsData.location.state.partner_id,
           firstName: firstName,
           lastName: lastName,
           username: email.toLowerCase(),
@@ -311,28 +311,28 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
         isFailed: false,
         errMessage: " " + firstName + " " + lastName + " ",
       }));
-      // backToList();
+      backToList();
     })
-    .catch((err) => {
-      let error = err.message;
-      if (
-        error.includes(
-          "duplicate key value violates unique constraint"
-        )
-      ) {
-        error = " Email already exists.";
-      } else {
-        error = err.message;
-      }
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: error,
-      }));
-    });
+      .catch((err) => {
+        let error = err.message;
+        if (
+          error.includes(
+            "duplicate key value violates unique constraint"
+          )
+        ) {
+          error = " Email already exists.";
+        } else {
+          error = err.message;
+        }
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
   };
 
   const updateIntoUser = () => {
@@ -349,18 +349,17 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           }
         }
       }).then((response: any) => {
-      console.log("response",response)
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: true,
-        isDelete: false,
-        isFailed: false,
-        errMessage: " " + firstName + " " + lastName + " ",
-      }));
-      // backToList();
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: true,
+          isDelete: false,
+          isFailed: false,
+          errMessage: " " + firstName + " " + lastName + " ",
+        }));
+        backToList();
       })
-    }else {
+    } else {
       updatePartnerUser({
         variables: {
           id: partnerUserID,
@@ -422,181 +421,181 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           {rowData ? rowData.name : null}
         </div>
       </Typography>
-      <AddEditForm handleOk={handleSubmit} handleCancel={backToList}>
+        <AddEditForm handleOk={handleSubmit} handleCancel={backToList}> 
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            {formState.isFailed ? (
-              <Alert
-                severity="error"
-                action={
-                  <IconButton
-                    aria-label="close"
-                    color="inherit"
-                    size="small"
-                    onClick={handleAlertClose}
-                  >
-                    <CloseIcon fontSize="inherit" />
-                  </IconButton>
-                }
-              >
-                {FAILED}
-                {formState.errMessage}
-              </Alert>
-            ) : null}
-          </Grid>
-          <Grid item xs={6}>
-            <Input
-              type="text"
-              label="First Name*"
-              name="firstName"
-              value={firstName}
-              onChange={handleChange}
-              error={isError.firstName}
-              helperText={isError.firstName}
-            >
-              First Name
-            </Input>
-          </Grid>
-          <Grid item xs={6}>
-            <Input
-              type="text"
-              label="Last Name*"
-              name="lastName"
-              value={lastName}
-              onChange={handleChange}
-              error={isError.lastName}
-              helperText={isError.lastName}
-            >
-              Last Name
-            </Input>
-          </Grid>
-          <Grid item xs={6}>
-            <Input
-              type="text"
-              label="Email*"
-              name="email"
-              value={email}
-              onChange={handleChange}
-              error={isError.email}
-              helperText={isError.email}
-            >
-              E-mail
-            </Input>
-          </Grid>
-          <Grid item xs={6}>
-            <Input
-              type="text"
-              label="Phone Number"
-              name="phoneNumber"
-              value={phoneNumber}
-              onChange={handleChange}
-              error={isError.phoneNumber}
-              helperText={isError.phoneNumber}
-            >
-              Phone Number
-            </Input>
-          </Grid>
-          <Grid item xs={6} className={styles.ConfirmPasswordWrap}>
-            <FormControl className={styles.TextField} variant="outlined">
-              <InputLabel classes={{ root: styles.FormLabel }}>
-                Password*
-              </InputLabel>
-              <OutlinedInput
-                classes={{
-                  root: styles.InputField,
-                  notchedOutline: styles.InputField,
-                  focused: styles.InputField,
-                }}
-                type={showPassword ? "text" : "password"}
-                label="Password*"
-                value={password}
-                onChange={handlePasswordChange()}
-                name="password"
-                required
-                error={isError.password}
-                endAdornment={
-                  <InputAdornment position="end">
+            <Grid item xs={12}>
+              {formState.isFailed ? (
+                <Alert
+                  severity="error"
+                  action={
                     <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => {
-                        setShowPassword(!showPassword);
-                      }}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={handleAlertClose}
                     >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                      <CloseIcon fontSize="inherit" />
                     </IconButton>
-                  </InputAdornment>
-                }
-              />
-              {isError.password ? (
-                <FormHelperText
-                  error={isError.password}
-                  classes={{ root: styles.FormHelperText }}
+                  }
                 >
-                  Password is Required.
-                </FormHelperText>
+                  {FAILED}
+                  {formState.errMessage}
+                </Alert>
               ) : null}
-            </FormControl>
-          </Grid>
-          {!rowData ? (
+            </Grid>
+            <Grid item xs={6}>
+              <Input
+                type="text"
+                label="First Name*"
+                name="firstName"
+                value={firstName}
+                onChange={handleChange}
+                error={isError.firstName}
+                helperText={isError.firstName}
+              >
+                First Name
+            </Input>
+            </Grid>
+            <Grid item xs={6}>
+              <Input
+                type="text"
+                label="Last Name*"
+                name="lastName"
+                value={lastName}
+                onChange={handleChange}
+                error={isError.lastName}
+                helperText={isError.lastName}
+              >
+                Last Name
+            </Input>
+            </Grid>
+            <Grid item xs={6}>
+              <Input
+                type="text"
+                label="Email*"
+                name="email"
+                value={email}
+                onChange={handleChange}
+                error={isError.email}
+                helperText={isError.email}
+              >
+                E-mail
+            </Input>
+            </Grid>
+            <Grid item xs={6}>
+              <Input
+                type="text"
+                label="Phone Number"
+                name="phoneNumber"
+                value={phoneNumber}
+                onChange={handleChange}
+                error={isError.phoneNumber}
+                helperText={isError.phoneNumber}
+              >
+                Phone Number
+            </Input>
+            </Grid>
             <Grid item xs={6} className={styles.ConfirmPasswordWrap}>
               <FormControl className={styles.TextField} variant="outlined">
                 <InputLabel classes={{ root: styles.FormLabel }}>
-                  Confirm Password*
-                </InputLabel>
+                  Password*
+              </InputLabel>
                 <OutlinedInput
                   classes={{
                     root: styles.InputField,
                     notchedOutline: styles.InputField,
                     focused: styles.InputField,
                   }}
-                  type={showConfirmPassword ? "text" : "password"}
-                  label="Confirm Password*"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange()}
-                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  label="Password*"
+                  value={password}
+                  onChange={handlePasswordChange()}
+                  name="password"
                   required
-                  error={isError.confirmPassword}
+                  error={isError.password}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={() => {
-                          setShowConfirmPassword(!showConfirmPassword);
+                          setShowPassword(!showPassword);
                         }}
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
                       >
-                        {showConfirmPassword ? (
-                          <Visibility />
-                        ) : (
-                            <VisibilityOff />
-                          )}
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
                   }
                 />
-                {isError.confirmPassword ? (
+                {isError.password ? (
                   <FormHelperText
-                    error={isError.confirmPassword}
+                    error={isError.password}
                     classes={{ root: styles.FormHelperText }}
                   >
-                    Confirm Password is Required.
+                    Password is Required.
                   </FormHelperText>
-                ) : null}
-                {confirmPassError ? (
-                  isError.confirmPassword ? null : (
-                    <FormHelperText classes={{ root: styles.FormHelperText }}>
-                      Confirm Password should be same
-                    </FormHelperText>
-                  )
                 ) : null}
               </FormControl>
             </Grid>
-          ) : null}
-        </Grid>
-      </AddEditForm>
+            {!rowData ? (
+              <Grid item xs={6} className={styles.ConfirmPasswordWrap}>
+                <FormControl className={styles.TextField} variant="outlined">
+                  <InputLabel classes={{ root: styles.FormLabel }}>
+                    Confirm Password*
+                </InputLabel>
+                  <OutlinedInput
+                    classes={{
+                      root: styles.InputField,
+                      notchedOutline: styles.InputField,
+                      focused: styles.InputField,
+                    }}
+                    type={showConfirmPassword ? "text" : "password"}
+                    label="Confirm Password*"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange()}
+                    name="confirmPassword"
+                    required
+                    error={isError.confirmPassword}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => {
+                            setShowConfirmPassword(!showConfirmPassword);
+                          }}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? (
+                            <Visibility />
+                          ) : (
+                              <VisibilityOff />
+                            )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                  {isError.confirmPassword ? (
+                    <FormHelperText
+                      error={isError.confirmPassword}
+                      classes={{ root: styles.FormHelperText }}
+                    >
+                      Confirm Password is Required.
+                    </FormHelperText>
+                  ) : null}
+                  {confirmPassError ? (
+                    isError.confirmPassword ? null : (
+                      <FormHelperText classes={{ root: styles.FormHelperText }}>
+                        Confirm Password should be same
+                      </FormHelperText>
+                    )
+                  ) : null}
+                </FormControl>
+              </Grid>
+            ) : null}
+          </Grid>
+        </AddEditForm>
     </React.Fragment>
   );
 };

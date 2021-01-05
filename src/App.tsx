@@ -34,7 +34,7 @@ function App() {
   };
   const accessToken = session ? session : null;
   const client = gqlClient(null);
-  if (authenticated) {
+  if (accessToken) {
     setTimeout(function () {
       logout();
       window.location.replace("/login");

@@ -73,12 +73,12 @@ export const sideDrawerAdminMenus = [
   //     routeConstants.PIICATEGORY,
   //   ],
   // },
-  {
-    title: "Help",
-    path: "",
-    icon: "prospecting",
-    pathList: [""],
-  },
+  // {
+  //   title: "Help",
+  //   path: "",
+  //   icon: "prospecting",
+  //   pathList: [""],
+  // },
 ];
 
 export const topStepperMenu = [

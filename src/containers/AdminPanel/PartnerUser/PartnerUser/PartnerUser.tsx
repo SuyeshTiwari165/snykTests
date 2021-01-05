@@ -20,15 +20,6 @@ import {
 } from "@apollo/client";
 import AutoCompleteDropDown from "../../../../components/UI/Form/Autocomplete/Autocomplete";
 import * as validations from "../../../../common/validateRegex";
-// import {
-//   GET_ROLE,
-//   GET_USER,
-//   GET_ROLE_BASED_USER,
-// } from "../../../../graphql/queries/User";
-// import { CompanyUser } from "../../../../common/Roles";
-// import { GET_ORGANIZATION } from "../../../../graphql/queries/Organization";
-// import { GET_CONTACT_INFO } from "../../../../graphql/queries/Contact";
-// import { GET_INDIVIDUAL } from "../../../../graphql/queries/Individual";
 import { GET_PARTNER_USER, GET_PARTNER_ID_USER } from "../../../../graphql/queries/PartnerUser";
 import logout from "../../../Auth/Logout/Logout";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -62,13 +53,9 @@ export const PartnerUser: React.FC = (propsData: any) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userRole, setUserRole] = useState();
   const [partnerList, setPartnerList] = useState("");
   const [partner, setPartner] = useState<any>("");
   const [newData, setNewData] = useState([]);
-  const [partnerListError, setPartnerListError] = useState(false);
   const [param, setParam] = useState<any>();
   const [rowData, setRowData] = useState<any>();
   const [passRegError, setPassRegError] = useState(false);

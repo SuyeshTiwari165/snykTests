@@ -71,7 +71,7 @@ export const Dashboard: React.FC = (props: any) => {
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
-      obj["partnerOrgId"] = element.node.id;
+      obj["partnerId"] = element.node.id;
       arr.push(obj);
     });
     setNewData(arr.slice(0, 5));
@@ -95,7 +95,8 @@ export const Dashboard: React.FC = (props: any) => {
     if (param === "View") {
     }
     if (param === "Edit") {
-      history.push(routeConstant.ADD_PARTNER, rowData);
+      console.log("rowData",rowData)
+      history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partnerId, rowData);
     }
     if (param === "Delete") {
     }
