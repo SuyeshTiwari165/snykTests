@@ -55,11 +55,11 @@ export const AuthRoutes = (
       exact
       component={ClientForm}
     />
-    <LayoutRoute
+    {/* <LayoutRoute
       path={routeConstants.CLIENT_FORM_EDIT + "/:id "}
       exact
       component={ClientForm}
-    />
+    /> */}
     <LayoutRoute path={routeConstants.DASHBOARD} exact component={Dashboard} />
     <LayoutRoute path={routeConstants.CLIENT} exact component={Client} />
     <LayoutRoute
@@ -84,6 +84,6 @@ export const AuthRoutes = (
       exact
       component={RaReportListing}
     />
-    <Route path="/" render={defaultRedirect} />
+    {/* <Route path="/" render={defaultRedirect} /> */}
   </Switch>
 );
