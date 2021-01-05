@@ -39,27 +39,15 @@ import moment from "moment";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [name, setName] = useState("");
-  // const [ContactId, setContactId] = useState("");
-  const [OrgId, setOrgId] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loader, setLoader] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [CCsubscription, setCCsubscription] = useState(false);
-  const [RAsubscription, setRAsubscription] = useState(false);
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  useEffect(() => {
-    if (props.location.state && props.location.state != null && props.location.state.showAddClient) {
-      setOpenEdit(true)
-    } else {
-      setOpenEdit(false)
-    }
-  }, [])
 
   const [
     getClients,
@@ -68,10 +56,10 @@ export const Client: React.FC = (props: any) => {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       console.log("data", data)
+      setRowData(true);
       setEmail(data.getClient.edges[0].node.emailId)
       setName(data.getClient.edges[0].node.clientName)
       setPhoneNumber(data.getClient.edges[0].node.mobileNumber)
-      // createTableDataObject(data.getClient.edges)
     },
   });
 
@@ -247,15 +235,15 @@ export const Client: React.FC = (props: any) => {
 
   const handleSubmit = () => {
     if (!handleInputErrors()) {
-      if (props.location.pathname.includes("/partner-form/edit")) {
-        updateIntoPartner();
+      if (props.location.pathname.includes("/client-form/edit")) {
+        updateIntoClient();
       } else {
-        insertIntoPartner();
+        insertIntoClient();
       }
     }
   };
 
-  const insertIntoPartner = () => {
+  const insertIntoClient = () => {
     setLoader(true)
     createClient({
       variables: {
@@ -302,13 +290,14 @@ export const Client: React.FC = (props: any) => {
     });
   };
 
-  const updateIntoPartner = () => {
+  const updateIntoClient = () => {
     if (props.location.state)
     setLoader(true)
       updateClient({
         variables: {
           id: props.location.state.clientId,
           ClientInput: {
+            clientName: name,
             mobileNumber: phoneNumber,
             emailId: email
           }
@@ -324,8 +313,6 @@ export const Client: React.FC = (props: any) => {
     setIsError({ error: null });
     setOpenEdit(false);
     setRowData(false);
-    setOrgId("");
-    // setContactId("");
     setName("");
     setEmail("");
     setPhoneNumber("");
@@ -338,11 +325,11 @@ export const Client: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        {!openEdit ? "Clients" :
-          <div>
+        {/* {!openEdit ? "Clients" :
+          <div> */}
             {rowData ? "Edit Client " : "Add Client"}
             {/* {rowData ? rowData.name : null} */}
-          </div>}
+          {/* </div>} */}
       </Typography>
 
       <AddEditForm

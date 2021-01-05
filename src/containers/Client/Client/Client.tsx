@@ -150,16 +150,17 @@ export const Client: React.FC = (props: any) => {
   };
 
   const handleClickEdit = (rowData: any) => {
-    history.push(routeConstant.CLIENT_FORM_ADD, rowData);
+    console.log("rowData", rowData)
+    history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
+
     // let partnerData: any = { "partner_id": partnerID }
   };
 
   const handleClickOpen = (rowData: any) => {
-    // let partnerData: any = { "partner_id": partnerID }
-    history.push(routeConstant.CLIENT_FORM_ADD, props.location.state);
+    history.push(routeConstant.CLIENT_FORM_ADD);
   };
 
-  if ( ipLoading) return <Loading />;
+  if (ipLoading) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (

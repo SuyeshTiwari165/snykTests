@@ -44,6 +44,7 @@ import * as routeConstant from "../../../common/RouteConstants";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
+import { RA_REPORT_DOWNLOAD } from "../../../config/index";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -78,7 +79,7 @@ export const Target: React.FC = (props: any) => {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   }
-
+console.log("sdghfdghfdgh",props["location"].state)
   //show password
   const [showPassword, setShowPassword] = useState(false);
   const [showVpnPassword, setShowVpnPassword] = useState(false);
@@ -396,10 +397,10 @@ export const Target: React.FC = (props: any) => {
         variables: {
           input: {
             "client": props.location.state.clientInfo.clientId,
-            "targetName": "FileVPNUpload",
+            "targetName": name,
             file: res,
-            "vpnUsername": "pii.openvas123",
-            "vpnPassword": "W@ccess"
+            "vpnUsername": vpnUserName,
+            "vpnPassword": vpnPassword
           }
         }
       })
@@ -495,6 +496,14 @@ export const Target: React.FC = (props: any) => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const onClickTestConnection = () => {
+    console.log("test Connection")
+    // const DocUrl =
+    // RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
+    let docUrl = "http://localhost:8000/target/vpntest/?cid=2&tid=3&ip=192.168.0.102"
+    fetch(docUrl)
+  }
 
   const handleClickShowVpnPassword = () => {
     setShowVpnPassword(!showVpnPassword);
@@ -720,6 +729,16 @@ export const Target: React.FC = (props: any) => {
             next
           </Button>
         </Grid>
+        <Grid item xs={1} classes={{ root: styles.FormLabel }}>
+                <Button
+                  type="button"
+                  color="primary"
+                  variant={"contained"}
+                  onClick={onClickTestConnection}
+                >
+                  Test Connection
+              </Button>
+              </Grid>
       </Grid>
     </React.Fragment>
   );
