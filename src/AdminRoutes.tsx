@@ -17,7 +17,7 @@ export const AdminRoutes = (
     <LayoutRoute path={routeConstants.PARTNER_USER_FORM_EDIT + ":id"} exact component={PartnerUserForm} />
     <LayoutRoute path={routeConstants.PARTNER_USER_FORM} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.PARTNER_FORM_ADD} exact component={PartnerForm} />
-    <LayoutRoute path={routeConstants.PARTNER_FORM_EDIT + ":id" }exact component={PartnerForm} />
+    <LayoutRoute path={routeConstants.PARTNER_FORM_EDIT + ":id"} exact component={PartnerForm} />
     <LayoutRoute
       path={routeConstants.ADMIN_DASHBOARD}
       exact

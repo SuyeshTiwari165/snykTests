@@ -88,6 +88,10 @@ export const Dashboard: React.FC = () => {
     history.push(routeConstant.PARTNER_USER, data);
   };
 
+  const handleClickEdit = (rowData: any) => {
+    history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
+  };
+
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData };
     // if (param === "CC") {
@@ -99,11 +103,12 @@ export const Dashboard: React.FC = () => {
     if (param === "View") {
     }
     if (param === "Edit") {
+      handleClickEdit(rowData);
     }
     if (param === "Delete") {
     }
   };
- 
+
 
   // if (loadSubs || ipLoading || iLoading || loadingOrg) return <Loading />;
   // if (iError) {
@@ -122,7 +127,7 @@ export const Dashboard: React.FC = () => {
         <CssBaseline />
         <Grid container spacing={3} className={styles.GridBox}>
           <Grid item xs={6} className={styles.FilterAddWrap}>
-          
+
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Clients</div>
               <div className={styles.dash_count}>{clientCount}</div>
@@ -138,13 +143,13 @@ export const Dashboard: React.FC = () => {
               </Link>
             </div>
             <div className={styles.partnerButton}>
-            <Link to={routeConstant.CLIENT_FORM_ADD}>
-              <Button
-                color="primary"
-                variant="contained"
+              <Link to={routeConstant.CLIENT_FORM_ADD}>
+                <Button
+                  color="primary"
+                  variant="contained"
                 // onClick={handleClickOpen}
-              >
-                <AddCircleIcon />
+                >
+                  <AddCircleIcon />
                  Client
               </Button>
               </Link>
@@ -164,24 +169,15 @@ export const Dashboard: React.FC = () => {
             columns={column}
             data={newData}
             actions={[
-              CCsubscription
-                ? {
-                    icon: () => <DescriptionIcon />,
-                    tooltip: "Cyber Compliance",
-                    onClick: (event: any, rowData: any, oldData: any) => {
-                      onRowClick(event, rowData, oldData, "CC");
-                    },
-                  }
-                : null,
-              RAsubscription
-                ? {
-                    icon: () => <AssessmentIcon />,
-                    tooltip: "Risk Assessment",
-                    onClick: (event: any, rowData: any, oldData: any) => {
-                      onRowClick(event, rowData, oldData, "RA");
-                    },
-                  }
-                : null,
+              // RAsubscription
+              //   ? {
+              //     icon: () => <AssessmentIcon />,
+              //     tooltip: "Risk Assessment",
+              //     onClick: (event: any, rowData: any, oldData: any) => {
+              //       onRowClick(event, rowData, oldData, "RA");
+              //     },
+              //   }
+              //   : null,
               // {
               //   icon: () => <VisibilityIcon />,
               //   tooltip: "View",
@@ -189,13 +185,13 @@ export const Dashboard: React.FC = () => {
               //     onRowClick(event, rowData, oldData, 'View');
               //   },
               // },
-              // {
-              //   icon: () => <EditIcon />,
-              //   tooltip: "Edit",
-              //   onClick: (event: any, rowData: any, oldData: any) => {
-              //     onRowClick(event, rowData, oldData, 'Edit');
-              //   },
-              // },
+              {
+                icon: () => <EditIcon />,
+                tooltip: "Edit",
+                onClick: (event: any, rowData: any, oldData: any) => {
+                  onRowClick(event, rowData, oldData, 'Edit');
+                },
+              },
               // {
               //   icon: () => <DeleteIcon />,
               //   tooltip: "Delete",

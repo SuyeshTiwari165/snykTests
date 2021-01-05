@@ -44,7 +44,7 @@ import * as routeConstant from "../../../common/RouteConstants";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
-import { RA_REPORT_DOWNLOAD } from "../../../config/index";
+import { RA_TARGET_VPNTEST } from "../../../config/index";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -79,7 +79,7 @@ export const Target: React.FC = (props: any) => {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   }
-console.log("sdghfdghfdgh",props["location"].state)
+  console.log("sdghfdghfdgh", props["location"].state)
   //show password
   const [showPassword, setShowPassword] = useState(false);
   const [showVpnPassword, setShowVpnPassword] = useState(false);
@@ -498,11 +498,13 @@ console.log("sdghfdghfdgh",props["location"].state)
   };
 
   const onClickTestConnection = () => {
-    console.log("test Connection")
-    // const DocUrl =
-    // RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
-    let docUrl = "http://localhost:8000/target/vpntest/?cid=2&tid=3&ip=192.168.0.102"
-    fetch(docUrl)
+    const DocUrl =
+      RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange;
+    fetch(DocUrl).then(() => {
+      console.log(" Test Connection Success !!!!!")
+    }).catch(() => {
+      console.log( "Test Connection Failed !!!!")
+    })
   }
 
   const handleClickShowVpnPassword = () => {
@@ -730,15 +732,15 @@ console.log("sdghfdghfdgh",props["location"].state)
           </Button>
         </Grid>
         <Grid item xs={1} classes={{ root: styles.FormLabel }}>
-                <Button
-                  type="button"
-                  color="primary"
-                  variant={"contained"}
-                  onClick={onClickTestConnection}
-                >
-                  Test Connection
+          <Button
+            type="button"
+            color="primary"
+            variant={"contained"}
+            onClick={onClickTestConnection}
+          >
+            Test Connection
               </Button>
-              </Grid>
+        </Grid>
       </Grid>
     </React.Fragment>
   );

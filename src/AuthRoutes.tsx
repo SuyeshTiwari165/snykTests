@@ -84,6 +84,6 @@ export const AuthRoutes = (
       exact
       component={RaReportListing}
     />
-    {/* <Route path="/" render={defaultRedirect} /> */}
+  <Route path="/" render={defaultRedirect} />                         
   </Switch>
 );
