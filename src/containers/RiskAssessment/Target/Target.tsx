@@ -161,8 +161,7 @@ export const Target: React.FC = (props: any) => {
       !userName ||
       !password ||
       !vpnUserName ||
-      !vpnPassword ||
-      !connectionSuccess
+      !vpnPassword
     ) {
       return true;
     }
@@ -513,8 +512,17 @@ export const Target: React.FC = (props: any) => {
     const DocUrl =
       RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange + "&vusername=" + vpnUserName + "&vpassword=" + vpnPassword;
     fetch(DocUrl).then((response: any) => {
-      // console.log(" Test Connection Success !!!!!", )
-      if (response.status == 200) {
+      console.log(" Test Connection Success !!!!!", response)
+      if (response.statusText == "VPN connection Failed") {
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: " Test Connection Failed",
+        }));
+      } else {
         SetConnectionSuccess(true)
         setFormState((formState) => ({
           ...formState,
@@ -524,16 +532,7 @@ export const Target: React.FC = (props: any) => {
           isFailed: false,
           errMessage: "Test Connection Successful",
         }));
-      } else {
-        SetConnectionSuccess(true)
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: " Test Connection Failed",
-        }));
+        
       }
     }).catch(() => {
       console.log("Test Connection Failed !!!!")
