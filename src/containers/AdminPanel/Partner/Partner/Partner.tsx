@@ -153,7 +153,7 @@ export const Partner: React.FC = (props: any) => {
                 variant="contained"
                 onClick={handleClickOpen}
               >
-                <AddCircleIcon />
+                <AddCircleIcon className={styles.EditIcon}/>
                   &nbsp; Partner
                 </Button>
             </div>
@@ -199,14 +199,19 @@ export const Partner: React.FC = (props: any) => {
             data={newData}
             actions={[
               {
-                icon: () => <EditIcon />,
+                icon: () => <img className={styles.EditIcon}
+                src={
+                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                }
+                alt="edit icon"
+              />,
                 tooltip: "Edit",
                 onClick: (event: any, rowData: any) => {
                   handleClickEdit(rowData, event);
                 },
               },
               {
-                icon: () => <AddCircleIcon />,
+                icon: () => <AddCircleIcon className={styles.CircleIcon} />,
                 tooltip: "Add Partner User",
                 onClick: (event: any, rowData: any) => {
                   handleClickAdd(rowData);

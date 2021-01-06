@@ -270,7 +270,7 @@ export const Client: React.FC = (props: any) => {
       </Typography>
       <Grid>
         <Grid container>
-          <Grid item xs={6} sm={9} className={styles.FilterWrap}>
+          <Grid item xs={12} md={9} className={styles.FilterWrap}>
             {/* <div className={styles.FilterInput}>
                 <Input
                   label="Name"
@@ -281,14 +281,14 @@ export const Client: React.FC = (props: any) => {
                 />
               </div> */}
           </Grid>
-          <Grid item xs={3} sm={3} className={styles.FilterAddWrap}>
+          <Grid item xs={12} md={3} className={styles.FilterAddWrap}>
             <div className={styles.FilterInput}>
               <Button
                 color="primary"
                 variant="contained"
                 onClick={handleClickOpen}
               >
-                <AddCircleIcon />
+                <AddCircleIcon className={styles.EditIcon}/>
                   &nbsp; Client
                 </Button>
             </div>
@@ -337,7 +337,12 @@ export const Client: React.FC = (props: any) => {
               data={newData}
               actions={[
                 {
-                  icon: () => <EditIcon />,
+                  icon: () => <img className={styles.EditIcon}
+                  src={
+                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                  }
+                  alt="edit icon"
+                />,
                   tooltip: "Edit",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "Edit");

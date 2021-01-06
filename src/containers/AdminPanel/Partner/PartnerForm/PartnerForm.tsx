@@ -318,7 +318,7 @@ export const PartnerForm: React.FC = (props: any) => {
               </Alert>
             ) : null}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Partner Name*"
@@ -331,7 +331,7 @@ export const PartnerForm: React.FC = (props: any) => {
               Partner Name
               </Input>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Email*"
@@ -344,7 +344,7 @@ export const PartnerForm: React.FC = (props: any) => {
               E-mail
               </Input>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Phone Number"
@@ -357,7 +357,7 @@ export const PartnerForm: React.FC = (props: any) => {
               Phone Number
               </Input>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Address"

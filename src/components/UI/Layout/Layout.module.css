@@ -1,5 +1,5 @@
 .Main {
-  width: 100%;
+  width: calc(100% - 246px);
   padding: 35px;
 }
 
@@ -8,4 +8,10 @@
   background-color: #EFF6FD;
   box-shadow: inset 18px 0px 25px -35px rgba(0, 0, 0, 0.45);
   min-height: calc(100vh - 101px);
+}
+
+@media (max-width: 599.95px) {
+  .mainContainer nav>div {
+    display: block !important;
+  }
 }

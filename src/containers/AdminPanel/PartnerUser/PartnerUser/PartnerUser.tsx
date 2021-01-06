@@ -270,7 +270,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
       </Typography>
       <Grid>
         <Grid container>
-          <Grid item xs={6} sm={8} className={styles.FilterWrap}>
+          <Grid item xs={12} md={8} className={styles.FilterWrap}>
             {/* <div className={styles.FilterInput}>
                 <Input
                   label="Email"
@@ -281,7 +281,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
                 />
               </div> */}
           </Grid>
-          <Grid item xs={4} sm={4} className={styles.backToListButton}>
+          <Grid item xs={12} md={4} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
                 <Button
@@ -305,7 +305,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
                   variant="contained"
                   onClick={handleClickOpen}
                 >
-                  <AddCircleIcon />
+                  <AddCircleIcon className={styles.EditIcon} />
                     &nbsp; User
                   </Button>
               </div>
@@ -353,7 +353,12 @@ export const PartnerUser: React.FC = (propsData: any) => {
               data={newData}
               actions={[
                 {
-                  icon: () => <EditIcon />,
+                  icon: () => <img className={styles.EditIcon}
+                  src={
+                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                  }
+                  alt="edit icon"
+                />,
                   tooltip: "Edit",
                   onClick: (event: any, rowData: any) => {
                     handleClickEdit(rowData, event);

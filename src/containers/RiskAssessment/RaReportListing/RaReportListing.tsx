@@ -177,7 +177,7 @@ export const RaReportListing: React.FC = (props: any) => {
               variant="contained"
               onClick={handleAddNewReport}
             >
-              <AddCircleIcon />
+              <AddCircleIcon  className={styles.EditIcon}/>
               &nbsp; New Risk Assessment
             </Button>
           </div>

@@ -111,13 +111,13 @@ export const Dashboard: React.FC = (props: any) => {
       <React.Fragment>
         <CssBaseline />
         <Grid container spacing={3} className={styles.GridBox}>
-          <Grid item xs={6} className={styles.FilterAddWrap}>
+          <Grid item xs={12} sm={6} className={styles.FilterAddWrap}>
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Partners</div>
               <div className={styles.dash_count}>{partnerCount}</div>
             </div>
           </Grid>
-          <Grid item xs={6} className={styles.FilterAddWrap}>
+          <Grid item xs={12} sm={6} className={styles.FilterAddWrap}>
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Partner User</div>
               <div className={styles.dash_count}>{partnerUserCount}</div>
@@ -154,7 +154,12 @@ export const Dashboard: React.FC = (props: any) => {
               //   },
               // },
               {
-                icon: () => <EditIcon />,
+                icon: () => <img className={styles.EditIcon}
+                src={
+                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                }
+                alt="edit icon"
+              />,
                 tooltip: "Edit",
                 onClick: (event: any, rowData: any, oldData: any) => {
                   onRowClick(event, rowData, oldData, "Edit");

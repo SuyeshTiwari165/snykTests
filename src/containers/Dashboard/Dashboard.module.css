@@ -103,3 +103,18 @@ th:last-child {
     width: 25% !important;
     text-align: center !important;
 }
+
+@media screen and (max-width: 599px) {
+    .partnerButton {
+        margin-top: 0px;
+        width: 100%;
+    }
+    .partnerButton:first-child button{
+        margin-bottom: 15px;
+    }
+}
+.EditIcon{
+    height:18px !important;
+    width:18px !important;
+}
+

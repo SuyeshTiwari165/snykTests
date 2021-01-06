@@ -440,7 +440,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
                 </Alert>
               ) : null}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <Input
                 type="text"
                 label="First Name*"
@@ -453,7 +453,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
                 First Name
             </Input>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <Input
                 type="text"
                 label="Last Name*"
@@ -466,7 +466,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
                 Last Name
             </Input>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <Input
                 type="text"
                 label="Email*"
@@ -479,7 +479,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
                 E-mail
             </Input>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <Input
                 type="text"
                 label="Phone Number"
@@ -492,7 +492,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
                 Phone Number
             </Input>
             </Grid>
-            <Grid item xs={6} className={styles.ConfirmPasswordWrap}>
+            <Grid item xs={12} md={6} className={styles.ConfirmPasswordWrap}>
               <FormControl className={styles.TextField} variant="outlined">
                 <InputLabel classes={{ root: styles.FormLabel }}>
                   Password*
@@ -536,7 +536,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
               </FormControl>
             </Grid>
             {!rowData ? (
-              <Grid item xs={6} className={styles.ConfirmPasswordWrap}>
+              <Grid item xs={12} md={6} className={styles.ConfirmPasswordWrap}>
                 <FormControl className={styles.TextField} variant="outlined">
                   <InputLabel classes={{ root: styles.FormLabel }}>
                     Confirm Password*
