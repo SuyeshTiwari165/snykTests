@@ -495,11 +495,11 @@ export const Target: React.FC = (props: any) => {
 
   const onClickTestConnection = () => {
     const DocUrl =
-      RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange;
+      RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange + "&vusername=" + vpnUserName + "&vpassword=" + vpnPassword;
     fetch(DocUrl).then(() => {
       console.log(" Test Connection Success !!!!!")
     }).catch(() => {
-      console.log( "Test Connection Failed !!!!")
+      console.log("Test Connection Failed !!!!")
     })
   }
 
