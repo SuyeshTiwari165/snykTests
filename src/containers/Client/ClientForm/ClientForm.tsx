@@ -356,7 +356,7 @@ export const Client: React.FC = (props: any) => {
               </Alert>
             ) : null}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Name*"
@@ -369,7 +369,7 @@ export const Client: React.FC = (props: any) => {
               Name
               </Input>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Email"
@@ -382,7 +382,7 @@ export const Client: React.FC = (props: any) => {
               E-mail
               </Input>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Input
               type="text"
               label="Phone Number"

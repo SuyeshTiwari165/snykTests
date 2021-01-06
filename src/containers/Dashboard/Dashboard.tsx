@@ -124,18 +124,17 @@ export const Dashboard: React.FC = () => {
       <React.Fragment>
         <CssBaseline />
         <Grid container spacing={3} className={styles.GridBox}>
-          <Grid item xs={6} className={styles.FilterAddWrap}>
-
+          <Grid item xs={12} md={6} className={styles.FilterAddWrap}>
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Clients</div>
               <div className={styles.dash_count}>{clientCount}</div>
             </div>
           </Grid>
-          <Grid item xs={6} className={styles.FilterAddWrap}>
+          <Grid item xs={12} md={6} className={styles.FilterAddWrap}>
             <div className={styles.partnerButton}>
               <Link to={routeConstant.PARTNER_USER_FORM_ADD}>
                 <Button color="primary" variant="contained">
-                  <AddCircleIcon />
+                  <AddCircleIcon className={styles.EditIcon}/>
                   User
                 </Button>
               </Link>
@@ -147,7 +146,7 @@ export const Dashboard: React.FC = () => {
                   variant="contained"
                 // onClick={handleClickOpen}
                 >
-                  <AddCircleIcon />
+                  <AddCircleIcon className={styles.EditIcon}/>
                  Client
               </Button>
               </Link>
@@ -184,7 +183,12 @@ export const Dashboard: React.FC = () => {
               //   },
               // },
               {
-                icon: () => <EditIcon />,
+                icon: () => <img className={styles.EditIcon}
+                src={
+                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                }
+                alt="edit icon"
+              />,
                 tooltip: "Edit",
                 onClick: (event: any, rowData: any, oldData: any) => {
                   onRowClick(event, rowData, oldData, 'Edit');

@@ -12,8 +12,8 @@
 .FilterWrap {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 5px;
   align-items: flex-end;
+  justify-content: flex-end;
 }
 .FilterInput {
   width: 250px;
@@ -32,8 +32,8 @@
   margin-top: 20px;
 }
 .FilterAddButton {
-  float: right !important;
-  margin-top: 20px;
+  text-align: right !important;
+  margin-bottom: 15px;
 }
 .FilterResetButton button {
   background-color: transparent !important;
@@ -44,4 +44,58 @@
 }
 .FilterResetButton button span {
   font-weight: 600 !important;
+}
+th:first-child {
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+}
+
+th:last-child {
+  border-top-right-radius: 60px;
+  border-bottom-right-radius: 60px;
+}
+
+th {
+  padding: 8px !important;
+  border-bottom: none !important;
+  line-height: 1.5 !important;
+  font-size: 12px !important;
+  color: #002f60 !important;
+  font-weight: 600 !important;
+  background-color: #eff6fd !important;
+}
+th span, th div{
+  font-size: 12px !important;
+  color: #002f60 !important;
+  font-weight: 600 !important;
+}
+table>thead {
+  background-color: transparent !important;
+}
+
+.ScrollTable>div {
+  max-height: calc(100vh - 351px) !important;
+  overflow-x: auto !important;
+}
+
+td button {
+  padding: 0px 10px !important;
+  color: #0072ed !important;
+}
+
+td {
+  padding: 8px !important;
+  line-height: 1.846 !important;
+  color: #707070 !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+}
+
+tfoot {
+  border-top: 1px solid #eee;
+}
+
+.EditIcon {
+  height: 18px !important;
+  width: 18px !important;
 }

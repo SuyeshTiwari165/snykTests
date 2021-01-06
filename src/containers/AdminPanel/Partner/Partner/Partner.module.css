@@ -99,3 +99,13 @@ table>thead {
   font-weight: 500;
   line-height: 1.6;
 }
+
+.EditIcon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.CircleIcon {
+  width: 20px !important;
+  height: 20px !important;
+}

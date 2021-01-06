@@ -560,10 +560,10 @@ export const Target: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <RaStepper />
       <Typography component="h5" variant="h1">
         Target
       </Typography>
+      <RaStepper />
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
@@ -603,7 +603,7 @@ export const Target: React.FC = (props: any) => {
             </Alert>
           ) : null}
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Input
             type="text"
             label="Target Name"
@@ -616,7 +616,7 @@ export const Target: React.FC = (props: any) => {
             Target Name
           </Input>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Input
             type="text"
             label="IP Range"
@@ -629,7 +629,7 @@ export const Target: React.FC = (props: any) => {
             IP Range
           </Input>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Input
             type="text"
             label="User Name"
@@ -642,7 +642,7 @@ export const Target: React.FC = (props: any) => {
             User Name
           </Input>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6} className={styles.PasswordField}>
           <FormControl className={styles.TextField} variant="outlined">
             <InputLabel classes={{ root: styles.FormLabel }}>
               Password
@@ -682,7 +682,7 @@ export const Target: React.FC = (props: any) => {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Input
             type="text"
             label="VPN User Name"
@@ -708,7 +708,7 @@ export const Target: React.FC = (props: any) => {
             VPN Password
           </Input>
         </Grid> */}
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6} className={styles.PasswordField}>
           <FormControl className={styles.TextField} variant="outlined">
             <InputLabel classes={{ root: styles.FormLabel }}>
               VPN Password
@@ -748,14 +748,9 @@ export const Target: React.FC = (props: any) => {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <form>
-            <Grid item xs={6}>
-              <Grid item xs={6}>
                 <input type="file" name="file" onChange={onChangeHandler} />
-              </Grid>
-
-              <Grid item xs={1} classes={{ root: styles.FormLabel }}>
                 <Button
                   type="button"
                   color="primary"
@@ -764,11 +759,9 @@ export const Target: React.FC = (props: any) => {
                 >
                   Upload
               </Button>
-              </Grid>
-            </Grid>
           </form>
         </Grid>
-        <Grid item xs={1} className={styles.backToListButton}>
+        <Grid item xs={12} className={styles.ActionButtons}>
           <Button
             variant={"contained"}
             onClick={handleBack}
@@ -777,8 +770,6 @@ export const Target: React.FC = (props: any) => {
           >
             back
           </Button>
-        </Grid>
-        <Grid item xs={1} className={styles.saveButton}>
           <Button
             onClick={handleSubmitDialogBox}
             color="primary"
@@ -788,8 +779,6 @@ export const Target: React.FC = (props: any) => {
           >
             next
           </Button>
-        </Grid>
-        <Grid item xs={1} classes={{ root: styles.FormLabel }}>
           <Button
             type="button"
             color="primary"

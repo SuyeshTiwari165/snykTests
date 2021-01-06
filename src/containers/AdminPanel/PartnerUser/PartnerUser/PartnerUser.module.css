@@ -153,3 +153,8 @@ table>thead {
 .ButtonGroup2 button svg{
   margin-right: 5px;
 }
+
+.EditIcon{
+  width: 18px !important;
+  height:18px !important;
+}

@@ -41,7 +41,6 @@ const theme = createMuiTheme({
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     drawer: {
-      // width: drawerWidth,
       flexShrink: 0,
       whiteSpace: "nowrap",
       backgroundColor: "#fff",
@@ -51,7 +50,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "72px",
       backgroundColor: "#fff",
       boxShadow: "7px 0 7px -6px #e4e4e4 !important",
-      marginTop: "-57px;"
+      marginTop: "-57px;",
+      "& + main" :{
+        width: "calc(100% - 72px)",
+      }
     },
     drawerOpen: {
       width: "246px",

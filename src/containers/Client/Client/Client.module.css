@@ -90,3 +90,12 @@ td {
 tfoot {
   border-top: 1px solid #eee;
 }
+
+td button:hover {
+  background-color: transparent !important;
+}
+
+.EditIcon{
+  height: 18px !important;
+  width: 18px !important;
+}
