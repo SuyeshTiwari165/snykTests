@@ -513,7 +513,7 @@ export const Target: React.FC = (props: any) => {
       RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange + "&vusername=" + vpnUserName + "&vpassword=" + vpnPassword;
     fetch(DocUrl).then((response: any) => {
       console.log(" Test Connection Success !!!!!", response)
-      if (response.statusText == "VPN connection Failed") {
+      if (response.statusText == "VPN connection Failed" || response.status !== 200) {
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -532,7 +532,7 @@ export const Target: React.FC = (props: any) => {
           isFailed: false,
           errMessage: "Test Connection Successful",
         }));
-        
+
       }
     }).catch(() => {
       console.log("Test Connection Failed !!!!")
