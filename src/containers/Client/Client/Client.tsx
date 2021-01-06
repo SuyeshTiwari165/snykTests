@@ -85,7 +85,6 @@ export const Client: React.FC = (props: any) => {
 
 
   useEffect(() => {
-    console.log("---partner,", partner);
     if (partner)
       getClients({
         variables: {
@@ -117,10 +116,6 @@ export const Client: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any) => {
       let obj: any = {};
-      // obj["createdon"] = moment(element.contact_id.created_at).format(
-      //   "MM/DD/YYYY hh:mm a"
-      // );
-      console.log("element", element)
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
       obj["name"] = element.node.clientName;
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
@@ -150,10 +145,7 @@ export const Client: React.FC = (props: any) => {
   };
 
   const handleClickEdit = (rowData: any) => {
-    console.log("rowData", rowData)
     history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
-
-    // let partnerData: any = { "partner_id": partnerID }
   };
 
   const handleClickOpen = (rowData: any) => {

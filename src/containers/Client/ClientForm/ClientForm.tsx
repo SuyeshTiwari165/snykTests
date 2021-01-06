@@ -55,7 +55,6 @@ export const Client: React.FC = (props: any) => {
   ] = useLazyQuery(GET_CLIENT, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      console.log("data", data)
       setRowData(true);
       setEmail(data.getClient.edges[0].node.emailId)
       setName(data.getClient.edges[0].node.clientName)
@@ -65,7 +64,6 @@ export const Client: React.FC = (props: any) => {
 
 
   useEffect(() => {
-    console.log("---partner,", partner);
     if (partner && props.location.state)
       getClients({
         variables: {

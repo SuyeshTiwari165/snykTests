@@ -46,7 +46,6 @@ export const Dashboard: React.FC = () => {
 
 
   useEffect(() => {
-    console.log("---partner,", partner);
     if (partner)
       getClients({
         variables: {
@@ -59,7 +58,6 @@ export const Dashboard: React.FC = () => {
     let arr: any = [];
     data.map((element: any) => {
       let obj: any = {};
-      console.log("element", element)
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
       obj["name"] = element.node.clientName;
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;

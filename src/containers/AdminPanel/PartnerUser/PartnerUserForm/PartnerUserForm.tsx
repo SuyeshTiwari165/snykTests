@@ -52,7 +52,6 @@ interface partnerValues {
 }
 
 export const PartnerUserForm: React.FC = (propsData: any) => {
-  // console.log("Partner user props >", propsData.location.state);
   const history = useHistory();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -135,7 +134,6 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       }, ALERT_MESSAGE_TIMER);
     }
     if (formState.isSuccess === true || formState.isUpdate === true) {
-      console.log("propsData", propsData);
       if (propsData.location.state != null) {
         propsData.location.state.formState = formState;
         backToList();
@@ -371,7 +369,6 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           }
         }
       }).then((response: any) => {
-        console.log("response", response)
         backToList();
       })
     }

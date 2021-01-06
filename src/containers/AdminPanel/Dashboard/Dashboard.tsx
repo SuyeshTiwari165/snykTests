@@ -1,4 +1,3 @@
-// import React from "react";
 import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.css";
 import Typography from "@material-ui/core/Typography";
@@ -26,18 +25,13 @@ import Loading from "../../../components/UI/Layout/Loading/Loading";
 import logout from "../../../containers/Auth/Logout/Logout";
 
 export const Dashboard: React.FC = (props: any) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [partnerCount, setPartnerCount] = useState();
   const [partnerUserCount, setPartnerUserCount] = useState();
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
   const [newData, setNewData] = useState();
 
-  console.log("---contact-", contact);
   const history = useHistory();
 
-  const { data: Org, loading: loadOrg } = useQuery(
+  const { data: partnerData, loading: loadPartner } = useQuery(
     GET_PARTNER,
     {
       onCompleted: (data: any) => {
@@ -95,14 +89,13 @@ export const Dashboard: React.FC = (props: any) => {
     if (param === "View") {
     }
     if (param === "Edit") {
-      console.log("rowData",rowData)
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partnerId, rowData);
     }
     if (param === "Delete") {
     }
   };
 
-  // if (loadOrg || loadingOrg1 || loadSubs) return <Loading />;
+  if (loadPartner || loadPartnerUsers ) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (

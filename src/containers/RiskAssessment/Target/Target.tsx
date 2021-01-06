@@ -72,14 +72,12 @@ export const Target: React.FC = (props: any) => {
       ? props["location"].state.targetName
       : null
     : null;
-  // const [newData, setNewData] = useState();
   const [editDataId, setEditDataId] = useState<Number | null>();
   if (props.location.state) {
     if (editDataId === null && props.location.state.editData === true) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   }
-  console.log("sdghfdghfdgh", props["location"].state)
   //show password
   const [showPassword, setShowPassword] = useState(false);
   const [showVpnPassword, setShowVpnPassword] = useState(false);
@@ -290,7 +288,6 @@ export const Target: React.FC = (props: any) => {
           // }
         })
         .catch((err) => {
-          console.log("error", err.message);
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
@@ -352,7 +349,6 @@ export const Target: React.FC = (props: any) => {
           history.push(routeConstant.TASK_DETAILS, data);
         })
         .catch((err) => {
-          console.log("error", err);
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")

@@ -70,7 +70,6 @@ export const Login: React.FC<LoginProps> = () => {
   const [getAdminRole, { data: dataAD, loading: loadingAD }] = useLazyQuery(
     GET_ADMIN_USER, {
     onCompleted: (data: any) => {
-      console.log("data", data.getUserDetails.edges[0].node.isSuperuser)
       localStorage.setItem("user", JSON.stringify(data.getUserDetails.edges[0].node));
       if (data.getUserDetails.edges[0].node.isSuperuser == true) {
         window.location.replace(routeConstants.ADMIN_DASHBOARD);
@@ -159,7 +158,6 @@ export const Login: React.FC<LoginProps> = () => {
         .catch((Error) => {
           setInvalidLogin(true);
           setShowLoading(false);
-          console.log("Error Response", Error);
         });
     }
   };
