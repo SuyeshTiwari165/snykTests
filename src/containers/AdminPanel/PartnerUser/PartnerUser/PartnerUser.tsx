@@ -42,7 +42,6 @@ interface partnerValues {
 }
 
 export const PartnerUser: React.FC = (propsData: any) => {
-  // console.log("Partner user props >", propsData.location.state);
   const history = useHistory();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -172,12 +171,10 @@ export const PartnerUser: React.FC = (propsData: any) => {
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
-      // console.log("element", element.node)
       let obj: any = {};
       obj["id"] = element.node.id;
       obj["email"] = element.node.userId.username;
       obj["name"] = element.node.userId.firstName + " " + element.node.userId.lastName;
-      // obj["partner"] = element.partner_id.name;
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
       obj["first_name"] = element.node.userId.firstName;
       obj["last_name"] = element.node.userId.lastName;
@@ -188,7 +185,6 @@ export const PartnerUser: React.FC = (propsData: any) => {
     });
     setNewData(arr);
   };
-  // console.log("partnerUserdata", propsData.location.state.partner_id)
 
 
   const handleAlertClose = () => {
@@ -203,7 +199,6 @@ export const PartnerUser: React.FC = (propsData: any) => {
   };
 
   const handleClickOpen = () => {
-    // param.propsData.from = "admin-partner-user";
     let partnerData: any = { "partner_id": partnerID }
     history.push(routeConstant.PARTNER_USER_FORM_ADD, propsData.location.state ? propsData.location.state : partnerData);
   };

@@ -115,7 +115,6 @@ export const Partner: React.FC = (props: any) => {
   };
 
   const handleClickEdit = (rowData: any, event: any) => {
-    console.log("rowData",rowData)
     if (
       user && user.user && user.user.role &&
       user.user.role.name === "Company User"

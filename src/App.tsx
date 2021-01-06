@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
 import {
   Switch,
-  RouteComponentProps,
   Redirect,
   Route,
   BrowserRouter,
 } from "react-router-dom";
-import { Layout } from "./components/UI/Layout/Layout";
 import { Login } from "./containers/Auth/Login/Login";
 import { Registration } from "./containers/Auth/Registration/Registration";
 import { SessionContext } from "./context/session";
@@ -20,7 +17,6 @@ import styles from "./App.module.css";
 import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme/";
 import logout from "./containers/Auth/Logout/Logout";
-import { CompanyUser } from "./common/Roles";
 
 function App() {
   const session = localStorage.getItem("session");
@@ -60,14 +56,14 @@ function App() {
   }
 
   return (
-    // <SessionContext.Provider value={values}>
-    <ApolloProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <ErrorHandler />
-        <BrowserRouter>{routes}</BrowserRouter>
-      </ThemeProvider>
-    </ApolloProvider>
-    // </SessionContext.Provider>
+    <SessionContext.Provider value={values}>
+      <ApolloProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <ErrorHandler />
+          <BrowserRouter>{routes}</BrowserRouter>
+        </ThemeProvider>
+      </ApolloProvider>
+    </SessionContext.Provider>
   );
 }
 

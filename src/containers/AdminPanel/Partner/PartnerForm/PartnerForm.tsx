@@ -253,7 +253,6 @@ export const PartnerForm: React.FC = (props: any) => {
         }
       },
     }).then((res: any) => {
-      console.log("res", res)
       backToList();
     })
   };
@@ -270,7 +269,6 @@ export const PartnerForm: React.FC = (props: any) => {
         }
       },
     }).then((res: any) => {
-      console.log("res", res)
       backToList();
     })
   }
