@@ -62,7 +62,7 @@ export const Target: React.FC = (props: any) => {
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState(null)
-
+  const [connectionSuccess, SetConnectionSuccess] = useState(false);
   //static values for partner and client are given.
   const clientInfo = props.location.state.clientInfo;
   const partnerId = parseInt(clientInfo.partnerId);
@@ -161,7 +161,8 @@ export const Target: React.FC = (props: any) => {
       !userName ||
       !password ||
       !vpnUserName ||
-      !vpnPassword
+      !vpnPassword ||
+      !connectionSuccess
     ) {
       return true;
     }
@@ -399,10 +400,25 @@ export const Target: React.FC = (props: any) => {
             "vpnPassword": vpnPassword
           }
         }
+      }).then((response: any) => {
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: true,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: false,
+          errMessage: "File Uploaded Successfully !!",
+        }));
+      }).catch((error: Error) => {
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "",
+        }));
       })
-      console.log(result)
-
-      console.log(res)
     });
   };
 
@@ -496,10 +512,39 @@ export const Target: React.FC = (props: any) => {
   const onClickTestConnection = () => {
     const DocUrl =
       RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange + "&vusername=" + vpnUserName + "&vpassword=" + vpnPassword;
-    fetch(DocUrl).then(() => {
-      console.log(" Test Connection Success !!!!!")
+    fetch(DocUrl).then((response: any) => {
+      // console.log(" Test Connection Success !!!!!", )
+      if (response.status == 200) {
+        SetConnectionSuccess(true)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: true,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: false,
+          errMessage: "Test Connection Successful",
+        }));
+      } else {
+        SetConnectionSuccess(true)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: " Test Connection Failed",
+        }));
+      }
     }).catch(() => {
       console.log("Test Connection Failed !!!!")
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "",
+      }));
     })
   }
 
@@ -522,6 +567,24 @@ export const Target: React.FC = (props: any) => {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
+          {formState.isSuccess ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
+          ) : null}
           {formState.isFailed ? (
             <Alert
               severity="error"

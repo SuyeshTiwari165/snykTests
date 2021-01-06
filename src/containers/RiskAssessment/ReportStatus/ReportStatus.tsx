@@ -24,7 +24,7 @@ import { useHistory } from "react-router-dom";
 export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
   const [newData, setNewData] = useState();
-  const clientInfo = props.location.state.clientInfo;
+  const clientInfo = props.location.state ? props.location.state.clientInfo : null;
 
   //table
   const columns = [
@@ -55,16 +55,25 @@ export const ReportStatus: React.FC = (props: any) => {
     if (utcDate === "" || utcDate === null) {
       return null;
     } else {
-      var date: any = new Date(utcDate);
-      var dd = date.getDate();
-      var mm = date.getMonth();
-      var yy = date.getFullYear();
-      var hh = date.getHours();
-      var min = date.getMinutes();
-      var dateAndTime = dd + "/" + mm + "/" + yy + " " + hh + ":" + min;
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      console.log(convertDate(new Date(utcDate)))
       return dateAndTime;
     }
   };
+
+  function convertDate(inputFormat: any) {
+    function pad(s: any) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat)
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+  }
 
   useEffect(() => {
     if (dataReportListing) {
