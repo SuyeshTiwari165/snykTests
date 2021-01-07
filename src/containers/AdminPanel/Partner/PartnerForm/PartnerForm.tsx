@@ -93,6 +93,30 @@ export const PartnerForm: React.FC = (props: any) => {
       setAddress(param.address);
     }
   }, [param]);
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+    if (formState.isSuccess === true || formState.isUpdate === true) {
+      if (props.location.state != null) {
+        props.location.state.formState = formState;
+        // backToList();
+      }
+      if (props.location.state === null || props.location.state === undefined) {
+        props.location.state = [];
+        props.location.state.from = "Partner-form";
+        props.location.state.formState = formState;
+        backToList();
+      }
+    }
+  }, [formState]);
   if (loadPartner) return <Loading />;
   if (errorPartner) {
     let error = { message: "Error" };
@@ -169,20 +193,7 @@ export const PartnerForm: React.FC = (props: any) => {
     }
     if (event.target.name === "phoneNumber") {
       setPhoneNumber(event.target.value);
-      let err = event.target.value === "" || null ? "Required" : "";
-      setIsError((error: any) => ({
-        ...error,
-        phoneNumber: err,
-      }));
-      if (!err) {
-        if (phoneNumber.length < 9) {
-          let errors = "Please enter valid Phone no.";
-          setIsError((error: any) => ({
-            ...error,
-            phoneNumber: errors,
-          }));
-        }
-      }
+
     }
     if (event.target.name === "address") {
       setAddress(event.target.value);
@@ -253,6 +264,14 @@ export const PartnerForm: React.FC = (props: any) => {
         }
       },
     }).then((res: any) => {
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + partnerName + " ",
+      }));
       backToList();
     })
   };
@@ -269,6 +288,14 @@ export const PartnerForm: React.FC = (props: any) => {
         }
       },
     }).then((res: any) => {
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: true,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + partnerName + " ",
+      }));
       backToList();
     })
   }
@@ -281,7 +308,7 @@ export const PartnerForm: React.FC = (props: any) => {
   const deleteTableRow = (rowData: any) => { };
 
   const backToList = () => {
-    history.push(routeConstant.ADD_PARTNER);
+    history.push(routeConstant.ADD_PARTNER,props.location.state);
 
   };
 

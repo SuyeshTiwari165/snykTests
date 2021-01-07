@@ -136,6 +136,15 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     if (formState.isSuccess === true || formState.isUpdate === true) {
       if (propsData.location.state != null) {
         propsData.location.state.formState = formState;
+        // backToList();
+      }
+      if(propsData.location.state === null ||propsData.location.state === undefined) {
+        propsData.location.state = [];
+        propsData.location.state.from = "Partner-form"
+        // if(formState != null || formState != undefined) {
+        propsData.location.state.formState = formState;
+        console.log("FORM STATE CHANGED when null",formState)
+
         backToList();
       }
     }
@@ -369,6 +378,14 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
           }
         }
       }).then((response: any) => {
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: true,
+          isDelete: false,
+          isFailed: false,
+          errMessage: " " + firstName + " " + lastName + " ",
+        }));
         backToList();
       })
     }

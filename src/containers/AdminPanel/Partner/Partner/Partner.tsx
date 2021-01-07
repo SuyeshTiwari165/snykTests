@@ -78,6 +78,9 @@ export const Partner: React.FC = (props: any) => {
 
   useEffect(() => {
     setParam(props.location.state);
+    if (props.location.state && props.location.state !== null && props.location.state.formState) {
+      setFormState(props.location.state.formState);
+    }
   }, []);
 
   const createTableDataObject = (data: any) => {
