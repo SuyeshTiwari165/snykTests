@@ -45,7 +45,14 @@ export const Dashboard: React.FC = (props: any) => {
     GET_PARTNER_USERS,
     {
       onCompleted: (data: any) => {
-        setPartnerUserCount(data.getPartnerUserDetails.edges.length);
+        let arr: any = [];
+        data.getPartnerUserDetails.edges.map((element: any, index: any) => {
+          if(element.node.userType == 'Partner') {
+            let obj: any = {};
+            arr.push(obj);
+          }
+        });
+        setPartnerUserCount(arr.length);
       },
       fetchPolicy: "cache-and-network",
     }
