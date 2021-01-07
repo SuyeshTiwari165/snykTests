@@ -122,15 +122,13 @@ export const Client: React.FC = (props: any) => {
     if (formState.isSuccess === true || formState.isUpdate === true) {
       if (props.location.state != null) {
         props.location.state.formState = formState;
-        backToList();
+        // backToList();
       }
       if(props.location.state === null ||props.location.state === undefined) {
         props.location.state = [];
-        props.location.state.from = "partner-user"
-        // if(formState != null || formState != undefined) {
-        props.location.state = formState;
-        backToList();
-      //   }
+        props.location.state.from = "client-form"
+        props.location.state.formState = formState;
+        // backToList();
       }
     }
   }, [formState]);
@@ -262,7 +260,7 @@ export const Client: React.FC = (props: any) => {
         isFailed: false,
         errMessage: " " + name + " " ,
       }));
-      // backToList();
+      backToList();
     })
     .catch((err) => {
       setLoader(false)
@@ -302,6 +300,14 @@ export const Client: React.FC = (props: any) => {
         },
       }).then((res: any) => {
         setLoader(false)
+         setFormState((formState) => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: " " + name + " " ,
+      }));
         backToList();
       })
   }
