@@ -45,7 +45,7 @@ import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
 import { RA_TARGET_VPNTEST } from "../../../config/index";
-
+import { TEST_CONNECTION } from "../../../graphql/mutations/VPNConnection"
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
@@ -104,6 +104,7 @@ export const Target: React.FC = (props: any) => {
   //queries
   const [createTarget] = useMutation(CREATE_TARGET);
   const [uploadFile] = useMutation(UPLOAD_VPN_FILE);
+  const [testVpnConnection] = useMutation(TEST_CONNECTION);
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [
     getTargetData,
@@ -237,6 +238,7 @@ export const Target: React.FC = (props: any) => {
 
   const handleSubmitDialogBox = () => {
     if (editDataId) {
+      setSubmitDisabled(true)
       let input = {
         targetName: name,
         host: ipRange,
@@ -261,6 +263,7 @@ export const Target: React.FC = (props: any) => {
             isFailed: false,
             errMessage: "",
           }));
+          setSubmitDisabled(false)
           setEditDataId(null);
           localStorage.setItem("name", JSON.stringify(name));
           localStorage.setItem(
@@ -288,6 +291,7 @@ export const Target: React.FC = (props: any) => {
           // }
         })
         .catch((err) => {
+          setSubmitDisabled(true)
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
@@ -306,6 +310,7 @@ export const Target: React.FC = (props: any) => {
           }));
         });
     } else {
+      setSubmitDisabled(true)
       let input = {
         partner: partnerId,
         client: clientId,
@@ -323,6 +328,7 @@ export const Target: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
+          setSubmitDisabled(false)
           setFormState((formState) => ({
             ...formState,
             isSuccess: true,
@@ -349,6 +355,7 @@ export const Target: React.FC = (props: any) => {
           history.push(routeConstant.TASK_DETAILS, data);
         })
         .catch((err) => {
+          setSubmitDisabled(false)
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
@@ -400,14 +407,26 @@ export const Target: React.FC = (props: any) => {
           }
         }
       }).then((response: any) => {
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: true,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: false,
-          errMessage: "File Uploaded Successfully !!",
-        }));
+        console.log("responsre", response)
+        if (response.data.uploadFile.success == "File Uploaded Failed") {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " File Upload Failed.",
+          }));
+        } else {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "File Uploaded Successfully !!",
+          }));
+        }
       }).catch((error: Error) => {
         setFormState((formState) => ({
           ...formState,
@@ -509,11 +528,19 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    const DocUrl =
-      RA_TARGET_VPNTEST + "?cid=" + props.location.state.clientInfo.clientId + "&tname=" + name + "&host=" + ipRange + "&vusername=" + vpnUserName + "&vpassword=" + vpnPassword;
-    fetch(DocUrl).then((response: any) => {
+    testVpnConnection({
+      variables: {
+        "input": {
+          "client": props.location.state.clientInfo.clientI,
+          "targetName": name,
+          "vpnUsername": vpnUserName,
+          "vpnPassword": vpnPassword,
+          "host": ipRange
+        }
+      }
+    }).then((response: any) => {
       console.log(" Test Connection Success !!!!!", response)
-      if (response.statusText == "VPN connection Failed" || response.status !== 200) {
+      if (response.data.vpnConnection.success == "VPN connected Successfully") {
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -750,14 +777,14 @@ export const Target: React.FC = (props: any) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <form>
-                <input type="file" name="file" onChange={onChangeHandler} />
-                <Button
-                  type="button"
-                  color="primary"
-                  variant={"contained"}
-                  onClick={onClickHandler}
-                >
-                  Upload
+            <input type="file" name="file" onChange={onChangeHandler} />
+            <Button
+              type="button"
+              color="primary"
+              variant={"contained"}
+              onClick={onClickHandler}
+            >
+              Upload
               </Button>
           </form>
         </Grid>

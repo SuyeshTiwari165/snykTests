@@ -160,11 +160,12 @@ export const TaskDetails: React.FC = (props: any) => {
   }, []);
 
   if (loadingScanConfig) return <Loading />;
-  if (getScanConfigList.length === 0) {
+  if (getScanConfigList.length === 0 && dataScanConfig) {
     setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
   }
 
   const handleSubmitDialogBox = () => {
+    setSubmitDisabled(true)
     let input = {
       partner: partnerId,
       client: clientId,
@@ -179,6 +180,7 @@ export const TaskDetails: React.FC = (props: any) => {
       },
     })
       .then((userRes) => {
+        setSubmitDisabled(false)
         setFormState((formState) => ({
           ...formState,
           isSuccess: true,
@@ -198,6 +200,7 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("password");
       })
       .catch((err) => {
+        setSubmitDisabled(true)
         console.log("error", err);
         let error = err.message;
         if (error.includes("duplicate key value violates unique constraint")) {
@@ -361,7 +364,7 @@ export const TaskDetails: React.FC = (props: any) => {
             data-testid="ok-button"
             disabled={submitDisabled}
           >
-            next
+            save
           </Button>
         </Grid>
       </Grid>
