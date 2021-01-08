@@ -390,7 +390,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       })
     }
   };
-  console.log("DATA", propsData.location.state.propuserData.rowData.first_name)
+  // console.log("DATA", propsData.location.state.propuserData.rowData.first_name)
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -431,7 +431,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       <CssBaseline />
       <Typography component="h5" variant="h1">
         <div>
-          {rowData ? "Edit User:" + (propsData.location.state.propuserData.rowData.first_name + " " + propsData.location.state.propuserData.rowData.last_name) : "Add User "}
+          {/* {rowData ? "Edit User:" + (propsData.location.statepropsData.location.state.propuserData.rowData.first_name + " " + propsData.location.state.propuserData.rowData.last_name) : "Add User "} */}
           {rowData ? rowData.name : null}
         </div>
       </Typography>
