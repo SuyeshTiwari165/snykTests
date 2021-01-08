@@ -70,6 +70,10 @@ export const PartnerUser: React.FC = (propsData: any) => {
   });
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  let userRole: any;
+  if (user) {
+    userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
+  }
   let partnerdata: any;
   if (propsData.location.state !== null) {
     partnerdata = propsData.location.state
@@ -284,6 +288,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
           <Grid item xs={12} md={4} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
+              {userRole === "SuperUser"  ? (
                 <Button
                   className={styles.BackToButton}
                   variant={"contained"}
@@ -300,6 +305,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
                   />
                     &nbsp; Back to List
                   </Button>
+                ) : null}
                 <Button
                   color="primary"
                   variant="contained"
