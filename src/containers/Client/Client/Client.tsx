@@ -81,6 +81,9 @@ export const Client: React.FC = (props: any) => {
     onCompleted: (data) => {
       createTableDataObject(data.getClient.edges)
     },
+    onError: (error) => {
+      logout()
+    }
   });
 
 
@@ -95,7 +98,7 @@ export const Client: React.FC = (props: any) => {
       setFormState(props.location.state.formState);
     }
   }, []);
-  
+
   useEffect(() => {
     if (props.location.state && props.location.state !== null && props.location.state.formState) {
       setFormState(props.location.state.formState);
@@ -288,7 +291,7 @@ export const Client: React.FC = (props: any) => {
                 variant="contained"
                 onClick={handleClickOpen}
               >
-                <AddCircleIcon className={styles.EditIcon}/>
+                <AddCircleIcon className={styles.EditIcon} />
                   &nbsp; Client
                 </Button>
             </div>
@@ -338,11 +341,11 @@ export const Client: React.FC = (props: any) => {
               actions={[
                 {
                   icon: () => <img className={styles.EditIcon}
-                  src={
-                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                  }
-                  alt="edit icon"
-                />,
+                    src={
+                      process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                    }
+                    alt="edit icon"
+                  />,
                   tooltip: "Edit",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "Edit");

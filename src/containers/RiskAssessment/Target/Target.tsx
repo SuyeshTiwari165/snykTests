@@ -509,7 +509,7 @@ export const Target: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
-
+  console.log("DATA",props.location.state)
   const handleVpnPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -531,7 +531,7 @@ export const Target: React.FC = (props: any) => {
     testVpnConnection({
       variables: {
         "input": {
-          "client": props.location.state.clientInfo.clientI,
+          "client": props.location.state.clientInfo.clientId,
           "targetName": name,
           "vpnUsername": vpnUserName,
           "vpnPassword": vpnPassword,
@@ -589,7 +589,7 @@ export const Target: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Target
+        Target : {props.location.state.clientInfo.name}
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
