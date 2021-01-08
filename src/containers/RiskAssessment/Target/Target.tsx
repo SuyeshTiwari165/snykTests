@@ -541,15 +541,6 @@ export const Target: React.FC = (props: any) => {
     }).then((response: any) => {
       console.log(" Test Connection Success !!!!!", response)
       if (response.data.vpnConnection.success == "VPN connected Successfully") {
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: " Test Connection Failed",
-        }));
-      } else {
         SetConnectionSuccess(true)
         setFormState((formState) => ({
           ...formState,
@@ -557,7 +548,17 @@ export const Target: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: false,
-          errMessage: "Test Connection Successful",
+          errMessage: " Test Connection Successful",
+        }));
+      } else {
+        SetConnectionSuccess(false)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "Test Connection Failed ",
         }));
 
       }
