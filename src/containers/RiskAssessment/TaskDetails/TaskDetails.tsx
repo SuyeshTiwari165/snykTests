@@ -160,7 +160,7 @@ export const TaskDetails: React.FC = (props: any) => {
   }, []);
 
   if (loadingScanConfig) return <Loading />;
-  if (getScanConfigList.length === 0) {
+  if (getScanConfigList.length === 0 && dataScanConfig) {
     setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
   }
 
@@ -270,10 +270,10 @@ export const TaskDetails: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <RaStepper />
       <Typography component="h5" variant="h1">
         Task
       </Typography>
+      <RaStepper />
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isFailed ? (
@@ -321,11 +321,11 @@ export const TaskDetails: React.FC = (props: any) => {
           </Input>
         </Grid>
         <Grid item xs={12}>
-          Select Scan Configuration
-        </Grid>
+          <label className={styles.HeaderLabel}>Select Scan Configuration</label>
+          <Grid container spacing={3}>
+          <Grid item xs={12} className={styles.ConfigItem}>
         {getScanConfigList.map((obj: any, i: any) => {
           return (
-            <Grid item xs={3}>
               <FormControlLabel
                 className={styles.CheckboxLabel}
                 key={obj.node.vatScanConfigId}
@@ -339,10 +339,12 @@ export const TaskDetails: React.FC = (props: any) => {
                 }
                 label={obj.node.scanConfigName}
               />
-            </Grid>
           );
         })}
 
+          </Grid>
+          </Grid>
+        </Grid>
         <Grid item xs={1} className={styles.backToListButton}>
           <Button
             variant={"contained"}
