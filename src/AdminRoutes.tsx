@@ -8,6 +8,8 @@ import * as routeConstants from "./common/RouteConstants";
 import PartnerUserForm from "./containers/AdminPanel/PartnerUser/PartnerUserForm/PartnerUserForm";
 import PartnerForm from "./containers/AdminPanel/Partner/PartnerForm/PartnerForm";
 import LayoutRoute from "./common/LayoutRoute";
+import ReportStatus from "./containers/AdminPanel/ReportStatus/ReportStatus";
+
 
 const defaultRedirect = () => <Redirect to="/admin-dashboard" />;
 export const AdminRoutes = (
@@ -18,6 +20,8 @@ export const AdminRoutes = (
     <LayoutRoute path={routeConstants.PARTNER_USER_FORM} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.PARTNER_FORM_ADD} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.PARTNER_FORM_EDIT + ":id"} exact component={PartnerForm} />
+    <LayoutRoute path={routeConstants.ADMIN_REPORT_STATUS} exact component={ReportStatus} />
+
     <LayoutRoute
       path={routeConstants.ADMIN_DASHBOARD}
       exact

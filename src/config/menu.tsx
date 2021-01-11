@@ -56,6 +56,12 @@ export const sideDrawerAdminMenus = [
     icon: "partners",
     pathList: [routeConstants.ADD_PARTNER],
   },
+  {
+    title: "Report Status",
+    path: routeConstants.ADMIN_REPORT_STATUS,
+    icon: "users",
+    pathList: [routeConstants.ADMIN_REPORT_STATUS],
+  },
 
   // {
   //   title: "Admin",

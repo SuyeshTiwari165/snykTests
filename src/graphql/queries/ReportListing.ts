@@ -25,3 +25,28 @@ query getReportStatus($clientid:Int!,$targetid:String){
   }
 }
 `;
+export const GET_ADMIN_REPORT_LISTING = gql`
+query getReportStatus{
+  getReportStatus {
+    edges{
+      node{
+        partnerId
+        clientId
+        vatTargetId{
+          id
+          targetName
+          vatTargetId
+        }
+        vatTaskId{
+          id
+          vatTaskId
+          taskName
+        }
+        scanStartDate
+        scanEndDate
+        scanRunStatus
+      }
+    }
+  }
+}
+`;
