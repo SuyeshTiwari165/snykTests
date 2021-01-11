@@ -100,9 +100,6 @@ export const Client: React.FC = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (props.location.state && props.location.state !== null && props.location.state.formState) {
-      setFormState(props.location.state.formState);
-    }
     if (
       formState.isDelete === true ||
       formState.isFailed === true ||
