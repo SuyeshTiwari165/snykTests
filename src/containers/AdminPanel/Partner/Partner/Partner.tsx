@@ -35,17 +35,14 @@ import * as validations from "../../../../common/validateRegex";
 
 export const Partner: React.FC = (props: any) => {
   const [newData, setNewData] = useState<any>([]);
-  const [rowData, setRowData] = useState<any>();
-  const [partnerSubsID, setPartnerSubsID] = useState<any>();
   const [param, setParam] = useState<any>();
-  const [foundErrors, setFoundError] = useState(false);
-  const [emailExistError, setEmailExistError] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   //table
   const column = [
     { title: "Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Phone", field: "phone" },
+    { title: "Created On", field: "created_on" },
   ];
 
   const [isError, setIsError] = useState<any>({
@@ -56,8 +53,6 @@ export const Partner: React.FC = (props: any) => {
   });
   const history = useHistory();
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [addPartner, setAddPartner] = useState(false);
-
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
@@ -92,6 +87,7 @@ export const Partner: React.FC = (props: any) => {
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
+      obj["created_on"] = element.node.createdDate;
       arr.push(obj);
     });
     setNewData(arr);
@@ -125,7 +121,6 @@ export const Partner: React.FC = (props: any) => {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partner_id, rowData);
     }
     if (user && user.isSuperuser) {
-      // param.propsData.from = "admin-partner-user";
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partner_id, rowData);
     }
   };
@@ -139,15 +134,6 @@ export const Partner: React.FC = (props: any) => {
       <Grid className={styles.TableWrap}>
         <Grid container>
           <Grid item xs={6} sm={9} className={styles.FilterWrap}>
-            {/* <div className={styles.FilterInput}>
-                <Input
-                  label="Name"
-                  name="filterName"
-                  id="combo-box-demo"
-                // value={filterName}
-                // onChange={nameFilter}
-                />
-              </div> */}
           </Grid>
           <Grid item xs={3} sm={3} className={styles.FilterAddWrap}>
             <div className={styles.FilterInput}>
