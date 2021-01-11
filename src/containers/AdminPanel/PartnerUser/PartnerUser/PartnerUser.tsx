@@ -26,7 +26,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { useHistory } from "react-router-dom";
 import * as routeConstant from "../../../../common/RouteConstants";
 import EditIcon from "@material-ui/icons/Edit";
-
+import moment from "moment";
 import {
   SUCCESS,
   UPDATE,
@@ -93,7 +93,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
   const column = [
     { title: "Name", field: "name" },
     { title: "Email", field: "email" },
-    // { title: "Partner", field: "partner" },
+    { title: "Created On", field: "created_on" },
     { title: "Phone", field: "phone" },
   ];
 
@@ -172,6 +172,30 @@ export const PartnerUser: React.FC = (propsData: any) => {
 
   if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <Loading />;
 
+  function convertDate(inputFormat: any) {
+    function pad(s: any) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat)
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+  }
+
+  const getDateAndTime = (utcDate: any) => {
+    if (utcDate === "" || utcDate === null) {
+      return null;
+    } else {
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      console.log(convertDate(new Date(utcDate)))
+      return dateAndTime;
+    }
+  };
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
@@ -182,6 +206,8 @@ export const PartnerUser: React.FC = (propsData: any) => {
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
       obj["first_name"] = element.node.userId.firstName;
       obj["last_name"] = element.node.userId.lastName;
+      obj['created_on'] = moment(element.node.userId.dateJoined).format(
+        "MM/DD/YYYY hh:mm a");
       if (partnerdata) {
         obj["partner_id"] = partnerdata.partner_id;
       }
@@ -192,14 +218,14 @@ export const PartnerUser: React.FC = (propsData: any) => {
 
 
   const handleAlertClose = () => {
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: false,
-        errMessage: "",
-      }));
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: "",
+    }));
   };
 
   const handleClickOpen = () => {
@@ -288,21 +314,21 @@ export const PartnerUser: React.FC = (propsData: any) => {
           <Grid item xs={12} md={4} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
-              {userRole === "SuperUser"  ? (
-                <Button
-                  className={styles.BackToButton}
-                  variant={"contained"}
-                  onClick={() => {
-                    history.push(routeConstant.ADD_PARTNER);
-                  }}
-                  color="secondary"
-                  data-testid="cancel-button"
-                >
-                  <img
-                    src={
-                      process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                    } alt="user icon"
-                  />
+                {userRole === "SuperUser" ? (
+                  <Button
+                    className={styles.BackToButton}
+                    variant={"contained"}
+                    onClick={() => {
+                      history.push(routeConstant.ADD_PARTNER);
+                    }}
+                    color="secondary"
+                    data-testid="cancel-button"
+                  >
+                    <img
+                      src={
+                        process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
+                      } alt="user icon"
+                    />
                     &nbsp; Back to List
                   </Button>
                 ) : null}
@@ -360,11 +386,11 @@ export const PartnerUser: React.FC = (propsData: any) => {
               actions={[
                 {
                   icon: () => <img className={styles.EditIcon}
-                  src={
-                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                  }
-                  alt="edit icon"
-                />,
+                    src={
+                      process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                    }
+                    alt="edit icon"
+                  />,
                   tooltip: "Edit",
                   onClick: (event: any, rowData: any) => {
                     handleClickEdit(rowData, event);

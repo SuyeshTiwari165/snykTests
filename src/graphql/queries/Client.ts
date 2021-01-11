@@ -8,6 +8,7 @@ query getCients($partnerId: Int!){
         emailId
         partnerId
         mobileNumber
+        createdDate
         address
         id
         clientName
@@ -24,6 +25,7 @@ query getClient($clientName: String!) {
       node {
         id
         clientName
+        createdDate
         emailId
         mobileNumber
       }

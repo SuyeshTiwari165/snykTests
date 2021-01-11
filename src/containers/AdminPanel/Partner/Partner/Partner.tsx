@@ -32,6 +32,8 @@ import {
 } from "../../../../graphql/mutations/RaPartner";
 import { GET_PARTNER } from "../../../../graphql/queries/Partners";
 import * as validations from "../../../../common/validateRegex";
+import moment from "moment";
+import PeopleIcon from '@material-ui/icons/People';
 
 export const Partner: React.FC = (props: any) => {
   const [newData, setNewData] = useState<any>([]);
@@ -78,6 +80,29 @@ export const Partner: React.FC = (props: any) => {
     }
   }, []);
 
+  function convertDate(inputFormat: any) {
+    function pad(s: any) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat)
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+  }
+
+  const getDateAndTime = (utcDate: any) => {
+    if (utcDate === "" || utcDate === null) {
+      return null;
+    } else {
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      return dateAndTime;
+    }
+  };
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
@@ -87,7 +112,8 @@ export const Partner: React.FC = (props: any) => {
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
-      obj["created_on"] = element.node.createdDate;
+      obj["created_on"] = moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a");
       arr.push(obj);
     });
     setNewData(arr);
@@ -111,6 +137,11 @@ export const Partner: React.FC = (props: any) => {
   const handleClickAdd = (rowData: any) => {
     let viewdata: any = rowData;
     history.push(routeConstant.PARTNER_USER, viewdata);
+  };
+
+  const handleClickClient = (rowData: any) => {
+    console.log("REDIRECTING !!!!!!")
+    history.push(routeConstant.CLIENT, rowData);
   };
 
   const handleClickEdit = (rowData: any, event: any) => {
@@ -142,7 +173,7 @@ export const Partner: React.FC = (props: any) => {
                 variant="contained"
                 onClick={handleClickOpen}
               >
-                <AddCircleIcon className={styles.EditIcon}/>
+                <AddCircleIcon className={styles.EditIcon} />
                   &nbsp; Partner
                 </Button>
             </div>
@@ -189,11 +220,11 @@ export const Partner: React.FC = (props: any) => {
             actions={[
               {
                 icon: () => <img className={styles.EditIcon}
-                src={
-                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                }
-                alt="edit icon"
-              />,
+                  src={
+                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                  }
+                  alt="edit icon"
+                />,
                 tooltip: "Edit",
                 onClick: (event: any, rowData: any) => {
                   handleClickEdit(rowData, event);
@@ -204,6 +235,13 @@ export const Partner: React.FC = (props: any) => {
                 tooltip: "Add Partner User",
                 onClick: (event: any, rowData: any) => {
                   handleClickAdd(rowData);
+                },
+              },
+              {
+                icon: () => <PeopleIcon className={styles.CircleIcon} />,
+                tooltip: "Clients",
+                onClick: (event: any, rowData: any) => {
+                  handleClickClient(rowData);
                 },
               },
             ]}

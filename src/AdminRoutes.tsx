@@ -9,7 +9,10 @@ import PartnerUserForm from "./containers/AdminPanel/PartnerUser/PartnerUserForm
 import PartnerForm from "./containers/AdminPanel/Partner/PartnerForm/PartnerForm";
 import LayoutRoute from "./common/LayoutRoute";
 import ReportStatus from "./containers/AdminPanel/ReportStatus/ReportStatus";
-
+import Client from "./containers/Client/Client/Client";
+import Target from "./containers/RiskAssessment/Target/Target";
+import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
+import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
 
 const defaultRedirect = () => <Redirect to="/admin-dashboard" />;
 export const AdminRoutes = (
@@ -21,13 +24,29 @@ export const AdminRoutes = (
     <LayoutRoute path={routeConstants.PARTNER_FORM_ADD} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.PARTNER_FORM_EDIT + ":id"} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.ADMIN_REPORT_STATUS} exact component={ReportStatus} />
-
+    <LayoutRoute
+      path={routeConstants.RA_REPORT_LISTING}
+      exact
+      component={RaReportListing}
+    />
     <LayoutRoute
       path={routeConstants.ADMIN_DASHBOARD}
       exact
       component={AdminDashboard}
     />
     <LayoutRoute path={routeConstants.ADD_PARTNER} exact component={Partner} />
+    <LayoutRoute path={routeConstants.CLIENT} exact component={Client} />
+    <LayoutRoute path={routeConstants.TARGET} exact component={Target} />
+    <LayoutRoute
+      path={routeConstants.TASK_DETAILS}
+      exact
+      component={TaskDetails}
+    />
+    <LayoutRoute
+      path={routeConstants.REPORT_STATUS}
+      exact
+      component={ReportStatus}
+    />
     <LayoutRoute
       path={routeConstants.PARTNER_USER}
       exact

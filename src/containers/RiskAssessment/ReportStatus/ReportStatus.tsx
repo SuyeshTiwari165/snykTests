@@ -58,7 +58,7 @@ export const ReportStatus: React.FC = (props: any) => {
       var dateFormat: any = new Date(utcDate);
       var hours = dateFormat.getHours();
       var minutes = dateFormat.getMinutes();
-      var ampm = hours >= 12 ? 'pm' : 'am';
+      var ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
       minutes = minutes < 10 ? '0' + minutes : minutes;

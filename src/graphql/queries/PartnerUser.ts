@@ -10,6 +10,7 @@ query getPartnerUserDetails($partner: Int!,$userType:String) {
         clientId
         userId {
           username
+          dateJoined
           firstName
           lastName
         }
@@ -33,6 +34,7 @@ query getPartnerUserDetails {
         clientId
         userId {
           username
+          dateJoined
           firstName
           lastName
         }
@@ -56,6 +58,7 @@ query getUserDetails($userid: String!) {
         id
         firstName
         lastName
+        dateJoined
         username
         email
       }
