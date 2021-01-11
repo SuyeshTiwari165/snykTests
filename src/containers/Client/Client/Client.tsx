@@ -51,11 +51,15 @@ export const Client: React.FC = (props: any) => {
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
 
   //table
-  const column = [
+  const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Phone", field: "phone" },
-    { title: "Created on", field: "createdon" },
+    { title: "Created on", field: "createdOn" },
+  ];
+
+  const SuperUsercolumns = [
+    { title: "Company Name", field: "name" }
   ];
 
   const [isError, setIsError] = useState<any>({
@@ -82,18 +86,32 @@ export const Client: React.FC = (props: any) => {
       createTableDataObject(data.getClient.edges)
     },
     onError: (error) => {
-      logout()
+      // logout()
     }
   });
 
+  let column: any;
+  if (partner.partnerId) {
+    column = CompanyUsercolumns
+  } else {
+    column = SuperUsercolumns
+  }
 
   useEffect(() => {
-    if (partner)
+    if (partner) {
       getClients({
         variables: {
           partnerId: partner.partnerId
         },
       });
+    }
+    if (props.location.state !== null && props.location.state !== undefined && props.location.state.partner_id) {
+      getClients({
+        variables: {
+          partnerId: props.location.state.partner_id
+        },
+      });
+    }
     if (props.location.state && props.location.state !== null && props.location.state.formState) {
       setFormState(props.location.state.formState);
     }
@@ -112,6 +130,31 @@ export const Client: React.FC = (props: any) => {
     }
   }, [formState]);
 
+
+  function convertDate(inputFormat: any) {
+    function pad(s: any) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat)
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+  }
+
+  const getDateAndTime = (utcDate: any) => {
+    if (utcDate === "" || utcDate === null) {
+      return null;
+    } else {
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      console.log(convertDate(new Date(utcDate)))
+      return dateAndTime;
+    }
+  };
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
@@ -121,16 +164,12 @@ export const Client: React.FC = (props: any) => {
       obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
       obj["clientId"] = element.node.id;
       obj["partnerId"] = element.node.partnerId;
+      obj["createdOn"] = moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a");
+      console.log("element.node.createdDate", element.node.createdDate)
       arr.push(obj);
     });
-    setNewData(arr.sort(function (a: any, b: any) {
-      // var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase();
-      // if (nameA < nameB) //sort string ascending
-      return -1;
-      // if (nameA > nameB)  //sort string decending
-      //  return 1;
-      return 0; //default return value (no sorting)
-    }));
+    setNewData(arr);
   };
 
   const handleAlertClose = () => {
@@ -281,18 +320,20 @@ export const Client: React.FC = (props: any) => {
                 />
               </div> */}
           </Grid>
-          <Grid item xs={12} md={3} className={styles.FilterAddWrap}>
-            <div className={styles.FilterInput}>
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleClickOpen}
-              >
-                <AddCircleIcon className={styles.EditIcon} />
+          {partner.partnerId ?
+            <Grid item xs={12} md={3} className={styles.FilterAddWrap}>
+              <div className={styles.FilterInput}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleClickOpen}
+                >
+                  <AddCircleIcon className={styles.EditIcon} />
                   &nbsp; Client
                 </Button>
-            </div>
-          </Grid>
+              </div>
+            </Grid>
+            : null}
         </Grid>
         <Paper className={styles.paper}>
           {formState.isSuccess ? (
@@ -336,18 +377,19 @@ export const Client: React.FC = (props: any) => {
               columns={column}
               data={newData}
               actions={[
-                {
-                  icon: () => <img className={styles.EditIcon}
-                    src={
-                      process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                    }
-                    alt="edit icon"
-                  />,
-                  tooltip: "Edit",
-                  onClick: (event: any, rowData: any, oldData: any) => {
-                    onRowClick(event, rowData, oldData, "Edit");
-                  },
-                },
+                partner.partnerId ?
+                  {
+                    icon: () => <img className={styles.EditIcon}
+                      src={
+                        process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                      }
+                      alt="edit icon"
+                    />,
+                    tooltip: "Edit",
+                    onClick: (event: any, rowData: any, oldData: any) => {
+                      onRowClick(event, rowData, oldData, "Edit");
+                    },
+                  } : null,
                 {
                   icon: () => <AssessmentIcon />,
                   tooltip: "Risk Assessment",
