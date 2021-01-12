@@ -26,18 +26,26 @@ query getReportStatus($clientid:Int!,$targetid:String){
 }
 `;
 export const GET_ADMIN_REPORT_LISTING = gql`
-query getReportStatus{
+query getReportStatus {
   getReportStatus {
-    edges{
-      node{
+    edges {
+      node {
         partnerId
         clientId
-        vatTargetId{
+        vatTargetId {
           id
           targetName
           vatTargetId
+          client {
+            clientName
+            id
+          }
+          partner {
+            id
+            partnerName
+          }
         }
-        vatTaskId{
+        vatTaskId {
           id
           vatTaskId
           taskName

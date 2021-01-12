@@ -40,6 +40,8 @@ import { GET_ADMIN_REPORT_LISTING } from "../../../graphql/queries/ReportListing
 
 
 export const ReportStatus: React.FC = (props: any) => {
+  const [filterName, setFilterName] = useState("");
+  const [filters, setFilters] = useState<object>();
   const [filterTarget, setFilterTarget] = useState("");
   const [filterPartner, setFilterPartner] = useState("");
   const [filterClient, setFilterClient] = useState("");
@@ -61,6 +63,7 @@ export const ReportStatus: React.FC = (props: any) => {
       title: "Target",
       field: "target",
     },
+    { title: "Task Name", field: "taskName" },
     {
       title: "Status",
       field: "status",
@@ -119,6 +122,9 @@ export const ReportStatus: React.FC = (props: any) => {
       tempArr["target"] = targetArr[i];
       let statusVar = false;
       let targetId = 0;
+      let scanEndDate = 0;
+      let scanStartDate = 0;
+      let taskName = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           if (
@@ -128,12 +134,16 @@ export const ReportStatus: React.FC = (props: any) => {
             statusVar = true;
           }
           targetId = data[j].node.vatTargetId.id;
+          scanEndDate = data[j].node.scanEndDate;
+          scanStartDate = data[j].node.scanStartDate;
+          taskName = data[j].node.vatTaskId.taskName;
         }
       }
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
       tempArr["status"] = statusVar ? "In Progress" : "Done";
-      tempArr["scan_start_date"] = "";
-      tempArr["end_scan_date"] = "10";
+      tempArr["scan_start_date"] = scanStartDate !=0 ? scanStartDate : null;;
+      tempArr["scan_end_date"] = scanEndDate !=0 ? scanEndDate : null;
+      tempArr["taskName"] = taskName ? taskName : null;
       arr.push(tempArr);
       console.log("ARRRAY",arr);
     }
@@ -164,7 +174,7 @@ export const ReportStatus: React.FC = (props: any) => {
 
   function handleKeyDown(event: any) {
     if (event.key === "Enter") {
-      //   handleSearch();
+        handleSearch();
     }
   }
   const resetForm = () => {
@@ -174,6 +184,67 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterClient("");
     setFilterPartner("");
   };
+
+  const handleSearch = () => {
+    let searchData: any = {};
+    if (filterName) {
+      searchData["name_contains"] = filterName.toString();
+    }
+    if (
+      filterTarget !== undefined &&
+      filterTarget !== null &&
+      Object.keys(filterTarget).length !== 0
+    ) {
+      // console.log("filterCategory issue");
+      // searchData["target"] = filterTarget.label;
+    }
+    if (
+      filterPartner !== undefined &&
+      filterPartner !== null &&
+      Object.keys(filterPartner).length !== 0 &&
+      filterPartner !== null
+    ) {
+      // console.log("filterCategory issue");
+      // searchData["partner"] = filterPartner.id;
+    }
+    if (
+      filterClient !== undefined &&
+      filterClient !== null &&
+      Object.keys(filterClient).length !== 0 &&
+      filterClient !== null
+    ) {
+      // console.log("filterCategory issue");
+      // searchData["client"] = filterClient.id;
+    }
+    // if (
+    //   filterPiiData !== undefined &&
+    //   filterPiiData !== null &&
+    //   filterPiiData.length > 0
+    // ) {
+    //   let piiDataArr = [];
+    //   for (let i in filterPiiData) {
+    //     piiDataArr.push(filterPiiData[i].id);
+    //   }
+    //   searchData["pii_data_in"] = piiDataArr;
+    // }
+
+    // if (
+    //   filterCompanyType !== undefined &&
+    //   filterCompanyType !== null &&
+    //   filterCompanyType.length > 0
+    // ) {
+    //   let companyTypeArr = [];
+    //   for (let i in filterCompanyType) {
+    //     companyTypeArr.push(filterCompanyType[i].id);
+    //   }
+    //   searchData["company_type_in"] = companyTypeArr;
+    // }
+
+    console.log("searchData", searchData);
+    setFilters(searchData);
+  };
+
+  if (loadingReportListing) return <Loading />;
   return (
     <React.Fragment>
       <CssBaseline />
@@ -254,7 +325,7 @@ export const ReportStatus: React.FC = (props: any) => {
           <Button
             color="primary"
             variant="contained"
-            // onClick={handleSearch}
+            onClick={handleSearch}
           >
             Search
           </Button>
