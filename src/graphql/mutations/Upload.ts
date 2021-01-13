@@ -28,3 +28,12 @@ export const UPLOAD_VPN_FILE = gql`
     }
   }
 `;
+
+export const ZIP_FILE = gql`
+  mutation uploadZipFile($input:FileUploadInput!){
+    uploadZipFile(input:$input){
+      success
+    }
+  }
+`;
+

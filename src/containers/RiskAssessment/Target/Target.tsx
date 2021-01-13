@@ -64,9 +64,10 @@ export const Target: React.FC = (props: any) => {
   const [selectedFile, setSelectedFile] = useState(null)
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   //static values for partner and client are given.
-  const clientInfo = props.location.state.clientInfo;
-  const partnerId = parseInt(clientInfo.partnerId);
-  const clientId = parseInt(clientInfo.clientId);
+  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const partnerId = partner.partnerId;
+  const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const targetName = props["location"].state
     ? props["location"].state.targetName
       ? props["location"].state.targetName

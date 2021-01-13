@@ -11,6 +11,7 @@ query getReportStatus($clientid:Int!,$targetid:String){
           id
           targetName
           vatTargetId
+          publishedFlag
         }
         vatTaskId{
           id
@@ -36,6 +37,7 @@ query getReportStatus {
           id
           targetName
           vatTargetId
+          publishedFlag
           client {
             clientName
             id
