@@ -47,7 +47,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   // const classes = useStyles(theme);
-  const clientInfo = props.location.state.clientInfo;
+  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const targetName = JSON.parse(localStorage.getItem("name") || "{}");
   let scanConfigListItems = props.location.state
     ? props.location.state.scanConfigList
@@ -72,8 +72,9 @@ export const TaskDetails: React.FC = (props: any) => {
 
   //static values for partner and client are given.
   const tempScheduleDate = new Date().toISOString();
-  const partnerId = parseInt(clientInfo.partnerId);
-  const clientId = parseInt(clientInfo.clientId);
+  const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const partnerId = partner.partnerId;
+  const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
 
   //table
   const columns = [
@@ -160,6 +161,7 @@ export const TaskDetails: React.FC = (props: any) => {
   }, []);
 
   if (loadingScanConfig) return <Loading />;
+  console.log("getScanConfigList.length",dataScanConfig)
   if (getScanConfigList.length === 0 && dataScanConfig) {
     setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
   }
@@ -326,26 +328,26 @@ export const TaskDetails: React.FC = (props: any) => {
         <Grid item xs={12}>
           <label className={styles.HeaderLabel}>Select Scan Configuration</label>
           <Grid container spacing={3}>
-          <Grid item xs={12} className={styles.ConfigItem}>
-        {getScanConfigList.map((obj: any, i: any) => {
-          return (
-              <FormControlLabel
-                className={styles.CheckboxLabel}
-                key={obj.node.vatScanConfigId}
-                control={
-                  <Checkbox
-                    checked={scanConfig.includes(obj.node.vatScanConfigId)}
-                    onChange={handleCheckElement}
-                    name={obj.node.scanConfigName}
-                    value={obj.node.vatScanConfigId}
+            <Grid item xs={12} className={styles.ConfigItem}>
+              {getScanConfigList.map((obj: any, i: any) => {
+                return (
+                  <FormControlLabel
+                    className={styles.CheckboxLabel}
+                    key={obj.node.vatScanConfigId}
+                    control={
+                      <Checkbox
+                        checked={scanConfig.includes(obj.node.vatScanConfigId)}
+                        onChange={handleCheckElement}
+                        name={obj.node.scanConfigName}
+                        value={obj.node.vatScanConfigId}
+                      />
+                    }
+                    label={obj.node.scanConfigName}
                   />
-                }
-                label={obj.node.scanConfigName}
-              />
-          );
-        })}
+                );
+              })}
 
-          </Grid>
+            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={1} className={styles.backToListButton}>

@@ -49,7 +49,11 @@ export const Client: React.FC = (props: any) => {
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  let userRole: any;
+  if (user) {
+    userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
+  }
   //table
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
@@ -87,6 +91,7 @@ export const Client: React.FC = (props: any) => {
     },
     onError: (error) => {
       // logout()
+      history.push(routeConstant.DASHBOARD);
     }
   });
 
@@ -98,7 +103,7 @@ export const Client: React.FC = (props: any) => {
   }
 
   useEffect(() => {
-    if (partner) {
+    if (partner !== '{}') {
       getClients({
         variables: {
           partnerId: partner.partnerId
@@ -109,6 +114,13 @@ export const Client: React.FC = (props: any) => {
       getClients({
         variables: {
           partnerId: props.location.state.partner_id
+        },
+      });
+    }
+    if (props.location.state && props.location.state.clientInfo) {
+      getClients({
+        variables: {
+          partnerId: props.location.state.clientInfo.partnerId
         },
       });
     }
@@ -130,6 +142,7 @@ export const Client: React.FC = (props: any) => {
     }
   }, [formState]);
 
+  console.log("props", props)
 
   function convertDate(inputFormat: any) {
     function pad(s: any) { return (s < 10) ? '0' + s : s; }
@@ -166,7 +179,6 @@ export const Client: React.FC = (props: any) => {
       obj["partnerId"] = element.node.partnerId;
       obj["createdOn"] = moment(element.node.createdDate).format(
         "MM/DD/YYYY hh:mm a");
-      console.log("element.node.createdDate", element.node.createdDate)
       arr.push(obj);
     });
     setNewData(arr);
@@ -309,16 +321,29 @@ export const Client: React.FC = (props: any) => {
       </Typography>
       <Grid>
         <Grid container>
-          <Grid item xs={12} md={9} className={styles.FilterWrap}>
-            {/* <div className={styles.FilterInput}>
-                <Input
-                  label="Name"
-                  name="filterName"
-                  id="combo-box-demo"
-                  // value={filterName}
-                  // onChange={nameFilter}
-                />
-              </div> */}
+          <Grid item xs={12} md={4} className={styles.backToListButton}>
+            <div className={styles.ButtonGroup1}>
+              <div className={styles.FilterInputgotolist}>
+                {userRole === "SuperUser" ? (
+                  <Button
+                    className={styles.BackToButton}
+                    variant={"contained"}
+                    onClick={() => {
+                      history.push(routeConstant.ADD_PARTNER);
+                    }}
+                    color="secondary"
+                    data-testid="cancel-button"
+                  >
+                    <img
+                      src={
+                        process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
+                      } alt="user icon"
+                    />
+                    &nbsp; Back to List
+                  </Button>
+                ) : null}
+              </div>
+            </div>
           </Grid>
           {partner.partnerId ?
             <Grid item xs={12} md={3} className={styles.FilterAddWrap}>

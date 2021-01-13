@@ -15,6 +15,17 @@
   align-items: flex-end;
   justify-content: flex-end;
 }
+label{
+  display: inline-block;
+  background-color: #0051a8;
+  font-size: small;
+  color: white;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
 .FilterInput {
   width: 250px;
   margin-right: 10px;
@@ -98,4 +109,84 @@ tfoot {
 .EditIcon {
   height: 18px !important;
   width: 18px !important;
+}
+/*Switch*/
+
+.PiiDataSwitch, .PiiDataSwitchCheck {
+  width: 100px !important;
+  padding: 4px !important;
+  border: 1px solid #0051a8;
+  border-radius: 20px;
+  z-index: 2 !important;
+  height: 39px !important;
+}
+
+.PiiDataSwitch>span, .PiiDataSwitchCheck>span {
+  padding: 4px;
+}
+
+.PiiDataSwitch>span {
+  transform: translateX(40px) !important;
+}
+
+.PiiDataSwitch>span+span, .PiiDataSwitchCheck>span+span {
+  border-radius: 20px;
+  background-color: transparent !important;
+}
+
+.PiiDataSwitch>span>span>span, .PiiDataSwitchCheck>span>span>span {
+  width: 48px;
+  background-color: #0051a8;
+  height: 28px;
+  border-radius: 25px;
+}
+
+.PiiDataSwitchLabels {
+  position: absolute;
+  width: 116px;
+  left: 0;
+  top: 0;
+}
+
+.pgswitch {
+  position: relative;
+  margin: 7px 0px;
+}
+
+.PiiDataSwitchLabels>span {
+  width: 48px;
+  justify-content: center;
+  font-weight: 500;
+  display: inline-flex;
+  padding: 12px 0px;
+}
+
+.PiiDataSwitchCheck+span .PiiDataSwitchNo, .PiiDataSwitch+span .PiiDataSwitchYes {
+  color: #fff;
+}
+
+.PiiDataSwitchCheck+span .PiiDataSwitchYes, .PiiDataSwitch+span .PiiDataSwitchNo {
+  color: #0051a8;
+}
+
+.PiiDataSwitchCheck>span>span>span::before {
+  content: "No";
+  color: #fff !important;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  padding: 6px 0px;
+  justify-content: center;
+}
+
+.PiiDataSwitch>span>span>span::before {
+  content: "YES";
+  color: #fff !important;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  padding: 5px 0px;
+  justify-content: center;
 }
