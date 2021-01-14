@@ -1,40 +1,19 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ReportStatus.module.css";
 import Grid from "@material-ui/core/Grid";
-import { Typography, FormHelperText } from "@material-ui/core";
+import { Typography} from "@material-ui/core";
 import { Button } from "../../../components/UI/Form/Button/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { AddEditForm } from "../../../components/UI/AddEditForm/AddEditForm";
 import Input from "../../../components/UI/Form/Input/Input";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import Alert from "../../../components/UI/Alert/Alert";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import {
   useQuery,
-  useMutation,
-  FetchResult,
   useLazyQuery,
 } from "@apollo/client";
 import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
-import * as validations from "../../../common/validateRegex";
 import logout from "../../Auth/Logout/Logout";
-import { useHistory } from "react-router-dom";
-import * as routeConstant from "../../../common/RouteConstants";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import {
-  SUCCESS,
-  UPDATE,
-  DELETE,
-  FAILED,
-  ALERT_MESSAGE_TIMER,
-} from "../../../common/MessageConstants";
 import TextField from "@material-ui/core/TextField";
 import { GET_ADMIN_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
 import moment from "moment";
@@ -171,28 +150,6 @@ export const ReportStatus: React.FC = (props: any) => {
       }
     });
 
-  // const {
-  //   data: targetData,
-  //   error: targetError,
-  //   loading: targetLoading,
-  //   refetch: refetchTargetData,
-  // } = useQuery(GET_TARGET_ADMIN, {
-  //   onCompleted: (data) => {
-  //     if (data.getTarget.edges != null || data.getTarget.edges != undefined) {
-  //       let arr: any = [];
-  //       data.getTarget.edges.map((element: any, index: any) => {
-  //         let obj: any = {};
-  //         obj["name"] = element.node.targetName;
-  //         obj["targetid"] = element.node.vatTargetId;
-  //         arr.push(obj);
-  //       });
-  //       setTargetNameList(arr);
-  //     }
-  //   },
-  //   notifyOnNetworkStatusChange: true,
-  //   fetchPolicy: "cache-and-network",
-  // });
-
   useEffect(() => {
     getReportList();
   }, []);
@@ -224,18 +181,12 @@ export const ReportStatus: React.FC = (props: any) => {
       );
       setNewData(temp);
     }
-    if (props.location.state) {
-      if (props.location.state.refetchData) {
-        // refetchReportListing();
-      }
-    }
   }, [dataReportListing]);
 
   function convertTargetArray(data: any) {
     const targetObj = new Set(
       data.map((x: any) => x.node.vatTargetId.targetName)
     );
-    // let array = [...targetObj];
     let array: any = [];
     targetObj.forEach((v) => array.push(v));
     return array;
@@ -290,19 +241,12 @@ export const ReportStatus: React.FC = (props: any) => {
   }
   };
   const startDateFilter = (event: any) => {
-    // console.log("STARTDATe",moment(event.target.value).format(
-    //   "YYYY-MM-DDTHH:mm:ss+00"
-    // ));
     setStartDate(event.target.value);
-    // YYYY-MM-DDTHH:mm
   };
   const endDateFilter = (event: any) => {
-    // console.log("enddate",moment(event.target.value).format(
-    //   "YYYY-MM-DDT24:60:99+99"
-    // ));
     setEndDate(event.target.value);
   };
-  const getStatusList = [{ name: "Done" }, { name: "In-Progress" }];
+  const getStatusList = [{ name: "Done" }, { name: "In Progress" }];
   const getStatus = {
     options: getStatusList,
     getOptionLabel: (option: { name: String }) => option.name,
@@ -424,22 +368,10 @@ export const ReportStatus: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      {/* <main className={styles.layout}> */}
       <Typography component="h5" variant="h1">
         Report Status
       </Typography>
       <Grid className={styles.FilterWrap}>
-        {/* <div className={styles.FilterInput}>
-          <Input
-            label="Partner Name"
-            name="partnerName"
-            id="partnerName"
-            value={filterPartner}
-            onChange={partnerFilter}
-            onKeyDown={handleKeyDown}
-          />
-        </div> */}
-
         <div className={styles.FilterInput}>
           <AutoCompleteDropDown
             {...getPartnerName}
@@ -473,18 +405,6 @@ export const ReportStatus: React.FC = (props: any) => {
             )}
           />
         </div>
-        {/*             
-        <div className={styles.FilterInput}>
-          <Input
-            label="Target"
-            name="filterName"
-            id="combo-box-demo"
-            value={filterTarget}
-            onChange={targetFilter}
-            onKeyDown={handleKeyDown}
-          />
-        </div> */}
-
         <div className={styles.FilterInput}>
           <AutoCompleteDropDown
             {...getTargetName}
@@ -524,7 +444,6 @@ export const ReportStatus: React.FC = (props: any) => {
             type="date"
             value={startDate}
             onChange={startDateFilter}
-            // defaultValue="2021-01-08"
             InputLabelProps={{
               shrink: true,
             }}
@@ -537,7 +456,6 @@ export const ReportStatus: React.FC = (props: any) => {
             type="date"
             value={endDate}
             onChange={endDateFilter}
-            // defaultValue="2021-01-09"
             InputLabelProps={{
               shrink: true,
             }}
@@ -559,28 +477,6 @@ export const ReportStatus: React.FC = (props: any) => {
           title={title}
           columns={columns}
           data={newData}
-          // actions={[
-          //   // {
-          //   //   icon: () => (
-          //   //     <img
-          //   //       className={styles.EditIcon}
-          //   //       src={process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"}
-          //   //       alt="edit icon"
-          //   //     />
-          //   //   ),
-          //   //   tooltip: "Edit",
-          //   //   onClick: (event: any, rowData: any) => {
-          //   //     // handleClickOpen(rowData);
-          //   //   },
-          //   // },
-          // ]}
-          // editable={{
-          //   onRowDelete: (oldData: any) =>
-          //     new Promise((resolve: any) => {
-          //       resolve();
-          //       // deleteTableRow(oldData);
-          //     }),
-          // }}
           options={{
             thirdSortClick: false,
             actionsColumnIndex: -1,
