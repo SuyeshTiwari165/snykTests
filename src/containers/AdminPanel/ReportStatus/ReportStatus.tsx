@@ -37,16 +37,40 @@ import {
 } from "../../../common/MessageConstants";
 import TextField from "@material-ui/core/TextField";
 import { GET_ADMIN_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
+import moment from "moment";
+import { GET_PARTNER } from "../../../graphql/queries/Partners";
+import { GET_CLIENTS } from "../../../graphql/queries/Client";
+import { GET_TARGET_ADMIN } from "../../../graphql/queries/Target";
 
+interface Partners {
+  id: number;
+  name: string;
+}
 
 export const ReportStatus: React.FC = (props: any) => {
   const [filterName, setFilterName] = useState("");
   const [filters, setFilters] = useState<object>();
-  const [filterTarget, setFilterTarget] = useState("");
-  const [filterPartner, setFilterPartner] = useState("");
-  const [filterClient, setFilterClient] = useState("");
+  const [filterTarget, setFilterTarget] = useState<any>("");
+  const [filterPartner, setFilterPartner] = useState<any>([
+    {
+      partner_id: "",
+      name: "",
+    },
+  ]);
+  const [filterClient, setFilterClient] = useState<any>([
+    {
+      clientName: "",
+      clientid: null,
+    },
+  ]);
   const [filterStatus, setFilterStatus] = useState<any | null>();
   const [reset, setReset] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<any>();
+  const [endDate, setEndDate] = useState<any>();
+  const [getPartnerNameList, setPartnerNameList] = useState([]);
+  const [getClientNameList, setClientNameList] = useState([]);
+  const [getTargetNameList, setTargetNameList] = useState([]);
+
   const title = "Listing of Reports ";
   const [newData, setNewData] = useState();
 
@@ -57,7 +81,7 @@ export const ReportStatus: React.FC = (props: any) => {
     },
     {
       title: "Client Name",
-      field: "clientmame",
+      field: "clientname",
     },
     {
       title: "Target",
@@ -71,18 +95,121 @@ export const ReportStatus: React.FC = (props: any) => {
     {
       title: "Scan Start Date ",
       field: "scan_start_date ",
-      //   sorting: false
     },
     { title: "Scan End Date", field: "scan_end_date" },
-    // { title: "Workplan Description", field: "workplan_content" },
   ];
-  const {
-    data: dataReportListing,
-    error: errorReportListing,
-    loading: loadingReportListing,
-    refetch: refetchReportListing,
-  } = useQuery(GET_ADMIN_REPORT_LISTING, {
+
+  const [
+    getReportList,
+    { data: dataReportListing, loading: loadingReportListing },
+  ] = useLazyQuery(GET_ADMIN_REPORT_LISTING, {
+    fetchPolicy: "cache-and-network",
+    onError: () => {
+      // logout();
+    },
+    onCompleted: () => {},
   });
+  const { data: Org, loading: loadOrg, refetch: refetchOrg } = useQuery(
+    GET_PARTNER,
+    {
+      onCompleted: (data: any) => {
+        if (Org.getPartner.edges != null || Org.getPartner.edges != undefined) {
+          let arr: any = [];
+          Org.getPartner.edges.map((element: any, index: any) => {
+            let obj: any = {};
+            obj["partner_id"] = element.node.id;
+            obj["name"] = element.node.partnerName;
+            arr.push(obj);
+          });
+          setPartnerNameList(arr);
+        }
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
+
+  const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
+    GET_CLIENTS,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) => {
+        if (
+          data.getClient.edges != null ||
+          ipData.getClient.edges != undefined
+        ) {
+          let arr: any = [];
+          ipData.getClient.edges.map((element: any, index: any) => {
+            let obj: any = {};
+            obj["name"] = element.node.clientName;
+            obj["clientid"] = element.node.id;
+            arr.push(obj);
+          });
+          setClientNameList(arr);
+        }
+      },
+      onError: (error) => {
+        // logout()
+      },
+    }
+  );
+
+  const [getTargets, { data: targetData, loading: targetLoading }] = useLazyQuery(
+    GET_TARGET_ADMIN,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) => {
+        if (data.getTarget.edges != null || data.getTarget.edges != undefined) {
+          let arr: any = [];
+          data.getTarget.edges.map((element: any, index: any) => {
+            let obj: any = {};
+            obj["name"] = element.node.targetName;
+            obj["targetid"] = element.node.vatTargetId;
+            arr.push(obj);
+          });
+          setTargetNameList(arr);
+        }
+      }
+    });
+
+  // const {
+  //   data: targetData,
+  //   error: targetError,
+  //   loading: targetLoading,
+  //   refetch: refetchTargetData,
+  // } = useQuery(GET_TARGET_ADMIN, {
+  //   onCompleted: (data) => {
+  //     if (data.getTarget.edges != null || data.getTarget.edges != undefined) {
+  //       let arr: any = [];
+  //       data.getTarget.edges.map((element: any, index: any) => {
+  //         let obj: any = {};
+  //         obj["name"] = element.node.targetName;
+  //         obj["targetid"] = element.node.vatTargetId;
+  //         arr.push(obj);
+  //       });
+  //       setTargetNameList(arr);
+  //     }
+  //   },
+  //   notifyOnNetworkStatusChange: true,
+  //   fetchPolicy: "cache-and-network",
+  // });
+
+  useEffect(() => {
+    getReportList();
+  }, []);
+
+  useEffect(() => {
+    getReportList({
+      variables: {
+        targetid: filterTarget ? filterTarget.name : null,
+        status: filterStatus ? filterStatus.name : null,
+        partnername: filterPartner ? filterPartner.name : null,
+        clientname: filterClient ? filterClient.name : null,
+        scanEndDate: endDate ? moment(endDate).format("YYYY-MM-DDT23:00:00") : null,
+        scanStartDate :startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null,
+      },
+    });
+
+  }, [filters]);
 
   useEffect(() => {
     if (dataReportListing) {
@@ -99,7 +226,7 @@ export const ReportStatus: React.FC = (props: any) => {
     }
     if (props.location.state) {
       if (props.location.state.refetchData) {
-        refetchReportListing();
+        // refetchReportListing();
       }
     }
   }, [dataReportListing]);
@@ -115,16 +242,17 @@ export const ReportStatus: React.FC = (props: any) => {
   }
 
   function convertTableData(data: any, targetArr: any) {
-      console.log("DATA",data);
     let arr: any = [];
     for (let i in targetArr) {
       let tempArr: any = {};
       tempArr["target"] = targetArr[i];
       let statusVar = false;
       let targetId = 0;
-      let scanEndDate = 0;
-      let scanStartDate = 0;
+      let scanEndDate = "";
+      let scanStartDate = "";
       let taskName = "";
+      let clientname = "";
+      let partnername = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           if (
@@ -134,33 +262,68 @@ export const ReportStatus: React.FC = (props: any) => {
             statusVar = true;
           }
           targetId = data[j].node.vatTargetId.id;
-          scanEndDate = data[j].node.scanEndDate;
-          scanStartDate = data[j].node.scanStartDate;
+          scanEndDate = !data[j].node.scanStartDate
+            ? "-"
+            : moment(data[j].node.scanEndDate).format("MM/DD/YYYY hh:mm a");
+          scanStartDate = !data[j].node.scanStartDate
+            ? "-"
+            : moment(data[j].node.scanStartDate).format("MM/DD/YYYY hh:mm a");
           taskName = data[j].node.vatTaskId.taskName;
+          clientname = data[j].node.vatTargetId.client.clientName;
+          partnername = data[j].node.vatTargetId.partner.partnerName;
         }
       }
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
       tempArr["status"] = statusVar ? "In Progress" : "Done";
-      tempArr["scan_start_date"] = scanStartDate !=0 ? scanStartDate : null;;
-      tempArr["scan_end_date"] = scanEndDate !=0 ? scanEndDate : null;
+      tempArr["scan_start_date"] = scanStartDate;
+      tempArr["scan_end_date"] = scanEndDate;
       tempArr["taskName"] = taskName ? taskName : null;
+      tempArr["partnername"] = partnername ? partnername : null;
+      tempArr["clientname"] = clientname ? clientname : null;
       arr.push(tempArr);
-      console.log("ARRRAY",arr);
     }
     return arr;
   }
 
-
-  const targetFilter = (event: any) => {
-    setFilterTarget(event.target.value);
+  const targetFilter = (event: any, newValue: any) => {
+    setFilterTarget(newValue);
   };
-  const clientFilter = (event: any) => {
-    setFilterClient(event.target.value);
+  const clientFilter = (event: any, newValue: any) => {
+    setReset(false);
+    setFilterClient(newValue);
+    if(newValue != null && newValue.name && filterPartner != null && filterPartner.name ) {
+    getTargets({
+      variables: {
+        clientName : newValue.name,
+        partnerName :filterPartner.name
+      },
+    })
+  }
+}
+  const partnerFilter = (event: any, newValue: any) => {
+    setReset(false);
+    setFilterPartner(newValue);
+    if(newValue != null && newValue.partner_id ) {
+    getClients({
+      variables: {
+        partnerId: newValue.partner_id,
+      },
+    });
+  }
   };
-  const partnerFilter = (event: any) => {
-    setFilterPartner(event.target.value);
+  const startDateFilter = (event: any) => {
+    // console.log("STARTDATe",moment(event.target.value).format(
+    //   "YYYY-MM-DDTHH:mm:ss+00"
+    // ));
+    setStartDate(event.target.value);
+    // YYYY-MM-DDTHH:mm
   };
-
+  const endDateFilter = (event: any) => {
+    // console.log("enddate",moment(event.target.value).format(
+    //   "YYYY-MM-DDT24:60:99+99"
+    // ));
+    setEndDate(event.target.value);
+  };
   const getStatusList = [{ name: "Done" }, { name: "In-Progress" }];
   const getStatus = {
     options: getStatusList,
@@ -174,7 +337,7 @@ export const ReportStatus: React.FC = (props: any) => {
 
   function handleKeyDown(event: any) {
     if (event.key === "Enter") {
-        handleSearch();
+      handleSearch();
     }
   }
   const resetForm = () => {
@@ -183,6 +346,8 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterTarget("");
     setFilterClient("");
     setFilterPartner("");
+    setStartDate("");
+    setEndDate("");
   };
 
   const handleSearch = () => {
@@ -196,7 +361,7 @@ export const ReportStatus: React.FC = (props: any) => {
       Object.keys(filterTarget).length !== 0
     ) {
       // console.log("filterCategory issue");
-      // searchData["target"] = filterTarget.label;
+      searchData["target"] = filterTarget;
     }
     if (
       filterPartner !== undefined &&
@@ -204,8 +369,7 @@ export const ReportStatus: React.FC = (props: any) => {
       Object.keys(filterPartner).length !== 0 &&
       filterPartner !== null
     ) {
-      // console.log("filterCategory issue");
-      // searchData["partner"] = filterPartner.id;
+      searchData["partner"] = filterPartner;
     }
     if (
       filterClient !== undefined &&
@@ -214,19 +378,37 @@ export const ReportStatus: React.FC = (props: any) => {
       filterClient !== null
     ) {
       // console.log("filterCategory issue");
-      // searchData["client"] = filterClient.id;
+      searchData["client"] = filterClient;
     }
-    // if (
-    //   filterPiiData !== undefined &&
-    //   filterPiiData !== null &&
-    //   filterPiiData.length > 0
-    // ) {
-    //   let piiDataArr = [];
-    //   for (let i in filterPiiData) {
-    //     piiDataArr.push(filterPiiData[i].id);
-    //   }
-    //   searchData["pii_data_in"] = piiDataArr;
-    // }
+    if (
+      filterStatus !== undefined &&
+      filterStatus !== null
+      // filterStatus.length > 0
+    ) {
+      let reportStatusArr = [];
+      for (let i in filterStatus) {
+        reportStatusArr.push(filterStatus[i]);
+      }
+      searchData["report_status_in"] = reportStatusArr;
+    }
+    if (
+      startDate !== undefined &&
+      startDate !== null &&
+      Object.keys(startDate).length !== 0 &&
+      startDate !== null
+    ) {
+      // console.log("filterCategory issue");
+      searchData["startDate"] = startDate;
+    }
+    if (
+      endDate !== undefined &&
+      endDate !== null &&
+      Object.keys(endDate).length !== 0 &&
+      endDate !== null
+    ) {
+      // console.log("filterCategory issue");
+      searchData["endDate"] = endDate;
+    }
 
     // if (
     //   filterCompanyType !== undefined &&
@@ -240,10 +422,25 @@ export const ReportStatus: React.FC = (props: any) => {
     //   searchData["company_type_in"] = companyTypeArr;
     // }
 
-    console.log("searchData", searchData);
+    // console.log("searchData", searchData);
+
     setFilters(searchData);
+    // console.log(filters)
+    // refetchReportListing();
   };
 
+  const getPartnerName = {
+    options: getPartnerNameList,
+    getOptionLabel: (option: { name: String }) => option.name,
+  };
+  const getClientName = {
+    options: getClientNameList,
+    getOptionLabel: (option: { name: String }) => option.name,
+  };
+  const getTargetName = {
+    options: getTargetNameList,
+    getOptionLabel: (option: { name: String }) => option.name,
+  };
   if (loadingReportListing) return <Loading />;
   return (
     <React.Fragment>
@@ -253,7 +450,7 @@ export const ReportStatus: React.FC = (props: any) => {
         Report Status
       </Typography>
       <Grid className={styles.FilterWrap}>
-        <div className={styles.FilterInput}>
+        {/* <div className={styles.FilterInput}>
           <Input
             label="Partner Name"
             name="partnerName"
@@ -262,17 +459,42 @@ export const ReportStatus: React.FC = (props: any) => {
             onChange={partnerFilter}
             onKeyDown={handleKeyDown}
           />
-        </div>
+        </div> */}
+
         <div className={styles.FilterInput}>
-          <Input
-            label="Client Name"
-            name="clientName"
-            id="clientName"
-            value={filterClient}
-            onChange={clientFilter}
-            onKeyDown={handleKeyDown}
+          <AutoCompleteDropDown
+            {...getPartnerName}
+            id="partnerName"
+            value={reset ? null : filterPartner ? filterPartner : null}
+            onChange={partnerFilter}
+            renderInput={(params: any) => (
+              <Input
+                {...params}
+                id="PartnerFilter"
+                label="Partner"
+                onKeyDown={handleKeyDown}
+              />
+            )}
           />
         </div>
+
+        <div className={styles.FilterInput}>
+          <AutoCompleteDropDown
+            {...getClientName}
+            id="clientName"
+            value={reset ? null : filterClient != null ? filterClient : null}
+            onChange={clientFilter}
+            renderInput={(params: any) => (
+              <Input
+                {...params}
+                id="ClientFilter"
+                label="Client"
+                onKeyDown={handleKeyDown}
+              />
+            )}
+          />
+        </div>
+        {/*             
         <div className={styles.FilterInput}>
           <Input
             label="Target"
@@ -281,6 +503,23 @@ export const ReportStatus: React.FC = (props: any) => {
             value={filterTarget}
             onChange={targetFilter}
             onKeyDown={handleKeyDown}
+          />
+        </div> */}
+
+        <div className={styles.FilterInput}>
+          <AutoCompleteDropDown
+            {...getTargetName}
+            id="clientName"
+            value={reset ? null : filterTarget != null ? filterTarget : null}
+            onChange={targetFilter}
+            renderInput={(params: any) => (
+              <Input
+                {...params}
+                id="filterTarget"
+                label="Target"
+                onKeyDown={handleKeyDown}
+              />
+            )}
           />
         </div>
         <div className={styles.FilterInput}>
@@ -304,7 +543,9 @@ export const ReportStatus: React.FC = (props: any) => {
             id="startDate"
             label="Scan Start Date"
             type="date"
-            defaultValue="2021-01-08"
+            value={startDate}
+            onChange={startDateFilter}
+            // defaultValue="2021-01-08"
             InputLabelProps={{
               shrink: true,
             }}
@@ -315,27 +556,21 @@ export const ReportStatus: React.FC = (props: any) => {
             id="endDate"
             label="Scan End Date"
             type="date"
-            defaultValue="2021-01-09"
+            value={endDate}
+            onChange={endDateFilter}
+            // defaultValue="2021-01-09"
             InputLabelProps={{
               shrink: true,
             }}
           />
         </div>
         <div className={styles.FilterSearchButton}>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleSearch}
-          >
+          <Button color="primary" variant="contained" onClick={handleSearch}>
             Search
           </Button>
         </div>
         <div className={styles.FilterResetButton}>
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={resetForm}
-          >
+          <Button color="secondary" variant="contained" onClick={resetForm}>
             reset
           </Button>
         </div>

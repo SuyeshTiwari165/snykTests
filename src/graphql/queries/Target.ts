@@ -29,3 +29,15 @@ query getTarget($targetName: String, $host: String) {
   }
 }
 `;
+export const GET_TARGET_ADMIN = gql `
+query getTarget ($partnerName : String,$clientName : String ) {
+  getTarget(partner_PartnerName:$partnerName,client_ClientName : $clientName){
+    edges{
+      node{
+        vatTargetId
+        targetName
+      }
+    }
+  }
+}
+`

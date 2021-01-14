@@ -27,12 +27,11 @@ query getReportStatus($clientid:Int!,$targetid:String){
 }
 `;
 export const GET_ADMIN_REPORT_LISTING = gql`
-query getReportStatus {
-  getReportStatus {
+query getReportStatus($partnername:String,$clientname:String,$targetid:String,$status:String,$scanStartDate:DateTime,$scanEndDate:DateTime){
+  getReportStatus(partnerId_PartnerName:$partnername,clientId_ClientName:$clientname,vatTargetId_TargetName:$targetid,scanRunStatus:$status,scanStartDate_Gte:$scanStartDate,scanEndDate_Lte:$scanEndDate){
     edges {
       node {
-        partnerId
-        clientId
+
         vatTargetId {
           id
           targetName
