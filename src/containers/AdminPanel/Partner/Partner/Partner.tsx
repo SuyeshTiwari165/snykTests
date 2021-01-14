@@ -79,6 +79,19 @@ export const Partner: React.FC = (props: any) => {
       setFormState(props.location.state.formState);
     }
   }, []);
+  
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function() {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
 
   function convertDate(inputFormat: any) {
     function pad(s: any) { return (s < 10) ? '0' + s : s; }
