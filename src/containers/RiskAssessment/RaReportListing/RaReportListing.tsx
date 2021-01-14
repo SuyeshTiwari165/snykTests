@@ -109,6 +109,18 @@ export const RaReportListing: React.FC = (props: any) => {
       );
       setNewData(temp);
     }
+    if (partner.partnerId) {
+      getReportListingData({
+        variables: {
+          clientname: propsClientName,
+          status: "Done"
+        }
+      })
+      if (props.location.state.refetchData) {
+        // getReportListingData()
+        // refetchReportListing();
+      }
+    }
     if (props.location.state) {
       getReportListingData({
         variables: {
@@ -150,11 +162,12 @@ export const RaReportListing: React.FC = (props: any) => {
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          if (
-            data[j].node.scanRunStatus !== "Done" ||
-            data[j].node.scanRunStatus === "In Progress"
-          ) {
-            statusVar = true;
+          console.log("data[j].node.vatTargetId", data[j].node.vatTargetId.publishedFlag)
+          if (data[j].node.vatTargetId.publishedFlag == "Published") {
+            tempArr["status"] = "Published";
+          }
+          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
+            tempArr["status"] = "Unpublished";
           }
           targetId = data[j].node.vatTargetId.id;
         }
@@ -164,7 +177,6 @@ export const RaReportListing: React.FC = (props: any) => {
       }
       tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
-      tempArr["status"] = statusVar ? "In Progress" : "Done";
       arr.push(tempArr);
     }
     return arr;
@@ -495,7 +507,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 : null,
               partner.partnerId
                 ? (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
+                  // disabled: rowData.status !== "Done",
                   icon: () => <SyncIcon />,
                   tooltip: "Re-run",
                   onClick: (event: any, rowData: any) => {
@@ -506,7 +518,7 @@ export const RaReportListing: React.FC = (props: any) => {
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
+                  // disabled: rowData.status !== "Done",
                   icon: () => <GetAppIcon />,
                   tooltip: "Download",
                   onClick: (event: any, rowData: any) => {
@@ -516,7 +528,7 @@ export const RaReportListing: React.FC = (props: any) => {
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
+                  // disabled: rowData.status !== "Done",
                   icon: () => (
                     <div>
                       <input
@@ -541,7 +553,7 @@ export const RaReportListing: React.FC = (props: any) => {
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
+                  // disabled: rowData.status !== "Done",
                   icon: () => <PublishIcon />,
                   tooltip: "Upload",
                   name: "file",
@@ -553,7 +565,7 @@ export const RaReportListing: React.FC = (props: any) => {
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
+                  // disabled: rowData.status !== "Done",
                   icon: () => (
                     <div>
                       <div>
