@@ -93,6 +93,10 @@ export const RaReportListing: React.FC = (props: any) => {
         dataReportListing.getReportStatus.edges,
         distinctTargetArray
       );
+
+      setPublished(getPublishDataList(dataReportListing.getReportStatus.edges, distinctTargetArray));
+      console.log("getPublishDataList",
+        getPublishDataList(dataReportListing.getReportStatus.edges, distinctTargetArray));
       setNewData(temp);
     }
     if (props.location.state) {
@@ -126,7 +130,7 @@ export const RaReportListing: React.FC = (props: any) => {
       tempArr["target"] = targetArr[i];
       let statusVar = false;
       let targetId = 0;
-      let publishFlag = false;
+      let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           if (
@@ -141,19 +145,54 @@ export const RaReportListing: React.FC = (props: any) => {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
         }
       }
-      tempArr["publish"] = publishFlag;
+      tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
       tempArr["status"] = statusVar ? "In Progress" : "Done";
       arr.push(tempArr);
     }
     return arr;
   }
+
+  function getPublishDataList(data: any, targetArr: any) {
+    let arr: any = [];
+    let tempArr: any = {};
+    for (let i in targetArr) {
+
+      let targetId = 0;
+      let statusVar = false;
+      // tempArr["target"] = targetArr[i];
+      let publishFlag = "";
+      for (let j in data) {
+        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+          if (
+            data[j].node.scanRunStatus !== "Done" ||
+            data[j].node.scanRunStatus === "In Progress"
+          ) {
+            statusVar = true;
+          }
+          targetId = data[j].node.vatTargetId.id;
+        }
+        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+          publishFlag = data[j].node.vatTargetId.publishedFlag;
+        }
+
+      }
+
+      // tempArr["targetId"] = targetId !== 0 ? targetId : null;
+      tempArr[targetId] = publishFlag == "Unpublished" ? false : true;
+
+      arr.push(tempArr);
+    }
+    return tempArr;
+  };
+
   const handleClickView = (rowData: any) => {
     history.push({
       pathname: routeConstant.REPORT_STATUS,
       state: { targetName: rowData.target, clientInfo: clientInfo },
     });
   };
+  
   const handleClickOpen = (rowData: any) => {
     history.push({
       pathname: routeConstant.TARGET,
