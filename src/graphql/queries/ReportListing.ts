@@ -1,8 +1,16 @@
 import { gql } from "@apollo/client";
 
 export const GET_REPORT_LISTING = gql`
-  query getReportStatus($clientid: ID!, $targetid: String) {
-    getReportStatus(clientId: $clientid, vatTargetId_TargetName: $targetid) {
+  query getReportStatus(
+    $clientname: String!
+    $targetid: String
+    $status: String
+    ) {
+    getReportStatus(
+      clientId_ClientName: $clientname, 
+      vatTargetId_TargetName: $targetid, 
+      scanRunStatus: $status
+    ) {
       edges {
         node {
           vatTargetId {

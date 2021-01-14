@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { Button } from "../../../components/UI/Form/Button/Button";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { Grid } from "@material-ui/core";
 import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
 import SyncIcon from "@material-ui/icons/Sync";
@@ -56,6 +56,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
   //static values
+  const propsClientName = props.location.state ? props.location.state.clientInfo.name : undefined;
   const propsClientId = props.location.state
     ? parseInt(props.location.state.clientInfo.clientId)
     : undefined;
@@ -69,18 +70,14 @@ export const RaReportListing: React.FC = (props: any) => {
     isDelete: false,
     errMessage: ""
   });
+  console.log("props.location.state", props.location.state)
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   //filter query condition declaration
-  const {
+  const [getReportListingData, {
     data: dataReportListing,
-    error: errorReportListing,
     loading: loadingReportListing,
     refetch: refetchReportListing
-  } = useQuery(GET_REPORT_LISTING, {
-    variables: {
-      clientid: propsClientId
-    }
-  });
+  }] = useLazyQuery(GET_REPORT_LISTING);
 
   const [uploadFile] = useMutation(ZIP_FILE);
   const [publishReport] = useMutation(PUBLISH_REPORT);
@@ -113,19 +110,26 @@ export const RaReportListing: React.FC = (props: any) => {
       setNewData(temp);
     }
     if (props.location.state) {
+      getReportListingData({
+        variables: {
+          clientname: propsClientName,
+          status: "Done"
+        }
+      })
       if (props.location.state.refetchData) {
-        refetchReportListing();
+        // getReportListingData()
+        // refetchReportListing();
       }
     }
   }, [dataReportListing]);
 
   //for task data
   if (loadingReportListing) return <Loading />;
-  if (errorReportListing) {
-    // history.push({
-    //   pathname: routeConstant.DASHBOARD,
-    // });
-  }
+  // if (errorReportListing) {
+  // history.push({
+  //   pathname: routeConstant.DASHBOARD,
+  // });
+  // }
   function convertTargetArray(data: any) {
     const targetObj = new Set(
       data.map((x: any) => x.node.vatTargetId.targetName)
@@ -240,10 +244,10 @@ export const RaReportListing: React.FC = (props: any) => {
     console.log("reader", file);
     if (file) {
       reader.readAsDataURL(file);
-      reader.onload = function() {
+      reader.onload = function () {
         cb(reader.result);
       };
-      reader.onerror = function(error) {
+      reader.onerror = function (error) {
         console.log("Error: ", error);
       };
     }
@@ -326,7 +330,7 @@ export const RaReportListing: React.FC = (props: any) => {
         }
       }).then((response: any) => {
         if (
-          response.data.publishedReport.success ==
+          event.target.checked !== true && response.data.publishedReport.success ==
           "Report Published Successfully "
         ) {
           setFormState(formState => ({
@@ -341,11 +345,11 @@ export const RaReportListing: React.FC = (props: any) => {
         } else {
           setFormState(formState => ({
             ...formState,
-            isSuccess: false,
+            isSuccess: true,
             isUpdate: false,
             isDelete: false,
-            isFailed: true,
-            errMessage: " Report Publish Failed."
+            isFailed: false,
+            errMessage: " Report Un-Published Successfully !!"
           }));
         }
       });
@@ -482,98 +486,98 @@ export const RaReportListing: React.FC = (props: any) => {
             actions={[
               partner.partnerId
                 ? {
-                    icon: () => <VisibilityIcon />,
-                    tooltip: "View Data",
-                    onClick: (event: any, rowData: any) => {
-                      handleClickView(rowData);
-                    }
+                  icon: () => <VisibilityIcon />,
+                  tooltip: "View Data",
+                  onClick: (event: any, rowData: any) => {
+                    handleClickView(rowData);
                   }
+                }
                 : null,
               partner.partnerId
                 ? (rowData: any) => ({
-                    disabled: rowData.status !== "Done",
-                    icon: () => <SyncIcon />,
-                    tooltip: "Re-run",
-                    onClick: (event: any, rowData: any) => {
-                      handleClickOpen(rowData);
-                    }
-                  })
+                  disabled: rowData.status !== "Done",
+                  icon: () => <SyncIcon />,
+                  tooltip: "Re-run",
+                  onClick: (event: any, rowData: any) => {
+                    handleClickOpen(rowData);
+                  }
+                })
                 : null,
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                    disabled: rowData.status !== "Done",
-                    icon: () => <GetAppIcon />,
-                    tooltip: "Download",
-                    onClick: (event: any, rowData: any) => {
-                      handleDownload(rowData);
-                    }
-                  }),
+                  disabled: rowData.status !== "Done",
+                  icon: () => <GetAppIcon />,
+                  tooltip: "Download",
+                  onClick: (event: any, rowData: any) => {
+                    handleDownload(rowData);
+                  }
+                }),
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                    disabled: rowData.status !== "Done",
-                    icon: () => (
+                  disabled: rowData.status !== "Done",
+                  icon: () => (
+                    <div>
+                      <input
+                        type="file"
+                        name={rowData.tableData.id}
+                        id="zipUpload"
+                        hidden
+                        onChange={(event: any) => {
+                          onChangeHandler(event, rowData);
+                        }}
+                      />
+                      <label htmlFor="zipUpload">Browse</label>
+                    </div>
+                  ),
+                  tooltip: "Upload",
+                  name: "file",
+                  type: "file",
+                  onClick: (event: any, rowData: any) => {
+                    // onChangeHandler(event, rowData)
+                  }
+                }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                  disabled: rowData.status !== "Done",
+                  icon: () => <PublishIcon />,
+                  tooltip: "Upload",
+                  name: "file",
+                  id: "file",
+                  onClick: (event: any, rowData: any) => {
+                    handleUpload(rowData);
+                  }
+                }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                  disabled: rowData.status !== "Done",
+                  icon: () => (
+                    <div>
                       <div>
-                        <input
-                          type="file"
-                          name={rowData.tableData.id}
-                          id="zipUpload"
-                          hidden
+                        <Switch
+                          id="rowData.targetId"
+                          checked={published[rowData.targetId]}
                           onChange={(event: any) => {
-                            onChangeHandler(event, rowData);
+                            handlePublish(event, rowData);
                           }}
-                        />
-                        <label htmlFor="zipUpload">Browse</label>
+                          name={rowData.targetId}
+                          {...props}
+                        ></Switch>
                       </div>
-                    ),
-                    tooltip: "Upload",
-                    name: "file",
-                    type: "file",
-                    onClick: (event: any, rowData: any) => {
-                      // onChangeHandler(event, rowData)
-                    }
-                  }),
-              partner.partnerId
-                ? null
-                : (rowData: any) => ({
-                    disabled: rowData.status !== "Done",
-                    icon: () => <PublishIcon />,
-                    tooltip: "Upload",
-                    name: "file",
-                    id: "file",
-                    onClick: (event: any, rowData: any) => {
-                      handleUpload(rowData);
-                    }
-                  }),
-              partner.partnerId
-                ? null
-                : (rowData: any) => ({
-                    disabled: rowData.status !== "Done",
-                    icon: () => (
-                      <div>
-                        <div>
-                          <Switch
-                            id="rowData.targetId"
-                            checked={published[rowData.targetId]}
-                            onChange={(event: any) => {
-                              handlePublish(event, rowData);
-                            }}
-                            name={rowData.targetId}
-                            {...props}
-                          ></Switch>
-                        </div>
-                        {/* <span className={styles.PiiDataSwitchLabels}>
+                      {/* <span className={styles.PiiDataSwitchLabels}>
                       <span className={styles.PiiDataSwitchNo}>NO</span>
                       <span className={styles.PiiDataSwitchYes}>YES</span>
                     </span> */}
-                      </div>
-                    ),
-                    tooltip: "Publish",
-                    onClick: (event: any, rowData: any) => {
-                      handlePublishchange(event, rowData);
-                    }
-                  })
+                    </div>
+                  ),
+                  tooltip: "Publish",
+                  onClick: (event: any, rowData: any) => {
+                    handlePublishchange(event, rowData);
+                  }
+                })
             ]}
           />
         </Paper>
