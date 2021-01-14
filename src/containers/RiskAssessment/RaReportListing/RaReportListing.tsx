@@ -515,16 +515,14 @@ export const RaReportListing: React.FC = (props: any) => {
                   }
                 })
                 : null,
-              partner.partnerId
-                ? null
-                : (rowData: any) => ({
-                  // disabled: rowData.status !== "Done",
-                  icon: () => <GetAppIcon />,
-                  tooltip: "Download",
-                  onClick: (event: any, rowData: any) => {
-                    handleDownload(rowData);
-                  }
-                }),
+              (rowData: any) => ({
+                // disabled: rowData.status !== "Done",
+                icon: () => <GetAppIcon />,
+                tooltip: "Download",
+                onClick: (event: any, rowData: any) => {
+                  handleDownload(rowData);
+                }
+              }),
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
