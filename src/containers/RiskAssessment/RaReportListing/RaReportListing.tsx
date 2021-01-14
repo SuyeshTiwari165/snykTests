@@ -76,7 +76,7 @@ export const RaReportListing: React.FC = (props: any) => {
     isDelete: false,
     errMessage: ""
   });
-  console.log("props.location.state", props.location.state)
+  // console.log("props.location.state", props.location.state)
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   //filter query condition declaration
   const [getReportListingData, {
@@ -106,20 +106,14 @@ export const RaReportListing: React.FC = (props: any) => {
           distinctTargetArray
         )
       );
-      console.log(
-        "getPublishDataList",
-        getPublishDataList(
-          dataReportListing.getReportStatus.edges,
-          distinctTargetArray
-        )
-      );
+      
       setNewData(temp);
     }
     if (partner.partnerId) {
       getReportListingData({
         variables: {
           clientname: propsClientName,
-          status: "Done"
+          publishflag: "Published"
         }
       })
       if (props.location.state.refetchData) {
@@ -168,7 +162,7 @@ export const RaReportListing: React.FC = (props: any) => {
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          console.log("data[j].node.vatTargetId", data[j].node)
+          // console.log("data[j].node.vatTargetId", data[j].node)
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
             tempArr["report_status"] = "Published";
           }
@@ -265,7 +259,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const getBase64 = (file: any, cb: any) => {
     let reader = new FileReader();
-    console.log("reader", file);
+    // console.log("reader", file);
     if (file) {
       reader.readAsDataURL(file);
       reader.onload = function () {
