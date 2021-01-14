@@ -20,8 +20,8 @@ import { RA_REPORT_DOWNLOAD } from "../../../config/index";
 import { saveAs } from "file-saver";
 import { ZIP_FILE } from "../../../graphql/mutations/Upload";
 import { PUBLISH_REPORT } from "../../../graphql/mutations/PublishReport";
-import PublishIcon from '@material-ui/icons/Publish';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import PublishIcon from "@material-ui/icons/Publish";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Alert from "../../../components/UI/Alert/Alert";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -30,16 +30,15 @@ import {
   UPDATE,
   DELETE,
   FAILED,
-  ALERT_MESSAGE_TIMER,
+  ALERT_MESSAGE_TIMER
 } from "../../../common/MessageConstants";
-import Switch from "../../../components/UI/Switch/Switch"
+import Switch from "../../../components/UI/Switch/Switch";
 
 export const RaReportListing: React.FC = (props: any) => {
-
   const [name, setName] = useState<String>("");
   const [published, setPublished] = useState<any>({});
   const [submitDisabled, setSubmitDisabled] = useState<Boolean>(true);
-  const [selectedFile, setSelectedFile] = useState<any>({})
+  const [selectedFile, setSelectedFile] = useState<any>({});
   const history = useHistory();
   const [newData, setNewData] = useState();
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
@@ -51,20 +50,24 @@ export const RaReportListing: React.FC = (props: any) => {
   //table
   const columns = [
     { title: "Target", field: "target" },
-    { title: "Status", field: "status" },
+    { title: "Status", field: "status" }
   ];
   const title = "Listing of Reports";
   const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
   //static values
-  const propsClientId = props.location.state ? parseInt(props.location.state.clientInfo.clientId) : undefined;
-  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const propsClientId = props.location.state
+    ? parseInt(props.location.state.clientInfo.clientId)
+    : undefined;
+  const clientInfo = props.location.state
+    ? props.location.state.clientInfo
+    : undefined;
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
     isFailed: false,
     isDelete: false,
-    errMessage: "",
+    errMessage: ""
   });
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   //filter query condition declaration
@@ -72,11 +75,11 @@ export const RaReportListing: React.FC = (props: any) => {
     data: dataReportListing,
     error: errorReportListing,
     loading: loadingReportListing,
-    refetch: refetchReportListing,
+    refetch: refetchReportListing
   } = useQuery(GET_REPORT_LISTING, {
     variables: {
-      clientid: propsClientId,
-    },
+      clientid: propsClientId
+    }
   });
 
   const [uploadFile] = useMutation(ZIP_FILE);
@@ -94,9 +97,19 @@ export const RaReportListing: React.FC = (props: any) => {
         distinctTargetArray
       );
 
-      setPublished(getPublishDataList(dataReportListing.getReportStatus.edges, distinctTargetArray));
-      console.log("getPublishDataList",
-        getPublishDataList(dataReportListing.getReportStatus.edges, distinctTargetArray));
+      setPublished(
+        getPublishDataList(
+          dataReportListing.getReportStatus.edges,
+          distinctTargetArray
+        )
+      );
+      console.log(
+        "getPublishDataList",
+        getPublishDataList(
+          dataReportListing.getReportStatus.edges,
+          distinctTargetArray
+        )
+      );
       setNewData(temp);
     }
     if (props.location.state) {
@@ -119,7 +132,7 @@ export const RaReportListing: React.FC = (props: any) => {
     );
     // let array = [...targetObj];
     let array: any = [];
-    targetObj.forEach((v) => array.push(v));
+    targetObj.forEach(v => array.push(v));
     return array;
   }
 
@@ -157,7 +170,6 @@ export const RaReportListing: React.FC = (props: any) => {
     let arr: any = [];
     let tempArr: any = {};
     for (let i in targetArr) {
-
       let targetId = 0;
       let statusVar = false;
       // tempArr["target"] = targetArr[i];
@@ -175,7 +187,6 @@ export const RaReportListing: React.FC = (props: any) => {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
         }
-
       }
 
       // tempArr["targetId"] = targetId !== 0 ? targetId : null;
@@ -184,30 +195,30 @@ export const RaReportListing: React.FC = (props: any) => {
       arr.push(tempArr);
     }
     return tempArr;
-  };
+  }
 
   const handleClickView = (rowData: any) => {
     history.push({
       pathname: routeConstant.REPORT_STATUS,
-      state: { targetName: rowData.target, clientInfo: clientInfo },
+      state: { targetName: rowData.target, clientInfo: clientInfo }
     });
   };
-  
+
   const handleClickOpen = (rowData: any) => {
     history.push({
       pathname: routeConstant.TARGET,
-      state: { targetName: rowData.target, clientInfo: clientInfo },
+      state: { targetName: rowData.target, clientInfo: clientInfo }
     });
   };
 
   const handleAlertClose = () => {
-    setFormState((formState) => ({
+    setFormState(formState => ({
       ...formState,
       isSuccess: false,
       isUpdate: false,
       isDelete: false,
       isFailed: false,
-      errMessage: "",
+      errMessage: ""
     }));
   };
 
@@ -216,25 +227,24 @@ export const RaReportListing: React.FC = (props: any) => {
     const DocUrl =
       RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
     fetch(DocUrl, {
-      method: "GET",
-    })
-      .then((response: any) => {
-        response.blob().then((blobData: any) => {
-          saveAs(blobData, "RA_Report");
-        })
+      method: "GET"
+    }).then((response: any) => {
+      response.blob().then((blobData: any) => {
+        saveAs(blobData, "RA_Report");
       });
+    });
   };
 
   const getBase64 = (file: any, cb: any) => {
     let reader = new FileReader();
-    console.log("reader", file)
+    console.log("reader", file);
     if (file) {
       reader.readAsDataURL(file);
-      reader.onload = function () {
-        cb(reader.result)
+      reader.onload = function() {
+        cb(reader.result);
       };
-      reader.onerror = function (error) {
-        console.log('Error: ', error);
+      reader.onerror = function(error) {
+        console.log("Error: ", error);
       };
     }
   };
@@ -242,57 +252,58 @@ export const RaReportListing: React.FC = (props: any) => {
   const onChangeHandler = (event: any, rowData: any) => {
     setSelectedFile({ [rowData.targetId]: event.target.files[0] });
     if (event.target.files[0]) {
-      setSubmitDisabled(false)
+      setSubmitDisabled(false);
     }
   };
 
-
   const handleUpload = (rowData: any) => {
     if (selectedFile[rowData.targetId]) {
-      let idCardBase64 = '';
+      let idCardBase64 = "";
       getBase64(selectedFile[rowData.targetId], (result: any) => {
         idCardBase64 = result;
         var res = result.slice(result.indexOf(",") + 1);
         uploadFile({
           variables: {
             input: {
-              "client": parseInt(props.location.state.clientInfo.clientId),
-              "targetName": rowData.target,
-              file: res,
+              client: parseInt(props.location.state.clientInfo.clientId),
+              targetName: rowData.target,
+              file: res
             }
           }
-        }).then((response: any) => {
-          if (response.data.uploadZipFile.success == "File Uploaded Failed") {
-            setFormState((formState) => ({
+        })
+          .then((response: any) => {
+            if (response.data.uploadZipFile.success == "File Uploaded Failed") {
+              setFormState(formState => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " File Upload Failed."
+              }));
+              setSelectedFile({});
+            } else {
+              setFormState(formState => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "File Uploaded Successfully !!"
+              }));
+              setSelectedFile({});
+            }
+          })
+          .catch((error: Error) => {
+            setFormState(formState => ({
               ...formState,
               isSuccess: false,
               isUpdate: false,
               isDelete: false,
               isFailed: true,
-              errMessage: " File Upload Failed.",
+              errMessage: ""
             }));
-            setSelectedFile({})
-          } else {
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: true,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: false,
-              errMessage: "File Uploaded Successfully !!",
-            }));
-            setSelectedFile({})
-          }
-        }).catch((error: Error) => {
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: "",
-          }));
-        })
+          });
       });
     }
   };
@@ -300,42 +311,44 @@ export const RaReportListing: React.FC = (props: any) => {
   let checked: boolean;
   const handlePublish = (event: any, rowdata: any) => {
     setPublished({ ...published, [rowdata.targetId]: event.target.checked });
-  }
+  };
 
   const handlePublishchange = (event: any, rowData: any) => {
     if (event.target.checked !== undefined) {
       publishReport({
         variables: {
           input: {
-            "client": parseInt(props.location.state.clientInfo.clientId),
-            "targetName": rowData.target,
-            "partner": props.location.state.clientInfo.partnerId,
-            "flagStatus": event.target.checked
+            client: parseInt(props.location.state.clientInfo.clientId),
+            targetName: rowData.target,
+            partner: props.location.state.clientInfo.partnerId,
+            flagStatus: event.target.checked
           }
         }
       }).then((response: any) => {
-        if (response.data.publishedReport.success == "Report Published Successfully ") {
-          setFormState((formState) => ({
+        if (
+          response.data.publishedReport.success ==
+          "Report Published Successfully "
+        ) {
+          setFormState(formState => ({
             ...formState,
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: "Report Published Successfully !!",
-
+            errMessage: "Report Published Successfully !!"
           }));
-          setSelectedFile({})
+          setSelectedFile({});
         } else {
-          setFormState((formState) => ({
+          setFormState(formState => ({
             ...formState,
             isSuccess: false,
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Report Publish Failed.",
+            errMessage: " Report Publish Failed."
           }));
         }
-      })
+      });
     }
   };
 
@@ -408,8 +421,8 @@ export const RaReportListing: React.FC = (props: any) => {
             </Alert>
           ) : null}
         </Grid>
-        <Grid container>
-          <Grid item xs={12} md={4} className={styles.backToListButton}>
+        <Grid container className={styles.backToListButtonPanel}>
+          <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
                 {userRole === "SuperUser" ? (
@@ -427,7 +440,8 @@ export const RaReportListing: React.FC = (props: any) => {
                     <img
                       src={
                         process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                      } alt="user icon"
+                      }
+                      alt="user icon"
                     />
                     &nbsp; Back to List
                   </Button>
@@ -435,7 +449,7 @@ export const RaReportListing: React.FC = (props: any) => {
               </div>
             </div>
           </Grid>
-          {partner.partnerId ?
+          {partner.partnerId ? (
             <Grid className={styles.FilterWrap}>
               <div className={styles.FilterAddButton}>
                 <Button
@@ -444,10 +458,11 @@ export const RaReportListing: React.FC = (props: any) => {
                   onClick={handleAddNewReport}
                 >
                   <AddCircleIcon className={styles.EditIcon} />
-              &nbsp; New Risk Assessment
-            </Button>
+                  &nbsp; New Risk Assessment
+                </Button>
               </div>
-            </Grid> : null}
+            </Grid>
+          ) : null}
         </Grid>
         <Paper className={styles.paper}>
           <MaterialTable
@@ -459,90 +474,106 @@ export const RaReportListing: React.FC = (props: any) => {
               paging: true,
               sorting: true,
               search: false,
-              filter: true,
+              filter: true
             }}
             onOrderChange={(orderedColumnId: any, orderDirection: any) => {
               orderFunc(orderedColumnId, orderDirection);
             }}
             actions={[
-              partner.partnerId ?
-                {
-                  icon: () => <VisibilityIcon />,
-                  tooltip: "View Data",
-                  onClick: (event: any, rowData: any) => {
-                    handleClickView(rowData);
-                  },
-                } : null,
-              partner.partnerId ?
-                (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
-                  icon: () => <SyncIcon />,
-                  tooltip: "Re-run",
-                  onClick: (event: any, rowData: any) => {
-                    handleClickOpen(rowData);
-                  },
-                }) : null,
-              partner.partnerId ? null :
-                (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
-                  icon: () => <GetAppIcon />,
-                  tooltip: "Download",
-                  onClick: (event: any, rowData: any) => {
-                    handleDownload(rowData);
-                  },
-                }),
-              partner.partnerId ? null :
-                (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
-                  icon: () =>
-                    <div>
-                      <input type="file" name={rowData.tableData.id} id="zipUpload" hidden onChange={(event: any) => {
-                        onChangeHandler(event, rowData)
-                      }} />
-                      <label htmlFor="zipUpload">Browse</label>
-                    </div>,
-                  tooltip: "Upload",
-                  name: "file",
-                  type: "file",
-                  onClick: (event: any, rowData: any) => {
-                    // onChangeHandler(event, rowData)
-                  },
-                }),
-              partner.partnerId ? null :
-                (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
-                  icon: () => <PublishIcon />,
-                  tooltip: "Upload",
-                  name: "file",
-                  id: "file",
-                  onClick: (event: any, rowData: any) => {
-                    handleUpload(rowData);
-                  },
-                }),
-              partner.partnerId ? null :
-                (rowData: any) => ({
-                  disabled: rowData.status !== "Done",
-                  icon: () => <div>
-                    <div>
-                      <Switch
-                        id="rowData.targetId"
-                        checked={published[rowData.targetId]}
-                        onChange={(event: any) => { handlePublish(event, rowData) }}
-                        name={rowData.targetId}
-                        {...props}
-                      ></Switch>
-                    </div>
-                    {/* <span className={styles.PiiDataSwitchLabels}>
+              partner.partnerId
+                ? {
+                    icon: () => <VisibilityIcon />,
+                    tooltip: "View Data",
+                    onClick: (event: any, rowData: any) => {
+                      handleClickView(rowData);
+                    }
+                  }
+                : null,
+              partner.partnerId
+                ? (rowData: any) => ({
+                    disabled: rowData.status !== "Done",
+                    icon: () => <SyncIcon />,
+                    tooltip: "Re-run",
+                    onClick: (event: any, rowData: any) => {
+                      handleClickOpen(rowData);
+                    }
+                  })
+                : null,
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    disabled: rowData.status !== "Done",
+                    icon: () => <GetAppIcon />,
+                    tooltip: "Download",
+                    onClick: (event: any, rowData: any) => {
+                      handleDownload(rowData);
+                    }
+                  }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    disabled: rowData.status !== "Done",
+                    icon: () => (
+                      <div>
+                        <input
+                          type="file"
+                          name={rowData.tableData.id}
+                          id="zipUpload"
+                          hidden
+                          onChange={(event: any) => {
+                            onChangeHandler(event, rowData);
+                          }}
+                        />
+                        <label htmlFor="zipUpload">Browse</label>
+                      </div>
+                    ),
+                    tooltip: "Upload",
+                    name: "file",
+                    type: "file",
+                    onClick: (event: any, rowData: any) => {
+                      // onChangeHandler(event, rowData)
+                    }
+                  }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    disabled: rowData.status !== "Done",
+                    icon: () => <PublishIcon />,
+                    tooltip: "Upload",
+                    name: "file",
+                    id: "file",
+                    onClick: (event: any, rowData: any) => {
+                      handleUpload(rowData);
+                    }
+                  }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    disabled: rowData.status !== "Done",
+                    icon: () => (
+                      <div>
+                        <div>
+                          <Switch
+                            id="rowData.targetId"
+                            checked={published[rowData.targetId]}
+                            onChange={(event: any) => {
+                              handlePublish(event, rowData);
+                            }}
+                            name={rowData.targetId}
+                            {...props}
+                          ></Switch>
+                        </div>
+                        {/* <span className={styles.PiiDataSwitchLabels}>
                       <span className={styles.PiiDataSwitchNo}>NO</span>
                       <span className={styles.PiiDataSwitchYes}>YES</span>
                     </span> */}
-                  </div>
-                  ,
-                  tooltip: "Publish",
-                  onClick: (event: any, rowData: any) => {
-                    handlePublishchange(event, rowData);
-                  },
-                }),
+                      </div>
+                    ),
+                    tooltip: "Publish",
+                    onClick: (event: any, rowData: any) => {
+                      handlePublishchange(event, rowData);
+                    }
+                  })
             ]}
           />
         </Paper>

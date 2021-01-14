@@ -16,7 +16,10 @@ import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import { CREATE_CLIENT, UPDATE_CLIENT } from "../../../graphql/mutations/Clients";
+import {
+  CREATE_CLIENT,
+  UPDATE_CLIENT
+} from "../../../graphql/mutations/Clients";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EditIcon from "@material-ui/icons/Edit";
@@ -33,7 +36,7 @@ import {
   UPDATE,
   DELETE,
   FAILED,
-  ALERT_MESSAGE_TIMER,
+  ALERT_MESSAGE_TIMER
 } from "../../../common/MessageConstants";
 import * as validations from "../../../common/validateRegex";
 import moment from "moment";
@@ -59,17 +62,15 @@ export const Client: React.FC = (props: any) => {
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Phone", field: "phone" },
-    { title: "Created on", field: "createdOn" },
+    { title: "Created on", field: "createdOn" }
   ];
 
-  const SuperUsercolumns = [
-    { title: "Company Name", field: "name" }
-  ];
+  const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
 
   const [isError, setIsError] = useState<any>({
     address: "",
     email: "",
-    phoneNumber: "",
+    phoneNumber: ""
   });
 
   const [formState, setFormState] = useState({
@@ -77,54 +78,62 @@ export const Client: React.FC = (props: any) => {
     isUpdate: false,
     isFailed: false,
     isDelete: false,
-    errMessage: "",
+    errMessage: ""
   });
 
   let contactIdArray: any = [];
-  const [
-    getClients,
-    { data: ipData, loading: ipLoading },
-  ] = useLazyQuery(GET_CLIENTS, {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      createTableDataObject(data.getClient.edges)
-    },
-    onError: (error) => {
-      // logout()
-      history.push(routeConstant.DASHBOARD);
+  const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
+    GET_CLIENTS,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: data => {
+        createTableDataObject(data.getClient.edges);
+      },
+      onError: error => {
+        // logout()
+        history.push(routeConstant.DASHBOARD);
+      }
     }
-  });
+  );
 
   let column: any;
   if (partner.partnerId) {
-    column = CompanyUsercolumns
+    column = CompanyUsercolumns;
   } else {
-    column = SuperUsercolumns
+    column = SuperUsercolumns;
   }
 
   useEffect(() => {
-    if (partner !== '{}') {
+    if (partner !== "{}") {
       getClients({
         variables: {
           partnerId: partner.partnerId
-        },
+        }
       });
     }
-    if (props.location.state !== null && props.location.state !== undefined && props.location.state.partner_id) {
+    if (
+      props.location.state !== null &&
+      props.location.state !== undefined &&
+      props.location.state.partner_id
+    ) {
       getClients({
         variables: {
           partnerId: props.location.state.partner_id
-        },
+        }
       });
     }
     if (props.location.state && props.location.state.clientInfo) {
       getClients({
         variables: {
           partnerId: props.location.state.clientInfo.partnerId
-        },
+        }
       });
     }
-    if (props.location.state && props.location.state !== null && props.location.state.formState) {
+    if (
+      props.location.state &&
+      props.location.state !== null &&
+      props.location.state.formState
+    ) {
       setFormState(props.location.state.formState);
     }
   }, []);
@@ -136,18 +145,20 @@ export const Client: React.FC = (props: any) => {
       formState.isSuccess === true ||
       formState.isUpdate === true
     ) {
-      setTimeout(function () {
+      setTimeout(function() {
         handleAlertClose();
       }, ALERT_MESSAGE_TIMER);
     }
   }, [formState]);
 
-  console.log("props", props)
+  console.log("props", props);
 
   function convertDate(inputFormat: any) {
-    function pad(s: any) { return (s < 10) ? '0' + s : s; }
-    var d = new Date(inputFormat)
-    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+    function pad(s: any) {
+      return s < 10 ? "0" + s : s;
+    }
+    var d = new Date(inputFormat);
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("/");
   }
 
   const getDateAndTime = (utcDate: any) => {
@@ -157,13 +168,13 @@ export const Client: React.FC = (props: any) => {
       var dateFormat: any = new Date(utcDate);
       var hours = dateFormat.getHours();
       var minutes = dateFormat.getMinutes();
-      var ampm = hours >= 12 ? 'PM' : 'AM';
+      var ampm = hours >= 12 ? "PM" : "AM";
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      var strTime = hours + ":" + minutes + " " + ampm;
       var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
-      console.log(convertDate(new Date(utcDate)))
+      console.log(convertDate(new Date(utcDate)));
       return dateAndTime;
     }
   };
@@ -174,24 +185,27 @@ export const Client: React.FC = (props: any) => {
       let obj: any = {};
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
       obj["name"] = element.node.clientName;
-      obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
+      obj["phone"] = !element.node.mobileNumber
+        ? "-"
+        : element.node.mobileNumber;
       obj["clientId"] = element.node.id;
       obj["partnerId"] = element.node.partnerId;
       obj["createdOn"] = moment(element.node.createdDate).format(
-        "MM/DD/YYYY hh:mm a");
+        "MM/DD/YYYY hh:mm a"
+      );
       arr.push(obj);
     });
     setNewData(arr);
   };
 
   const handleAlertClose = () => {
-    setFormState((formState) => ({
+    setFormState(formState => ({
       ...formState,
       isSuccess: false,
       isUpdate: false,
       isDelete: false,
       isFailed: false,
-      errMessage: "",
+      errMessage: ""
     }));
   };
 
@@ -220,7 +234,7 @@ export const Client: React.FC = (props: any) => {
       let err = event.target.value === "" || null ? "Required" : "";
       setIsError((error: any) => ({
         ...error,
-        name: err,
+        name: err
       }));
     }
     if (event.target.name === "email") {
@@ -231,14 +245,17 @@ export const Client: React.FC = (props: any) => {
       //   email: err,
       // }));
       //  if (!err) {
-      if (event.target.value && !validations.EMAIL_REGEX.test(event.target.value)) {
+      if (
+        event.target.value &&
+        !validations.EMAIL_REGEX.test(event.target.value)
+      ) {
         let errors = "Please enter valid email address.";
         setIsError((error: any) => ({
           ...error,
-          email: errors,
+          email: errors
         }));
       } else {
-        setIsError({ 'error': null })
+        setIsError({ error: null });
       }
       // }
     }
@@ -275,7 +292,7 @@ export const Client: React.FC = (props: any) => {
       let err = "Name is Required";
       setIsError((error: any) => ({
         ...error,
-        name: err,
+        name: err
       }));
       foundErrors = true;
     }
@@ -291,7 +308,7 @@ export const Client: React.FC = (props: any) => {
       let errors = "Please enter valid email address.";
       setIsError((error: any) => ({
         ...error,
-        email: errors,
+        email: errors
       }));
       foundErrors = true;
     }
@@ -317,11 +334,10 @@ export const Client: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Typography component="h5" variant="h1">
-      </Typography>
+      <Typography component="h5" variant="h1"></Typography>
       <Grid>
-        <Grid container>
-          <Grid item xs={12} md={4} className={styles.backToListButton}>
+        <Grid container className={styles.backToListButtonPanel}>
+          <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
                 {userRole === "SuperUser" ? (
@@ -337,7 +353,8 @@ export const Client: React.FC = (props: any) => {
                     <img
                       src={
                         process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                      } alt="user icon"
+                      }
+                      alt="user icon"
                     />
                     &nbsp; Back to List
                   </Button>
@@ -345,7 +362,7 @@ export const Client: React.FC = (props: any) => {
               </div>
             </div>
           </Grid>
-          {partner.partnerId ?
+          {partner.partnerId ? (
             <Grid item xs={12} md={3} className={styles.FilterAddWrap}>
               <div className={styles.FilterInput}>
                 <Button
@@ -358,7 +375,7 @@ export const Client: React.FC = (props: any) => {
                 </Button>
               </div>
             </Grid>
-            : null}
+          ) : null}
         </Grid>
         <Paper className={styles.paper}>
           {formState.isSuccess ? (
@@ -402,25 +419,29 @@ export const Client: React.FC = (props: any) => {
               columns={column}
               data={newData}
               actions={[
-                partner.partnerId ?
-                  {
-                    icon: () => <img className={styles.EditIcon}
-                      src={
-                        process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                partner.partnerId
+                  ? {
+                      icon: () => (
+                        <img
+                          className={styles.EditIcon}
+                          src={
+                            process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                          }
+                          alt="edit icon"
+                        />
+                      ),
+                      tooltip: "Edit",
+                      onClick: (event: any, rowData: any, oldData: any) => {
+                        onRowClick(event, rowData, oldData, "Edit");
                       }
-                      alt="edit icon"
-                    />,
-                    tooltip: "Edit",
-                    onClick: (event: any, rowData: any, oldData: any) => {
-                      onRowClick(event, rowData, oldData, "Edit");
-                    },
-                  } : null,
+                    }
+                  : null,
                 {
                   icon: () => <AssessmentIcon />,
                   tooltip: "Risk Assessment",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
-                  },
+                  }
                 }
                 // {
                 //   icon: () => <VisibilityIcon />,
@@ -440,7 +461,7 @@ export const Client: React.FC = (props: any) => {
               options={{
                 headerStyle: {
                   backgroundColor: "#EFF6FD",
-                  color: "#002F60",
+                  color: "#002F60"
                 },
                 actionsColumnIndex: -1,
                 paging: true,
@@ -449,13 +470,12 @@ export const Client: React.FC = (props: any) => {
                 filter: true,
                 draggable: false,
                 pageSize: 25,
-                pageSizeOptions: [25, 50, 75, 100], // rows selection options                
+                pageSizeOptions: [25, 50, 75, 100] // rows selection options
               }}
             />
           </div>
         </Paper>
       </Grid>
-
     </React.Fragment>
   );
 };
