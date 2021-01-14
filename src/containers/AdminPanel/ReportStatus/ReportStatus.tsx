@@ -94,7 +94,7 @@ export const ReportStatus: React.FC = (props: any) => {
     },
     {
       title: "Scan Start Date ",
-      field: "scan_start_date ",
+      field: "scan_start_date"
     },
     { title: "Scan End Date", field: "scan_end_date" },
   ];
