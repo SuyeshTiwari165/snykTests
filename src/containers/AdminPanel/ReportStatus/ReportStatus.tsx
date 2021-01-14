@@ -243,47 +243,20 @@ export const ReportStatus: React.FC = (props: any) => {
 
   function convertTableData(data: any, targetArr: any) {
     let arr: any = [];
-    for (let i in targetArr) {
-      let tempArr: any = {};
-      tempArr["target"] = targetArr[i];
-      let statusVar = false;
-      let targetId = 0;
-      let scanEndDate = "";
-      let scanStartDate = "";
-      let taskName = "";
-      let clientname = "";
-      let partnername = "";
-      for (let j in data) {
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          if (
-            data[j].node.scanRunStatus !== "Done" ||
-            data[j].node.scanRunStatus === "In Progress"
-          ) {
-            statusVar = true;
-          }
-          targetId = data[j].node.vatTargetId.id;
-          scanEndDate = !data[j].node.scanStartDate
-            ? "-"
-            : moment(data[j].node.scanEndDate).format("MM/DD/YYYY hh:mm a");
-          scanStartDate = !data[j].node.scanStartDate
-            ? "-"
-            : moment(data[j].node.scanStartDate).format("MM/DD/YYYY hh:mm a");
-          taskName = data[j].node.vatTaskId.taskName;
-          clientname = data[j].node.vatTargetId.client.clientName;
-          partnername = data[j].node.vatTargetId.partner.partnerName;
-        }
-      }
-      tempArr["targetId"] = targetId !== 0 ? targetId : null;
-      tempArr["status"] = statusVar ? "In Progress" : "Done";
-      tempArr["scan_start_date"] = scanStartDate;
-      tempArr["scan_end_date"] = scanEndDate;
-      tempArr["taskName"] = taskName ? taskName : null;
-      tempArr["partnername"] = partnername ? partnername : null;
-      tempArr["clientname"] = clientname ? clientname : null;
-      arr.push(tempArr);
-    }
-    return arr;
-  }
+    console.log("DATA",data);
+    data.map((element: any) => {
+      let obj: any = {};
+      obj["target"] = element.node.vatTargetId ? element.node.vatTargetId.targetName : null;
+      obj["status"] = element.node.scanRunStatus ? element.node.scanRunStatus : null;
+      obj["scan_start_date"] =element.node.scanStartDate ? moment(element.node.scanStartDate).format("MM/DD/YYYY hh:mm a") : "-";
+      obj["scan_end_date"] =element.node.scanEndDate ? moment(element.node.scanEndDate).format("MM/DD/YYYY hh:mm a"): "-";
+      obj["taskName"] = element.node.vatTaskId ? element.node.vatTaskId.taskName : null;
+      obj["partnername"] = element.node.vatTargetId.partner ? element.node.vatTargetId.partner.partnerName : null;
+      obj["clientname"] = element.node.vatTargetId.client ? element.node.vatTargetId.client.clientName : null;
+      arr.push(obj);
+    });
+    return arr
+   };
 
   const targetFilter = (event: any, newValue: any) => {
     setFilterTarget(newValue);
@@ -303,6 +276,11 @@ export const ReportStatus: React.FC = (props: any) => {
   const partnerFilter = (event: any, newValue: any) => {
     setReset(false);
     setFilterPartner(newValue);
+    setFilterStatus("");
+    setFilterTarget("");
+    setFilterClient("");
+    setStartDate("");
+    setEndDate("");
     if(newValue != null && newValue.partner_id ) {
     getClients({
       variables: {
@@ -348,6 +326,7 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterPartner("");
     setStartDate("");
     setEndDate("");
+    getReportList();
   };
 
   const handleSearch = () => {
