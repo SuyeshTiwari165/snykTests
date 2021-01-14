@@ -48,10 +48,16 @@ export const RaReportListing: React.FC = (props: any) => {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
   //table
-  const columns = [
+
+  const CompnyUserColumns = [
     { title: "Target", field: "target" },
-    { title: "Status", field: "status" }
+    { title: "Status", field: "status" },
   ];
+  const AdminColumns = [{ title: "Target", field: "target" },
+  { title: "Status", field: "status" },
+  { title: "Report Status", field: "report_status" }
+  ];
+  const columns = partner.partnerId ? CompnyUserColumns : AdminColumns;
   const title = "Listing of Reports";
   const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
@@ -164,10 +170,12 @@ export const RaReportListing: React.FC = (props: any) => {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           console.log("data[j].node.vatTargetId", data[j].node.vatTargetId.publishedFlag)
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
-            tempArr["status"] = "Published";
+            tempArr["status"] = "Done";
+            tempArr["report_status"] = "Published";
           }
           if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
-            tempArr["status"] = "Unpublished";
+            tempArr["status"] = "In Progress";
+            tempArr["report_status"] = "Unpublished";
           }
           targetId = data[j].node.vatTargetId.id;
         }
@@ -515,14 +523,14 @@ export const RaReportListing: React.FC = (props: any) => {
                   }
                 })
                 : null,
-              (rowData: any) => ({
+              (rowData: any) => (rowData.status == "Done" ? {
                 // disabled: rowData.status !== "Done",
                 icon: () => <GetAppIcon />,
                 tooltip: "Download",
                 onClick: (event: any, rowData: any) => {
                   handleDownload(rowData);
                 }
-              }),
+              } : null),
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
