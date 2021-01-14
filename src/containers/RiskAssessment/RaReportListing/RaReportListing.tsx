@@ -168,13 +168,17 @@ export const RaReportListing: React.FC = (props: any) => {
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          console.log("data[j].node.vatTargetId", data[j].node.vatTargetId.publishedFlag)
+          console.log("data[j].node.vatTargetId", data[j].node)
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
-            tempArr["status"] = "Done";
             tempArr["report_status"] = "Published";
           }
-          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
+          if (data[j].node.scanRunStatus == "Done") {
+            tempArr["status"] = "Done";
+          }
+          if (data[j].node.scanRunStatus == "In Progress") {
             tempArr["status"] = "In Progress";
+          }
+          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
             tempArr["report_status"] = "Unpublished";
           }
           targetId = data[j].node.vatTargetId.id;
