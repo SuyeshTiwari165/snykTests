@@ -121,7 +121,7 @@ export const RaReportListing: React.FC = (props: any) => {
         // refetchReportListing();
       }
     }
-    if (props.location.state) {
+    if (partner.partnerId == undefined) {
       getReportListingData({
         variables: {
           clientname: propsClientName,
