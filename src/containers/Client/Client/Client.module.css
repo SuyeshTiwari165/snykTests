@@ -60,10 +60,10 @@ th:last-child {
 th {
   padding: 8px !important;
   border-bottom: none !important;
-  line-height:1.5 !important;
-  font-size:12px !important;
+  line-height: 1.5 !important;
+  font-size: 12px !important;
   color: #002f60;
-  font-weight:600 !important;
+  font-weight: 600 !important;
 }
 
 table>thead {
@@ -82,11 +82,12 @@ td button {
 
 td {
   padding: 8px !important;
-  line-height:1.846 !important;
+  line-height: 1.846 !important;
   color: #707070 !important;
   font-size: 12px !important;
   font-weight: normal !important;
 }
+
 tfoot {
   border-top: 1px solid #eee;
 }
@@ -95,7 +96,37 @@ td button:hover {
   background-color: transparent !important;
 }
 
-.EditIcon{
+.EditIcon {
   height: 18px !important;
   width: 18px !important;
+}
+
+.backToListButton button {
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: #0051A8 !important;
+  text-transform: unset !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+}
+
+.backToListButton button:hover {
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: #0051A8 !important;
+  text-transform: unset !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+}
+
+.backToListButton button span img {
+  width: 14px !important;
+  margin-right: 3px;
+}
+
+.backToListButtonPanel {
+  text-align: right;
+  padding-right: 20px;
 }
