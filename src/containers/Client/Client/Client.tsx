@@ -334,7 +334,7 @@ export const Client: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Typography component="h5" variant="h1"></Typography>
+      <Typography component="h5" variant="h1">Client</Typography>
       <Grid>
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
