@@ -37,6 +37,7 @@ import Switch from "../../../components/UI/Switch/Switch";
 export const RaReportListing: React.FC = (props: any) => {
   const [name, setName] = useState<String>("");
   const [published, setPublished] = useState<any>({});
+  const [loader, setLoader] = useState<Boolean>(false);
   const [submitDisabled, setSubmitDisabled] = useState<Boolean>(true);
   const [selectedFile, setSelectedFile] = useState<any>({});
   const history = useHistory();
@@ -135,7 +136,7 @@ export const RaReportListing: React.FC = (props: any) => {
   }, [dataReportListing]);
 
   //for task data
-  if (loadingReportListing) return <Loading />;
+  if (loadingReportListing || loader) return <Loading />;
   // if (errorReportListing) {
   // history.push({
   //   pathname: routeConstant.DASHBOARD,
@@ -249,12 +250,14 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleDownload = (rowData: any) => {
+    setLoader(true)
     let intTargetId = parseInt(rowData.targetId);
     const DocUrl =
       RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
     fetch(DocUrl, {
       method: "GET"
     }).then((response: any) => {
+      setLoader(false)
       response.blob().then((blobData: any) => {
         saveAs(blobData, "RA_Report");
       });
@@ -284,6 +287,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handleUpload = (rowData: any) => {
     if (selectedFile[rowData.targetId]) {
+      setLoader(true)
       let idCardBase64 = "";
       getBase64(selectedFile[rowData.targetId], (result: any) => {
         idCardBase64 = result;
@@ -308,6 +312,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 errMessage: " File Upload Failed."
               }));
               setSelectedFile({});
+              setLoader(false)
             } else {
               setFormState(formState => ({
                 ...formState,
@@ -318,6 +323,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 errMessage: "File Uploaded Successfully !!"
               }));
               setSelectedFile({});
+              setLoader(false)
             }
           })
           .catch((error: Error) => {
@@ -329,6 +335,7 @@ export const RaReportListing: React.FC = (props: any) => {
               isFailed: true,
               errMessage: ""
             }));
+            setLoader(false)
           });
       });
     }
@@ -341,6 +348,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handlePublishchange = (event: any, rowData: any) => {
     if (event.target.checked !== undefined) {
+      setLoader(true)
       publishReport({
         variables: {
           input: {
@@ -351,6 +359,7 @@ export const RaReportListing: React.FC = (props: any) => {
           }
         }
       }).then((response: any) => {
+        setLoader(false)
         if (
           event.target.checked !== true && response.data.publishedReport.success ==
           "Report Published Successfully "
@@ -374,7 +383,9 @@ export const RaReportListing: React.FC = (props: any) => {
             errMessage: " Report Un-Published Successfully !!"
           }));
         }
-      });
+      }).catch((error: any) => {
+        setLoader(false)
+      })
     }
   };
 
