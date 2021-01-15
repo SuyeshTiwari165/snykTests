@@ -25,7 +25,7 @@ export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
   const [newData, setNewData] = useState();
   const clientInfo = props.location.state ? props.location.state.clientInfo : null;
-
+  console.log("props.location.stat",props.location.state)
   //table
   const columns = [
     { title: "Target", field: "target" },
@@ -38,7 +38,7 @@ export const ReportStatus: React.FC = (props: any) => {
   const title = "Listing of Report Status";
   const [orderBy, setOrderBy] = useState<String>();
 
-  const staticClientId = clientInfo !== null ? clientInfo.clientId : undefined;
+  const staticClientName = clientInfo !== null ? clientInfo.name : undefined;
   const targetName = props["location"].state.targetName;
   const {
     data: dataReportListing,
@@ -47,7 +47,7 @@ export const ReportStatus: React.FC = (props: any) => {
     // refetch: refetchReportListing,
   } = useQuery(GET_REPORT_LISTING, {
     variables: {
-      clientid: staticClientId,
+      clientname: staticClientName,
       targetid: targetName,
     },
   });

@@ -106,14 +106,13 @@ export const RaReportListing: React.FC = (props: any) => {
           distinctTargetArray
         )
       );
-      
+
       setNewData(temp);
     }
     if (partner.partnerId) {
       getReportListingData({
         variables: {
           clientname: propsClientName,
-          publishflag: "Published"
         }
       })
       if (props.location.state.refetchData) {
@@ -165,17 +164,22 @@ export const RaReportListing: React.FC = (props: any) => {
           // console.log("data[j].node.vatTargetId", data[j].node)
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
             tempArr["report_status"] = "Published";
+            tempArr["status"] = "Done";
           }
+
+          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
+            tempArr["report_status"] = "Unpublished";
+            tempArr["status"] = "In Progress";
+          }
+          targetId = data[j].node.vatTargetId.id;
+        }
+        if (partner.partnerId == undefined) {
           if (data[j].node.scanRunStatus == "Done") {
             tempArr["status"] = "Done";
           }
           if (data[j].node.scanRunStatus == "In Progress") {
             tempArr["status"] = "In Progress";
           }
-          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
-            tempArr["report_status"] = "Unpublished";
-          }
-          targetId = data[j].node.vatTargetId.id;
         }
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
