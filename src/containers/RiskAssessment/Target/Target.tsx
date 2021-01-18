@@ -14,6 +14,7 @@ import {
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import Alert from "../../../components/UI/Alert/Alert";
@@ -26,6 +27,8 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { Grid } from "@material-ui/core";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
@@ -63,6 +66,7 @@ export const Target: React.FC = (props: any) => {
   const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState(null)
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
+  const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
@@ -231,8 +235,8 @@ export const Target: React.FC = (props: any) => {
   }, []);
 
   // for target data
-  if (targetLoading) return <Loading />;
-  if (taskLoading) return <Loading />;
+  if (targetLoading || taskLoading || backdrop) return <SimpleBackdrop />;
+  if (taskLoading) return <SimpleBackdrop />;
   if (targetError) {
     return <div className="error">Error!</div>;
   }
@@ -379,6 +383,9 @@ export const Target: React.FC = (props: any) => {
 
   const onChangeHandler = (event: any) => {
     setSelectedFile(event.target.files[0])
+    if (event.target.files[0] && name && vpnUserName && vpnPassword) {
+      setSubmitDisabled(false)
+    }
   };
 
   const getBase64 = (file: any, cb: any) => {
@@ -393,6 +400,7 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickHandler = (event: any) => {
+    setBackdrop(true)
     let idCardBase64 = '';
     getBase64(selectedFile, (result: any) => {
       idCardBase64 = result;
@@ -409,6 +417,8 @@ export const Target: React.FC = (props: any) => {
         }
       }).then((response: any) => {
         console.log("responsre", response)
+        setBackdrop(false);
+        setSelectedFile(null);
         if (response.data.uploadFile.success == "File Uploaded Failed") {
           setFormState((formState) => ({
             ...formState,
@@ -429,6 +439,8 @@ export const Target: React.FC = (props: any) => {
           }));
         }
       }).catch((error: Error) => {
+        setBackdrop(false);
+        setSelectedFile(null);
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -510,7 +522,7 @@ export const Target: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
-  console.log("DATA",props.location.state)
+  console.log("DATA", props.location.state)
   const handleVpnPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -529,6 +541,7 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
+    // setBackdrop(true)
     testVpnConnection({
       variables: {
         "input": {
@@ -540,6 +553,7 @@ export const Target: React.FC = (props: any) => {
         }
       }
     }).then((response: any) => {
+      setBackdrop(false)
       console.log(" Test Connection Success !!!!!", response)
       if (response.data.vpnConnection.success == "VPN connected Successfully") {
         SetConnectionSuccess(true)
@@ -564,6 +578,7 @@ export const Target: React.FC = (props: any) => {
 
       }
     }).catch(() => {
+      setBackdrop(false)
       console.log("Test Connection Failed !!!!")
       setFormState((formState) => ({
         ...formState,
@@ -658,59 +673,7 @@ export const Target: React.FC = (props: any) => {
             IP Range
           </Input>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Input
-            type="text"
-            label="User Name"
-            value={userName}
-            onChange={handleUserNameChange}
-            required
-            error={isError.userName}
-            helperText={isError.userName}
-          >
-            User Name
-          </Input>
-        </Grid>
-        <Grid item xs={12} md={6} className={styles.PasswordField}>
-          <FormControl className={styles.TextField} variant="outlined">
-            <InputLabel classes={{ root: styles.FormLabel }}>
-              Password
-            </InputLabel>
-            <OutlinedInput
-              classes={{
-                root: styles.InputField,
-                notchedOutline: styles.InputField,
-                focused: styles.InputField,
-              }}
-              type={showPassword ? "text" : "password"}
-              label="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-              error={isError.password}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            {isError.password ? (
-              <FormHelperText
-                error={isError.password}
-                classes={{ root: styles.FormHelperText }}
-              >
-                Please enter a password.
-              </FormHelperText>
-            ) : null}
-          </FormControl>
-        </Grid>
+
         <Grid item xs={12} md={6}>
           <Input
             type="text"
@@ -784,11 +747,75 @@ export const Target: React.FC = (props: any) => {
               type="button"
               color="primary"
               variant={"contained"}
+              disabled={submitDisabled}
               onClick={onClickHandler}
             >
               Upload
               </Button>
           </form>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Input
+            type="text"
+            label="User Name"
+            value={userName}
+            onChange={handleUserNameChange}
+            required
+            error={isError.userName}
+            helperText={isError.userName}
+          >
+            User Name
+          </Input>
+        </Grid>
+        <Grid item xs={12} md={6} className={styles.PasswordField}>
+          <FormControl className={styles.TextField} variant="outlined">
+            <InputLabel classes={{ root: styles.FormLabel }}>
+              Password
+            </InputLabel>
+            <OutlinedInput
+              classes={{
+                root: styles.InputField,
+                notchedOutline: styles.InputField,
+                focused: styles.InputField,
+              }}
+              type={showPassword ? "text" : "password"}
+              label="Password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+              error={isError.password}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {isError.password ? (
+              <FormHelperText
+                error={isError.password}
+                classes={{ root: styles.FormHelperText }}
+              >
+                Please enter a password.
+              </FormHelperText>
+            ) : null}
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} className={styles.ActionButtons}>
+          <Button
+            type="button"
+            color="primary"
+            variant={"contained"}
+            onClick={onClickTestConnection}
+          >
+            Test Connection
+          </Button>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
@@ -808,17 +835,10 @@ export const Target: React.FC = (props: any) => {
           >
             next
           </Button>
-          <Button
-            type="button"
-            color="primary"
-            variant={"contained"}
-            onClick={onClickTestConnection}
-          >
-            Test Connection
-              </Button>
+
         </Grid>
       </Grid>
-    </React.Fragment>
+    </React.Fragment >
   );
 };
 

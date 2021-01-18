@@ -25,7 +25,7 @@ export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
   const [newData, setNewData] = useState();
   const clientInfo = props.location.state ? props.location.state.clientInfo : null;
-  console.log("props.location.stat",props.location.state)
+  // console.log("props.location.stat", props.location.state)
   //table
   const columns = [
     { title: "Target", field: "target" },
@@ -40,6 +40,7 @@ export const ReportStatus: React.FC = (props: any) => {
 
   const staticClientName = clientInfo !== null ? clientInfo.name : undefined;
   const targetName = props["location"].state.targetName;
+  const targetData = props["location"].state.target;
   const {
     data: dataReportListing,
     error: errorReportListing,
@@ -108,7 +109,7 @@ export const ReportStatus: React.FC = (props: any) => {
     }
     return arr;
   }
-
+  console.log("targetData", targetData)
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {
     let orderByColumn;
     let orderBy = "";
@@ -138,6 +139,10 @@ export const ReportStatus: React.FC = (props: any) => {
       <Typography component="h5" variant="h1">
         Report Status
       </Typography>
+      {!targetData.publish ?
+        <Typography component="h5" variant="h3">
+          Report Not Published !
+      </Typography> : null}
       <Grid>
         <Grid className={styles.FilterWrap}>
           <div className={styles.backToListButton}>
