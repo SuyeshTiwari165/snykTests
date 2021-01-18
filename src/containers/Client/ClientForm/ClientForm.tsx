@@ -310,6 +310,28 @@ export const Client: React.FC = (props: any) => {
       }));
         backToList();
       })
+      .catch((err) => {
+        setLoader(false)
+        let error = err.message;
+        if (
+          error.includes(
+            "duplicate key value violates unique constraint"
+          )
+        ) {
+          error = " Client Name Already Exists ";
+        }
+         else {
+          error = err.message;
+        }
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      }); 
   }
 
   const backToList = () => {

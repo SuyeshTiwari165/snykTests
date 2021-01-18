@@ -462,7 +462,7 @@ export const RaReportListing: React.FC = (props: any) => {
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
-                {userRole === "SuperUser" ? (
+                {/* {userRole === "SuperUser" ? ( */}
                   <Button
                     className={styles.BackToButton}
                     variant={"contained"}
@@ -482,7 +482,7 @@ export const RaReportListing: React.FC = (props: any) => {
                     />
                     &nbsp; Back to List
                   </Button>
-                ) : null}
+                {/* ) : null} */}
               </div>
             </div>
           </Grid>

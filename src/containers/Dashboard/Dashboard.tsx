@@ -108,7 +108,7 @@ export const Dashboard: React.FC = () => {
   };
 
 
-  // if (loadSubs || ipLoading || iLoading || loadingOrg) return <Loading />;
+  if (ipLoading) return <Loading />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (
