@@ -274,6 +274,28 @@ export const PartnerForm: React.FC = (props: any) => {
       }));
       backToList();
     })
+    .catch((err) => {
+      // setLoader(false)
+      let error = err.message;
+      if (
+        error.includes(
+          "duplicate key value violates unique constraint"
+        )
+      ) {
+        error = " Partner Name Already Exists ";
+      }
+       else {
+        error = err.message;
+      }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
   };
 
   const updateIntoPartner = () => {
@@ -298,6 +320,28 @@ export const PartnerForm: React.FC = (props: any) => {
       }));
       backToList();
     })
+    .catch((err) => {
+      // setLoader(false)
+      let error = err.message;
+      if (
+        error.includes(
+          "duplicate key value violates unique constraint"
+        )
+      ) {
+        error = " Partner Name Already Exists ";
+      }
+       else {
+        error = err.message;
+      }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
   }
 
   const handleClickAdd = (rowData: any) => {
