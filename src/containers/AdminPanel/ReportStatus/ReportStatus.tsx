@@ -437,11 +437,13 @@ export const ReportStatus: React.FC = (props: any) => {
             )}
           />
         </div>
-        <div>
+        <div className={styles.FilterDateInput}>
           <TextField
             id="startDate"
             label="Scan Start Date"
             type="date"
+            variant="outlined"
+            className={styles.outlineDate}
             value={startDate}
             onChange={startDateFilter}
             InputLabelProps={{
@@ -449,11 +451,13 @@ export const ReportStatus: React.FC = (props: any) => {
             }}
           />
         </div>
-        <div>
+        <div className={styles.FilterDateInput}>
           <TextField
             id="endDate"
             label="Scan End Date"
             type="date"
+            variant="outlined"
+            className={styles.outlineDate}
             value={endDate}
             onChange={endDateFilter}
             InputLabelProps={{

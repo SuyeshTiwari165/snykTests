@@ -461,8 +461,6 @@ export const RaReportListing: React.FC = (props: any) => {
         </Grid>
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
-            <div className={styles.ButtonGroup1}>
-              <div className={styles.FilterInputgotolist}>
                 {/* {userRole === "SuperUser" ? ( */}
                   <Button
                     className={styles.BackToButton}
@@ -484,23 +482,18 @@ export const RaReportListing: React.FC = (props: any) => {
                     &nbsp; Back to List
                   </Button>
                 {/* ) : null} */}
-              </div>
-            </div>
-          </Grid>
           {partner.partnerId ? (
-            <Grid className={styles.FilterWrap}>
-              <div className={styles.FilterAddButton}>
                 <Button
                   color="primary"
                   variant="contained"
                   onClick={handleAddNewReport}
+                  className={styles.ActionButton}
                 >
                   <AddCircleIcon className={styles.EditIcon} />
                   &nbsp; New Risk Assessment
                 </Button>
-              </div>
-            </Grid>
           ) : null}
+        </Grid>
         </Grid>
         <Paper className={styles.paper}>
           <MaterialTable
