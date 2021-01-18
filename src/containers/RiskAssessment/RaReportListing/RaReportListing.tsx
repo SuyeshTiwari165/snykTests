@@ -5,6 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Button } from "../../../components/UI/Form/Button/Button";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { Grid } from "@material-ui/core";
@@ -37,7 +38,7 @@ import Switch from "../../../components/UI/Switch/Switch";
 export const RaReportListing: React.FC = (props: any) => {
   const [name, setName] = useState<String>("");
   const [published, setPublished] = useState<any>({});
-  const [loader, setLoader] = useState<Boolean>(false);
+  const [backdrop, setBackdrop] = useState<Boolean>(false);
   const [submitDisabled, setSubmitDisabled] = useState<Boolean>(true);
   const [selectedFile, setSelectedFile] = useState<any>({});
   const history = useHistory();
@@ -136,7 +137,7 @@ export const RaReportListing: React.FC = (props: any) => {
   }, [dataReportListing]);
 
   //for task data
-  if (loadingReportListing || loader) return <Loading />;
+  if (loadingReportListing || backdrop) return <SimpleBackdrop />;
   // if (errorReportListing) {
   // history.push({
   //   pathname: routeConstant.DASHBOARD,
@@ -162,7 +163,6 @@ export const RaReportListing: React.FC = (props: any) => {
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          // console.log("data[j].node.vatTargetId", data[j].node)
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
             tempArr["report_status"] = "Published";
             tempArr["status"] = "Done";
@@ -173,13 +173,14 @@ export const RaReportListing: React.FC = (props: any) => {
             tempArr["status"] = "In Progress";
           }
           targetId = data[j].node.vatTargetId.id;
-        }
-        if (partner.partnerId == undefined) {
-          if (data[j].node.scanRunStatus == "Done") {
-            tempArr["status"] = "Done";
-          }
-          if (data[j].node.scanRunStatus == "In Progress") {
-            tempArr["status"] = "In Progress";
+
+          if (partner.partnerId == undefined) {
+            if (data[j].node.scanRunStatus == "Done") {
+              tempArr["status"] = "Done";
+            }
+            if (data[j].node.scanRunStatus == "In Progress") {
+              tempArr["status"] = "In Progress";
+            }
           }
         }
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
@@ -227,7 +228,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleClickView = (rowData: any) => {
     history.push({
       pathname: routeConstant.REPORT_STATUS,
-      state: { targetName: rowData.target, clientInfo: clientInfo }
+      state: { targetName: rowData.target, clientInfo: clientInfo, target: rowData }
     });
   };
 
@@ -250,14 +251,14 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleDownload = (rowData: any) => {
-    setLoader(true)
+    setBackdrop(true)
     let intTargetId = parseInt(rowData.targetId);
     const DocUrl =
       RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
     fetch(DocUrl, {
       method: "GET"
     }).then((response: any) => {
-      setLoader(false)
+      setBackdrop(false)
       response.blob().then((blobData: any) => {
         saveAs(blobData, "RA_Report");
       });
@@ -287,7 +288,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handleUpload = (rowData: any) => {
     if (selectedFile[rowData.targetId]) {
-      setLoader(true)
+      setBackdrop(true)
       let idCardBase64 = "";
       getBase64(selectedFile[rowData.targetId], (result: any) => {
         idCardBase64 = result;
@@ -312,7 +313,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 errMessage: " File Upload Failed."
               }));
               setSelectedFile({});
-              setLoader(false)
+              setBackdrop(false)
             } else {
               setFormState(formState => ({
                 ...formState,
@@ -323,7 +324,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 errMessage: "File Uploaded Successfully !!"
               }));
               setSelectedFile({});
-              setLoader(false)
+              setBackdrop(false)
             }
           })
           .catch((error: Error) => {
@@ -335,7 +336,7 @@ export const RaReportListing: React.FC = (props: any) => {
               isFailed: true,
               errMessage: ""
             }));
-            setLoader(false)
+            setBackdrop(false)
           });
       });
     }
@@ -348,7 +349,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handlePublishchange = (event: any, rowData: any) => {
     if (event.target.checked !== undefined) {
-      setLoader(true)
+      setBackdrop(true)
       publishReport({
         variables: {
           input: {
@@ -359,7 +360,7 @@ export const RaReportListing: React.FC = (props: any) => {
           }
         }
       }).then((response: any) => {
-        setLoader(false)
+        setBackdrop(false)
         if (
           event.target.checked !== true && response.data.publishedReport.success ==
           "Report Published Successfully "
@@ -384,7 +385,7 @@ export const RaReportListing: React.FC = (props: any) => {
           }));
         }
       }).catch((error: any) => {
-        setLoader(false)
+        setBackdrop(false)
       })
     }
   };
@@ -462,27 +463,27 @@ export const RaReportListing: React.FC = (props: any) => {
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
-                {userRole === "SuperUser" ? (
-                  <Button
-                    className={styles.BackToButton}
-                    variant={"contained"}
-                    onClick={() => {
-                      let data = {};
-                      data = { clientInfo: clientInfo };
-                      history.push(routeConstant.CLIENT, data);
-                    }}
-                    color="secondary"
-                    data-testid="cancel-button"
-                  >
-                    <img
-                      src={
-                        process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                      }
-                      alt="user icon"
-                    />
+                {/* {userRole === "SuperUser" ? ( */}
+                <Button
+                  className={styles.BackToButton}
+                  variant={"contained"}
+                  onClick={() => {
+                    let data = {};
+                    data = { clientInfo: clientInfo };
+                    history.push(routeConstant.CLIENT, data);
+                  }}
+                  color="secondary"
+                  data-testid="cancel-button"
+                >
+                  <img
+                    src={
+                      process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
+                    }
+                    alt="user icon"
+                  />
                     &nbsp; Back to List
                   </Button>
-                ) : null}
+                {/* ) : null} */}
               </div>
             </div>
           </Grid>
@@ -554,15 +555,16 @@ export const RaReportListing: React.FC = (props: any) => {
                         type="file"
                         name={rowData.tableData.id}
                         id="zipUpload"
+                        className={styles.uploadButton}
                         hidden
                         onChange={(event: any) => {
                           onChangeHandler(event, rowData);
                         }}
                       />
-                      <label htmlFor="zipUpload">Browse</label>
+                      <label htmlFor="zipUpload"><CloudUploadIcon /></label>
                     </div>
                   ),
-                  tooltip: "Upload",
+                  tooltip: "Browse",
                   name: "file",
                   type: "file",
                   onClick: (event: any, rowData: any) => {
@@ -587,8 +589,14 @@ export const RaReportListing: React.FC = (props: any) => {
                   // disabled: rowData.status !== "Done",
                   icon: () => (
                     <div>
-                      <div>
+                       <div className={styles.raswitch}>
                         <Switch
+                          className={
+                            published[rowData.targetId]
+                              ? styles.PublishSwitch
+                              : styles.PublishSwitchCheck
+                          }
+
                           id="rowData.targetId"
                           checked={published[rowData.targetId]}
                           onChange={(event: any) => {
@@ -598,10 +606,10 @@ export const RaReportListing: React.FC = (props: any) => {
                           {...props}
                         ></Switch>
                       </div>
-                      {/* <span className={styles.PiiDataSwitchLabels}>
-                      <span className={styles.PiiDataSwitchNo}>NO</span>
-                      <span className={styles.PiiDataSwitchYes}>YES</span>
-                    </span> */}
+                      <span className={styles.PublishSwitchLabels}>
+                        <span className={styles.PublishSwitchNo}>NO</span>
+                        <span className={styles.PublishSwitchYes}>YES</span>
+                      </span>
                     </div>
                   ),
                   tooltip: "Publish",

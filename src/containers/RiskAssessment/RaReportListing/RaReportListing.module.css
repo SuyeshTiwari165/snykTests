@@ -124,7 +124,7 @@ tfoot {
 
 /*Switch*/
 
-.PiiDataSwitch, .PiiDataSwitchCheck {
+.PublishSwitch, .PublishSwitchCheck {
   width: 100px !important;
   padding: 4px !important;
   border: 1px solid #0051a8;
@@ -133,39 +133,39 @@ tfoot {
   height: 39px !important;
 }
 
-.PiiDataSwitch>span, .PiiDataSwitchCheck>span {
+.PublishSwitch>span, .PublishSwitchCheck>span {
   padding: 4px;
 }
 
-.PiiDataSwitch>span {
+.PublishSwitch>span {
   transform: translateX(40px) !important;
 }
 
-.PiiDataSwitch>span+span, .PiiDataSwitchCheck>span+span {
+.PublishSwitch>span+span, .PublishSwitchCheck>span+span {
   border-radius: 20px;
   background-color: transparent !important;
 }
 
-.PiiDataSwitch>span>span>span, .PiiDataSwitchCheck>span>span>span {
+.PublishSwitch>span>span>span, .PublishSwitchCheck>span>span>span {
   width: 48px;
   background-color: #0051a8;
   height: 28px;
   border-radius: 25px;
 }
 
-.PiiDataSwitchLabels {
+.PublishSwitchLabels {
   position: absolute;
   width: 116px;
   left: 0;
   top: 0;
 }
 
-.pgswitch {
+.raswitch {
   position: relative;
   margin: 7px 0px;
 }
 
-.PiiDataSwitchLabels>span {
+.PublishSwitchLabels>span {
   width: 48px;
   justify-content: center;
   font-weight: 500;
@@ -173,15 +173,17 @@ tfoot {
   padding: 12px 0px;
 }
 
-.PiiDataSwitchCheck+span .PiiDataSwitchNo, .PiiDataSwitch+span .PiiDataSwitchYes {
+.PublishSwitchCheck+span .PublishSwitchNo, .PublishSwitch+span .PublishSwitchYes {
   color: #fff;
+  font-size: 5px;
 }
 
-.PiiDataSwitchCheck+span .PiiDataSwitchYes, .PiiDataSwitch+span .PiiDataSwitchNo {
+.PublishSwitchCheck+span .PublishSwitchYes, .PublishSwitch+span .PublishSwitchNo {
   color: #0051a8;
+  font-size: 5px;
 }
 
-.PiiDataSwitchCheck>span>span>span::before {
+.PublishSwitchCheck>span>span>span::before {
   content: "No";
   color: #fff !important;
   font-family: Roboto, sans-serif;
@@ -192,7 +194,7 @@ tfoot {
   justify-content: center;
 }
 
-.PiiDataSwitch>span>span>span::before {
+.PublishSwitch>span>span>span::before {
   content: "YES";
   color: #fff !important;
   font-family: Roboto, sans-serif;
@@ -231,4 +233,8 @@ tfoot {
 .backToListButtonPanel {
   text-align: right;
   padding-right: 20px;
+}
+
+.uploadButton {
+  cursor: pointer;
 }
