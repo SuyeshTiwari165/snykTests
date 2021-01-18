@@ -125,8 +125,8 @@ export const Partner: React.FC = (props: any) => {
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
-      obj["created_on"] = moment(element.node.createdDate).format(
-        "MM/DD/YYYY hh:mm a");
+      obj["created_on"] = element.node.createdDate ? moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a") : "-";
       arr.push(obj);
     });
     setNewData(arr);
@@ -168,6 +168,7 @@ export const Partner: React.FC = (props: any) => {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partner_id, rowData);
     }
   };
+  if (loadOrg) return <Loading />;
 
   return (
     <React.Fragment>

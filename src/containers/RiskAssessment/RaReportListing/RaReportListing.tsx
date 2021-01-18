@@ -464,23 +464,23 @@ export const RaReportListing: React.FC = (props: any) => {
             <div className={styles.ButtonGroup1}>
               <div className={styles.FilterInputgotolist}>
                 {/* {userRole === "SuperUser" ? ( */}
-                <Button
-                  className={styles.BackToButton}
-                  variant={"contained"}
-                  onClick={() => {
-                    let data = {};
-                    data = { clientInfo: clientInfo };
-                    history.push(routeConstant.CLIENT, data);
-                  }}
-                  color="secondary"
-                  data-testid="cancel-button"
-                >
-                  <img
-                    src={
-                      process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                    }
-                    alt="user icon"
-                  />
+                  <Button
+                    className={styles.BackToButton}
+                    variant={"contained"}
+                    onClick={() => {
+                      let data = {};
+                      data = { clientInfo: clientInfo };
+                      history.push(routeConstant.CLIENT, data);
+                    }}
+                    color="secondary"
+                    data-testid="cancel-button"
+                  >
+                    <img
+                      src={
+                        process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
+                      }
+                      alt="user icon"
+                    />
                     &nbsp; Back to List
                   </Button>
                 {/* ) : null} */}

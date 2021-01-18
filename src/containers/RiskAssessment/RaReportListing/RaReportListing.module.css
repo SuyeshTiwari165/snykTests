@@ -204,15 +204,17 @@ tfoot {
   padding: 5px 0px;
   justify-content: center;
 }
-
 .backToListButton button {
+  background-color: transparent !important;
+  border: 0px !important;
+  box-shadow: none !important;
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051A8 !important;
+  color: #0051a8 !important;
+  outline: 0 !important;
   text-transform: unset !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none;
+  padding-right: 0px !important;
+  margin-bottom: 3px;
 }
 
 .backToListButton button:hover {
