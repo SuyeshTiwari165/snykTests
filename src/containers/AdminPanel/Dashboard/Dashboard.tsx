@@ -142,7 +142,7 @@ export const Dashboard: React.FC = (props: any) => {
           </div>
         </Grid>
       </React.Fragment>
-      <Grid className={styles.recentTypo} item xs={6}>
+      <Grid className={styles.recentTypo} item xs={12}>
         <Typography component="h2" variant="h1" gutterBottom>
           Recently added Partners
         </Typography>
