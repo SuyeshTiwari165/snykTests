@@ -178,9 +178,9 @@ export const Partner: React.FC = (props: any) => {
       </Typography>
       <Grid className={styles.TableWrap}>
         <Grid container>
-          <Grid item xs={6} sm={9} className={styles.FilterWrap}>
-          </Grid>
-          <Grid item xs={3} sm={3} className={styles.FilterAddWrap}>
+          {/* <Grid item xs={6} sm={9} className={styles.FilterWrap}>
+          </Grid> */}
+          <Grid item xs={12} className={styles.FilterAddWrap}>
             <div className={styles.FilterInput}>
               <Button
                 color="primary"

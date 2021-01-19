@@ -131,31 +131,37 @@ export const Dashboard: React.FC = () => {
             </div>
           </Grid>
           <Grid item xs={12} md={6} className={styles.FilterAddWrap}>
-            <div className={styles.partnerButton}>
-              <Link to={routeConstant.PARTNER_USER_FORM_ADD}>
-                <Button color="primary" variant="contained">
-                  <AddCircleIcon className={styles.EditIcon}/>
-                  User
-                </Button>
-              </Link>
-            </div>
-            <div className={styles.partnerButton}>
-              <Link to={routeConstant.CLIENT_FORM_ADD}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                // onClick={handleClickOpen}
-                >
-                  <AddCircleIcon className={styles.EditIcon}/>
-                 Client
-              </Button>
-              </Link>
-            </div>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={12}>
+                <div className={styles.partnerButton}>
+                  <Link to={routeConstant.PARTNER_USER_FORM_ADD}>
+                    <Button color="primary" variant="contained">
+                      <AddCircleIcon className={styles.EditIcon}/>
+                      User
+                    </Button>
+                  </Link>
+                </div>
+                </Grid>
+                <Grid item xs={12} sm={6} md={12}>
+                <div className={styles.partnerButton}>
+                  <Link to={routeConstant.CLIENT_FORM_ADD}>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                    // onClick={handleClickOpen}
+                    >
+                      <AddCircleIcon className={styles.EditIcon}/>
+                    Client
+                  </Button>
+                  </Link>
+                </div>
+              </Grid>
+          </Grid>
           </Grid>
         </Grid>
         {/* </Container> */}
       </React.Fragment>
-      <Grid className={styles.recentTypo} item xs={6}>
+      <Grid className={styles.recentTypo} item xs={12}>
         <Typography component="h2" variant="h1" gutterBottom>
           Recently added clients
         </Typography>

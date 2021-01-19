@@ -66,3 +66,14 @@
 .logout {
   cursor:pointer
 }
+
+@media (max-width: 599.95px) {
+  .userInfo {
+    height: 49px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    width: 100%;
+  }
+}

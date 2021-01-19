@@ -168,6 +168,15 @@ export const Login: React.FC<LoginProps> = () => {
         <Grid item xs={12} className={styles.siteInfo}>
           <form className={styles.Login} onSubmit={onLogin} noValidate>
             <div className={styles.Box}>
+              <div className={styles.RALogoImg}>
+                <img
+                    src={
+                      process.env.PUBLIC_URL +
+                      "/icons/svg-icon/risk-assessments.svg"
+                    }
+                    alt="user icon"
+                  />
+              </div>
               <div className={styles.cyberComplianceLogo}>
                 RA In a Box
               </div>

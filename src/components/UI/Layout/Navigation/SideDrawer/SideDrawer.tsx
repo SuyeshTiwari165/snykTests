@@ -44,7 +44,21 @@ const useStyles = makeStyles((theme: Theme) =>
       flexShrink: 0,
       whiteSpace: "nowrap",
       backgroundColor: "#fff",
-      boxShadow: "7px 0 7px -6px #e4e4e4 !important"
+      boxShadow: "7px 0 7px -6px #e4e4e4 !important",
+      [theme.breakpoints.down("xs")]: {
+        position: "absolute",
+        left:"0",
+        backgroundColor: "#fff",
+        height: "100%",
+        zIndex: "999",
+      },
+      "& + main" :{
+        [theme.breakpoints.down("xs")]: {
+          width: "100%",
+          marginTop: "50px",
+        }
+      }
+
     },
     navClose: {
       width: "72px",
@@ -53,7 +67,19 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: "-57px;",
       "& + main" :{
         width: "calc(100% - 72px)",
-      }
+        [theme.breakpoints.down("xs")]: {
+          marginLeft: "72px",
+          marginTop: "50px",
+        }
+      },
+      [theme.breakpoints.down("xs")]: {
+        position: "absolute",
+        left:"0",
+        top: "49px",
+        backgroundColor: "#fff",
+        height: "calc(100% + 7px)",
+        zIndex: "999",
+      },
     },
     drawerOpen: {
       width: "246px",
@@ -65,7 +91,10 @@ const useStyles = makeStyles((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen
       }),
-      height: "100%"
+      height: "100%",
+      [theme.breakpoints.down("xs")]: {
+        marginTop: "0px"
+      }
     },
     drawerClose: {
       position: "relative",
@@ -78,8 +107,17 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowX: "hidden",
       // width: theme.spacing(7) + 1,
       [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9) + 1
-      }
+        width: theme.spacing(9) + 1,
+        "& > div:nth-child(2)" :{
+          top: "0",
+        }
+      }, 
+      "& > div > div" :{
+        [theme.breakpoints.down("xs")]: {
+          backgroundColor: "#fff",
+          marginBottom: "0px",
+        }
+      },
     },
     toolbar: {
       display: "flex"
@@ -96,6 +134,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       justifyContent: "flex-end",
       padding: "8px 0px",
+      [theme.breakpoints.down("xs")]: {
+        padding: "0px",
+      }
     },
     anotherToolBar: {
       padding: "0px",
@@ -103,6 +144,13 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: "56px",
       "& > button" :{
         marginTop : "8px !important",
+      },
+      [theme.breakpoints.down("xs")]: {
+        height: "auto",
+        padding: "0px",
+        minHeight: "49px",
+        backgroundColor: "#0051a8",
+        marginBottom: "8px",
       }
     },
     title: {

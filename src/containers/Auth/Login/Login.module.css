@@ -47,7 +47,7 @@
 
 .Box {
   margin-top: 10vh;
-  height: 380px;
+  /* height: 380px; */
   width: 308px;
   border-radius: 20px;
   display: flex;
@@ -91,9 +91,10 @@
 }
 
 .cyberComplianceLogo {
-  color: #0051a8;
-  font-size: 28px;
-  margin-bottom: 24px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #002F60;
 }
 
 .OrText {
@@ -153,4 +154,9 @@
   border-radius: 10px !important;
   line-height: 1.846 !important;
   height: 37px !important;
+}
+.RALogoImg{
+  display: block;
+  width: 83px;
+  margin-bottom: 7px;
 }
