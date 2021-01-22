@@ -160,11 +160,15 @@ export const TaskDetails: React.FC = (props: any) => {
     setRaStepper(client, stepper.Task.name, stepper.Task.value);
   }, []);
 
+  useEffect(() => {
+    if (getScanConfigList.length === 0 && dataScanConfig) {
+      setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
+    }
+  }, [dataScanConfig]);
+
   if (loadingScanConfig) return <Loading />;
-  console.log("getScanConfigList.length",dataScanConfig)
-  if (getScanConfigList.length === 0 && dataScanConfig) {
-    setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
-  }
+  console.log("getScanConfigList.length",props.location)
+  
 
   const handleSubmitDialogBox = () => {
     setSubmitDisabled(true)
@@ -198,8 +202,11 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("name");
         localStorage.removeItem("targetId");
         localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
         localStorage.removeItem("userName");
         localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
       })
       .catch((err) => {
         setSubmitDisabled(true)
@@ -222,12 +229,8 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    // if (scanListCheckBox.length > 0) {
-    //   let data = { editData: true, scanListShow: true, clientInfo: clientInfo };
-    //   history.push(routeConstant.TARGET, data);
-    // }
     let data = { editData: true, clientInfo: clientInfo };
-    history.push(routeConstant.TARGET, data);
+    history.push(routeConstant.LINUX_NETWORK, data);
   };
 
   const handleAlertClose = () => {

@@ -74,18 +74,26 @@ export default function RaStepper(props: any) {
       path: routeConstants.TARGET,
     },
     {
+      title: "Linux Network",
+      path: routeConstants.LINUX_NETWORK,
+    },
+    {
+      title: "Windows Network",
+      path: routeConstants.WINDOWS_NETWORK,
+    },
+    {
       title: "Task",
       path: routeConstants.TASK_DETAILS,
     },
+
   ];
   if (nextValue.data) {
     if (activeStep !== nextValue.data.activeStep) {
-      if (nextValue.data.raStep === allSteps[0].title) {
-        setActiveStep(nextValue.data.activeStep);
-        setStep(nextValue.data.activeStep);
-      } else if (nextValue.data.raStep === allSteps[1].title) {
-        setActiveStep(nextValue.data.activeStep);
-        setStep(nextValue.data.activeStep);
+      for (let index in allSteps) {
+        if (nextValue.data.raStep === allSteps[index].title) {
+          setActiveStep(nextValue.data.activeStep);
+          setStep(nextValue.data.activeStep);
+        }
       }
     }
   }

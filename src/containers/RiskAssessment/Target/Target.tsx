@@ -13,6 +13,7 @@ import {
   UPDATE_TARGET,
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
+import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
@@ -27,8 +28,6 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { Grid } from "@material-ui/core";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
@@ -44,23 +43,26 @@ import RaStepper from "../component/RaStepper/RaStepper";
 import { useHistory } from "react-router-dom";
 import { setRaStepper } from "../common/SetRaStepper";
 import * as routeConstant from "../../../common/RouteConstants";
+import * as msgConstant from "../../../common/MessageConstants";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
 import { RA_TARGET_VPNTEST } from "../../../config/index";
 import { TEST_CONNECTION } from "../../../graphql/mutations/VPNConnection"
+
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
-
+  const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   // const sessionData = useQuery(RA_TARGET_SESSION);
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
-
+  const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   //add/edit data
   const [name, setName] = useState<String>("");
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
+  const [linuxDomain, setLinuxDomain] = useState(false);
   const [vpnUserName, setVpnUserName] = useState<String>("");
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
@@ -69,6 +71,7 @@ export const Target: React.FC = (props: any) => {
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  console.log("props.location.state", props.location.state)
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
@@ -212,7 +215,7 @@ export const Target: React.FC = (props: any) => {
       setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
     }
-  }
+  };
 
   useEffect(() => {
     if (
@@ -226,6 +229,7 @@ export const Target: React.FC = (props: any) => {
       }, ALERT_MESSAGE_TIMER);
     }
   }, [formState]);
+
   useEffect(() => {
     setSubmitDisabled(checkValidation);
   }, [name, ipRange, userName, password, vpnUserName, vpnPassword]);
@@ -236,149 +240,146 @@ export const Target: React.FC = (props: any) => {
 
   // for target data
   if (targetLoading || taskLoading || backdrop) return <SimpleBackdrop />;
-  if (taskLoading) return <SimpleBackdrop />;
   if (targetError) {
     return <div className="error">Error!</div>;
   }
 
   const handleSubmitDialogBox = () => {
-    if (editDataId) {
-      setSubmitDisabled(true)
-      let input = {
-        targetName: name,
-        host: ipRange,
-        winUsername: userName,
-        winPassword: password,
-        vpnUsername: vpnUserName,
-        vpnPassword: vpnPassword,
-      };
-      let id = editDataId;
-      updateTarget({
-        variables: {
-          input,
-          id,
-        },
-      })
-        .then((userRes) => {
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: true,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "",
-          }));
-          setSubmitDisabled(false)
-          setEditDataId(null);
-          localStorage.setItem("name", JSON.stringify(name));
-          localStorage.setItem(
-            "targetId",
-            JSON.stringify(userRes.data.updateTarget.targetField.id)
-          );
-          localStorage.setItem("ipRange", JSON.stringify(ipRange));
-          localStorage.setItem("userName", JSON.stringify(userName));
-          localStorage.setItem("password", JSON.stringify(password));
-          localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
-          let data = {};
-          if (scanConfigList) {
-            data = { scanConfigList: scanConfigList, clientInfo: clientInfo };
-          }
-          // if (targetName !== null) {
-          //   history.push({
-          //     pathname: routeConstant.TASK_DETAILS,
-          //     state: { targetName: targetName },
-          //   });
-          //   console.log("normal push", targetName);
-          // } else {
-          history.push(routeConstant.TASK_DETAILS, data);
-          // }
-        })
-        .catch((err) => {
-          setSubmitDisabled(true)
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          } else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-    } else {
-      setSubmitDisabled(true)
-      let input = {
-        partner: partnerId,
-        client: clientId,
-        targetName: name,
-        host: ipRange,
-        winUsername: userName,
-        winPassword: password,
-        vpnUsername: vpnUserName,
-        vpnPassword: vpnPassword,
-        startDate: startDate,
-      };
-      createTarget({
-        variables: {
-          input,
-        },
-      })
-        .then((userRes) => {
-          setSubmitDisabled(false)
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: true,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "",
-          }));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
-          localStorage.setItem("name", JSON.stringify(name));
-          localStorage.setItem(
-            "targetId",
-            JSON.stringify(userRes.data.createTarget.targetField.id)
-          );
-          localStorage.setItem("ipRange", JSON.stringify(ipRange));
-          localStorage.setItem("userName", JSON.stringify(userName));
-          localStorage.setItem("password", JSON.stringify(password));
-          localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-          let data = {};
-          if (scanConfigList) {
-            data = { scanConfigList: scanConfigList, clientInfo: clientInfo };
-          }
-          history.push(routeConstant.TASK_DETAILS, data);
-        })
-        .catch((err) => {
-          setSubmitDisabled(false)
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          } else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-    }
+    // if (editDataId) {
+    //   setSubmitDisabled(true)
+    //   let input = {
+    //     targetName: name,
+    //     host: ipRange,
+    //     vpnUsername: vpnUserName,
+    //     vpnPassword: vpnPassword,
+    //   };
+    //   let id = editDataId;
+    //   updateTarget({
+    //     variables: {
+    //       input,
+    //       id,
+    //     },
+    //   })
+    //     .then((userRes) => {
+    //       console.log("dsdsdsfdsdf", userRes)
+    //       setFormState((formState) => ({
+    //         ...formState,
+    //         isSuccess: false,
+    //         isUpdate: true,
+    //         isDelete: false,
+    //         isFailed: false,
+    //         errMessage: "",
+    //       }));
+    //       setSubmitDisabled(false)
+    //       setEditDataId(null);
+    //       localStorage.setItem("name", JSON.stringify(name));
+    //       localStorage.setItem(
+    //         "targetId",
+    //         JSON.stringify(userRes.data.updateTarget.targetField.id)
+    //       );
+    //       localStorage.setItem("ipRange", JSON.stringify(ipRange));
+    //       localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+    //       localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+    //       setRaStepper(client, stepper.Task.name, stepper.Task.value);
+    //       setShowDialogBox(false)
+    //       let data = {};
+    //       setTimeout(() => {
+    //         setLinuxDomain(true);
+    //         setShowDialogBox(true)
+    //         setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+    //       }, 1000);
+    //     })
+    //     .catch((err) => {
+    //       setShowDialogBox(false)
+    //       setSubmitDisabled(true)
+    //       let error = err.message;
+    //       if (
+    //         error.includes("duplicate key value violates unique constraint")
+    //       ) {
+    //         error = " Name already present.";
+    //       } else {
+    //         error = err.message;
+    //       }
+    //       setFormState((formState) => ({
+    //         ...formState,
+    //         isSuccess: false,
+    //         isUpdate: false,
+    //         isDelete: false,
+    //         isFailed: true,
+    //         errMessage: error,
+    //       }));
+    //     });
+    // } else {
+    //   setSubmitDisabled(true)
+    //   if (partnerId && clientId) {
+    //     let input = {
+    //       partner: partnerId,
+    //       client: clientId,
+    //       targetName: name,
+    //       host: ipRange,
+    //       vpnUsername: vpnUserName,
+    //       vpnPassword: vpnPassword,
+    //       startDate: startDate,
+    //     };
+    //     createTarget({
+    //       variables: {
+    //         input,
+    //       },
+    //     })
+    //       .then((userRes) => {
+    //         setSubmitDisabled(false)
+    //         setFormState((formState) => ({
+    //           ...formState,
+    //           isSuccess: true,
+    //           isUpdate: false,
+    //           isDelete: false,
+    //           isFailed: false,
+    //           errMessage: "",
+    //         }));
+    //         setRaStepper(client, stepper.Task.name, stepper.Task.value);
+            localStorage.setItem("name", JSON.stringify(name));
+            // localStorage.setItem(
+            //   "targetId",
+            //   JSON.stringify(userRes.data.createTarget.targetField.id)
+            // );
+            localStorage.setItem("ipRange", JSON.stringify(ipRange));
+            localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+            localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+    //         setShowDialogBox(false)
+    //         let data = {};
+    //         let targetInfo = {
+    //           targetName: name,
+    //           host: ipRange,
+    //           userName: userName,
+    //           password: password,
+    //         };
+            setTimeout(() => {
+              setLinuxDomain(true);
+              setShowDialogBox(true)
+              setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+              }, 1000);
+    //       })
+    //       .catch((err) => {
+    //         setSubmitDisabled(false)
+    //         let error = err.message;
+    //         if (
+    //           error.includes("duplicate key value violates unique constraint")
+    //         ) {
+    //           error = " Name already present.";
+    //         } else {
+    //           error = err.message;
+    //         }
+    //         setFormState((formState) => ({
+    //           ...formState,
+    //           isSuccess: false,
+    //           isUpdate: false,
+    //           isDelete: false,
+    //           isFailed: true,
+    //           errMessage: error,
+    //         }));
+    //       });
+    //   }
+    // }
   };
 
   const onChangeHandler = (event: any) => {
@@ -466,6 +467,29 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("vpnPassword");
   };
 
+
+  let data = {};
+  let targetInfo = {
+    targetName: name,
+    host: ipRange,
+    vpnUserName: vpnUserName,
+    vpnPassword: vpnPassword,
+  };
+  const handleOkay = () => {
+    setTimeout(() => {
+      data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+      history.push(routeConstant.LINUX_NETWORK, data);
+    }, 500);
+  };
+
+  const handleClose = () => {
+    setShowDialogBox(false);
+    setTimeout(() => {
+      data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+      history.push(routeConstant.WINDOWS_NETWORK, data);
+    }, 500);
+  };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
     let value = event.target.value;
@@ -522,7 +546,7 @@ export const Target: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
-  console.log("DATA", props.location.state)
+
   const handleVpnPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -541,55 +565,57 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    // setBackdrop(true)
-    testVpnConnection({
-      variables: {
-        "input": {
-          "client": props.location.state.clientInfo.clientId,
-          "targetName": name,
-          "vpnUsername": vpnUserName,
-          "vpnPassword": vpnPassword,
-          "host": ipRange
+    if (props.location.state.clientInfo) {
+      setBackdrop(true)
+      testVpnConnection({
+        variables: {
+          "input": {
+            "client": props.location.state.clientInfo.clientId,
+            "targetName": name,
+            "vpnUsername": vpnUserName,
+            "vpnPassword": vpnPassword,
+            "host": ipRange
+          }
         }
-      }
-    }).then((response: any) => {
-      setBackdrop(false)
-      console.log(" Test Connection Success !!!!!", response)
-      if (response.data.vpnConnection.success == "VPN connected Successfully") {
-        SetConnectionSuccess(true)
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: true,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: false,
-          errMessage: " Test Connection Successful",
-        }));
-      } else {
-        SetConnectionSuccess(false)
+      }).then((response: any) => {
+        setBackdrop(false)
+        console.log(" Test Connection Success !!!!!", response)
+        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+          SetConnectionSuccess(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: " Test Connection Successful",
+          }));
+        } else {
+          SetConnectionSuccess(false)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Test Connection Failed ",
+          }));
+
+        }
+      }).catch(() => {
+        setBackdrop(false)
+        console.log("Test Connection Failed !!!!")
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
           isUpdate: false,
           isDelete: false,
           isFailed: true,
-          errMessage: "Test Connection Failed ",
+          errMessage: "",
         }));
-
-      }
-    }).catch(() => {
-      setBackdrop(false)
-      console.log("Test Connection Failed !!!!")
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: "",
-      }));
-    })
-  }
+      })
+    }
+  };
 
   const handleClickShowVpnPassword = () => {
     setShowVpnPassword(!showVpnPassword);
@@ -605,7 +631,7 @@ export const Target: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Target : {props.location.state.clientInfo.name}
+        Target : {props.location.state !== undefined && props.location.state.clientInfo !== undefined ? props.location.state.clientInfo.name : null}
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
@@ -673,7 +699,6 @@ export const Target: React.FC = (props: any) => {
             IP Range
           </Input>
         </Grid>
-
         <Grid item xs={12} md={6}>
           <Input
             type="text"
@@ -687,19 +712,6 @@ export const Target: React.FC = (props: any) => {
             VPN User Name
           </Input>
         </Grid>
-        {/* <Grid item xs={6}>
-          <Input
-            type="text"
-            label="VPN Password"
-            value={vpnPassword}
-            onChange={handleVpnPasswordChange}
-            required
-            error={isError.vpnPassword}
-            helperText={isError.vpnPassword}
-          >
-            VPN Password
-          </Input>
-        </Grid> */}
         <Grid item xs={12} md={6} className={styles.PasswordField}>
           <FormControl className={styles.TextField} variant="outlined">
             <InputLabel classes={{ root: styles.FormLabel }}>
@@ -754,69 +766,6 @@ export const Target: React.FC = (props: any) => {
               </Button>
           </form>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Input
-            type="text"
-            label="User Name"
-            value={userName}
-            onChange={handleUserNameChange}
-            required
-            error={isError.userName}
-            helperText={isError.userName}
-          >
-            User Name
-          </Input>
-        </Grid>
-        <Grid item xs={12} md={6} className={styles.PasswordField}>
-          <FormControl className={styles.TextField} variant="outlined">
-            <InputLabel classes={{ root: styles.FormLabel }}>
-              Password
-            </InputLabel>
-            <OutlinedInput
-              classes={{
-                root: styles.InputField,
-                notchedOutline: styles.InputField,
-                focused: styles.InputField,
-              }}
-              type={showPassword ? "text" : "password"}
-              label="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-              error={isError.password}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            {isError.password ? (
-              <FormHelperText
-                error={isError.password}
-                classes={{ root: styles.FormHelperText }}
-              >
-                Please enter a password.
-              </FormHelperText>
-            ) : null}
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} className={styles.ActionButtons}>
-          <Button
-            type="button"
-            color="primary"
-            variant={"contained"}
-            onClick={onClickTestConnection}
-          >
-            Test Connection
-          </Button>
-        </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
             variant={"contained"}
@@ -831,14 +780,35 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            disabled={submitDisabled}
+          // disabled={submitDisabled}
           >
             next
           </Button>
+          <AlertBox
+            DialogTitle={""}
+            open={showDialogBox}
+            dialogBoxMsg={dialogBoxMsg}
+            pathName={""}
+            handleOkay={handleOkay}
+            cancelButtonPath={""}
+            closeButtonPath={handleClose}
+            buttonName={"Yes"}
+            CloseButtonName={"No"}
+            handleCancel={handleClose}
+            handleClose={handleClose}
+          ></AlertBox>
 
+          <Button
+            type="button"
+            color="primary"
+            variant={"contained"}
+            onClick={onClickTestConnection}
+          >
+            Test Connection
+              </Button>
         </Grid>
       </Grid>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
 

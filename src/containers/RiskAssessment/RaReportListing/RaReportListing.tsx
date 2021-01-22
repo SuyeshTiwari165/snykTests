@@ -64,8 +64,8 @@ export const RaReportListing: React.FC = (props: any) => {
   const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
   //static values
-  const propsClientName = props.location.state ? props.location.state.clientInfo.name : undefined;
-  const propsClientId = props.location.state
+  const propsClientName = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.name : undefined;
+  const propsClientId = props.location.state && props.location.state.clientInfo
     ? parseInt(props.location.state.clientInfo.clientId)
     : undefined;
   const clientInfo = props.location.state
@@ -117,10 +117,10 @@ export const RaReportListing: React.FC = (props: any) => {
           clientname: propsClientName,
         }
       })
-      if (props.location.state.refetchData) {
-        // getReportListingData()
-        // refetchReportListing();
-      }
+      // if (props.location.state.refetchData) {
+      //   // getReportListingData()
+      //   // refetchReportListing();
+      // }
     }
     if (partner.partnerId == undefined) {
       getReportListingData({
@@ -341,6 +341,8 @@ export const RaReportListing: React.FC = (props: any) => {
       });
     }
   };
+
+  console.log("props",props.location.state)
 
   let checked: boolean;
   const handlePublish = (event: any, rowdata: any) => {
