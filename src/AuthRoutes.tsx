@@ -3,6 +3,8 @@ import React from "react";
 import { Switch, Route, RouteComponentProps, Redirect } from "react-router";
 import Dashboard from "./containers/Dashboard/Dashboard";
 import Target from "./containers/RiskAssessment/Target/Target";
+import Windows_Network from "./containers/RiskAssessment/Windows_Network/Windows_Network";
+import Linux_Network from "./containers/RiskAssessment/Linux Network/Linux_Network";
 import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
 import ReportStatus from "./containers/RiskAssessment/ReportStatus/ReportStatus";
 import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
@@ -69,6 +71,8 @@ export const AuthRoutes = (
     />
     <LayoutRoute path={routeConstants.LOGOUT_URL} exact component={Logout} />
     <LayoutRoute path={routeConstants.TARGET} exact component={Target} />
+    <LayoutRoute path={routeConstants.WINDOWS_NETWORK} component={Windows_Network} />
+    <LayoutRoute path={routeConstants.LINUX_NETWORK} exact component={Linux_Network} />
     <LayoutRoute
       path={routeConstants.TASK_DETAILS}
       exact

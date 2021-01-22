@@ -6,10 +6,11 @@ export const CLIENT_FORM = "/client-form";
 export const CLIENT_FORM_ADD = "/client-form/add";
 export const CLIENT_FORM_EDIT = "/client-form/edit/";
 
-
 //------------RA ROUTES---------------//
 export const TARGET = "/target";
 export const TASK_DETAILS = "/task-details";
+export const LINUX_NETWORK = "/linux-network-details";
+export const WINDOWS_NETWORK = "/windows-network-details";
 export const REPORT_STATUS = "/report-status";
 export const RA_REPORT_LISTING = "/report-listing";
 //------------ADMIN ROUTES---------------//

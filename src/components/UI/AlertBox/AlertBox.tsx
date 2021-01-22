@@ -24,10 +24,10 @@ const AlertBox = (props: any) => {
         paper: styles.AlertboxPaper,
         scrollPaper: styles.ScrollPaper,
       }}
-      >
+    >
       <DialogTitle id="form-dialog-title">
-        Warning!
-        <Link color="primary" to={{pathname: props.closeButtonPath}}>
+        {props.DialogTitle ? props.DialogTitle : ""}
+        <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}>
           <IconButton
             aria-label="close"
             style={{
@@ -35,8 +35,8 @@ const AlertBox = (props: any) => {
               right: "12px",
               top: "8px",
             }}
-            onClick={props.handleClose}
-            >
+            onClick={props.cancelButtonPath}
+          >
             <CloseIcon />
           </IconButton>
         </Link>
@@ -45,14 +45,14 @@ const AlertBox = (props: any) => {
         <DialogContentText>{props.dialogBoxMsg}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        {props.buttonName !== '' ? <Link color="primary" to={{pathname: props.pathName}}>
-          <Button variant="contained" color="primary">
+        {props.buttonName !== '' ? <Link color="primary" to={{ pathname: props.pathName }}>
+          <Button variant="contained" color="primary" onClick={props.handleOkay}>
             {props.buttonName}
           </Button>
         </Link> : null}
-        <Link color="primary" to={{pathname: props.closeButtonPath}}>
+        <Link color="primary" to={{ pathname: props.closeButtonPath }}>
           <Button variant="contained" color="primary" onClick={props.handleClose}>
-            {'Close'}
+            {props.CloseButtonName ? props.CloseButtonName : 'Close'}
           </Button>
         </Link>
       </DialogActions>

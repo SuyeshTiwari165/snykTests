@@ -3,8 +3,16 @@
         "name": "Target",
         "value": "0"
     },
+    "LinuxNetwork": {
+        "name": "Linux Network",
+        "value": "1"
+    },
+    "WindowsNetwork": {
+        "name": "Windows Network",
+        "value": "2"
+    },
     "Task": {
         "name": "Task",
-        "value": "1"
-    }   
+        "value": "3"
+    }
 }
