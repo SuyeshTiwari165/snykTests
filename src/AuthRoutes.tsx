@@ -4,7 +4,7 @@ import { Switch, Route, RouteComponentProps, Redirect } from "react-router";
 import Dashboard from "./containers/Dashboard/Dashboard";
 import Target from "./containers/RiskAssessment/Target/Target";
 import Windows_Network from "./containers/RiskAssessment/Windows_Network/Windows_Network";
-import Linux_Network from "./containers/RiskAssessment/Linux Network/Linux_Network";
+import Linux_Network from "./containers/RiskAssessment/Linux_Network/Linux_Network";
 import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
 import ReportStatus from "./containers/RiskAssessment/ReportStatus/ReportStatus";
 import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
