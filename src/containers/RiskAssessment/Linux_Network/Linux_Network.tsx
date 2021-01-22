@@ -63,10 +63,11 @@ export const Linux_Network: React.FC = (props: any) => {
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   if (props.location.state) {
-    if (editDataId === null && localStorage.getItem("targetId") !== "{") {
+    if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   };
+
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [backdrop, setBackdrop] = useState(false);
@@ -159,8 +160,6 @@ export const Linux_Network: React.FC = (props: any) => {
       if (localStorage.getItem("vpnPassword") !== null) {
         setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
       };
-
-
     };
   }, []);
 
@@ -168,7 +167,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [createTarget] = useMutation(CREATE_TARGET);
 
   useEffect(() => {
-    if (targetName !== null) {
+    if (targetName !== null && clientInfo) {
       getTargetData({
         variables: {
           targetName: targetName,
@@ -184,11 +183,8 @@ export const Linux_Network: React.FC = (props: any) => {
     }
   }, [targetName]);
 
-  // let targetName = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.targetName : undefined;
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
   let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
-  // let vpnUserName = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.vpnUserName : undefined;
-  // let vpnPassword = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.vpnPassword : undefined;
 
   const checkValidation = () => {
     if (
@@ -214,7 +210,7 @@ export const Linux_Network: React.FC = (props: any) => {
     setShowDialogBox(false);
     setTimeout(() => {
       data = { clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-      history.push(routeConstant.TASK_DETAILS, data);
+      history.push(routeConstant.TASK_DETAILS);
     }, 500);
   };
 
@@ -283,7 +279,7 @@ export const Linux_Network: React.FC = (props: any) => {
   let data = {};
   const handleOkay = () => {
     setTimeout(() => {
-      data = { clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      data = {editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 1000);
   };
@@ -364,8 +360,8 @@ export const Linux_Network: React.FC = (props: any) => {
         host: ipRange,
         winUsername: userName,
         winPassword: password,
-        vpnUsername: vpnUserName,
-        vpnPassword: vpnPassword,
+        vpnUsername: VPNUsername,
+        vpnPassword: VPNPassword,
         startDate: startDate,
         ipAddress: ipAddress,
         networkType: networkType

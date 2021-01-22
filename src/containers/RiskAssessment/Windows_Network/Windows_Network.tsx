@@ -34,6 +34,8 @@ export const Windows_Network: React.FC = (props: any) => {
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   const [linuxDomain, setWindowsDomain] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
+  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -80,8 +82,8 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleSubmitDialogBox = () => {
-    let data = props.location.state
-    history.push(routeConstant.TASK_DETAILS,data)
+    // let data = { editData: true, clientInfo: clientInfo, targetInfo:targetInfo };
+    history.push(routeConstant.TASK_DETAILS)
     // setShowDialogBox(true)
     // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
    
@@ -246,7 +248,7 @@ export const Windows_Network: React.FC = (props: any) => {
           back
           </Button>
         <Button
-          onClick={handleOkay}
+          onClick={handleSubmitDialogBox}
           color="primary"
           variant={"contained"}
           data-testid="ok-button"

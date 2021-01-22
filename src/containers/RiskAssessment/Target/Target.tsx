@@ -461,6 +461,7 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("name");
     localStorage.removeItem("targetId");
     localStorage.removeItem("ipRange");
+    localStorage.removeItem("ipAddress");
     localStorage.removeItem("userName");
     localStorage.removeItem("password");
     localStorage.removeItem("vpnUserName");

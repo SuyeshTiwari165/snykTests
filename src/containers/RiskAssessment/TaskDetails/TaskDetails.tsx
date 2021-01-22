@@ -48,6 +48,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const client = useApolloClient();
   // const classes = useStyles(theme);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const targetName = JSON.parse(localStorage.getItem("name") || "{}");
   let scanConfigListItems = props.location.state
     ? props.location.state.scanConfigList
@@ -229,7 +230,7 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    let data = { editData: true, clientInfo: clientInfo };
+    let data = { editData: true, clientInfo: clientInfo, targetInfo:targetInfo };
     history.push(routeConstant.LINUX_NETWORK, data);
   };
 
