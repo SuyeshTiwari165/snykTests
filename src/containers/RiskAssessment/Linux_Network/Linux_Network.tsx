@@ -142,7 +142,6 @@ export const Linux_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     if (targetId && editDataId == undefined) {
-      console.log("password", localStorage.getItem("password"))
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
       setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
       if (localStorage.getItem("userName") !== null) {
@@ -442,7 +441,7 @@ export const Linux_Network: React.FC = (props: any) => {
           targetName: targetName,
           vpnUsername: VPNUsername,
           vpnPassword: VPNPassword,
-          host: host,
+          host: ipRange,
           username: userName,
           password: password,
           ipAddress: ipAddress
@@ -450,7 +449,6 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }).then((response: any) => {
       setBackdrop(false)
-      console.log(" Test Connection Success !!!!!", response)
       if (response.data.vpnConnection.success == "VPN connected Successfully") {
         SetConnectionSuccess(true)
         setFormState((formState) => ({
