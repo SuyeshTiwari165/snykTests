@@ -27,7 +27,7 @@ const AlertBox = (props: any) => {
     >
       <DialogTitle id="form-dialog-title">
         {props.DialogTitle ? props.DialogTitle : ""}
-        <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}>
+        {/* <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}> */}
           <IconButton
             aria-label="close"
             style={{
@@ -35,11 +35,11 @@ const AlertBox = (props: any) => {
               right: "12px",
               top: "8px",
             }}
-            onClick={props.cancelButtonPath}
+            onClick={props.handleCancel}
           >
             <CloseIcon />
           </IconButton>
-        </Link>
+        {/* </Link> */}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>{props.dialogBoxMsg}</DialogContentText>

@@ -63,6 +63,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   if (props.location.state) {
+    console.log("editDataId",editDataId)
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
@@ -142,7 +143,7 @@ export const Linux_Network: React.FC = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (targetId && editDataId == undefined) {
+    if (targetId && editDataId !== undefined) {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
       setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
       if (localStorage.getItem("userName") !== null) {
