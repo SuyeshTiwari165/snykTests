@@ -21,8 +21,9 @@ export const GET_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
-            networkType
-            ipAddress
+            vatCredentials{
+            linuxIpAddress
+          }
           }
           vatTaskId {
             id
@@ -62,8 +63,9 @@ export const GET_ADMIN_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
-            networkType
-            ipAddress
+           vatCredentials{
+            linuxIpAddress
+          }
             client {
               clientName
               id

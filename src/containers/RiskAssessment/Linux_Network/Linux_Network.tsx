@@ -63,7 +63,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   if (props.location.state) {
-    console.log("editDataId",editDataId)
+    console.log("editDataId", editDataId)
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
@@ -93,7 +93,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);
-
+  const [createTarget] = useMutation(CREATE_TARGET);
   const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
     GET_TASK_DETAILS,
     {
@@ -163,9 +163,6 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
-
-
-  const [createTarget] = useMutation(CREATE_TARGET);
 
   useEffect(() => {
     if (targetName !== null && clientInfo) {
@@ -280,7 +277,7 @@ export const Linux_Network: React.FC = (props: any) => {
   let data = {};
   const handleOkay = () => {
     setTimeout(() => {
-      data = {editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      data = { editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 1000);
   };
@@ -294,13 +291,12 @@ export const Linux_Network: React.FC = (props: any) => {
         client: clientId,
         targetName: targetName,
         host: ipRange,
-        winUsername: userName,
-        winPassword: password,
+        linuxUsername: userName,
+        linuxPassword: password,
         vpnUsername: vpnUserName,
         vpnPassword: vpnPassword,
         startDate: startDate,
-        ipAddress: ipAddress,
-        networkType: networkType
+        linuxIpAddress: ipAddress
       };
       let id = editDataId;
       updateTarget({
@@ -336,77 +332,6 @@ export const Linux_Network: React.FC = (props: any) => {
         .catch((err) => {
           setShowDialogBox(false)
           setSubmitDisabled(true)
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          } else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-    } else {
-      let input = {
-        partner: partnerId,
-        client: clientId,
-        targetName: targetName,
-        host: ipRange,
-        winUsername: userName,
-        winPassword: password,
-        vpnUsername: VPNUsername,
-        vpnPassword: VPNPassword,
-        startDate: startDate,
-        ipAddress: ipAddress,
-        networkType: networkType
-      };
-      createTarget({
-        variables: {
-          input,
-        },
-      })
-        .then((userRes) => {
-          setSubmitDisabled(false)
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: true,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "Target Created Successfully !!",
-          }));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
-          // localStorage.setItem("name", JSON.stringify(name));
-          localStorage.setItem(
-            "targetId",
-            JSON.stringify(userRes.data.createTarget.targetField.id)
-          );
-          localStorage.setItem("ipAddress", JSON.stringify(ipAddress));
-          localStorage.setItem("userName", JSON.stringify(userName));
-          localStorage.setItem("password", JSON.stringify(password));
-          setShowDialogBox(false)
-          let data = {};
-          let targetInfo = {
-            targetName: targetName,
-            host: ipAddress,
-            userName: userName,
-            password: password,
-          };
-          setTimeout(() => {
-            setLinuxDomain(true);
-            setShowDialogBox(true)
-            setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
-          }, 1000);
-        })
-        .catch((err) => {
-          setSubmitDisabled(false)
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
