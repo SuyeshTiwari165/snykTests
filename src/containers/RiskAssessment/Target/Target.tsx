@@ -204,7 +204,7 @@ export const Target: React.FC = (props: any) => {
       });
     }
   }, [targetName]);
-
+  console.log("editDataId",editDataId)
   if (targetId && editDataId === undefined) {
     if (targetId.length > 0) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
@@ -245,141 +245,141 @@ export const Target: React.FC = (props: any) => {
   }
 
   const handleSubmitDialogBox = () => {
-    // if (editDataId) {
-    //   setSubmitDisabled(true)
-    //   let input = {
-    //     targetName: name,
-    //     host: ipRange,
-    //     vpnUsername: vpnUserName,
-    //     vpnPassword: vpnPassword,
-    //   };
-    //   let id = editDataId;
-    //   updateTarget({
-    //     variables: {
-    //       input,
-    //       id,
-    //     },
-    //   })
-    //     .then((userRes) => {
-    //       console.log("dsdsdsfdsdf", userRes)
-    //       setFormState((formState) => ({
-    //         ...formState,
-    //         isSuccess: false,
-    //         isUpdate: true,
-    //         isDelete: false,
-    //         isFailed: false,
-    //         errMessage: "",
-    //       }));
-    //       setSubmitDisabled(false)
-    //       setEditDataId(null);
-    //       localStorage.setItem("name", JSON.stringify(name));
-    //       localStorage.setItem(
-    //         "targetId",
-    //         JSON.stringify(userRes.data.updateTarget.targetField.id)
-    //       );
-    //       localStorage.setItem("ipRange", JSON.stringify(ipRange));
-    //       localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-    //       localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-    //       setRaStepper(client, stepper.Task.name, stepper.Task.value);
-    //       setShowDialogBox(false)
-    //       let data = {};
-    //       setTimeout(() => {
-    //         setLinuxDomain(true);
-    //         setShowDialogBox(true)
-    //         setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-    //       }, 1000);
-    //     })
-    //     .catch((err) => {
-    //       setShowDialogBox(false)
-    //       setSubmitDisabled(true)
-    //       let error = err.message;
-    //       if (
-    //         error.includes("duplicate key value violates unique constraint")
-    //       ) {
-    //         error = " Name already present.";
-    //       } else {
-    //         error = err.message;
-    //       }
-    //       setFormState((formState) => ({
-    //         ...formState,
-    //         isSuccess: false,
-    //         isUpdate: false,
-    //         isDelete: false,
-    //         isFailed: true,
-    //         errMessage: error,
-    //       }));
-    //     });
-    // } else {
-    //   setSubmitDisabled(true)
-    //   if (partnerId && clientId) {
-    //     let input = {
-    //       partner: partnerId,
-    //       client: clientId,
-    //       targetName: name,
-    //       host: ipRange,
-    //       vpnUsername: vpnUserName,
-    //       vpnPassword: vpnPassword,
-    //       startDate: startDate,
-    //     };
-    //     createTarget({
-    //       variables: {
-    //         input,
-    //       },
-    //     })
-    //       .then((userRes) => {
-    //         setSubmitDisabled(false)
-    //         setFormState((formState) => ({
-    //           ...formState,
-    //           isSuccess: true,
-    //           isUpdate: false,
-    //           isDelete: false,
-    //           isFailed: false,
-    //           errMessage: "",
-    //         }));
-    //         setRaStepper(client, stepper.Task.name, stepper.Task.value);
+    if (editDataId) {
+      setSubmitDisabled(true)
+      let input = {
+        targetName: name,
+        host: ipRange,
+        vpnUsername: vpnUserName,
+        vpnPassword: vpnPassword,
+      };
+      let id = editDataId;
+      updateTarget({
+        variables: {
+          input,
+          id,
+        },
+      })
+        .then((userRes) => {
+          console.log("dsdsdsfdsdf", userRes)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: true,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "",
+          }));
+          setSubmitDisabled(false)
+          setEditDataId(null);
+          localStorage.setItem("name", JSON.stringify(name));
+          localStorage.setItem(
+            "targetId",
+            JSON.stringify(userRes.data.updateTarget.targetField.id)
+          );
+          localStorage.setItem("ipRange", JSON.stringify(ipRange));
+          localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+          setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          setShowDialogBox(false)
+          let data = {};
+          setTimeout(() => {
+            setLinuxDomain(true);
+            setShowDialogBox(true)
+            setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+          }, 1000);
+        })
+        .catch((err) => {
+          setShowDialogBox(false)
+          setSubmitDisabled(true)
+          let error = err.message;
+          if (
+            error.includes("duplicate key value violates unique constraint")
+          ) {
+            error = " Name already present.";
+          } else {
+            error = err.message;
+          }
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    } else {
+      setSubmitDisabled(true)
+      if (partnerId && clientId && name && ipRange && vpnUserName) {
+        let input = {
+          partner: partnerId,
+          client: clientId,
+          targetName: name,
+          host: ipRange,
+          vpnUsername: vpnUserName,
+          vpnPassword: vpnPassword,
+          startDate: startDate,
+        };
+        createTarget({
+          variables: {
+            input,
+          },
+        })
+          .then((userRes) => {
+            setSubmitDisabled(false)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "",
+            }));
+            setRaStepper(client, stepper.Task.name, stepper.Task.value);
             localStorage.setItem("name", JSON.stringify(name));
-            // localStorage.setItem(
-            //   "targetId",
-            //   JSON.stringify(userRes.data.createTarget.targetField.id)
-            // );
+            localStorage.setItem(
+              "targetId",
+              JSON.stringify(userRes.data.createTarget.targetField.id)
+            );
             localStorage.setItem("ipRange", JSON.stringify(ipRange));
             localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
             localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-    //         setShowDialogBox(false)
-    //         let data = {};
-    //         let targetInfo = {
-    //           targetName: name,
-    //           host: ipRange,
-    //           userName: userName,
-    //           password: password,
-    //         };
+            setShowDialogBox(false)
+            let data = {};
+            let targetInfo = {
+              targetName: name,
+              host: ipRange,
+              userName: userName,
+              password: password,
+            };
             setTimeout(() => {
               setLinuxDomain(true);
               setShowDialogBox(true)
               setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-              }, 1000);
-    //       })
-    //       .catch((err) => {
-    //         setSubmitDisabled(false)
-    //         let error = err.message;
-    //         if (
-    //           error.includes("duplicate key value violates unique constraint")
-    //         ) {
-    //           error = " Name already present.";
-    //         } else {
-    //           error = err.message;
-    //         }
-    //         setFormState((formState) => ({
-    //           ...formState,
-    //           isSuccess: false,
-    //           isUpdate: false,
-    //           isDelete: false,
-    //           isFailed: true,
-    //           errMessage: error,
-    //         }));
-    //       });
-    //   }
-    // }
+            }, 1000);
+          })
+          .catch((err) => {
+            setSubmitDisabled(false)
+            let error = err.message;
+            if (
+              error.includes("duplicate key value violates unique constraint")
+            ) {
+              error = " Name already present.";
+            } else {
+              error = err.message;
+            }
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+      }
+    }
   };
 
   const onChangeHandler = (event: any) => {
@@ -483,10 +483,16 @@ export const Target: React.FC = (props: any) => {
     }, 500);
   };
 
+  const handleCancel = () => {
+    setShowDialogBox(false);
+  };
+
   const handleClose = () => {
     setShowDialogBox(false);
     setTimeout(() => {
-      data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+      if (props.location.state) {
+        data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+      }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 500);
   };
@@ -792,10 +798,10 @@ export const Target: React.FC = (props: any) => {
             pathName={""}
             handleOkay={handleOkay}
             cancelButtonPath={""}
-            closeButtonPath={handleClose}
+            closeButtonPath={""}
             buttonName={"Yes"}
             CloseButtonName={"No"}
-            handleCancel={handleClose}
+            handleCancel={handleCancel}
             handleClose={handleClose}
           ></AlertBox>
 

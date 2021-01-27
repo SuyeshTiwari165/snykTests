@@ -160,6 +160,8 @@ export const RaReportListing: React.FC = (props: any) => {
       tempArr["target"] = targetArr[i];
       let statusVar = false;
       let targetId = 0;
+      let targetHost;
+      let targetIpAddress;
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
@@ -186,9 +188,18 @@ export const RaReportListing: React.FC = (props: any) => {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
         }
+        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+          targetHost = data[j].node.vatTargetId.host;
+        }
+        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+          targetIpAddress = data[j].node.vatTargetId.ipAddress;
+        }
       }
+
       tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
+      tempArr["host"] = targetHost;
+      tempArr["ipAddress"] = targetIpAddress;
       arr.push(tempArr);
     }
     return arr;
@@ -233,6 +244,7 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleClickOpen = (rowData: any) => {
+    console.log("rowData", rowData);
     history.push({
       pathname: routeConstant.TARGET,
       state: { targetName: rowData.target, clientInfo: clientInfo }
@@ -342,7 +354,7 @@ export const RaReportListing: React.FC = (props: any) => {
     }
   };
 
-  console.log("props",props.location.state)
+  console.log("props", props.location.state)
 
   let checked: boolean;
   const handlePublish = (event: any, rowdata: any) => {
@@ -463,39 +475,39 @@ export const RaReportListing: React.FC = (props: any) => {
         </Grid>
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
-                {/* {userRole === "SuperUser" ? ( */}
-                  <Button
-                    className={styles.BackToButton}
-                    variant={"contained"}
-                    onClick={() => {
-                      let data = {};
-                      data = { clientInfo: clientInfo };
-                      history.push(routeConstant.CLIENT, data);
-                    }}
-                    color="secondary"
-                    data-testid="cancel-button"
-                  >
-                    <img
-                      src={
-                        process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                      }
-                      alt="user icon"
-                    />
+            {/* {userRole === "SuperUser" ? ( */}
+            <Button
+              className={styles.BackToButton}
+              variant={"contained"}
+              onClick={() => {
+                let data = {};
+                data = { clientInfo: clientInfo };
+                history.push(routeConstant.CLIENT, data);
+              }}
+              color="secondary"
+              data-testid="cancel-button"
+            >
+              <img
+                src={
+                  process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
+                }
+                alt="user icon"
+              />
                     &nbsp; Back to List
                   </Button>
-                {/* ) : null} */}
-          {partner.partnerId ? (
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={handleAddNewReport}
-                  className={styles.ActionButton}
-                >
-                  <AddCircleIcon className={styles.EditIcon} />
+            {/* ) : null} */}
+            {partner.partnerId ? (
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleAddNewReport}
+                className={styles.ActionButton}
+              >
+                <AddCircleIcon className={styles.EditIcon} />
                   &nbsp; New Risk Assessment
-                </Button>
-          ) : null}
-        </Grid>
+              </Button>
+            ) : null}
+          </Grid>
         </Grid>
         <Paper className={styles.paper}>
           <MaterialTable
@@ -584,7 +596,7 @@ export const RaReportListing: React.FC = (props: any) => {
                   // disabled: rowData.status !== "Done",
                   icon: () => (
                     <div>
-                       <div className={styles.raswitch}>
+                      <div className={styles.raswitch}>
                         <Switch
                           className={
                             published[rowData.targetId]
