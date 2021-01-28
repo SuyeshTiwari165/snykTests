@@ -42,6 +42,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const [editDataId, setEditDataId] = useState<Number | null>();
+  const [ipAddress, setIpAddress] = useState<String>("");
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const VPNUsername = JSON.parse(localStorage.getItem("vpnUserName") || "{}");
@@ -72,6 +73,8 @@ export const Windows_Network: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
+
+  const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const checkValidation = () => {
     if (
@@ -97,6 +100,7 @@ export const Windows_Network: React.FC = (props: any) => {
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
       setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
+      setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
     };
   }, []);
 
@@ -115,8 +119,10 @@ export const Windows_Network: React.FC = (props: any) => {
         client: clientId,
         targetName: targetName,
         host: ipRange,
+        winIpAddress: ipAddress,
         winUsername: userName,
         winPassword: password,
+        startDate: startDate,
         vpnUsername: VPNUsername,
         vpnPassword: VPNPassword,
       };
@@ -145,7 +151,7 @@ export const Windows_Network: React.FC = (props: any) => {
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
-            data = { editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+            data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
             history.push(routeConstant.TASK_DETAILS, data);
           }, 1000);
           // setTimeout(() => {
@@ -176,8 +182,8 @@ export const Windows_Network: React.FC = (props: any) => {
         });
     }
   };
-  console.log("prorps-----------",props.location)
-  const handleSkip = () =>{
+  console.log("prorps-----------", props.location)
+  const handleSkip = () => {
     history.push(routeConstant.TASK_DETAILS);
   };
 
@@ -191,7 +197,7 @@ export const Windows_Network: React.FC = (props: any) => {
     setShowPassword(!showPassword);
   };
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIpRange(event.target.value);
+    setIpAddress(event.target.value);
     let value = event.target.value;
     let isErrIpRange = value.length <= 0 ? "Required" : "";
     setIsError((isError: any) => ({
@@ -232,7 +238,11 @@ export const Windows_Network: React.FC = (props: any) => {
   const handleBack = () => {
     let data = {};
     // data = { refetchData: true, clientInfo: clientInfo };
-    history.push(routeConstant.TARGET, props.location.state);
+    if (props.location.state && props.location.state.LinuxNetwork) {
+      history.push(routeConstant.LINUX_NETWORK, props.location.state);
+    } else {
+      history.push(routeConstant.TARGET, props.location.state);
+    }
     // localStorage.removeItem("name");
     // localStorage.removeItem("targetId");
     // localStorage.removeItem("ipRange");
@@ -317,7 +327,7 @@ export const Windows_Network: React.FC = (props: any) => {
         <Input
           type="text"
           label="IP List"
-          value={ipRange}
+          value={ipAddress}
           onChange={handleIpRangeChange}
           required
           error={isError.ipRange}
@@ -352,7 +362,7 @@ export const Windows_Network: React.FC = (props: any) => {
         >
           skip
           </Button>
-          {/* <AlertBox
+        {/* <AlertBox
             DialogTitle={""}
             open={showDialogBox}
             dialogBoxMsg={dialogBoxMsg}

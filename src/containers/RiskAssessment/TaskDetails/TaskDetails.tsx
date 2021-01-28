@@ -65,7 +65,7 @@ export const TaskDetails: React.FC = (props: any) => {
 
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
-  console.log("prioror",props.location.state)
+  console.log("prioror", props.location.state)
   //add/edit data
 
   const [name, setName] = useState<String>("");
@@ -192,8 +192,8 @@ export const TaskDetails: React.FC = (props: any) => {
   }, [dataScanConfig]);
 
   if (loadingScanConfig) return <Loading />;
-  console.log("getScanConfigList.length",props.location)
-  
+  console.log("getScanConfigList.length", props.location)
+
 
   const handleSubmitDialogBox = () => {
     setSubmitDisabled(true)
@@ -254,8 +254,12 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    let data = { editData: true, clientInfo: clientInfo, targetInfo:targetInfo };
-    history.push(routeConstant.LINUX_NETWORK, data);
+    let data = { editData: true, clientInfo: clientInfo, targetInfo: targetInfo };
+    if (props.location.state && props.location.state.windowsNetwork) {
+      history.push(routeConstant.WINDOWS_NETWORK, data);
+    } else {
+      history.push(routeConstant.LINUX_NETWORK, data);
+    }
   };
 
   const handleAlertClose = () => {

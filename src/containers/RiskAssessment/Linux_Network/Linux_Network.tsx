@@ -177,21 +177,21 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
-  console.log("targetName",targetName)
+  console.log("targetName", targetName)
   useEffect(() => {
     // if (targetName !== null && clientInfo) {
-      getTargetData({
-        variables: {
-          targetName: targetName,
-        },
-      });
+    getTargetData({
+      variables: {
+        targetName: targetName,
+      },
+    });
 
-      getTaskData({
-        variables: {
-          targetName: targetName,
-          client_ClientName: clientInfo.name,
-        },
-      });
+    getTaskData({
+      variables: {
+        targetName: targetName,
+        client_ClientName: clientInfo.name,
+      },
+    });
     // }
   }, [targetName]);
 
@@ -222,7 +222,7 @@ export const Linux_Network: React.FC = (props: any) => {
     setShowDialogBox(false);
     setTimeout(() => {
       data = { clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-      history.push(routeConstant.TASK_DETAILS,data);
+      history.push(routeConstant.TASK_DETAILS, data);
     }, 500);
   };
 
@@ -291,7 +291,7 @@ export const Linux_Network: React.FC = (props: any) => {
   let data = {};
   const handleOkay = () => {
     setTimeout(() => {
-      data = { editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      data = { LinuxNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 1000);
   };
