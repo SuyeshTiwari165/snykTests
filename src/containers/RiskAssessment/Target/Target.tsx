@@ -119,29 +119,54 @@ export const Target: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
-      if (targetData) {
-        setIpRange(data.getTarget.edges[0].node.host);
-        setUserName(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.domainUsername
-            : null
-        );
-        setPassword(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.domainPassword
-            : null
-        );
+      console.log("getCredentialsDetails", data.getCredentialsDetails)
+      if (targetData && data.getCredentialsDetails.edges[0]) {
+        setIpRange(data.getCredentialsDetails.edges[0].node.vatTarget.host);
+        //   setUserName(
+        //     data.getTarget.edges[0].node.vatCredentials
+        //       ? data.getTarget.edges[0].node.vatCredentials.domainUsername
+        //       : null
+        //   );
+        // setPassword(
+        //   data.getCredentialsDetails.edges[0].node
+        //     ? data.getCredentialsDetails.edges[0].node.domainPassword
+        //     : null
+        // );
         setVpnUserName(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.vpnUsername
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.vpnUsername
             : null
         );
         setVpnPassword(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.vpnPassword
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.vpnPassword
             : null
         );
+      } else {
+        // let error = err.message;
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "",
+        }));
+        setTimeout(() => {
+          history.push(routeConstant.RA_REPORT_LISTING,props.location.state)
+        }, 1000);
       }
+    },
+    onError: (err) => {
+      let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
     },
     fetchPolicy: "cache-and-network",
   });
@@ -204,7 +229,7 @@ export const Target: React.FC = (props: any) => {
       });
     }
   }, [targetName]);
-  console.log("editDataId",editDataId)
+  console.log("editDataId", editDataId)
   if (targetId && editDataId === undefined) {
     if (targetId.length > 0) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
@@ -334,7 +359,7 @@ export const Target: React.FC = (props: any) => {
               isUpdate: false,
               isDelete: false,
               isFailed: false,
-              errMessage: "",
+              errMessage: "Target Created Successfully !",
             }));
             setRaStepper(client, stepper.Task.name, stepper.Task.value);
             localStorage.setItem("name", JSON.stringify(name));
