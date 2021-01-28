@@ -11,6 +11,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { GET_SCAN_CONFIG } from "../../../graphql/queries/ScanConfig";
 import { GET_SCANDATA } from "../../../graphql/queries/ScanData";
 import { GET_TARGET } from "../../../graphql/queries/Target";
+import { GET_TASK_DETAILS } from "../../../graphql/queries/TaskDetails";
 import {
   CREATE_TASK,
   UPDATE_TASK,
@@ -64,7 +65,7 @@ export const TaskDetails: React.FC = (props: any) => {
 
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
-
+  console.log("prioror",props.location.state)
   //add/edit data
 
   const [name, setName] = useState<String>("");
@@ -99,6 +100,18 @@ export const TaskDetails: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
+
+  const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
+    GET_TASK_DETAILS,
+    {
+      onCompleted: (data: any) => {
+        if (data.getTask.edges) {
+          setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+        }
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
   //queries
   const [createTask] = useMutation(CREATE_TASK);
@@ -140,6 +153,17 @@ export const TaskDetails: React.FC = (props: any) => {
   if (targetName !== {} && target === "") {
     setTarget(JSON.parse(localStorage.getItem("name") || "{}"));
   }
+
+  useEffect(() => {
+    if (targetName !== null) {
+      getTaskData({
+        variables: {
+          targetName: targetName,
+          client_ClientName: clientInfo.name,
+        },
+      });
+    }
+  }, [targetName]);
 
   useEffect(() => {
     if (

@@ -105,35 +105,49 @@ export const Linux_Network: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
     }
   );
-
   const [
     getTargetData,
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
-      if (targetData && data.getTarget.edges[0]) {
-        setIpRange(data.getTarget.edges[0].node.host);
+      console.log("getCredentialsDetails", data.getCredentialsDetails)
+      if (targetData && data.getCredentialsDetails.edges[0]) {
+        setIpAddress(data.getCredentialsDetails.edges[0].node.linuxIpAddress);
         setUserName(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.domainUsername
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.domainUsername
             : null
         );
         setPassword(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.domainPassword
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.domainPassword
             : null
         );
-        setVpnUserName(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.vpnUsername
-            : null
-        );
-        setVpnPassword(
-          data.getTarget.edges[0].node.vatCredentials
-            ? data.getTarget.edges[0].node.vatCredentials.vpnPassword
-            : null
-        );
+      } else {
+        // let error = err.message;
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "",
+        }));
+        setTimeout(() => {
+          history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
+        }, 1000);
       }
+    },
+    onError: (err) => {
+      let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
     },
     fetchPolicy: "cache-and-network",
   });
@@ -163,7 +177,7 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
-
+  console.log("targetName",clientInfo)
   useEffect(() => {
     if (targetName !== null && clientInfo) {
       getTargetData({
@@ -208,7 +222,7 @@ export const Linux_Network: React.FC = (props: any) => {
     setShowDialogBox(false);
     setTimeout(() => {
       data = { clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-      history.push(routeConstant.TASK_DETAILS);
+      history.push(routeConstant.TASK_DETAILS,data);
     }, 500);
   };
 
@@ -326,7 +340,7 @@ export const Linux_Network: React.FC = (props: any) => {
           setTimeout(() => {
             setLinuxDomain(true);
             setShowDialogBox(true)
-            setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+            setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
           }, 1000);
         })
         .catch((err) => {

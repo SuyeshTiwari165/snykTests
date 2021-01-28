@@ -21,9 +21,6 @@ export const GET_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
-            vatCredentials{
-            linuxIpAddress
-          }
           }
           vatTaskId {
             id
@@ -63,9 +60,12 @@ export const GET_ADMIN_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
-           vatCredentials{
-            linuxIpAddress
-          }
+            vatCredentials {
+              linuxIpAddress
+              domainUsername
+              domainPassword
+              linuxIpAddress
+            }
             client {
               clientName
               id

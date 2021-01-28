@@ -185,6 +185,7 @@ export const RaReportListing: React.FC = (props: any) => {
             }
           }
         }
+        console.log("data[j].node.vatTargetId", data[j].node)
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
         }
@@ -199,7 +200,7 @@ export const RaReportListing: React.FC = (props: any) => {
       tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
       tempArr["targetId"] = targetId !== 0 ? targetId : null;
       tempArr["host"] = targetHost;
-      tempArr["ipAddress"] = targetIpAddress;
+      tempArr["linuxIpAddress"] = targetIpAddress;
       arr.push(tempArr);
     }
     return arr;
@@ -247,7 +248,7 @@ export const RaReportListing: React.FC = (props: any) => {
     console.log("rowData", rowData);
     history.push({
       pathname: routeConstant.TARGET,
-      state: { targetName: rowData.target, clientInfo: clientInfo }
+      state: { targetName: rowData.target, targetData: rowData, clientInfo: clientInfo }
     });
   };
 
