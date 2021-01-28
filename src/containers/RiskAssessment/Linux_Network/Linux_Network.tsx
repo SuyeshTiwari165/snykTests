@@ -177,9 +177,9 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
-  console.log("targetName",clientInfo)
+  console.log("targetName",targetName)
   useEffect(() => {
-    if (targetName !== null && clientInfo) {
+    // if (targetName !== null && clientInfo) {
       getTargetData({
         variables: {
           targetName: targetName,
@@ -192,7 +192,7 @@ export const Linux_Network: React.FC = (props: any) => {
           client_ClientName: clientInfo.name,
         },
       });
-    }
+    // }
   }, [targetName]);
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;

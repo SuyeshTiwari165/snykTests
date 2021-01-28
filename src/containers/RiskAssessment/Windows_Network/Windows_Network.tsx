@@ -15,6 +15,7 @@ import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import { setRaStepper } from "../common/SetRaStepper";
 import { useHistory } from "react-router-dom";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { useApolloClient } from "@apollo/client";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Button } from "../../../components/UI/Form/Button/Button";
@@ -22,6 +23,11 @@ import * as routeConstant from "../../../common/RouteConstants";
 import * as msgConstant from "../../../common/MessageConstants";
 import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import stepper from "../common/raStepperList.json";
+import {
+  CREATE_TARGET,
+  UPDATE_TARGET,
+  DELETE_TARGET,
+} from "../../../graphql/mutations/Target";
 
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
@@ -35,7 +41,21 @@ export const Windows_Network: React.FC = (props: any) => {
   const [linuxDomain, setWindowsDomain] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const [editDataId, setEditDataId] = useState<Number | null>();
+  const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
+  const VPNUsername = JSON.parse(localStorage.getItem("vpnUserName") || "{}");
+  const VPNPassword = JSON.parse(localStorage.getItem("vpnPassword") || "{}");
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
+  const partnerId = partner.partnerId;
+  const [targetName, setTargetName] = useState<String>("");
+  const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
+  if (props.location.state) {
+    console.log("editDataId", editDataId)
+    if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
+      setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
+    }
+  };
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -52,7 +72,7 @@ export const Windows_Network: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
-
+  const [updateTarget] = useMutation(UPDATE_TARGET);
   const checkValidation = () => {
     if (
       isError.name !== "" ||
@@ -74,6 +94,12 @@ export const Windows_Network: React.FC = (props: any) => {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value);
   }, []);
 
+  useEffect(() => {
+    if (targetId && editDataId !== undefined) {
+      setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
+    };
+  }, []);
+
 
   const handleOkay = () => {
     setWindowsDomain(true);
@@ -82,11 +108,73 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleSubmitDialogBox = () => {
-    // let data = { editData: true, clientInfo: clientInfo, targetInfo:targetInfo };
-    history.push(routeConstant.TASK_DETAILS)
-    // setShowDialogBox(true)
-    // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
-   
+    if (editDataId) {
+      setSubmitDisabled(true)
+      let input = {
+        partner: partnerId,
+        client: clientId,
+        targetName: targetName,
+        host: ipRange,
+        winUsername: userName,
+        winPassword: password,
+        vpnUsername: VPNUsername,
+        vpnPassword: VPNPassword,
+      };
+      let id = editDataId;
+      updateTarget({
+        variables: {
+          input,
+          id,
+        },
+      })
+        .then((userRes) => {
+          console.log("dsdsdsfdsdf", userRes)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: true,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "",
+          }));
+          setSubmitDisabled(false)
+          setEditDataId(null);
+          localStorage.setItem("winUsername", JSON.stringify(userName));
+          localStorage.setItem("winPassword", JSON.stringify(password));
+          setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          setShowDialogBox(false)
+          let data = {};
+          setTimeout(() => {
+            data = { editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+            history.push(routeConstant.TASK_DETAILS, data);
+          }, 1000);
+          // setTimeout(() => {
+          //   setLinuxDomain(true);
+          //   setShowDialogBox(true)
+          //   // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
+          // }, 1000);
+        })
+        .catch((err) => {
+          setShowDialogBox(false)
+          setSubmitDisabled(true)
+          let error = err.message;
+          if (
+            error.includes("duplicate key value violates unique constraint")
+          ) {
+            error = " Name already present.";
+          } else {
+            error = err.message;
+          }
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    }
   };
   console.log("prorps-----------",props.location)
   const handleSkip = () =>{
@@ -264,19 +352,19 @@ export const Windows_Network: React.FC = (props: any) => {
         >
           skip
           </Button>
-          <AlertBox
+          {/* <AlertBox
             DialogTitle={""}
             open={showDialogBox}
             dialogBoxMsg={dialogBoxMsg}
             pathName={""}
-            handleOkay={handleSubmitDialogBox}
+            handleOkay={handleOkay}
             cancelButtonPath={""}
-            closeButtonPath={routeConstant.TASK_DETAILS}
+            closeButtonPath={handleClose}
             buttonName={"Yes"}
             CloseButtonName={"No"}
             handleCancel={handleClose}
             handleClose={handleClose}
-          ></AlertBox>
+          ></AlertBox> */}
         <Button
           type="button"
           color="primary"
