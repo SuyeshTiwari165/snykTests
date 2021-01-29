@@ -60,12 +60,6 @@ export const GET_ADMIN_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
-            vatCredentials {
-              linuxIpAddress
-              domainUsername
-              domainPassword
-              linuxIpAddress
-            }
             client {
               clientName
               id

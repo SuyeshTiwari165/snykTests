@@ -13,6 +13,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import { FormHelperText, makeStyles, createStyles } from "@material-ui/core";
 import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
+import { GET_TARGET } from "../../../graphql/queries/Target";
 import { setRaStepper } from "../common/SetRaStepper";
 import { useHistory } from "react-router-dom";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
@@ -93,6 +94,54 @@ export const Windows_Network: React.FC = (props: any) => {
     return false;
   };
 
+  const 
+  { data: targetData, loading: targetLoading, error: targetError }
+ = useQuery(GET_TARGET, {
+  variables: {
+    targetName: targetName,
+  },
+  onCompleted: (data: any) => {
+    if (targetData && data.getCredentialsDetails.edges[0]) {
+      setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
+      setUserName(
+        data.getCredentialsDetails.edges[0].node
+          ? data.getCredentialsDetails.edges[0].node.winUsername
+          : null
+      );
+      setPassword(
+        data.getCredentialsDetails.edges[0].node
+          ? data.getCredentialsDetails.edges[0].node.winPassword
+          : null
+      );
+    } else {
+      // let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "",
+      }));
+      setTimeout(() => {
+        history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
+      }, 1000);
+    }
+  },
+  onError: (err) => {
+    let error = err.message;
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: error,
+    }));
+  },
+  fetchPolicy: "cache-and-network",
+});
+  console.log("props",props.location.state.LinuxNetwork)
   useEffect(() => {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value);
   }, []);
