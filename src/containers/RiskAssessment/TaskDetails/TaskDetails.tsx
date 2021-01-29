@@ -101,16 +101,19 @@ export const TaskDetails: React.FC = (props: any) => {
     errMessage: "",
   });
 
-  const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
-    GET_TASK_DETAILS,
-    {
-      onCompleted: (data: any) => {
-        if (data.getTask.edges) {
-          setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
-        }
-      },
-      fetchPolicy: "cache-and-network",
-    }
+  const { data: taskData, loading: taskLoading } = useQuery(
+    GET_TASK_DETAILS, {
+    variables: {
+      targetName: targetName,
+      client_ClientName: clientInfo.name,
+    },
+    onCompleted: (data: any) => {
+      if (data.getTask.edges[0]) {
+        setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+      }
+    },
+    fetchPolicy: "cache-and-network",
+  }
   );
 
   //queries
@@ -154,16 +157,16 @@ export const TaskDetails: React.FC = (props: any) => {
     setTarget(JSON.parse(localStorage.getItem("name") || "{}"));
   }
 
-  useEffect(() => {
-    if (targetName !== null) {
-      getTaskData({
-        variables: {
-          targetName: targetName,
-          client_ClientName: clientInfo.name,
-        },
-      });
-    }
-  }, [targetName]);
+  // useEffect(() => {
+  //   if (targetName !== null) {
+  //     getTaskData({
+  //       variables: {
+  //         targetName: targetName,
+  //         client_ClientName: clientInfo.name,
+  //       },
+  //     });
+  //   }
+  // }, [targetName]);
 
   useEffect(() => {
     if (
@@ -257,8 +260,10 @@ export const TaskDetails: React.FC = (props: any) => {
     let data = { editData: true, clientInfo: clientInfo, targetInfo: targetInfo };
     if (props.location.state && props.location.state.windowsNetwork) {
       history.push(routeConstant.WINDOWS_NETWORK, data);
-    } else {
+    } else if (props.location.state && props.location.state.LinuxNetwork) {
       history.push(routeConstant.LINUX_NETWORK, data);
+    } else {
+      history.push(routeConstant.TARGET, data);
     }
   };
 

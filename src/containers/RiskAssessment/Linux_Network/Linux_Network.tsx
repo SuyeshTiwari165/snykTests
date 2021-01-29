@@ -105,10 +105,12 @@ export const Linux_Network: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
     }
   );
-  const [
-    getTargetData,
-    { data: targetData, loading: targetLoading, error: targetError },
-  ] = useLazyQuery(GET_TARGET, {
+  const 
+    { data: targetData, loading: targetLoading, error: targetError }
+   = useQuery(GET_TARGET, {
+    variables: {
+      targetName: targetName,
+    },
     onCompleted: (data: any) => {
       console.log("getCredentialsDetails", data.getCredentialsDetails)
       if (targetData && data.getCredentialsDetails.edges[0]) {
@@ -160,15 +162,7 @@ export const Linux_Network: React.FC = (props: any) => {
     if (targetId && editDataId !== undefined) {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
       setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
-      if (localStorage.getItem("userName") !== null) {
-        setUserName(JSON.parse(localStorage.getItem("userName") || "{}"));
-      };
-      if (localStorage.getItem("password") !== null) {
-        setPassword(JSON.parse(localStorage.getItem("password") || "{}"));
-      };
-      if (localStorage.getItem("ipAddress") !== null) {
-        setIpAddress(JSON.parse(localStorage.getItem("ipAddress") || "{}"));
-      };
+    
       if (localStorage.getItem("vpnUserName") !== null) {
         setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       };
@@ -178,22 +172,23 @@ export const Linux_Network: React.FC = (props: any) => {
     };
   }, []);
   console.log("targetName", targetName)
-  useEffect(() => {
-    // if (targetName !== null && clientInfo) {
-    getTargetData({
-      variables: {
-        targetName: targetName,
-      },
-    });
+  // useEffect(() => {
+  //   // if (targetName !== null && clientInfo) {
+  //     // getTargetData({
+        // variables: {
+        //   targetName: targetName,
+        // },
+  //     // });
 
-    getTaskData({
-      variables: {
-        targetName: targetName,
-        client_ClientName: clientInfo.name,
-      },
-    });
-    // }
-  }, [targetName]);
+  //   // getTaskData({
+  //   //   variables: {
+  //   //     targetName: targetName,
+  //   //     client_ClientName: clientInfo.name,
+  //   //   },
+  //   // });
+  //   // }
+  // }, [targetName]);
+ 
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
   let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;

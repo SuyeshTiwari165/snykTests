@@ -142,20 +142,21 @@ export const Target: React.FC = (props: any) => {
             ? data.getCredentialsDetails.edges[0].node.vpnPassword
             : null
         );
-      } else {
-        // let error = err.message;
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: "",
-        }));
-        setTimeout(() => {
-          history.push(routeConstant.RA_REPORT_LISTING,props.location.state)
-        }, 1000);
-      }
+      } 
+      // else {
+      //   // let error = err.message;
+      //   setFormState((formState) => ({
+      //     ...formState,
+      //     isSuccess: false,
+      //     isUpdate: false,
+      //     isDelete: false,
+      //     isFailed: true,
+      //     errMessage: "",
+      //   }));
+      //   setTimeout(() => {
+      //     history.push(routeConstant.RA_REPORT_LISTING,props.location.state)
+      //   }, 1000);
+      // }
     },
     onError: (err) => {
       let error = err.message;
