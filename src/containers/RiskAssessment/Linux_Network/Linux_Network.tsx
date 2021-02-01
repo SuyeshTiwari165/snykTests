@@ -110,7 +110,7 @@ export const Linux_Network: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError }
       = useQuery(GET_TARGET, {
         variables: {
-          targetName:props.location.state && props.location.state.editData ? (targetName?targetName : ReRunTargetName): (ReRunTargetName ? ReRunTargetName : targetName),
+          targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
           console.log("getCredentialsDetails", data.getCredentialsDetails)
@@ -269,7 +269,13 @@ export const Linux_Network: React.FC = (props: any) => {
   let data = {};
   const handleOkay = () => {
     setTimeout(() => {
-      data = { LinuxNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        windowsNetwork:  props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+        editData: props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state.clientInfo,
+        targetInfo: props.location.state.targetInfo
+      };
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 1000);
   };
@@ -533,7 +539,7 @@ export const Linux_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            // disabled={submitDisabled}
+          // disabled={submitDisabled}
           >
             next
           </Button>

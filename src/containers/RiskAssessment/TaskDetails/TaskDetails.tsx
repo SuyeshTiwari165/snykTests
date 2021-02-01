@@ -105,13 +105,13 @@ export const TaskDetails: React.FC = (props: any) => {
   const { data: taskData, loading: taskLoading } = useQuery(
     GET_TASK_DETAILS, {
     variables: {
-      targetName:props.location.state && props.location.state.editData ? (targetName?targetName : ReRunTargetName): (ReRunTargetName ? ReRunTargetName : targetName),
-      client_ClientName: clientInfo.name,
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      client_ClientName: clientInfo ? clientInfo.name : null,
     },
     onCompleted: (data: any) => {
       if (data.getTask.edges[0]) {
-        console.log("data.getTask.edges[0]",data.getTask.edges[0])
-        setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+        console.log("data.getTask.edges[0]", data.getTask.edges[0].node.vatScanConfigList)
+        setScanConfig(data.getTask.edges[0].node.vatScanConfigList);
       }
     },
     fetchPolicy: "cache-and-network",
@@ -197,7 +197,7 @@ export const TaskDetails: React.FC = (props: any) => {
   }, [dataScanConfig]);
 
   if (loadingScanConfig) return <Loading />;
-  console.log("getScanConfigList.length", props.location)
+  console.log("getScanConfigList.length", dataScanConfig)
 
 
   const handleSubmitDialogBox = () => {
@@ -260,7 +260,12 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    let data = { editData: true, clientInfo: clientInfo, targetInfo: targetInfo };
+    let data = {
+      editData: true,
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+      clientInfo: clientInfo, targetInfo: targetInfo
+    };
     if (props.location.state && props.location.state.windowsNetwork) {
       history.push(routeConstant.WINDOWS_NETWORK, data);
     } else if (props.location.state && props.location.state.LinuxNetwork) {
@@ -370,7 +375,7 @@ export const TaskDetails: React.FC = (props: any) => {
           <Grid container spacing={3}>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {
-                console.log("obj.node",getScanConfigList)
+                // console.log("obj.node",getScanConfigList)
                 return (
                   <FormControlLabel
                     className={styles.CheckboxLabel}

@@ -71,7 +71,7 @@ export const Target: React.FC = (props: any) => {
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
-  console.log("props.location.state", props.location.state)
+  // console.log("props.location.state", props.location.state)
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
@@ -119,7 +119,7 @@ export const Target: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
-      console.log("getCredentialsDetails", data.getCredentialsDetails)
+      // console.log("getCredentialsDetails", data.getCredentialsDetails)
       if (targetData && data.getCredentialsDetails.edges[0]) {
         setIpRange(data.getCredentialsDetails.edges[0].node.vatTarget.host);
         //   setUserName(
@@ -176,15 +176,13 @@ export const Target: React.FC = (props: any) => {
     {
       onCompleted: (data: any) => {
         if (data.getTask.edges) {
-          console.log("getTaskData",data.getTask.edges[0].node.vatScanConfigList);
-        
           setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
         }
       },
       fetchPolicy: "cache-and-network",
     }
   );
-
+  console.log("PROPS__________________", props.location.state)
   const checkValidation = () => {
     if (
       isError.name !== "" ||
@@ -227,7 +225,7 @@ export const Target: React.FC = (props: any) => {
       getTaskData();
     }
   }, []);
-  console.log("editDataId", editDataId)
+  // console.log("editDataId", editDataId)
   if (targetId && editDataId === undefined) {
     if (targetId.length > 0) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
@@ -509,7 +507,11 @@ export const Target: React.FC = (props: any) => {
   };
   const handleOkay = () => {
     setTimeout(() => {
-      data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+      data = {
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state && props.location.state.clientInfo,
+        targetInfo: targetInfo
+      };
       history.push(routeConstant.LINUX_NETWORK, data);
     }, 500);
   };
@@ -820,7 +822,7 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>
