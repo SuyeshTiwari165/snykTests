@@ -61,7 +61,7 @@ export const Dashboard: React.FC = (props: any) => {
   //table
   const column = [
     { title: "Partner", field: "partner" },
-    { title: "Created On", field: "createdon" }
+    { title: "Created On", field: "created_on" }
   ];
 
   const createTableDataObject = (data: any) => {
@@ -73,6 +73,8 @@ export const Dashboard: React.FC = (props: any) => {
       obj["phone"] = element.node.mobileNumber;
       obj["address"] = element.node.address;
       obj["partnerId"] = element.node.id;
+      obj["created_on"] = element.node.createdDate ? moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a") : "-";
       arr.push(obj);
     });
     setNewData(arr.slice(0, 5));
