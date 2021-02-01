@@ -105,11 +105,12 @@ export const TaskDetails: React.FC = (props: any) => {
   const { data: taskData, loading: taskLoading } = useQuery(
     GET_TASK_DETAILS, {
     variables: {
-      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      targetName:props.location.state && props.location.state.editData ? (targetName?targetName : ReRunTargetName): (ReRunTargetName ? ReRunTargetName : targetName),
       client_ClientName: clientInfo.name,
     },
     onCompleted: (data: any) => {
       if (data.getTask.edges[0]) {
+        console.log("data.getTask.edges[0]",data.getTask.edges[0])
         setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
       }
     },
@@ -232,6 +233,7 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("targetId");
         localStorage.removeItem("ipRange");
         localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
         localStorage.removeItem("userName");
         localStorage.removeItem("password");
         localStorage.removeItem("vpnUserName");

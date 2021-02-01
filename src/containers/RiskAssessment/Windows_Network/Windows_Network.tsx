@@ -110,7 +110,7 @@ export const Windows_Network: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError }
       = useQuery(GET_TARGET, {
         variables: {
-          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+          targetName:props.location.state && props.location.state.editData ? (targetName?targetName : ReRunTargetName): (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
           if (targetData && data.getCredentialsDetails.edges[0]) {

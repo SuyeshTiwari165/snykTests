@@ -176,6 +176,8 @@ export const Target: React.FC = (props: any) => {
     {
       onCompleted: (data: any) => {
         if (data.getTask.edges) {
+          console.log("getTaskData",data.getTask.edges[0].node.vatScanConfigList);
+        
           setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
         }
       },
@@ -222,14 +224,9 @@ export const Target: React.FC = (props: any) => {
         },
       });
 
-      getTaskData({
-        variables: {
-          targetName: targetName,
-          client_ClientName: clientInfo.name,
-        },
-      });
+      getTaskData();
     }
-  }, [targetName]);
+  }, []);
   console.log("editDataId", editDataId)
   if (targetId && editDataId === undefined) {
     if (targetId.length > 0) {
@@ -495,6 +492,7 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("targetId");
     localStorage.removeItem("ipRange");
     localStorage.removeItem("ipAddress");
+    localStorage.removeItem('re-runTargetName');
     localStorage.removeItem("userName");
     localStorage.removeItem("password");
     localStorage.removeItem("vpnUserName");
@@ -822,7 +820,7 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            disabled={submitDisabled}
+            // disabled={submitDisabled}
           >
             next
           </Button>
