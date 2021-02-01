@@ -89,6 +89,7 @@ export const Linux_Network: React.FC = (props: any) => {
     errMessage: "",
   });
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
@@ -105,54 +106,55 @@ export const Linux_Network: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
     }
   );
-  const 
+  const
     { data: targetData, loading: targetLoading, error: targetError }
-   = useQuery(GET_TARGET, {
-    variables: {
-      targetName: targetName,
-    },
-    onCompleted: (data: any) => {
-      console.log("getCredentialsDetails", data.getCredentialsDetails)
-      if (targetData && data.getCredentialsDetails.edges[0]) {
-        setIpAddress(data.getCredentialsDetails.edges[0].node.linuxIpAddress);
-        setUserName(
-          data.getCredentialsDetails.edges[0].node
-            ? data.getCredentialsDetails.edges[0].node.domainUsername
-            : null
-        );
-        setPassword(
-          data.getCredentialsDetails.edges[0].node
-            ? data.getCredentialsDetails.edges[0].node.domainPassword
-            : null
-        );
-      } else {
-        // let error = err.message;
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: "",
-        }));
-        setTimeout(() => {
-          history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
-        }, 1000);
-      }
-    },
-    onError: (err) => {
-      let error = err.message;
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: error,
-      }));
-    },
-    fetchPolicy: "cache-and-network",
-  });
+      = useQuery(GET_TARGET, {
+        variables: {
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        },
+        onCompleted: (data: any) => {
+          console.log("getCredentialsDetails", data.getCredentialsDetails)
+          if (targetData && data.getCredentialsDetails.edges[0]) {
+            setIpAddress(data.getCredentialsDetails.edges[0].node.linuxIpAddress);
+            setUserName(
+              data.getCredentialsDetails.edges[0].node
+                ? data.getCredentialsDetails.edges[0].node.domainUsername
+                : null
+            );
+            setPassword(
+              data.getCredentialsDetails.edges[0].node
+                ? data.getCredentialsDetails.edges[0].node.domainPassword
+                : null
+            );
+          }
+          // else {
+          //   // let error = err.message;
+          //   setFormState((formState) => ({
+          //     ...formState,
+          //     isSuccess: false,
+          //     isUpdate: false,
+          //     isDelete: false,
+          //     isFailed: true,
+          //     errMessage: "",
+          //   }));
+          //   setTimeout(() => {
+          //     history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
+          //   }, 1000);
+          // }
+        },
+        onError: (err) => {
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        },
+        fetchPolicy: "cache-and-network",
+      });
 
   useEffect(() => {
     setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value);
@@ -162,7 +164,6 @@ export const Linux_Network: React.FC = (props: any) => {
     if (targetId && editDataId !== undefined) {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
       setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
-    
       if (localStorage.getItem("vpnUserName") !== null) {
         setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       };
@@ -171,24 +172,6 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
-  console.log("targetName", targetName)
-  // useEffect(() => {
-  //   // if (targetName !== null && clientInfo) {
-  //     // getTargetData({
-        // variables: {
-        //   targetName: targetName,
-        // },
-  //     // });
-
-  //   // getTaskData({
-  //   //   variables: {
-  //   //     targetName: targetName,
-  //   //     client_ClientName: clientInfo.name,
-  //   //   },
-  //   // });
-  //   // }
-  // }, [targetName]);
- 
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
   let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
@@ -203,7 +186,8 @@ export const Linux_Network: React.FC = (props: any) => {
       isError.vpnPassword !== "" ||
       !ipAddress ||
       !userName ||
-      !password
+      !password ||
+      !connectionSuccess
     ) {
       return true;
     }
@@ -266,7 +250,6 @@ export const Linux_Network: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
-
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
@@ -362,7 +345,6 @@ export const Linux_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    console.log(password)
     // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {
     setBackdrop(true)
     testVpnConnection({
@@ -380,8 +362,9 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }).then((response: any) => {
       setBackdrop(false)
-      if (response.data.vpnConnection.success == "VPN connected Successfully") {
+      if (response.data.domainConnection.success == "VPN connected Successfully") {
         SetConnectionSuccess(true)
+        setSubmitDisabled(false)
         setFormState((formState) => ({
           ...formState,
           isSuccess: true,
@@ -390,8 +373,10 @@ export const Linux_Network: React.FC = (props: any) => {
           isFailed: false,
           errMessage: " Test Connection Successful",
         }));
-      } else {
+      }
+      if (response.data.domainConnection.success == "VPN connection Failed") {
         SetConnectionSuccess(false)
+        setSubmitDisabled(true)
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -420,15 +405,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
   const handleBack = () => {
     let data = {};
-    // data = { refetchData: true, clientInfo: clientInfo };
     history.push(routeConstant.TARGET, props.location.state);
-    // localStorage.removeItem("name");
-    // localStorage.removeItem("targetId");
-    // localStorage.removeItem("ipAddress");
-    // localStorage.removeItem("userName");
-    // localStorage.removeItem("password");
-    // localStorage.removeItem("vpnUserName");
-    // localStorage.removeItem("vpnPassword");
   };
   return (
     <React.Fragment>
@@ -556,7 +533,7 @@ export const Linux_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-          // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>
