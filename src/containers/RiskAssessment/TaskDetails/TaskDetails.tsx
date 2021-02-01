@@ -368,23 +368,23 @@ export const TaskDetails: React.FC = (props: any) => {
           <Grid container spacing={3}>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {
+                console.log("obj.node",getScanConfigList)
                 return (
                   <FormControlLabel
                     className={styles.CheckboxLabel}
-                    key={obj.node.vatScanConfigId}
+                    key={obj.node ? obj.node.vatScanConfigId : null}
                     control={
                       <Checkbox
-                        checked={scanConfig.includes(obj.node.vatScanConfigId)}
+                        checked={scanConfig.includes(obj.node ? obj.node.vatScanConfigId : null)}
                         onChange={handleCheckElement}
-                        name={obj.node.scanConfigName}
-                        value={obj.node.vatScanConfigId}
+                        name={obj.node ? obj.node.scanConfigName : null}
+                        value={obj.node ? obj.node.vatScanConfigId : null}
                       />
                     }
-                    label={obj.node.scanConfigName}
+                    label={obj.node ? obj.node.scanConfigName : null}
                   />
                 );
               })}
-
             </Grid>
           </Grid>
         </Grid>
