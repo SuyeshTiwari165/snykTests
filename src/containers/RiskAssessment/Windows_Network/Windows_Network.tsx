@@ -110,7 +110,7 @@ export const Windows_Network: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError }
       = useQuery(GET_TARGET, {
         variables: {
-          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+          targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
           if (targetData && data.getCredentialsDetails.edges[0]) {
@@ -125,7 +125,7 @@ export const Windows_Network: React.FC = (props: any) => {
                 ? data.getCredentialsDetails.edges[0].node.winPassword
                 : null
             );
-          } 
+          }
           // else {
           //   // let error = err.message;
           //   setFormState((formState) => ({
@@ -213,7 +213,13 @@ export const Windows_Network: React.FC = (props: any) => {
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
-            data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+            data = {
+              LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+              windowsNetwork:  props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+              editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+              clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo: null
+            }
             history.push(routeConstant.TASK_DETAILS, data);
           }, 1000);
           // setTimeout(() => {
@@ -522,7 +528,7 @@ export const Windows_Network: React.FC = (props: any) => {
           color="primary"
           variant={"contained"}
           data-testid="ok-button"
-          // disabled={submitDisabled}
+        // disabled={submitDisabled}
         >
           next
           </Button>
