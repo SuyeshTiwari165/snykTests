@@ -47,6 +47,7 @@ export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
   const history = useHistory();
   const client = useApolloClient();
+  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
   // const classes = useStyles(theme);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
@@ -104,7 +105,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const { data: taskData, loading: taskLoading } = useQuery(
     GET_TASK_DETAILS, {
     variables: {
-      targetName: targetName,
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
       client_ClientName: clientInfo.name,
     },
     onCompleted: (data: any) => {

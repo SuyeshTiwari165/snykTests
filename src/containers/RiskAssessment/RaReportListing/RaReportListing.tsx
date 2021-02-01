@@ -248,7 +248,7 @@ export const RaReportListing: React.FC = (props: any) => {
     console.log("rowData", rowData);
     history.push({
       pathname: routeConstant.TARGET,
-      state: { targetName: rowData.target, targetData: rowData, clientInfo: clientInfo }
+      state: { reRun: true, targetName: rowData.target, targetData: rowData, clientInfo: clientInfo }
     });
   };
 

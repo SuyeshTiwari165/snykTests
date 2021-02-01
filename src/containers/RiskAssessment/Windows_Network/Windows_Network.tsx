@@ -23,12 +23,21 @@ import { Button } from "../../../components/UI/Form/Button/Button";
 import * as routeConstant from "../../../common/RouteConstants";
 import * as msgConstant from "../../../common/MessageConstants";
 import AlertBox from "../../../components/UI/AlertBox/AlertBox";
+import CloseIcon from "@material-ui/icons/Close";
+import Alert from "../../../components/UI/Alert/Alert";
 import stepper from "../common/raStepperList.json";
 import {
   CREATE_TARGET,
   UPDATE_TARGET,
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
+import {
+  SUCCESS,
+  UPDATE,
+  DELETE,
+  FAILED,
+  ALERT_MESSAGE_TIMER,
+} from "../../../common/MessageConstants";
 
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
@@ -44,7 +53,9 @@ export const Windows_Network: React.FC = (props: any) => {
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [ipAddress, setIpAddress] = useState<String>("");
+  const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const VPNUsername = JSON.parse(localStorage.getItem("vpnUserName") || "{}");
   const VPNPassword = JSON.parse(localStorage.getItem("vpnPassword") || "{}");
@@ -87,61 +98,63 @@ export const Windows_Network: React.FC = (props: any) => {
       isError.vpnPassword !== "" ||
       !ipRange ||
       !userName ||
-      !password
+      !password ||
+      !connectionSuccess
     ) {
       return true;
     }
     return false;
   };
 
-  const 
-  { data: targetData, loading: targetLoading, error: targetError }
- = useQuery(GET_TARGET, {
-  variables: {
-    targetName: targetName,
-  },
-  onCompleted: (data: any) => {
-    if (targetData && data.getCredentialsDetails.edges[0]) {
-      setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
-      setUserName(
-        data.getCredentialsDetails.edges[0].node
-          ? data.getCredentialsDetails.edges[0].node.winUsername
-          : null
-      );
-      setPassword(
-        data.getCredentialsDetails.edges[0].node
-          ? data.getCredentialsDetails.edges[0].node.winPassword
-          : null
-      );
-    } else {
-      // let error = err.message;
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: "",
-      }));
-      setTimeout(() => {
-        history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
-      }, 1000);
-    }
-  },
-  onError: (err) => {
-    let error = err.message;
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: true,
-      errMessage: error,
-    }));
-  },
-  fetchPolicy: "cache-and-network",
-});
-  console.log("props",props.location.state.LinuxNetwork)
+  const
+    { data: targetData, loading: targetLoading, error: targetError }
+      = useQuery(GET_TARGET, {
+        variables: {
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        },
+        onCompleted: (data: any) => {
+          if (targetData && data.getCredentialsDetails.edges[0]) {
+            setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
+            setUserName(
+              data.getCredentialsDetails.edges[0].node
+                ? data.getCredentialsDetails.edges[0].node.winUsername
+                : null
+            );
+            setPassword(
+              data.getCredentialsDetails.edges[0].node
+                ? data.getCredentialsDetails.edges[0].node.winPassword
+                : null
+            );
+          } 
+          // else {
+          //   // let error = err.message;
+          //   setFormState((formState) => ({
+          //     ...formState,
+          //     isSuccess: false,
+          //     isUpdate: false,
+          //     isDelete: false,
+          //     isFailed: true,
+          //     errMessage: "",
+          //   }));
+          //   setTimeout(() => {
+          //     history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
+          //   }, 1000);
+          // }
+        },
+        onError: (err) => {
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        },
+        fetchPolicy: "cache-and-network",
+      });
+  console.log("props", props.location.state.LinuxNetwork)
   useEffect(() => {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value);
   }, []);
@@ -233,7 +246,9 @@ export const Windows_Network: React.FC = (props: any) => {
   };
   console.log("prorps-----------", props.location)
   const handleSkip = () => {
-    history.push(routeConstant.TASK_DETAILS);
+    let data = {};
+    data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+    history.push(routeConstant.TASK_DETAILS, data);
   };
 
   const handleMouseDownPassword = (
@@ -280,6 +295,76 @@ export const Windows_Network: React.FC = (props: any) => {
     setSubmitDisabled(checkValidation);
   };
 
+
+  const onClickTestConnection = () => {
+    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {
+    // setBackdrop(true)
+    // testVpnConnection({
+    //   variables: {
+    //     input: {
+    //       client: clientID,
+    //       targetName: targetName,
+    //       vpnUsername: VPNUsername,
+    //       vpnPassword: VPNPassword,
+    //       host: ipRange,
+    //       username: userName,
+    //       password: password,
+    //       ipAddress: ipAddress
+    //     }
+    //   }
+    // }).then((response: any) => {
+    //   setBackdrop(false)
+    //   if (response.data.domainConnection.success == "VPN connected Successfully") {
+    SetConnectionSuccess(false)
+    //     setSubmitDisabled(false)
+    //     setFormState((formState) => ({
+    //       ...formState,
+    //       isSuccess: true,
+    //       isUpdate: false,
+    //       isDelete: false,
+    //       isFailed: false,
+    //       errMessage: " Test Connection Successful",
+    //     }));
+    //   } 
+    //   if(response.data.domainConnection.success == "VPN connection Failed") {
+    //     SetConnectionSuccess(false)
+    setSubmitDisabled(true)
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: "Test Connection Failed ",
+    }));
+
+    //   }
+    // }).catch(() => {
+    //   setBackdrop(false)
+    //   console.log("Test Connection Failed !!!!")
+    //   setFormState((formState) => ({
+    //     ...formState,
+    //     isSuccess: false,
+    //     isUpdate: false,
+    //     isDelete: false,
+    //     isFailed: true,
+    //     errMessage: "",
+    //   }));
+    // })
+    // }
+  };
+
+  const handleAlertClose = () => {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: "",
+    }));
+  };
+
   const handleClose = () => {
     setShowDialogBox(false);
   };
@@ -318,6 +403,44 @@ export const Windows_Network: React.FC = (props: any) => {
         Windows Network :
       </Typography>
       <RaStepper />
+      <Grid item xs={12}>
+        {formState.isSuccess ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            <strong>{formState.errMessage}</strong>
+            {/* {SUCCESS} */}
+          </Alert>
+        ) : null}
+        {formState.isFailed ? (
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {FAILED}
+            {formState.errMessage}
+          </Alert>
+        ) : null}
+      </Grid>
       <Grid item xs={12} md={6}>
         <Input
           type="text"
@@ -399,7 +522,7 @@ export const Windows_Network: React.FC = (props: any) => {
           color="primary"
           variant={"contained"}
           data-testid="ok-button"
-        // disabled={submitDisabled}
+          disabled={submitDisabled}
         >
           next
           </Button>
@@ -428,7 +551,7 @@ export const Windows_Network: React.FC = (props: any) => {
           type="button"
           color="primary"
           variant={"contained"}
-        // onClick={onClickTestConnection}
+          onClick={onClickTestConnection}
         >
           Test Connection
         </Button>

@@ -90,7 +90,7 @@ export const Target: React.FC = (props: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showVpnPassword, setShowVpnPassword] = useState(false);
   const startDate = new Date();
-
+  const [uploadDisabled, setUploadDisabled] = useState(true);
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
     name: "",
@@ -142,7 +142,7 @@ export const Target: React.FC = (props: any) => {
             ? data.getCredentialsDetails.edges[0].node.vpnPassword
             : null
         );
-      } 
+      }
       // else {
       //   // let error = err.message;
       //   setFormState((formState) => ({
@@ -368,6 +368,9 @@ export const Target: React.FC = (props: any) => {
               "targetId",
               JSON.stringify(userRes.data.createTarget.targetField.id)
             );
+            if (props.location.state && props.location.state.reRun == true) {
+              localStorage.setItem("re-runTargetName", JSON.stringify(props.location.state.targetName));
+            };
             localStorage.setItem("ipRange", JSON.stringify(ipRange));
             localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
             localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
@@ -411,7 +414,9 @@ export const Target: React.FC = (props: any) => {
   const onChangeHandler = (event: any) => {
     setSelectedFile(event.target.files[0])
     if (event.target.files[0] && name && vpnUserName && vpnPassword) {
-      setSubmitDisabled(false)
+      setUploadDisabled(false)
+    } else {
+      setUploadDisabled(true)
     }
   };
 
@@ -447,6 +452,7 @@ export const Target: React.FC = (props: any) => {
         setBackdrop(false);
         setSelectedFile(null);
         if (response.data.uploadFile.success == "File Uploaded Failed") {
+          // setSubmitDisabled(true)
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -456,6 +462,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " File Upload Failed.",
           }));
         } else {
+          // setSubmitDisabled(false)
           setFormState((formState) => ({
             ...formState,
             isSuccess: true,
@@ -615,6 +622,7 @@ export const Target: React.FC = (props: any) => {
         console.log(" Test Connection Success !!!!!", response)
         if (response.data.vpnConnection.success == "VPN connected Successfully") {
           SetConnectionSuccess(true)
+          setSubmitDisabled(false)
           setFormState((formState) => ({
             ...formState,
             isSuccess: true,
@@ -625,6 +633,7 @@ export const Target: React.FC = (props: any) => {
           }));
         } else {
           SetConnectionSuccess(false)
+          setSubmitDisabled(true)
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -792,7 +801,7 @@ export const Target: React.FC = (props: any) => {
               type="button"
               color="primary"
               variant={"contained"}
-              disabled={submitDisabled}
+              disabled={uploadDisabled}
               onClick={onClickHandler}
             >
               Upload
@@ -813,7 +822,7 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-          // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>
