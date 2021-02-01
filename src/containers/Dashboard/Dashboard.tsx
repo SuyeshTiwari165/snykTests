@@ -64,6 +64,8 @@ export const Dashboard: React.FC = () => {
       obj["clientId"] = element.node.id;
       obj["partnerId"] = element.node.partnerId;
       obj["clientOrgId"] = element.id;
+      obj["created_on"] = element.node.createdDate ? moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a") : "-";
       arr.push(obj);
     });
     setNewData(arr.slice(0, 5));
@@ -74,7 +76,7 @@ export const Dashboard: React.FC = () => {
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Phone", field: "phone" },
-    { title: "Created on", field: "createdon" },
+    { title: "Created on", field: "created_on" },
   ];
 
   const handleClickOpen = () => {
