@@ -151,8 +151,6 @@ export const Client: React.FC = (props: any) => {
     }
   }, [formState]);
 
-  console.log("props", props);
-
   function convertDate(inputFormat: any) {
     function pad(s: any) {
       return s < 10 ? "0" + s : s;
@@ -174,7 +172,6 @@ export const Client: React.FC = (props: any) => {
       minutes = minutes < 10 ? "0" + minutes : minutes;
       var strTime = hours + ":" + minutes + " " + ampm;
       var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
-      console.log(convertDate(new Date(utcDate)));
       return dateAndTime;
     }
   };

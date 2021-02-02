@@ -78,7 +78,6 @@ export const RaReportListing: React.FC = (props: any) => {
     isDelete: false,
     errMessage: ""
   });
-  // console.log("props.location.state", props.location.state)
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   //filter query condition declaration
   const [getReportListingData, {
@@ -185,7 +184,6 @@ export const RaReportListing: React.FC = (props: any) => {
             }
           }
         }
-        console.log("data[j].node.vatTargetId", data[j].node)
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
           publishFlag = data[j].node.vatTargetId.publishedFlag;
         }
@@ -245,7 +243,6 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleClickOpen = (rowData: any) => {
-    console.log("rowData", rowData);
     history.push({
       pathname: routeConstant.TARGET,
       state: { reRun: true, targetName: rowData.target, targetData: rowData, clientInfo: clientInfo }
@@ -280,7 +277,6 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const getBase64 = (file: any, cb: any) => {
     let reader = new FileReader();
-    // console.log("reader", file);
     if (file) {
       reader.readAsDataURL(file);
       reader.onload = function () {
@@ -354,8 +350,6 @@ export const RaReportListing: React.FC = (props: any) => {
       });
     }
   };
-
-  console.log("props", props.location.state)
 
   let checked: boolean;
   const handlePublish = (event: any, rowdata: any) => {

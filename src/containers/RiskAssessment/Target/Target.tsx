@@ -71,7 +71,6 @@ export const Target: React.FC = (props: any) => {
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
-  // console.log("props.location.state", props.location.state)
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
@@ -119,7 +118,6 @@ export const Target: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
-      // console.log("getCredentialsDetails", data.getCredentialsDetails)
       if (targetData && data.getCredentialsDetails.edges[0]) {
         setIpRange(data.getCredentialsDetails.edges[0].node.vatTarget.host);
         //   setUserName(
@@ -182,7 +180,7 @@ export const Target: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
     }
   );
-  console.log("PROPS__________________", props.location.state)
+
   const checkValidation = () => {
     if (
       isError.name !== "" ||
@@ -222,10 +220,10 @@ export const Target: React.FC = (props: any) => {
         },
       });
 
-      getTaskData();
+      // getTaskData();
     }
   }, []);
-  // console.log("editDataId", editDataId)
+
   if (targetId && editDataId === undefined) {
     if (targetId.length > 0) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
@@ -282,14 +280,13 @@ export const Target: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
-          console.log("dsdsdsfdsdf", userRes)
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
             isUpdate: true,
             isDelete: false,
             isFailed: false,
-            errMessage: "",
+            errMessage: "Target Updated Successfully !",
           }));
           setSubmitDisabled(false)
           setEditDataId(null);
@@ -443,7 +440,6 @@ export const Target: React.FC = (props: any) => {
           }
         }
       }).then((response: any) => {
-        console.log("responsre", response)
         setBackdrop(false);
         setSelectedFile(null);
         if (response.data.uploadFile.success == "File Uploaded Failed") {
@@ -627,7 +623,6 @@ export const Target: React.FC = (props: any) => {
         }
       }).then((response: any) => {
         setBackdrop(false)
-        console.log(" Test Connection Success !!!!!", response)
         if (response.data.vpnConnection.success == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
@@ -654,7 +649,6 @@ export const Target: React.FC = (props: any) => {
         }
       }).catch(() => {
         setBackdrop(false)
-        console.log("Test Connection Failed !!!!")
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -687,6 +681,24 @@ export const Target: React.FC = (props: any) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
+          ) : null}
+          {formState.isUpdate ? (
             <Alert
               severity="success"
               action={
@@ -830,7 +842,7 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            disabled={submitDisabled}
+          // disabled={submitDisabled}
           >
             next
           </Button>

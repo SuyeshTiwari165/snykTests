@@ -4,5 +4,6 @@ export const RA_STEPPER = gql`
   {
     raStep @client
     activeStep @client
+    propsData @client
   }
 `;
