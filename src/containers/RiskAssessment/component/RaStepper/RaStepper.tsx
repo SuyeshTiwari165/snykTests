@@ -63,10 +63,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function RaStepper(props: any) {
   var stepperObject = stepper;
   const nextValue = useQuery(RA_STEPPER);
-
+  const [propsData, setPropsData] = useState<any>();
   const history = useHistory();
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [step, setStep] = useState<number>(0);
   const allSteps: any = [
     {
@@ -93,6 +93,7 @@ export default function RaStepper(props: any) {
         if (nextValue.data.raStep === allSteps[index].title) {
           setActiveStep(nextValue.data.activeStep);
           setStep(nextValue.data.activeStep);
+          setPropsData(nextValue.data.propsData)
         }
       }
     }
@@ -101,7 +102,7 @@ export default function RaStepper(props: any) {
     // setActiveStep(i);
     setStep(i);
     e.preventDefault();
-    history.push(label.path);
+    history.push(label.path,propsData);
   };
 
   return (

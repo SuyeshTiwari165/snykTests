@@ -63,12 +63,13 @@ export const Windows_Network: React.FC = (props: any) => {
   const partnerId = partner.partnerId;
   const [targetName, setTargetName] = useState<String>("");
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
+
   if (props.location.state) {
-    console.log("editDataId", editDataId)
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   };
+
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -196,7 +197,6 @@ export const Windows_Network: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
-          console.log("dsdsdsfdsdf", userRes)
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -250,7 +250,7 @@ export const Windows_Network: React.FC = (props: any) => {
         });
     }
   };
-  console.log("prorps-----------", props.location)
+
   const handleSkip = () => {
     let data = {};
     data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }

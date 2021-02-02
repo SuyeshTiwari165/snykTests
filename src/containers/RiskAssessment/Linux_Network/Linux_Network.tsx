@@ -63,7 +63,6 @@ export const Linux_Network: React.FC = (props: any) => {
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   if (props.location.state) {
-    console.log("editDataId", editDataId)
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
@@ -113,7 +112,6 @@ export const Linux_Network: React.FC = (props: any) => {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
-          console.log("getCredentialsDetails", data.getCredentialsDetails)
           if (targetData && data.getCredentialsDetails.edges[0]) {
             setIpAddress(data.getCredentialsDetails.edges[0].node.linuxIpAddress);
             setUserName(
@@ -196,7 +194,6 @@ export const Linux_Network: React.FC = (props: any) => {
 
   if (backdrop) return <SimpleBackdrop />;
 
-  console.log("props", props.location)
   const handleClose = () => {
     setShowDialogBox(false);
     setTimeout(() => {
@@ -309,7 +306,6 @@ export const Linux_Network: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
-          console.log("dsdsdsfdsdf", userRes)
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -399,7 +395,6 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }).catch(() => {
       setBackdrop(false)
-      console.log("Test Connection Failed !!!!")
       setFormState((formState) => ({
         ...formState,
         isSuccess: false,
@@ -561,7 +556,7 @@ export const Linux_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            disabled={submitDisabled}
+            // disabled={submitDisabled}
           >
             next
           </Button>
