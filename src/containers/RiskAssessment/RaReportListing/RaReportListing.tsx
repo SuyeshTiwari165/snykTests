@@ -536,14 +536,14 @@ export const RaReportListing: React.FC = (props: any) => {
                 }
                 : null,
               partner.partnerId
-                ? (rowData: any) => ({
+                ? (rowData: any) => (rowData.status == "Done" ? {
                   // disabled: rowData.status !== "Done",
                   icon: () => <SyncIcon />,
                   tooltip: "Re-run",
                   onClick: (event: any, rowData: any) => {
                     handleClickOpen(rowData);
                   }
-                })
+                } : null)
                 : null,
               (rowData: any) => (rowData.status == "Done" ? {
                 // disabled: rowData.status !== "Done",

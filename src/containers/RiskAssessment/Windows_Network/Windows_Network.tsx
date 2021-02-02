@@ -154,9 +154,9 @@ export const Windows_Network: React.FC = (props: any) => {
         },
         fetchPolicy: "cache-and-network",
       });
-  console.log("props", props.location.state.LinuxNetwork)
+
   useEffect(() => {
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value);
+    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
   }, []);
 
   useEffect(() => {
@@ -203,13 +203,13 @@ export const Windows_Network: React.FC = (props: any) => {
             isUpdate: true,
             isDelete: false,
             isFailed: false,
-            errMessage: "",
+            errMessage: "Windows Credentials Updated Successfully !.",
           }));
           setSubmitDisabled(false)
           setEditDataId(null);
           localStorage.setItem("winUsername", JSON.stringify(userName));
           localStorage.setItem("winPassword", JSON.stringify(password));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
@@ -376,20 +376,11 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    let data = {};
-    // data = { refetchData: true, clientInfo: clientInfo };
     if (props.location.state && props.location.state.LinuxNetwork) {
       history.push(routeConstant.LINUX_NETWORK, props.location.state);
     } else {
       history.push(routeConstant.TARGET, props.location.state);
     }
-    // localStorage.removeItem("name");
-    // localStorage.removeItem("targetId");
-    // localStorage.removeItem("ipRange");
-    // localStorage.removeItem("userName");
-    // localStorage.removeItem("password");
-    // localStorage.removeItem("vpnUserName");
-    // localStorage.removeItem("vpnPassword");
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -428,6 +419,24 @@ export const Windows_Network: React.FC = (props: any) => {
             {/* {SUCCESS} */}
           </Alert>
         ) : null}
+         {formState.isUpdate ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
+          ) : null}
         {formState.isFailed ? (
           <Alert
             severity="error"

@@ -157,7 +157,7 @@ export const Linux_Network: React.FC = (props: any) => {
       });
 
   useEffect(() => {
-    setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value);
+    setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
   }, []);
 
   useEffect(() => {
@@ -200,7 +200,12 @@ export const Linux_Network: React.FC = (props: any) => {
   const handleClose = () => {
     setShowDialogBox(false);
     setTimeout(() => {
-      data = { clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo
+      }
       history.push(routeConstant.TASK_DETAILS, data);
     }, 500);
   };
@@ -271,7 +276,7 @@ export const Linux_Network: React.FC = (props: any) => {
     setTimeout(() => {
       data = {
         LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-        windowsNetwork:  props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state.clientInfo,
         targetInfo: props.location.state.targetInfo
@@ -311,14 +316,14 @@ export const Linux_Network: React.FC = (props: any) => {
             isUpdate: true,
             isDelete: false,
             isFailed: false,
-            errMessage: "",
+            errMessage: "Linux Credentials Updated Successfully !.",
           }));
           setSubmitDisabled(false)
           setEditDataId(null);
           localStorage.setItem("ipAddress", JSON.stringify(ipAddress));
           localStorage.setItem("userName", JSON.stringify(userName));
           localStorage.setItem("password", JSON.stringify(password));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
@@ -368,7 +373,7 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }).then((response: any) => {
       setBackdrop(false)
-      if (response.data.domainConnection.success == "VPN connected Successfully") {
+      if (response.data.domainConnection.success == "Authentication succeeded, connection successful") {
         SetConnectionSuccess(true)
         setSubmitDisabled(false)
         setFormState((formState) => ({
@@ -377,10 +382,9 @@ export const Linux_Network: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: false,
-          errMessage: " Test Connection Successful",
+          errMessage: "Test Connection Successful",
         }));
-      }
-      if (response.data.domainConnection.success == "VPN connection Failed") {
+      } else {
         SetConnectionSuccess(false)
         setSubmitDisabled(true)
         setFormState((formState) => ({
@@ -423,6 +427,24 @@ export const Linux_Network: React.FC = (props: any) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
+          ) : null}
+          {formState.isUpdate ? (
             <Alert
               severity="success"
               action={
