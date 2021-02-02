@@ -106,7 +106,7 @@ export const TaskDetails: React.FC = (props: any) => {
     GET_TASK_DETAILS, {
     variables: {
       targetName: ReRunTargetName ? ReRunTargetName : targetName,
-      client_ClientName: clientInfo ? clientInfo.name : null,
+      client_ClientName: clientInfo.name,
     },
     onCompleted: (data: any) => {
       if (data.getTask.edges[0]) {
@@ -187,7 +187,7 @@ export const TaskDetails: React.FC = (props: any) => {
   }, [name, scanConfig, submitDisabled]);
 
   useEffect(() => {
-    setRaStepper(client, stepper.Task.name, stepper.Task.value);
+    setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
   }, []);
 
   useEffect(() => {

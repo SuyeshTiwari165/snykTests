@@ -256,7 +256,7 @@ export const Target: React.FC = (props: any) => {
   }, [name, ipRange, userName, password, vpnUserName, vpnPassword]);
 
   useEffect(() => {
-    setRaStepper(client, stepper.Target.name, stepper.Target.value);
+    setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
   }, []);
 
   // for target data
@@ -301,7 +301,7 @@ export const Target: React.FC = (props: any) => {
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
           localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value);
+          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
@@ -357,7 +357,7 @@ export const Target: React.FC = (props: any) => {
               isFailed: false,
               errMessage: "Target Created Successfully !",
             }));
-            setRaStepper(client, stepper.Task.name, stepper.Task.value);
+            setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
             localStorage.setItem("name", JSON.stringify(name));
             localStorage.setItem(
               "targetId",
@@ -476,7 +476,7 @@ export const Target: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: true,
-          errMessage: "",
+          errMessage: " ",
         }));
       })
     });
@@ -506,8 +506,11 @@ export const Target: React.FC = (props: any) => {
     vpnPassword: vpnPassword,
   };
   const handleOkay = () => {
+    setShowDialogBox(false);
     setTimeout(() => {
       data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state && props.location.state.clientInfo,
         targetInfo: targetInfo
@@ -524,7 +527,12 @@ export const Target: React.FC = (props: any) => {
     setShowDialogBox(false);
     setTimeout(() => {
       if (props.location.state) {
-        data = { clientInfo: props.location.state.clientInfo, targetInfo: targetInfo }
+        data = {
+          LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+          windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+          editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+          clientInfo: props.location.state.clientInfo, targetInfo: targetInfo
+        }
       }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 500);
