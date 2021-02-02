@@ -561,7 +561,7 @@ export const Linux_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-          // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>
