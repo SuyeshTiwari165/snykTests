@@ -319,7 +319,7 @@ export const Linux_Network: React.FC = (props: any) => {
           localStorage.setItem("ipAddress", JSON.stringify(ipAddress));
           localStorage.setItem("userName", JSON.stringify(userName));
           localStorage.setItem("password", JSON.stringify(password));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+          // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
@@ -556,7 +556,7 @@ export const Linux_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-            // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>
