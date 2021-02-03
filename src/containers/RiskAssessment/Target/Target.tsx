@@ -298,14 +298,14 @@ export const Target: React.FC = (props: any) => {
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
           localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+          // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
-          setTimeout(() => {
-            setLinuxDomain(true);
-            setShowDialogBox(true)
-            setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-          }, 1000);
+          // setTimeout(() => {
+          setLinuxDomain(true);
+          setShowDialogBox(true)
+          setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+          // }, 1000);
         })
         .catch((err) => {
           setShowDialogBox(false)
@@ -354,7 +354,7 @@ export const Target: React.FC = (props: any) => {
               isFailed: false,
               errMessage: "Target Created Successfully !",
             }));
-            setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+            // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
             localStorage.setItem("name", JSON.stringify(name));
             localStorage.setItem(
               "targetId",
@@ -842,7 +842,7 @@ export const Target: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-          // disabled={submitDisabled}
+            disabled={submitDisabled}
           >
             next
           </Button>

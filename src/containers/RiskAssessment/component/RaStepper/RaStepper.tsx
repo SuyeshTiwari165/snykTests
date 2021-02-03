@@ -92,6 +92,8 @@ export default function RaStepper(props: any) {
       for (let index in allSteps) {
         if (nextValue.data.raStep === allSteps[index].title) {
           setActiveStep(nextValue.data.activeStep);
+          console.log("nextValue.data.raStep",nextValue.data.raStep)
+          console.log("setActiveStep---------",nextValue.data.activeStep)
           setStep(nextValue.data.activeStep);
           setPropsData(nextValue.data.propsData)
         }
@@ -99,12 +101,13 @@ export default function RaStepper(props: any) {
     }
   }
   const handleTab = (e: any, i: number, label: any) => {
-    // setActiveStep(i);
+    setActiveStep(i);
+    console.log("i---------",i)
     setStep(i);
     e.preventDefault();
     history.push(label.path,propsData);
   };
-
+  console.log("activeStep---------",activeStep)
   return (
     <div className={classes.root}>
       <Stepper
