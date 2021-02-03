@@ -107,6 +107,7 @@ export const Client: React.FC = (props: any) => {
     if (partner !== "{}") {
       getClients({
         variables: {
+          orderBy : "client_name",
           partnerId: partner.partnerId
         }
       });
@@ -118,6 +119,7 @@ export const Client: React.FC = (props: any) => {
     ) {
       getClients({
         variables: {
+          orderBy : "client_name",
           partnerId: props.location.state.partner_id
         }
       });
@@ -125,6 +127,7 @@ export const Client: React.FC = (props: any) => {
     if (props.location.state && props.location.state.clientInfo) {
       getClients({
         variables: {
+          orderBy : "client_name",
           partnerId: props.location.state.clientInfo.partnerId
         }
       });
@@ -460,6 +463,7 @@ export const Client: React.FC = (props: any) => {
                   backgroundColor: "#EFF6FD",
                   color: "#002F60"
                 },
+                thirdSortClick: false,
                 actionsColumnIndex: -1,
                 paging: true,
                 sorting: true,

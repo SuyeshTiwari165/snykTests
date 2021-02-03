@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_PARTNER_USER = gql`
-query getPartnerUserDetails($partner: Int!,$userType:String) {
-  getPartnerUserDetails(partnerId: $partner,userType:$userType) {
+query getPartnerUserDetails($partner: Int!,$userType:String,$orderBy : String) {
+  getPartnerUserDetails(partnerId: $partner,userType:$userType, orderBy: [$orderBy]) {
     edges {
       node {
         id

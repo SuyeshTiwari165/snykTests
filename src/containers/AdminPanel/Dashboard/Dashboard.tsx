@@ -31,16 +31,16 @@ export const Dashboard: React.FC = (props: any) => {
 
   const history = useHistory();
 
-  const { data: partnerData, loading: loadPartner } = useQuery(
-    GET_PARTNER,
-    {
+    const { data: partnerData, loading: loadPartner } = useQuery(GET_PARTNER, {
+      variables: {
+        orderBy: "-created_date",
+      },
       onCompleted: (data: any) => {
         createTableDataObject(data.getPartner.edges);
         setPartnerCount(data.getPartner.edges.length);
       },
       fetchPolicy: "cache-and-network",
-    }
-  );
+    });
   const { data: partnerUsers, loading: loadPartnerUsers } = useQuery(
     GET_PARTNER_USERS,
     {

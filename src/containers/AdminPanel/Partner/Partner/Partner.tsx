@@ -63,16 +63,16 @@ export const Partner: React.FC = (props: any) => {
     errMessage: "",
   });
 
-  const { data: Org, loading: loadOrg, refetch: refetchOrg } = useQuery(
-    GET_PARTNER,
-    {
-      onCompleted: (data: any) => {
-        createTableDataObject(data.getPartner.edges);
-      },
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
+    variables: {
+      orderBy : "partner_name"
+    },
+    onCompleted: (data: any) => {
+      createTableDataObject(data.getPartner.edges);
 
+    },
+    fetchPolicy: "cache-and-network"
+  });
   useEffect(() => {
     setParam(props.location.state);
     if (props.location.state && props.location.state !== null && props.location.state.formState) {
@@ -270,6 +270,9 @@ export const Partner: React.FC = (props: any) => {
               search: false,
               filter: true,
               draggable: false,
+              thirdSortClick: false,
+              pageSize: 25,
+              pageSizeOptions: [25, 50, 75, 100] // rows selection options
             }}
           />
         </Paper>

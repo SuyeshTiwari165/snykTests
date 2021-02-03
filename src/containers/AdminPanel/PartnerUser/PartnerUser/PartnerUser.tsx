@@ -113,6 +113,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
         setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
         getpartnerUserDataforCompuser({
           variables: {
+            orderBy: "user_id__first_name",
             partner: data.getPartnerUserDetails.edges[0].node.partnerId,
             userType: 'Partner'
           },
@@ -138,15 +139,16 @@ export const PartnerUser: React.FC = (propsData: any) => {
       getpartnerUserData({
         variables: {
           partner: propsData.location.state.partner_id,
-          userType: 'Partner'
-
+          userType: 'Partner',
+          orderBy: "user_id__first_name", 
         },
       })
     } else if (propsData.location.state && propsData.location.state.propData) {
       getpartnerUserData({
         variables: {
           partner: propsData.location.state.propData.partner_id,
-          userType: 'Partner'
+          userType: 'Partner',
+          orderBy: "user_id__first_name", 
         },
       })
     } else {

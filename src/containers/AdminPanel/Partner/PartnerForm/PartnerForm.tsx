@@ -69,9 +69,10 @@ export const PartnerForm: React.FC = (props: any) => {
   const [createPartner] = useMutation(CREATE_PARTNER);
   const [updatePartner] = useMutation(UPDATE_PARTNER);
 
-  const { data: partnerData, loading: loadPartner, error: errorPartner, refetch: refetchOrg } = useQuery(
-    GET_PARTNER,
-    {
+  const { data: partnerData,error: errorPartner, loading: loadPartner, refetch: refetchOrg } = useQuery(GET_PARTNER, {
+    variables: {
+      orderBy : "partner_name"
+    },
       onCompleted: (data: any) => {
         createTableDataObject(data.getPartner.edges);
       },
@@ -123,7 +124,7 @@ export const PartnerForm: React.FC = (props: any) => {
     return (
       <div className="error">
         Error!
-        {Logout()}
+        {/* {Logout()} */}
       </div>
     )
   }
@@ -146,7 +147,7 @@ export const PartnerForm: React.FC = (props: any) => {
     return (
       <div className="error">
         Error!
-        {Logout()}
+        {/* {Logout()} */}
       </div>
     )
   }
