@@ -1,5 +1,4 @@
 import * as routeConstants from "../common/RouteConstants";
-
 export const sideDrawerMenus = [
   {
     title: "Dashboard",
@@ -62,7 +61,12 @@ export const sideDrawerAdminMenus = [
     icon: "users",
     pathList: [routeConstants.ADMIN_REPORT_STATUS],
   },
-
+  {
+    title: "VPN Status",
+    path: routeConstants.ADMIN_VPN_STATUS,
+    icon: "users",
+    pathList: [routeConstants.ADMIN_VPN_STATUS],
+  },
   // {
   //   title: "Admin",
   //   type: "admin",
