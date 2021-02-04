@@ -66,7 +66,12 @@ export const Target: React.FC = (props: any) => {
   const [vpnUserName, setVpnUserName] = useState<String>("");
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
-  const [selectedFile, setSelectedFile] = useState(null)
+  const [selectedFile, setSelectedFile] = useState<any>([
+    {
+    name : "",      
+    lastModifiedDate: null,
+  }
+])
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
@@ -405,6 +410,7 @@ export const Target: React.FC = (props: any) => {
 
   const onChangeHandler = (event: any) => {
     setSelectedFile(event.target.files[0])
+
     if (event.target.files[0] && name && vpnUserName && vpnPassword) {
       setUploadDisabled(false)
     } else {
@@ -424,58 +430,63 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickHandler = (event: any) => {
-    setBackdrop(true)
-    let idCardBase64 = '';
-    getBase64(selectedFile, (result: any) => {
-      idCardBase64 = result;
-      var res = result.slice(result.indexOf(",") + 1);
-      uploadFile({
-        variables: {
-          input: {
-            "client": props.location.state.clientInfo.clientId,
-            "targetName": name,
-            file: res,
-            "vpnUsername": vpnUserName,
-            "vpnPassword": vpnPassword
-          }
-        }
-      }).then((response: any) => {
-        setBackdrop(false);
-        setSelectedFile(null);
-        if (response.data.uploadFile.success == "File Uploaded Failed") {
-          // setSubmitDisabled(true)
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: " File Upload Failed.",
-          }));
-        } else {
-          // setSubmitDisabled(false)
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: true,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "File Uploaded Successfully !!",
-          }));
-        }
-      }).catch((error: Error) => {
-        setBackdrop(false);
-        setSelectedFile(null);
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: " ",
-        }));
-      })
-    });
+    setBackdrop(true);
+    if (selectedFile.name != null) {
+      let idCardBase64 = "";
+      getBase64(selectedFile, (result: any) => {
+        idCardBase64 = result;
+        var res = result.slice(result.indexOf(",") + 1);
+        uploadFile({
+          variables: {
+            input: {
+              client: props.location.state.clientInfo.clientId,
+              targetName: name,
+              file: res,
+              vpnUsername: vpnUserName,
+              vpnPassword: vpnPassword,
+              type: selectedFile.name.split(".")[1],
+            },
+          },
+        })
+          .then((response: any) => {
+            setBackdrop(false);
+            setSelectedFile(null);
+            if (response.data.uploadFile.success == "File Uploaded Failed") {
+              // setSubmitDisabled(true)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " File Upload Failed.",
+              }));
+            } else {
+              // setSubmitDisabled(false)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "File Uploaded Successfully !!",
+              }));
+            }
+          })
+          .catch((error: Error) => {
+            setBackdrop(false);
+            setSelectedFile(null);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " ",
+            }));
+          });
+      });
+    }
   };
 
   const handleBack = () => {

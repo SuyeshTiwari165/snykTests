@@ -37,6 +37,7 @@ export const GET_REPORT_LISTING = gql`
 `;
 export const GET_ADMIN_REPORT_LISTING = gql`
   query getReportStatus(
+    $orderBy: String
     $partnername: String
     $clientname: String
     $targetid: String
@@ -45,6 +46,7 @@ export const GET_ADMIN_REPORT_LISTING = gql`
     $scanEndDate: DateTime
   ) {
     getReportStatus(
+      orderBy: [$orderBy]
       partnerId_PartnerName: $partnername
       clientId_ClientName: $clientname
       vatTargetId_TargetName: $targetid
