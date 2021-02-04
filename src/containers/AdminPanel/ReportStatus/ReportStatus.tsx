@@ -88,9 +88,10 @@ export const ReportStatus: React.FC = (props: any) => {
     },
     onCompleted: () => {},
   });
-  const { data: Org, loading: loadOrg, refetch: refetchOrg } = useQuery(
-    GET_PARTNER,
-    {
+    const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
+      variables: {
+        orderBy : "partner_name"
+      },
       onCompleted: (data: any) => {
         if (Org.getPartner.edges != null || Org.getPartner.edges != undefined) {
           let arr: any = [];
@@ -151,12 +152,17 @@ export const ReportStatus: React.FC = (props: any) => {
     });
 
   useEffect(() => {
-    getReportList();
+    getReportList({
+      variables: {
+        orderBy : "partner_id__partner_name",
+      }
+    });
   }, []);
 
   useEffect(() => {
     getReportList({
       variables: {
+        orderBy : "partner_id__partner_name",
         targetid: filterTarget ? filterTarget.name : null,
         status: filterStatus ? filterStatus.name : null,
         partnername: filterPartner ? filterPartner.name : null,
@@ -235,6 +241,7 @@ export const ReportStatus: React.FC = (props: any) => {
     if(newValue != null && newValue.partner_id ) {
     getClients({
       variables: {
+        orderBy : "client_name",
         partnerId: newValue.partner_id,
       },
     });
@@ -270,7 +277,11 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterPartner("");
     setStartDate("");
     setEndDate("");
-    getReportList();
+    getReportList({
+      variables: {
+        orderBy : "partner_id__partner_name",
+      }
+    });
   };
 
   const handleSearch = () => {
