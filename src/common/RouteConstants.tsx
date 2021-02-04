@@ -25,4 +25,6 @@ export const PARTNER_USER_FORM = "/partner-user-form";
 export const PARTNER_USER_FORM_ADD = "/partner-user-form/add";
 export const PARTNER_USER_FORM_EDIT = "/partner-user-form/edit/";
 export const ADMIN_REPORT_STATUS = "/admin-report-status";
+export const ADMIN_VPN_STATUS= "/vpn-status";
+
 

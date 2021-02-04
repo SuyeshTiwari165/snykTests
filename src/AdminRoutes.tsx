@@ -13,6 +13,7 @@ import Client from "./containers/Client/Client/Client";
 import Target from "./containers/RiskAssessment/Target/Target";
 import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
 import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
+import VpnStatus from "./containers/AdminPanel/VpnStatus/VpnStatus";
 
 const defaultRedirect = () => <Redirect to="/admin-dashboard" />;
 export const AdminRoutes = (
@@ -24,6 +25,8 @@ export const AdminRoutes = (
     <LayoutRoute path={routeConstants.PARTNER_FORM_ADD} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.PARTNER_FORM_EDIT + ":id"} exact component={PartnerForm} />
     <LayoutRoute path={routeConstants.ADMIN_REPORT_STATUS} exact component={ReportStatus} />
+    <LayoutRoute path={routeConstants.ADMIN_VPN_STATUS} exact component={VpnStatus} />
+
     <LayoutRoute
       path={routeConstants.RA_REPORT_LISTING}
       exact

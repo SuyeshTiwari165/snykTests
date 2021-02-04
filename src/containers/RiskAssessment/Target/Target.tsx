@@ -645,7 +645,20 @@ export const Target: React.FC = (props: any) => {
             isFailed: false,
             errMessage: " Test Connection Successful",
           }));
-        } else {
+        }
+        if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "You are already connected with another VPN. Please disconnect then try again",
+          }));
+        }
+         else {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
