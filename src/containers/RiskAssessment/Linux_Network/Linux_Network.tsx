@@ -381,7 +381,7 @@ export const Linux_Network: React.FC = (props: any) => {
           errMessage: "Test Connection Successful",
         }));
       }
-      if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+      else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
         SetConnectionSuccess(false)
         setSubmitDisabled(true)
         setFormState((formState) => ({
