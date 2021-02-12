@@ -15,3 +15,11 @@ export const TEST_LINUX_CONNECTION = gql`
     }
   }
 `;
+
+export const VPN_DISCONNECTION = gql`
+mutation disconnectVpn($input:FileUploadInput!){
+  disconnectVpn(input:$input){
+    success
+  }
+}
+`;
