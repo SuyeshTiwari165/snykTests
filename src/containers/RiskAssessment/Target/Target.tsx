@@ -790,6 +790,7 @@ export const Target: React.FC = (props: any) => {
 
   const onClickTestConnection = () => {
     if (props.location.state.clientInfo) {
+      if (props.location.state && props.location.state.reRun === true) {
       setBackdrop(true)
       testVpnConnection({
         variables: {
@@ -798,7 +799,8 @@ export const Target: React.FC = (props: any) => {
             "targetName": name,
             "vpnUsername": vpnUserName,
             "vpnPassword": vpnPassword,
-            "host": ipRange
+            "host": ipRange,
+            "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
           }
         }
       }).then((response: any) => {
@@ -852,6 +854,70 @@ export const Target: React.FC = (props: any) => {
           errMessage: "",
         }));
       })
+    } else {
+      setBackdrop(true)
+      testVpnConnection({
+        variables: {
+          "input": {
+            "client": props.location.state.clientInfo.clientId,
+            "targetName": name,
+            "vpnUsername": vpnUserName,
+            "vpnPassword": vpnPassword,
+            "host": ipRange,
+          }
+        }
+      }).then((response: any) => {
+        setBackdrop(false)
+        console.log("RESPONSE",response);
+        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+          SetConnectionSuccess(true)
+          setSubmitDisabled(false)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: " Test Connection Successful",
+          }));
+        }
+        else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "You are already connected with another VPN. Please disconnect then try again",
+          }));
+        }
+         else {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Test Connection Failed ",
+          }));
+
+        }
+      }).catch(() => {
+        setBackdrop(false)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "",
+        }));
+      })
+    }
     }
   };
 

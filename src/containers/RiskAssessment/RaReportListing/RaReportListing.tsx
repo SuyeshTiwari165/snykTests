@@ -90,6 +90,15 @@ export const RaReportListing: React.FC = (props: any) => {
   const [publishReport] = useMutation(PUBLISH_REPORT);
 
   useEffect(() => {
+    console.log("propsClientName", propsClientName);
+    getReportListingData({
+      variables: {
+        clientname: propsClientName,
+      },
+    });
+  }, []);
+  
+  useEffect(() => {
     if (dataReportListing) {
       let distinctTargetArray: any = [];
       distinctTargetArray = convertTargetArray(
@@ -135,14 +144,6 @@ export const RaReportListing: React.FC = (props: any) => {
     }
   }, [dataReportListing]);
 
-  useEffect(() => {
-console.log("propsClientName",propsClientName)
-  getReportListingData({
-    variables: {
-      clientname: propsClientName,
-    }
-  })
-  }, []);
 
   //for task data
   if (loadingReportListing || backdrop) return <SimpleBackdrop />;

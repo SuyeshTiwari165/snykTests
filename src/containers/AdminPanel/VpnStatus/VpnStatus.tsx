@@ -8,7 +8,7 @@ import Input from "../../../components/UI/Form/Input/Input";
 import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
 import logout from "../../Auth/Logout/Logout";
 import TextField from "@material-ui/core/TextField";
@@ -19,6 +19,20 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import DesktopAccessDisabledIcon from '@material-ui/icons/DesktopAccessDisabled';
 import { GET_VPN_CONNECTED_CLIENTS } from "../../../graphql/queries/Target";
+import { VPN_DISCONNECTION } from "../../../graphql/mutations/VPNConnection"
+import Alert from "../../../components/UI/Alert/Alert";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
+import {
+  SUCCESS,
+  UPDATE,
+  DELETE,
+  FAILED,
+  ALERT_MESSAGE_TIMER,
+} from "../../../common/MessageConstants";
+
+
 export const VpnStatus: React.FC = (props: any) => {
   const title = "Listing of VPN Connected ";
   const columns = [
@@ -32,6 +46,7 @@ export const VpnStatus: React.FC = (props: any) => {
     },
   ];
   const [newData, setNewData] = useState([]);
+  const [backdrop, setBackdrop] = useState<Boolean>(false);
 
   const [getVpnConnectedClients, {
     data: dataVpnConnectedClients,
@@ -41,13 +56,21 @@ export const VpnStatus: React.FC = (props: any) => {
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
-        createTableDataObject(data);
+        createTableDataObject(dataVpnConnectedClients.getTarget.edges);
       },
       onError: error => {
         // logout()
       }
     }
     );
+    const [testVpnConnection] = useMutation(VPN_DISCONNECTION);
+    const [formState, setFormState] = useState({
+      isSuccess: false,
+      isUpdate: false,
+      isFailed: false,
+      isDelete: false,
+      errMessage: ""
+    });
     
     useEffect(() => {
       getVpnConnectedClients({
@@ -56,9 +79,48 @@ export const VpnStatus: React.FC = (props: any) => {
         }
       })
     }, []);
+    const handleAlertClose = () => {
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: ""
+      }));
+    };
+  
+
+    useEffect(() => {
+      getVpnConnectedClients({
+        variables: {
+          vpnConnectFlag : 'Connected'
+        }
+      })
+    }, []);
+
+    useEffect(() => {
+      getVpnConnectedClients({
+        variables: {
+          vpnConnectFlag : 'Connected'
+        }
+      })
+    }, [backdrop]);
+
+    useEffect(() => {
+      if (
+        formState.isDelete === true ||
+        formState.isFailed === true ||
+        formState.isSuccess === true ||
+        formState.isUpdate === true
+      ) {
+        setTimeout(function() {
+          handleAlertClose();
+        }, ALERT_MESSAGE_TIMER);
+      }
+    }, [formState]);
 
     const createTableDataObject = (data: any) => {
-      console.log("DATA",data);
       let arr: any = [];
       data.map((element: any) => {
         let obj: any = {};
@@ -70,6 +132,53 @@ export const VpnStatus: React.FC = (props: any) => {
       });
       setNewData(arr);
     };
+    const handleClickClient = (rowData: any) => {
+      setBackdrop(true)
+      testVpnConnection({
+        variables: {
+          "input": {
+            "client": rowData.clientId,
+            "targetName": rowData.targetName,
+            "clientName": rowData.clientname
+          }
+        }
+      }).then((response: any) => {
+        console.log("RESPONSE",response)
+        if (response.data.disconnectVpn.success == "VPN disconnected Successfully") {
+          setFormState(formState => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "VPN Disconnected Successfully !!"
+          }));
+          setBackdrop(false)
+        } else {
+          setFormState(formState => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " VPN Disconnection Failed !!"
+          }));
+          setBackdrop(false)
+        }
+      }).catch(() => {
+        console.log("ERROR");
+        setFormState(formState => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "VPN Disconnection Failed !!"
+        }));
+        setBackdrop(false)
+      })
+    };
+    if (loadingVpnConnectedClients || backdrop) return <SimpleBackdrop />;
 
   return (
     <React.Fragment>
@@ -77,31 +186,56 @@ export const VpnStatus: React.FC = (props: any) => {
       <Typography component="h5" variant="h1">
         VPN Connection Status
       </Typography>
+      <Grid>
+        <Grid item xs={12}>
+          {formState.isSuccess ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
+          ) : null}
+          {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {formState.errMessage}
+            </Alert>
+          ) : null}
+        </Grid>
+        </Grid>
       <Paper className={styles.paper}>
         <MaterialTable
           title={title}
           data = {newData}
           columns={columns}
           actions={[
-              // {
-              //   icon: () => <BlurOffIcon className={styles.CircleIcon} />,
-              //   tooltip: "Disconnect",
-              //   onClick: (event: any, rowData: any) => {
-              //   //   handleClickClient(rowData);
-              //   },
-              // },
-              // {
-              //   icon: () => <CloudOffIcon className={styles.CircleIcon} />,
-              //   tooltip: "Disconnect",
-              //   onClick: (event: any, rowData: any) => {
-              //   //   handleClickClient(rowData);
-              //   },
-              // },
               {
                 icon: () => <DesktopAccessDisabledIcon className={styles.CircleIcon} />,
                 tooltip: "Disconnect",
                 onClick: (event: any, rowData: any) => {
-                //   handleClickClient(rowData);
+                  handleClickClient(rowData);
                 },
               },
           ]}

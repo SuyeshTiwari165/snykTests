@@ -44,6 +44,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const client = useApolloClient();
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
+  const [domainName, setDomainName] = useState<String>("");
   const [vpnUserName, setVpnUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
@@ -287,6 +288,16 @@ export const Windows_Network: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
+  const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDomainName(event.target.value);
+    let value = event.target.value;
+    let isErrUserName = value.length <= 0 ? "Required" : "";
+    setIsError((isError: any) => ({
+      ...isError,
+      domainName: isErrUserName,
+    }));
+    setSubmitDisabled(checkValidation);
+  };
 
   const handleVpnUserNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -469,6 +480,21 @@ export const Windows_Network: React.FC = (props: any) => {
           User Name
           </Input>
       </Grid>
+      <Grid item xs={12} md={6}>
+        <Input
+          type="text"
+          label="Domain Name"
+          value={domainName}
+          onChange={handleDomainChange}
+          required
+          error={isError.domainName}
+          helperText={isError.domainName}
+        >
+          Domain Name
+          </Input>
+      </Grid>
+      
+
       <Grid item xs={12} md={6} className={styles.PasswordField}>
         <FormControl className={styles.TextField} variant="outlined">
           <InputLabel classes={{ root: styles.FormLabel }}>
