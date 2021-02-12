@@ -137,14 +137,11 @@ export const RaReportListing: React.FC = (props: any) => {
 
   useEffect(() => {
 console.log("propsClientName",propsClientName)
-if(propsClientName && propsClientName!= null ) {
   getReportListingData({
     variables: {
       clientname: propsClientName,
-      status: "Done"
     }
   })
-}
   }, []);
 
   //for task data

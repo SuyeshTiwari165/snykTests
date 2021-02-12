@@ -45,3 +45,21 @@ query getTarget ($partnerName : String,$clientName : String ) {
   }
 }
 `
+export const GET_VPN_CONNECTED_CLIENTS = gql `
+query ($vpnConnectFlag : String){
+  getTarget(vpnConnectFlag: $vpnConnectFlag){
+    edges{
+      node{
+        vatTargetId
+        targetName
+        client{
+          clientName
+          id
+          vpnConnectFlag
+        }
+        vpnConnectFlag
+      }
+    }
+  }
+}
+`
