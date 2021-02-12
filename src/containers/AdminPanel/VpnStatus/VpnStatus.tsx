@@ -18,6 +18,7 @@ import BlurOffIcon from '@material-ui/icons/BlurOff';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import DesktopAccessDisabledIcon from '@material-ui/icons/DesktopAccessDisabled';
+import { GET_VPN_CONNECTED_CLIENTS } from "../../../graphql/queries/Target";
 export const VpnStatus: React.FC = (props: any) => {
   const title = "Listing of VPN Connected ";
   const columns = [
@@ -30,11 +31,46 @@ export const VpnStatus: React.FC = (props: any) => {
       field: "status",
     },
   ];
-  const rows = [
-    { id: 1, clientname: 'WA', status: 'Connected'},
-    { id: 2, clientname: 'DA', status: 'Connected'},
-    { id: 3, clientname: 'Lannister', status: 'Connected'},
-  ];
+  const [newData, setNewData] = useState([]);
+
+  const [getVpnConnectedClients, {
+    data: dataVpnConnectedClients,
+    loading: loadingVpnConnectedClients,
+  }] = useLazyQuery(GET_VPN_CONNECTED_CLIENTS,
+    {
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: "cache-and-network",
+      onCompleted: data => {
+        createTableDataObject(data);
+      },
+      onError: error => {
+        // logout()
+      }
+    }
+    );
+    
+    useEffect(() => {
+      getVpnConnectedClients({
+        variables: {
+          vpnConnectFlag : 'Connected'
+        }
+      })
+    }, []);
+
+    const createTableDataObject = (data: any) => {
+      console.log("DATA",data);
+      let arr: any = [];
+      data.map((element: any) => {
+        let obj: any = {};
+        obj["clientname"] = !element.node ? "-" : element.node.client.clientName;
+        obj["status"] = element.node.vpnConnectFlag;
+        obj["clientId"] = element.node.client.id;
+        obj["targetName"] = element.node.targetName
+        arr.push(obj);
+      });
+      setNewData(arr);
+    };
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -44,23 +80,23 @@ export const VpnStatus: React.FC = (props: any) => {
       <Paper className={styles.paper}>
         <MaterialTable
           title={title}
-          data = {rows}
+          data = {newData}
           columns={columns}
           actions={[
-              {
-                icon: () => <BlurOffIcon className={styles.CircleIcon} />,
-                tooltip: "Disconnect",
-                onClick: (event: any, rowData: any) => {
-                //   handleClickClient(rowData);
-                },
-              },
-              {
-                icon: () => <CloudOffIcon className={styles.CircleIcon} />,
-                tooltip: "Disconnect",
-                onClick: (event: any, rowData: any) => {
-                //   handleClickClient(rowData);
-                },
-              },
+              // {
+              //   icon: () => <BlurOffIcon className={styles.CircleIcon} />,
+              //   tooltip: "Disconnect",
+              //   onClick: (event: any, rowData: any) => {
+              //   //   handleClickClient(rowData);
+              //   },
+              // },
+              // {
+              //   icon: () => <CloudOffIcon className={styles.CircleIcon} />,
+              //   tooltip: "Disconnect",
+              //   onClick: (event: any, rowData: any) => {
+              //   //   handleClickClient(rowData);
+              //   },
+              // },
               {
                 icon: () => <DesktopAccessDisabledIcon className={styles.CircleIcon} />,
                 tooltip: "Disconnect",
