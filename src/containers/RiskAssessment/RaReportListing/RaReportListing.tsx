@@ -135,6 +135,18 @@ export const RaReportListing: React.FC = (props: any) => {
     }
   }, [dataReportListing]);
 
+  useEffect(() => {
+console.log("propsClientName",propsClientName)
+if(propsClientName && propsClientName!= null ) {
+  getReportListingData({
+    variables: {
+      clientname: propsClientName,
+      status: "Done"
+    }
+  })
+}
+  }, []);
+
   //for task data
   if (loadingReportListing || backdrop) return <SimpleBackdrop />;
   // if (errorReportListing) {
