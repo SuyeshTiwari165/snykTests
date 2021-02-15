@@ -95,6 +95,7 @@ export const Target: React.FC = (props: any) => {
   const [showVpnPassword, setShowVpnPassword] = useState(false);
   const startDate = new Date();
   const [uploadDisabled, setUploadDisabled] = useState(true);
+  const [fileUploaded, setFileUploaded] = useState(false);
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
     name: "",
@@ -410,9 +411,8 @@ export const Target: React.FC = (props: any) => {
 
   const onChangeHandler = (event: any) => {
     setSelectedFile(event.target.files[0])
-
     // if (event.target.files[0] && name && vpnUserName && vpnPassword) {
-      if (event.target.files[0] && name && vpnUserName ) {
+      if (event.target.files[0]) {
       setUploadDisabled(false)
     } else {
       setUploadDisabled(true)
@@ -542,8 +542,9 @@ export const Target: React.FC = (props: any) => {
   //   }
   // };
   const onClickHandler = (event: any) => {
-    setBackdrop(true);
-    if (selectedFile.name != null) {
+    if (name && vpnUserName && !uploadDisabled) {
+      setBackdrop(true);
+    if (selectedFile && selectedFile.name != null) {
       let idCardBase64 = "";
       getBase64(selectedFile, (result: any) => {
         idCardBase64 = result;
@@ -570,6 +571,7 @@ export const Target: React.FC = (props: any) => {
                 if (
                   response.data.uploadFile.success == "File Uploaded Failed"
                 ) {
+                  setFileUploaded(false);
                   // setSubmitDisabled(true)
                   setFormState((formState) => ({
                     ...formState,
@@ -580,6 +582,7 @@ export const Target: React.FC = (props: any) => {
                     errMessage: " File Upload Failed.",
                   }));
                 } else {
+                  setFileUploaded(true);
                   // setSubmitDisabled(false)
                   setFormState((formState) => ({
                     ...formState,
@@ -592,6 +595,7 @@ export const Target: React.FC = (props: any) => {
                 }
               })
               .catch((error: Error) => {
+                setFileUploaded(false);
                 setBackdrop(false);
                 setSelectedFile(null);
                 setFormState((formState) => ({
@@ -622,6 +626,7 @@ export const Target: React.FC = (props: any) => {
               setSelectedFile(null);
               if (response.data.uploadFile.success == "File Uploaded Failed") {
                 // setSubmitDisabled(true)
+                setFileUploaded(false);
                 setFormState((formState) => ({
                   ...formState,
                   isSuccess: false,
@@ -631,6 +636,7 @@ export const Target: React.FC = (props: any) => {
                   errMessage: " File Upload Failed.",
                 }));
               } else {
+                setFileUploaded(true)
                 // setSubmitDisabled(false)
                 setFormState((formState) => ({
                   ...formState,
@@ -643,6 +649,7 @@ export const Target: React.FC = (props: any) => {
               }
             })
             .catch((error: Error) => {
+              setFileUploaded(false)
               setBackdrop(false);
               setSelectedFile(null);
               setFormState((formState) => ({
@@ -656,7 +663,28 @@ export const Target: React.FC = (props: any) => {
             });
         }
       });
+    } else {
+      setBackdrop(false);
+      setSelectedFile(null);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "Please Choose File to Upload",
+      }));
     }
+  } else {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: "Please Fill Required Fields and Upload File ",
+    }));
+  }
   };
   const handleBack = () => {
     let data = {};
@@ -1124,6 +1152,7 @@ export const Target: React.FC = (props: any) => {
             type="button"
             color="primary"
             variant={"contained"}
+            disabled= {!fileUploaded}
             onClick={onClickTestConnection}
           >
             Test Connection
