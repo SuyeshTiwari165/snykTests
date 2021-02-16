@@ -97,7 +97,7 @@ export const RaReportListing: React.FC = (props: any) => {
       },
     });
   }, []);
-  
+
   useEffect(() => {
     if (dataReportListing) {
       let distinctTargetArray: any = [];
@@ -295,13 +295,6 @@ export const RaReportListing: React.FC = (props: any) => {
       reader.onerror = function (error) {
         console.log("Error: ", error);
       };
-    }
-  };
-
-  const onChangeHandler = (event: any, rowData: any) => {
-    setSelectedFile({ [rowData.targetId]: event.target.files[0] });
-    if (event.target.files[0]) {
-      setSubmitDisabled(false);
     }
   };
 
@@ -558,35 +551,35 @@ export const RaReportListing: React.FC = (props: any) => {
                 }
               } : null),
               partner.partnerId
-                ? null
-                : (rowData: any) => ({
-                  // disabled: rowData.status !== "Done",
-                  icon: () => (
-                    <div>
-                      <input
-                        type="file"
-                        name={rowData.tableData.id}
-                        id="zipUpload"
-                        className={styles.uploadButton}
-                        hidden
-                        onChange={(event: any) => {
-                          onChangeHandler(event, rowData);
-                        }}
-                      />
-                      <label htmlFor="zipUpload"><CloudUploadIcon /></label>
-                    </div>
-                  ),
-                  tooltip: "Browse",
-                  name: "file",
-                  type: "file",
-                  onClick: (event: any, rowData: any) => {
-                    // onChangeHandler(event, rowData)
-                  }
-                }),
+              ? null
+              : (rowData: any) => ({
+                // disabled: rowData.status !== "Done",
+                icon: () => (
+                  <div>
+                    <input
+                      type="file"
+                      name={rowData.targetId}
+                      id={rowData.targetId}
+                      className={styles.uploadButton}
+                      hidden
+                      onChange={(event: any) => {
+                        setSelectedFile({ [rowData.targetId]: event.target.files[0] });
+                      }}
+                    />
+                    <label htmlFor={rowData.targetId}><CloudUploadIcon /></label>
+                  </div>
+                ),
+                tooltip: "Browse",
+                name: "file",
+                type: "file",
+                // onClick: (event: any, rowData: any) => {
+                //   getRowData(rowData);
+                // }
+              }) ,
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  // disabled: rowData.status !== "Done",
+                  // disabled: selectedFile == {} ? false : true,
                   icon: () => <PublishIcon />,
                   tooltip: "Upload",
                   name: "file",

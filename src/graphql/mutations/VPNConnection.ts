@@ -23,3 +23,10 @@ mutation disconnectVpn($input:FileUploadInput!){
   }
 }
 `;
+
+export const TEST_WINDOWS_CONNECTION = gql`
+mutation windowsVpnTest($input: TestConnectionInput!) {
+  windowsVpnTest(input: $input) {
+    success
+  }
+}`;

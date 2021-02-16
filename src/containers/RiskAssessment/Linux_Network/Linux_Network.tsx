@@ -239,7 +239,7 @@ export const Linux_Network: React.FC = (props: any) => {
     }));
     setSubmitDisabled(checkValidation);
   };
-
+ 
   const handlePasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {

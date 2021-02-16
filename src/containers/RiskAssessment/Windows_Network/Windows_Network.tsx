@@ -38,6 +38,8 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
+import Paper from "@material-ui/core/Paper";
+import { TEST_WINDOWS_CONNECTION } from "../../../graphql/mutations/VPNConnection";
 
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
@@ -64,13 +66,13 @@ export const Windows_Network: React.FC = (props: any) => {
   const partnerId = partner.partnerId;
   const [targetName, setTargetName] = useState<String>("");
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
-
+  const [backdrop, setBackdrop] = useState(false);
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
   };
-
+  const [testWindowsConnection] = useMutation(TEST_WINDOWS_CONNECTION);
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -168,6 +170,7 @@ export const Windows_Network: React.FC = (props: any) => {
     };
   }, []);
 
+  if (backdrop) return <SimpleBackdrop />;
 
   const handleOkay = () => {
     setWindowsDomain(true);
@@ -183,6 +186,7 @@ export const Windows_Network: React.FC = (props: any) => {
         client: clientId,
         targetName: targetName,
         host: ipRange,
+        winName: domainName,
         winIpAddress: ipAddress,
         winUsername: userName,
         winPassword: password,
@@ -216,10 +220,10 @@ export const Windows_Network: React.FC = (props: any) => {
           setTimeout(() => {
             data = {
               LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-              windowsNetwork:  props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+              windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
               editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
               clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo: null
+              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null
             }
             history.push(routeConstant.TASK_DETAILS, data);
           }, 1000);
@@ -312,63 +316,80 @@ export const Windows_Network: React.FC = (props: any) => {
     setSubmitDisabled(checkValidation);
   };
 
-
   const onClickTestConnection = () => {
-    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {
-    // setBackdrop(true)
-    // testVpnConnection({
-    //   variables: {
-    //     input: {
-    //       client: clientID,
-    //       targetName: targetName,
-    //       vpnUsername: VPNUsername,
-    //       vpnPassword: VPNPassword,
-    //       host: ipRange,
-    //       username: userName,
-    //       password: password,
-    //       ipAddress: ipAddress
-    //     }
-    //   }
-    // }).then((response: any) => {
-    //   setBackdrop(false)
-    //   if (response.data.domainConnection.success == "VPN connected Successfully") {
-    SetConnectionSuccess(false)
-    //     setSubmitDisabled(false)
-    //     setFormState((formState) => ({
-    //       ...formState,
-    //       isSuccess: true,
-    //       isUpdate: false,
-    //       isDelete: false,
-    //       isFailed: false,
-    //       errMessage: " Test Connection Successful",
-    //     }));
-    //   } 
-    //   if(response.data.domainConnection.success == "VPN connection Failed") {
-    //     SetConnectionSuccess(false)
-    setSubmitDisabled(true)
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: true,
-      errMessage: "Test Connection Failed ",
-    }));
-
-    //   }
-    // }).catch(() => {
-    //   setBackdrop(false)
-    //   console.log("Test Connection Failed !!!!")
-    //   setFormState((formState) => ({
-    //     ...formState,
-    //     isSuccess: false,
-    //     isUpdate: false,
-    //     isDelete: false,
-    //     isFailed: true,
-    //     errMessage: "",
-    //   }));
-    // })
-    // }
+    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {    
+    setBackdrop(true);
+    testWindowsConnection({
+      variables: {
+        input: {
+          client: clientId,
+          targetName: targetName,
+          vpnUsername: VPNUsername,
+          vpnPassword: VPNPassword,
+          host: ipRange,
+          winUsername: userName,
+          winPassword: password,
+          winIpAddress: ipAddress,
+          winName: domainName,
+        },
+      },
+    })
+      .then((response: any) => {
+        setBackdrop(false);
+        if (
+          response.data.domainConnection.success ==
+          "Authentication succeeded, connection successful"
+        ) {
+          SetConnectionSuccess(true);
+          setSubmitDisabled(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "Test Connection Successful",
+          }));
+        } else if (
+          response.data.vpnConnection.success ==
+          "VPN is Connected,Please Disconnect"
+        ) {
+          SetConnectionSuccess(false);
+          setSubmitDisabled(true);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage:
+              "You are already connected with another VPN. Please disconnect then try again",
+          }));
+        } else {
+          SetConnectionSuccess(false);
+          setSubmitDisabled(true);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Test Connection Failed ",
+          }));
+        }
+      })
+      .catch(() => {
+        setBackdrop(false);
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "",
+        }));
+      });
+    // }    
   };
 
   const handleAlertClose = () => {
@@ -409,28 +430,11 @@ export const Windows_Network: React.FC = (props: any) => {
       <CssBaseLine />
       <Typography component="h5" variant="h1">
         Windows Network :
-      </Typography>
+        </Typography>
       <RaStepper />
-      <Grid item xs={12}>
-        {formState.isSuccess ? (
-          <Alert
-            severity="success"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            <strong>{formState.errMessage}</strong>
-            {/* {SUCCESS} */}
-          </Alert>
-        ) : null}
-         {formState.isUpdate ? (
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          {formState.isSuccess ? (
             <Alert
               severity="success"
               action={
@@ -448,134 +452,152 @@ export const Windows_Network: React.FC = (props: any) => {
               {/* {SUCCESS} */}
             </Alert>
           ) : null}
-        {formState.isFailed ? (
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleAlertClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {FAILED}
-            {formState.errMessage}
-          </Alert>
-        ) : null}
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Input
-          type="text"
-          label="User Name"
-          value={userName}
-          onChange={handleUserNameChange}
-          required
-          error={isError.userName}
-          helperText={isError.userName}
-        >
-          User Name
-          </Input>
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Input
-          type="text"
-          label="Domain Name"
-          value={domainName}
-          onChange={handleDomainChange}
-          required
-          error={isError.domainName}
-          helperText={isError.domainName}
-        >
-          Domain Name
-          </Input>
-      </Grid>
-      
-
-      <Grid item xs={12} md={6} className={styles.PasswordField}>
-        <FormControl className={styles.TextField} variant="outlined">
-          <InputLabel classes={{ root: styles.FormLabel }}>
-            Password
-            </InputLabel>
-          <OutlinedInput
-            classes={{
-              root: styles.InputField,
-              notchedOutline: styles.InputField,
-              focused: styles.InputField,
-            }}
-            type={showPassword ? "text" : "password"}
-            label="Password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-            error={isError.password}
-            endAdornment={
-              <InputAdornment position="end">
+          {formState.isUpdate ? (
+            <Alert
+              severity="success"
+              action={
                 <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
                 >
-                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                  <CloseIcon fontSize="inherit" />
                 </IconButton>
-              </InputAdornment>
-            }
-          />
-          {isError.password ? (
-            <FormHelperText
-              error={isError.password}
-              classes={{ root: styles.FormHelperText }}
+              }
             >
-              Please enter a password.
-            </FormHelperText>
+              <strong>{formState.errMessage}</strong>
+              {/* {SUCCESS} */}
+            </Alert>
           ) : null}
-        </FormControl>
-
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Input
-          type="text"
-          label="IP List"
-          value={ipAddress}
-          onChange={handleIpRangeChange}
-          required
-          error={isError.ipRange}
-          helperText={isError.ipRange}
-        >
-          IP Range
+          {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {FAILED}
+              {formState.errMessage}
+            </Alert>
+          ) : null}
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Input
+            type="text"
+            label="User Name"
+            value={userName}
+            onChange={handleUserNameChange}
+            required
+            error={isError.userName}
+            helperText={isError.userName}
+          >
+            User Name
           </Input>
-      </Grid>
-      <Grid item xs={12} className={styles.ActionButtons}>
-        <Button
-          variant={"contained"}
-          onClick={handleBack}
-          color="secondary"
-          data-testid="cancel-button"
-        >
-          back
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Input
+            type="text"
+            label="Domain Name"
+            value={domainName}
+            onChange={handleDomainChange}
+            required
+            error={isError.domainName}
+            helperText={isError.domainName}
+          >
+            Domain Name
+          </Input>
+        </Grid>
+
+
+        <Grid item xs={12} md={6} className={styles.PasswordField}>
+          <FormControl className={styles.TextField} variant="outlined">
+            <InputLabel classes={{ root: styles.FormLabel }}>
+              Password
+            </InputLabel>
+            <OutlinedInput
+              classes={{
+                root: styles.InputField,
+                notchedOutline: styles.InputField,
+                focused: styles.InputField,
+              }}
+              type={showPassword ? "text" : "password"}
+              label="Password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+              error={isError.password}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {isError.password ? (
+              <FormHelperText
+                error={isError.password}
+                classes={{ root: styles.FormHelperText }}
+              >
+                Please enter a password.
+              </FormHelperText>
+            ) : null}
+          </FormControl>
+
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Input
+            type="text"
+            label="IP List"
+            value={ipAddress}
+            onChange={handleIpRangeChange}
+            required
+            error={isError.ipRange}
+            helperText={isError.ipRange}
+          >
+            IP Range
+          </Input>
+        </Grid>
+        <Grid item xs={12} className={styles.ActionButtons}>
+          <Button
+            variant={"contained"}
+            onClick={handleBack}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            back
           </Button>
-        <Button
-          onClick={handleSubmitDialogBox}
-          color="primary"
-          variant={"contained"}
-          data-testid="ok-button"
-        // disabled={submitDisabled}
-        >
-          next
+          <Button
+            onClick={handleSubmitDialogBox}
+            color="primary"
+            variant={"contained"}
+            data-testid="ok-button"
+          // disabled={submitDisabled}
+          >
+            next
           </Button>
-        <Button
-          variant={"contained"}
-          onClick={handleSkip}
-          color="secondary"
-          data-testid="cancel-button"
-        >
-          skip
+          <Button
+            variant={"contained"}
+            onClick={handleSkip}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            skip
           </Button>
-        {/* <AlertBox
+          {/* <AlertBox
             DialogTitle={""}
             open={showDialogBox}
             dialogBoxMsg={dialogBoxMsg}
@@ -588,14 +610,15 @@ export const Windows_Network: React.FC = (props: any) => {
             handleCancel={handleClose}
             handleClose={handleClose}
           ></AlertBox> */}
-        <Button
-          type="button"
-          color="primary"
-          variant={"contained"}
-          onClick={onClickTestConnection}
-        >
-          Test Connection
+          <Button
+            type="button"
+            color="primary"
+            variant={"contained"}
+            onClick={onClickTestConnection}
+          >
+            Test Connection
         </Button>
+        </Grid>
       </Grid>
     </React.Fragment>
   )
