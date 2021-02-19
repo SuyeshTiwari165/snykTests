@@ -24,3 +24,11 @@
   width: 14px !important;
   margin-right: 3px;
 }
+
+.saveButton button:nth-child(2) {
+  background-color: transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  font-weight:bold !important;
+  padding:0px !important;
+  }
