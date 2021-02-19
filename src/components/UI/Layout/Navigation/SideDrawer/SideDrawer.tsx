@@ -187,11 +187,20 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
       <Toolbar className={classes.anotherToolBar}>
         {fullOpen ? (
           <div className={classes.outerBox}>
-            <ThemeProvider theme={theme}>
+            {/* <ThemeProvider theme={theme}>
               <Typography component="h6" variant="h6" className={classes.title}>
                 Ra in a Box
               </Typography>
-            </ThemeProvider>
+            </ThemeProvider> */}
+               <div className={styles.RALogoImg}>
+                <img
+                    src={
+                      process.env.PUBLIC_URL +
+                      "/icons/svg-icon/logo-ra-in-a-box.svg"
+                    }
+                    alt="user icon"
+                  />
+              </div>
             <IconButton
               className={classes.iconButton}
               onClick={() => setFullOpen(false)}
