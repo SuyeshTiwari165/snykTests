@@ -295,6 +295,8 @@ export const Target: React.FC = (props: any) => {
             errMessage: "Target Updated Successfully !",
           }));
           setSubmitDisabled(false)
+          setUploadDisabled(true)
+          setFileUploaded(false)
           setEditDataId(null);
           localStorage.setItem("name", JSON.stringify(name));
           localStorage.setItem(
@@ -595,6 +597,7 @@ export const Target: React.FC = (props: any) => {
                 }
               })
               .catch((error: Error) => {
+                setUploadDisabled(true)
                 setFileUploaded(false);
                 setBackdrop(false);
                 setSelectedFile(null);
@@ -649,6 +652,7 @@ export const Target: React.FC = (props: any) => {
               }
             })
             .catch((error: Error) => {
+              setUploadDisabled(true)
               setFileUploaded(false)
               setBackdrop(false);
               setSelectedFile(null);
@@ -750,6 +754,8 @@ export const Target: React.FC = (props: any) => {
       ...isError,
       name: isErrName,
     }));
+    setUploadDisabled(true)
+    setFileUploaded(false)
     setSubmitDisabled(checkValidation);
   };
 
