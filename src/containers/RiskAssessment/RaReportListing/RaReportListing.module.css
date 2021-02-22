@@ -130,11 +130,11 @@ tfoot {
   border: 1px solid #0051a8;
   border-radius: 20px;
   z-index: 2 !important;
-  height: 39px !important;
+  height: 37px !important;
 }
 
 .PublishSwitch>span, .PublishSwitchCheck>span {
-  padding: 4px;
+  padding: 3px 6px;
 }
 
 .PublishSwitch>span {
@@ -170,7 +170,8 @@ tfoot {
   justify-content: center;
   font-weight: 500;
   display: inline-flex;
-  padding: 12px 0px;
+  padding: 16px 0px;
+  font-size: 14px;
 }
 
 .PublishSwitchCheck+span .PublishSwitchNo, .PublishSwitch+span .PublishSwitchYes {
