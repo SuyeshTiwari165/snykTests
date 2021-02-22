@@ -363,7 +363,7 @@ export const Client: React.FC = (props: any) => {
             </div>
           </Grid>
           {partner.partnerId ? (
-            <Grid item xs={12} md={3} className={styles.FilterAddWrap}>
+            <Grid item xs={12} md={12} className={styles.FilterAddWrap}>
               <div className={styles.FilterInput}>
                 <Button
                   color="primary"
