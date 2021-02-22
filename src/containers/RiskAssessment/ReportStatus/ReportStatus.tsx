@@ -156,6 +156,7 @@ export const ReportStatus: React.FC = (props: any) => {
           </div>
         </Grid>
         <Paper className={styles.paper}>
+          <div className={styles.report_table}>
           <MaterialTable
             title={title}
             columns={columns}
@@ -170,7 +171,7 @@ export const ReportStatus: React.FC = (props: any) => {
             onOrderChange={(orderedColumnId: any, orderDirection: any) => {
               orderFunc(orderedColumnId, orderDirection);
             }}
-          />
+          /></div>
         </Paper>
       </Grid>
     </React.Fragment>
