@@ -487,8 +487,9 @@ export const ReportStatus: React.FC = (props: any) => {
           </Button>
         </div>
       </Grid>
+      <div className={styles.status_report}>
       <Paper className={styles.paper}>
-        <MaterialTable
+              <MaterialTable
           title={title}
           columns={columns}
           data={newData}
@@ -504,7 +505,7 @@ export const ReportStatus: React.FC = (props: any) => {
             pageSizeOptions: [25, 50, 75, 100],
           }}
         />
-      </Paper>
+      </Paper></div>
     </React.Fragment>
   );
 };

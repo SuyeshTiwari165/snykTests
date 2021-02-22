@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "72px",
       backgroundColor: "#fff",
       boxShadow: "7px 0 7px -6px #e4e4e4 !important",
-      marginTop: "-57px;",
+      // marginTop: "-57px;",
       "& + main" :{
         width: "calc(100% - 72px)",
         [theme.breakpoints.down("xs")]: {
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) =>
     drawerOpen: {
       width: "246px",
       position: "relative",
-      marginTop: "-57px;",
+      // marginTop: "-57px;",
       backgroundColor: "transparent",
       borderRight: "0px",
       transition: theme.transitions.create("width", {
@@ -133,7 +133,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       width: "100%",
       justifyContent: "flex-end",
-      padding: "8px 0px",
+      padding: "0px",
       [theme.breakpoints.down("xs")]: {
         padding: "0px",
       }
@@ -160,7 +160,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     iconButton: {
       margin: "0 10px 0 0",
-      color: "#fff"
+      color: "#0051A8"
     },
     closedIcon: {
       margin: "12px 12px 12px 15px"
@@ -192,15 +192,7 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
                 Ra in a Box
               </Typography>
             </ThemeProvider> */}
-               <div className={styles.RALogoImg}>
-                <img
-                    src={
-                      process.env.PUBLIC_URL +
-                      "/icons/svg-icon/logo-ra-in-a-box.svg"
-                    }
-                    alt="user icon"
-                  />
-              </div>
+          
             <IconButton
               className={classes.iconButton}
               onClick={() => setFullOpen(false)}

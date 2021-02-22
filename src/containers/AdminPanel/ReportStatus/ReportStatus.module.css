@@ -158,3 +158,11 @@
   .outlineDate > label + div > input {
     outline: 0px !important;
   }
+
+ th:nth-child(6) {
+  width: 16% !important;
+}
+
+th:nth-child(7) {
+  text-align: left !important;
+}

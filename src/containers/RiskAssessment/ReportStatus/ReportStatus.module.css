@@ -59,3 +59,12 @@
   width: 14px !important;
   margin-right: 3px;
 }
+
+.backToListButton {
+  text-align: right;
+  margin-right: 15px;
+  width: 100%;
+}
+th:nth-child(5) {
+  text-align: left !important;
+}

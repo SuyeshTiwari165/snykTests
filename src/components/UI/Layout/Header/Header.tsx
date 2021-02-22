@@ -15,6 +15,17 @@ export const Header: React.FC = () => (
   <div className={styles.Header} data-testid="Header">
     <Card className={styles.root}>
       <Grid container>
+      <Grid item xs={12} className={styles.RALogoImg}>
+      <div>
+                <img
+                    src={
+                      process.env.PUBLIC_URL +
+                      "/icons/svg-icon/risk-assessments.svg"
+                    }
+                    alt="user icon"
+                  />
+              </div>
+      </Grid>
         <Grid item xs={12} className={styles.userInfo}>
           <span className={styles.userNameLabel}>
             {JSON.parse(localStorage.getItem("user") || "{}").username}{" "}

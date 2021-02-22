@@ -67,6 +67,28 @@
   cursor:pointer
 }
 
+.RALogoImg {
+	display: inline-block;
+	width: 247px;
+	background-color: #fff !important;
+	padding: 5px 15px;
+	text-align: center;
+	font-size: 140%;
+	color: #002F60 !important;
+	box-shadow: 10px 0 7px -10px rgba(0, 0, 0, 0.45);
+	vertical-align: top;
+	height: 46px;
+	z-index: 100;
+	position: absolute;
+	top: 0px;
+	line-height: 22px;
+}
+
+.RALogoImg img {
+  width: 40px;
+  height: auto;
+}
+
 @media (max-width: 599.95px) {
   .userInfo {
     height: 49px;
