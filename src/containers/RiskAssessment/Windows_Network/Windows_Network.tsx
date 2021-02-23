@@ -337,7 +337,7 @@ export const Windows_Network: React.FC = (props: any) => {
       .then((response: any) => {
         setBackdrop(false);
         if (
-          response.data.domainConnection.success ==
+          response.data.windowsVpnTest.success ==
           "Authentication succeeded, connection successful"
         ) {
           SetConnectionSuccess(true);
@@ -351,7 +351,7 @@ export const Windows_Network: React.FC = (props: any) => {
             errMessage: "Test Connection Successful",
           }));
         } else if (
-          response.data.vpnConnection.success ==
+          response.data.windowsVpnTest.success ==
           "VPN is Connected,Please Disconnect"
         ) {
           SetConnectionSuccess(false);
@@ -585,7 +585,8 @@ export const Windows_Network: React.FC = (props: any) => {
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
-          // disabled={submitDisabled}
+            disabled={!connectionSuccess}
+            
           >
             next
           </Button>
