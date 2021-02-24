@@ -26,6 +26,7 @@ query getTarget($targetName: String) {
         winIpAddress
         winUsername
         winPassword
+        winName
       }
     }
   }
