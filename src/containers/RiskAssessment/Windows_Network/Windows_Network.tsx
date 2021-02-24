@@ -325,8 +325,7 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) { 
-      if(targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && ReRunTargetName) {
+    if(localStorage.getItem("runTargetName") != null && targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && targetData.getCredentialsDetails.edges &&  targetData.getCredentialsDetails.edges.length > 0) {        console.log("targetData.getCredentialsDetails",targetData);
         setBackdrop(true);
         testWindowsConnection({
           variables: {
