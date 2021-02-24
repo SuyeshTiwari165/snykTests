@@ -119,11 +119,11 @@ export const Linux_Network: React.FC = (props: any) => {
                 ? data.getCredentialsDetails.edges[0].node.domainUsername
                 : null
             );
-            setPassword(
-              data.getCredentialsDetails.edges[0].node
-                ? data.getCredentialsDetails.edges[0].node.domainPassword
-                : null
-            );
+            // setPassword(
+            //   data.getCredentialsDetails.edges[0].node
+            //     ? data.getCredentialsDetails.edges[0].node.domainPassword
+            //     : null
+            // );
           }
           // else {
           //   // let error = err.message;
@@ -166,7 +166,7 @@ export const Linux_Network: React.FC = (props: any) => {
         setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       };
       if (localStorage.getItem("vpnPassword") !== null) {
-        setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
+        // setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
       };
     };
   }, []);
@@ -352,7 +352,77 @@ export const Linux_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
+    console.log("ReRunTargetName",ReRunTargetName);
     // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {
+      if(targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && ReRunTargetName) {
+        console.log("targetData.getCredentialsDetails",targetData);
+        setBackdrop(true)
+    testVpnConnection({
+      variables: {
+        input: {
+          client: clientID,
+          targetName: targetName,
+          vpnUsername: VPNUsername,
+          vpnPassword: VPNPassword,
+          host: ipRange,
+          username: userName,
+          password: password,
+          ipAddress: ipAddress, 
+          targetId :targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+        }
+      }
+    }).then((response: any) => {
+      setBackdrop(false)
+      if (response.data.domainConnection.success == "Authentication succeeded, connection successful") {
+        SetConnectionSuccess(true)
+        setSubmitDisabled(false)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: true,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: false,
+          errMessage: "Test Connection Successful",
+        }));
+      }
+      else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+        SetConnectionSuccess(false)
+        setSubmitDisabled(true)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "You are already connected with another VPN. Please disconnect then try again",
+        }));
+      }
+       else {
+        SetConnectionSuccess(false)
+        setSubmitDisabled(true)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: "Test Connection Failed ",
+        }));
+
+      }
+    }).catch(() => {
+      setBackdrop(false)
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "",
+      }));
+    })
+      }
+      else {
     setBackdrop(true)
     testVpnConnection({
       variables: {
@@ -417,7 +487,7 @@ export const Linux_Network: React.FC = (props: any) => {
         errMessage: "",
       }));
     })
-    // }
+    }
   };
 
 

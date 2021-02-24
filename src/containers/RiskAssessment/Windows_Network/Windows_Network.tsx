@@ -41,6 +41,7 @@ import {
 import Paper from "@material-ui/core/Paper";
 import { TEST_WINDOWS_CONNECTION } from "../../../graphql/mutations/VPNConnection";
 
+
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
@@ -117,18 +118,25 @@ export const Windows_Network: React.FC = (props: any) => {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
+          console.log("RERUN DATA",data);
+
           if (targetData && data.getCredentialsDetails.edges[0]) {
+            console.log("RERUN targetData",targetData);
             setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
             setUserName(
               data.getCredentialsDetails.edges[0].node
                 ? data.getCredentialsDetails.edges[0].node.winUsername
                 : null
             );
-            setPassword(
-              data.getCredentialsDetails.edges[0].node
-                ? data.getCredentialsDetails.edges[0].node.winPassword
-                : null
-            );
+            setDomainName(data.getCredentialsDetails.edges[0].node
+              ? data.getCredentialsDetails.edges[0].node.winName
+              : null);
+
+            // setPassword(
+            //   data.getCredentialsDetails.edges[0].node
+            //     ? data.getCredentialsDetails.edges[0].node.winPassword
+            //     : null
+            // );
           }
           // else {
           //   // let error = err.message;
@@ -317,7 +325,81 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {    
+    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) { 
+      if(targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && ReRunTargetName) {
+        setBackdrop(true);
+        testWindowsConnection({
+          variables: {
+            input: {
+              client: clientId,
+              targetName: targetName,
+              vpnUsername: VPNUsername,
+              vpnPassword: VPNPassword,
+              host: ipRange,
+              winUsername: userName,
+              winPassword: password,
+              winIpAddress: ipAddress,
+              winName: domainName,
+              targetId : targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+            },
+          },
+        })
+          .then((response: any) => {
+            setBackdrop(false);
+            if (
+              response.data.windowsVpnTest.success ==
+              "Authentication succeeded, connection successful"
+            ) {
+              SetConnectionSuccess(true);
+              setSubmitDisabled(false);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "Test Connection Successful",
+              }));
+            } else if (
+              response.data.windowsVpnTest.success ==
+              "VPN is Connected,Please Disconnect"
+            ) {
+              SetConnectionSuccess(false);
+              setSubmitDisabled(true);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage:
+                  "You are already connected with another VPN. Please disconnect then try again",
+              }));
+            } else {
+              SetConnectionSuccess(false);
+              setSubmitDisabled(true);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: "Test Connection Failed ",
+              }));
+            }
+          })
+          .catch(() => {
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "",
+            }));
+          });
+      }else {
     setBackdrop(true);
     testWindowsConnection({
       variables: {
@@ -389,7 +471,7 @@ export const Windows_Network: React.FC = (props: any) => {
           errMessage: "",
         }));
       });
-    // }    
+    }    
   };
 
   const handleAlertClose = () => {
