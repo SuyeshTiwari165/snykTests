@@ -352,10 +352,7 @@ export const Linux_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
-    console.log("ReRunTargetName",ReRunTargetName);
-    // if (targetName && clientID && host && vpnUserName && ipAddress && userName && password) {
-      if(targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && ReRunTargetName) {
-        console.log("targetData.getCredentialsDetails",targetData);
+      if(localStorage.getItem("runTargetName") != null && targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && targetData.getCredentialsDetails.edges &&  targetData.getCredentialsDetails.edges.length > 0) {        console.log("targetData.getCredentialsDetails",targetData);
         setBackdrop(true)
     testVpnConnection({
       variables: {
@@ -368,7 +365,7 @@ export const Linux_Network: React.FC = (props: any) => {
           username: userName,
           password: password,
           ipAddress: ipAddress, 
-          targetId :targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+          targetId :targetData.getCredentialsDetails.edges ? targetData.getCredentialsDetails.edges[0].node.vatTarget.id : null
         }
       }
     }).then((response: any) => {
