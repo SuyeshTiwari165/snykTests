@@ -254,3 +254,7 @@ tfoot {
   color: #fff !important;
   margin-left: 10px;
 }
+
+tfoot td > div {
+  flex-wrap: wrap;
+}

@@ -166,3 +166,7 @@
 th:nth-child(7) {
   text-align: left !important;
 }
+
+tfoot td > div {
+  flex-wrap: wrap;
+}

@@ -57,3 +57,7 @@
   margin-bottom: 5px;
   margin-left:0px !important;
 }
+
+.backToListButton button {
+  margin-right: 10px;
+}

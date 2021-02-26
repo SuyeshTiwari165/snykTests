@@ -58,13 +58,13 @@ export const sideDrawerAdminMenus = [
   {
     title: "Report Status",
     path: routeConstants.ADMIN_REPORT_STATUS,
-    icon: "users",
+    icon: "report-status",
     pathList: [routeConstants.ADMIN_REPORT_STATUS],
   },
   {
     title: "VPN Status",
     path: routeConstants.ADMIN_VPN_STATUS,
-    icon: "users",
+    icon: "vpn-status",
     pathList: [routeConstants.ADMIN_VPN_STATUS],
   },
   // {
