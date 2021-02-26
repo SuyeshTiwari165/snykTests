@@ -4,6 +4,7 @@
 .ReactStepper {
   padding: 0px !important;
   background-color: transparent !important;
+  flex-wrap: wrap;
 }
 .ReactStep {
   padding: 0px !important;

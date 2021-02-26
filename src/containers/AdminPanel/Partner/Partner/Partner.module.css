@@ -109,3 +109,6 @@ table>thead {
   width: 20px !important;
   height: 20px !important;
 }
+tfoot td > div {
+  flex-wrap: wrap;
+}

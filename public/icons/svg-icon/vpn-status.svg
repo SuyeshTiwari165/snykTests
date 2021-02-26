@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+  <g id="vpn-status" transform="translate(3000 -445.734)">
+    <g id="monitor_2_" data-name="monitor (2)" transform="translate(-3000 445.734)">
+      <g id="Group_178" data-name="Group 178">
+        <path id="Path_626" data-name="Path 626" d="M23.636,21.333H2.364A2.49,2.49,0,0,0,0,23.933v15.6a2.49,2.49,0,0,0,2.364,2.6h8.273v2.6H8.273v2.6h9.455v-2.6H15.364v-2.6h8.273A2.49,2.49,0,0,0,26,39.533v-15.6A2.49,2.49,0,0,0,23.636,21.333Zm0,18.2H2.364v-15.6H23.636Z" transform="translate(0 -21.333)" fill="#002f60"/>
+      </g>
+    </g>
+    <text id="VPN" transform="translate(-2996.09 458)" fill="#002f60" font-size="9" font-family="Roboto-Bold, Roboto" font-weight="700"><tspan x="0" y="0">VPN</tspan></text>
+    <g id="Rectangle_259" data-name="Rectangle 259" transform="translate(-2996 460.336)" fill="#fff" stroke="#002f60" stroke-width="1">
+      <rect width="17.616" height="2" rx="1" stroke="none"/>
+      <rect x="0.5" y="0.5" width="16.616" height="1" rx="0.5" fill="none"/>
+    </g>
+  </g>
+</svg>

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
         left:"0",
         backgroundColor: "#fff",
         height: "100%",
-        zIndex: "999",
+        zIndex: "99",
       },
       "& + main" :{
         [theme.breakpoints.down("xs")]: {
@@ -69,13 +69,13 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 72px)",
         [theme.breakpoints.down("xs")]: {
           marginLeft: "72px",
-          marginTop: "50px",
+          marginTop: "47px",
         }
       },
       [theme.breakpoints.down("xs")]: {
         position: "absolute",
         left:"0",
-        top: "49px",
+        top: "47px",
         backgroundColor: "#fff",
         height: "calc(100% + 7px)",
         zIndex: "999",
@@ -93,7 +93,10 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       height: "100%",
       [theme.breakpoints.down("xs")]: {
-        marginTop: "0px"
+        marginTop: "49px",
+        "& > div > div" :{
+          boxShadow: "none",
+        }
       }
     },
     drawerClose: {
@@ -104,7 +107,8 @@ const useStyles = makeStyles((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen
       }),
-      overflowX: "hidden",
+      overflowX: "hidden",      
+      boxShadow: "inset 1px 2px 2px -1px #ccc",
       // width: theme.spacing(7) + 1,
       [theme.breakpoints.up("sm")]: {
         width: theme.spacing(9) + 1,
@@ -149,8 +153,9 @@ const useStyles = makeStyles((theme: Theme) =>
         height: "auto",
         padding: "0px",
         minHeight: "49px",
-        backgroundColor: "#0051a8",
+        // backgroundColor: "#0051a8",
         marginBottom: "8px",
+        boxShadow: "inset 1px 2px 2px -1px #ccc",
       }
     },
     title: {

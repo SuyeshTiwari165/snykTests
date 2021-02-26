@@ -345,7 +345,7 @@ export const TaskDetails: React.FC = (props: any) => {
             </Alert>
           ) : null}
         </Grid>
-        <Grid item xs={6}>
+        <Grid item md={6} xs={12}>
           <Input
             type="text"
             label="Task Name"
@@ -358,7 +358,7 @@ export const TaskDetails: React.FC = (props: any) => {
             Task Name
           </Input>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item md={6} xs={12}>
           <Input
             type="text"
             label="Target"
@@ -395,7 +395,7 @@ export const TaskDetails: React.FC = (props: any) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={1} className={styles.backToListButton}>
+        <Grid item xs={12} className={styles.backToListButton}>
           <Button
             variant={"contained"}
             onClick={handleBack}
@@ -404,8 +404,6 @@ export const TaskDetails: React.FC = (props: any) => {
           >
             back
           </Button>
-        </Grid>
-        <Grid item xs={1} className={styles.saveButton}>
           <Button
             onClick={handleSubmitDialogBox}
             color="primary"

@@ -8,3 +8,7 @@
     border: 1px solid #0051a8;
     position: relative;
   }
+
+  tfoot td > div {
+    flex-wrap: wrap;
+  }
