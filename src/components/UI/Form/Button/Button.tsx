@@ -13,11 +13,13 @@ export interface ButtonProps {
   to?: any;
   type?: any;
   onKeyDown?: any;
+  id?: any;
 }
 
 export const Button: React.SFC<ButtonProps> = (props) => {
   return (
     <ButtonElement
+      id = {props.id}
       variant={props.variant}
       color={props.color}
       onClick={props.onClick}

@@ -662,16 +662,6 @@ export const Windows_Network: React.FC = (props: any) => {
             back
           </Button>
           <Button
-            onClick={handleSubmitDialogBox}
-            color="primary"
-            variant={"contained"}
-            data-testid="ok-button"
-            disabled={!connectionSuccess}
-            
-          >
-            next
-          </Button>
-          <Button
             variant={"contained"}
             onClick={handleSkip}
             color="secondary"
@@ -700,6 +690,16 @@ export const Windows_Network: React.FC = (props: any) => {
           >
             Test Connection
         </Button>
+        <Button
+            onClick={handleSubmitDialogBox}
+            color="primary"
+            variant={"contained"}
+            data-testid="ok-button"
+            disabled={!connectionSuccess}
+            
+          >
+            next
+          </Button>
         </Grid>
       </Grid>
     </React.Fragment>

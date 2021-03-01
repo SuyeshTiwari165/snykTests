@@ -432,7 +432,8 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       <Typography component="h5" variant="h1">
         <div>
           {/* {rowData ? "Edit User:" + (propsData.location.statepropsData.location.state.propuserData.rowData.first_name + " " + propsData.location.state.propuserData.rowData.last_name) : "Add User "} */}
-          {rowData ? rowData.name : null}
+          {/* {rowData ? rowData.name : null} */}
+          {"Users"}
         </div>
       </Typography>
       <AddEditForm handleOk={handleSubmit} handleCancel={backToList}>

@@ -365,7 +365,7 @@ export const TaskDetails: React.FC = (props: any) => {
             value={target}
             // onChange={handleNameChange}
             required
-            disabled
+            disabled = {true}
           >
             Target
           </Input>
