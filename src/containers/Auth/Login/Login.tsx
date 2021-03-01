@@ -257,6 +257,7 @@ export const Login: React.FC<LoginProps> = () => {
                 </div>
               ) : null}
               <Button
+                id = {"login"}
                 className={styles.ContinueButton}
                 onClick={onLogin}
                 color="default"

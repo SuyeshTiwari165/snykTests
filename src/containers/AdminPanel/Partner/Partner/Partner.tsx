@@ -65,7 +65,7 @@ export const Partner: React.FC = (props: any) => {
 
   const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
     variables: {
-      orderBy : "partner_name"
+      orderBy : "-created_date"
     },
     onCompleted: (data: any) => {
       createTableDataObject(data.getPartner.edges);

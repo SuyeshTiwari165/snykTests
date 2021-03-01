@@ -64,12 +64,17 @@ export const Client: React.FC = (props: any) => {
 
 
   useEffect(() => {
-    if (partner && props.location.state)
+    if (props.location.state) {
       getClients({
         variables: {
           clientName: props.location.state.name
         },
       });
+    setRowData(true);
+    setEmail(props.location.state.email != "-" ? props.location.state.email : "")
+    setName(props.location.state.name ? props.location.state.name : "")
+    setPhoneNumber(props.location.state.phone != "-" ? props.location.state.phone : "")
+    } 
   }, []);
 
   //table
@@ -403,6 +408,7 @@ export const Client: React.FC = (props: any) => {
               label="Email"
               name="email"
               value={email}
+              disabled = {rowData}
               onChange={handleChange}
               error={isError.email}
               helperText={isError.email}

@@ -631,15 +631,6 @@ export const Linux_Network: React.FC = (props: any) => {
           >
             back
           </Button>
-          <Button
-            onClick={handleSubmitDialogBox}
-            color="primary"
-            variant={"contained"}
-            data-testid="ok-button"
-            disabled={submitDisabled}
-          >
-            next
-          </Button>
           <AlertBox
             DialogTitle={""}
             open={showDialogBox}
@@ -661,6 +652,15 @@ export const Linux_Network: React.FC = (props: any) => {
           >
             Test Connection
         </Button>
+        <Button
+            onClick={handleSubmitDialogBox}
+            color="primary"
+            variant={"contained"}
+            data-testid="ok-button"
+            disabled={submitDisabled}
+          >
+            next
+          </Button>
         </Grid>
       </Grid>
     </React.Fragment>
