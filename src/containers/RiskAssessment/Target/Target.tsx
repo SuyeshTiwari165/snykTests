@@ -569,7 +569,7 @@ export const Target: React.FC = (props: any) => {
             })
               .then((response: any) => {
                 setBackdrop(false);
-                setSelectedFile(null);
+                // setSelectedFile(null);
                 if (
                   response.data.uploadFile.success == "File Uploaded Failed"
                 ) {
@@ -626,7 +626,7 @@ export const Target: React.FC = (props: any) => {
           })
             .then((response: any) => {
               setBackdrop(false);
-              setSelectedFile(null);
+              // setSelectedFile(null);
               if (response.data.uploadFile.success == "File Uploaded Failed") {
                 // setSubmitDisabled(true)
                 setFileUploaded(false);
