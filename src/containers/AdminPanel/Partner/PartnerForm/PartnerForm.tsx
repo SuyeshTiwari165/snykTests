@@ -362,7 +362,9 @@ export const PartnerForm: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Partner
+        {/* Partner */}
+        {param ? "Edit Partner " : "Add Partner"}
+
       </Typography>
       <AddEditForm
         handleOk={handleSubmit}
