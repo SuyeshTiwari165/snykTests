@@ -2,11 +2,13 @@
   border-radius: 24px !important;
   margin-top: 66px !important;
   /* WIDTH:50%; */
+  min-width: 400px !important;
 }
 
 .ScrollPaper {
   align-items: unset !important;
 }
+
 .Alertbox {
   max-width: 80%;
   min-width: 50% !important;
@@ -25,4 +27,24 @@
   padding-top: 24px !important;
   text-align: center;
   padding-bottom: 8px !important;
+}
+
+.AlertBoxCloseIcon {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  padding: 0px;
+}
+
+.AlertBoHeader+div {
+  padding: 16px !important;
+}
+
+.AlertBoxBodyText:last-child {
+  margin-bottom: 0px !important;
+}
+
+.AlertBoxFooter {
+  padding: 16px !important;
+  border-top: 1px solid #0051A8;
 }
