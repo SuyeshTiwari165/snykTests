@@ -25,26 +25,21 @@ const AlertBox = (props: any) => {
         scrollPaper: styles.ScrollPaper,
       }}
     >
-      <DialogTitle id="form-dialog-title">
+      <DialogTitle id="form-dialog-title"  className={styles.AlertBoHeader}>
         {props.DialogTitle ? props.DialogTitle : ""}
         {/* <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}> */}
-          <IconButton
+          <IconButton  className={styles.AlertBoxCloseIcon}
             aria-label="close"
-            style={{
-              position: "absolute",
-              right: "12px",
-              top: "8px",
-            }}
             onClick={props.handleCancel}
           >
             <CloseIcon />
           </IconButton>
         {/* </Link> */}
       </DialogTitle>
-      <DialogContent>
-        <DialogContentText>{props.dialogBoxMsg}</DialogContentText>
+      <DialogContent className={styles.AlertBoxBody}>
+        <DialogContentText className={styles.AlertBoxBodyText}>{props.dialogBoxMsg}</DialogContentText>
       </DialogContent>
-      <DialogActions>
+      <DialogActions className={styles.AlertBoxFooter}>
         {props.buttonName !== '' ? <Link color="primary" to={{ pathname: props.pathName }}>
           <Button variant="contained" color="primary" onClick={props.handleOkay}>
             {props.buttonName}
