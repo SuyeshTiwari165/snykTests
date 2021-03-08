@@ -1108,7 +1108,7 @@ export const Target: React.FC = (props: any) => {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={styles.upBtn}>
           <form>
             <input type="file" name="file" onChange={onChangeHandler} />
             <Button
