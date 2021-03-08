@@ -84,7 +84,10 @@ export const RaReportListing: React.FC = (props: any) => {
     data: dataReportListing,
     loading: loadingReportListing,
     refetch: refetchReportListing
-  }] = useLazyQuery(GET_REPORT_LISTING);
+  }] = useLazyQuery(GET_REPORT_LISTING,
+    {
+      fetchPolicy: "cache-and-network",
+    });
 
   const [uploadFile] = useMutation(ZIP_FILE);
   const [publishReport] = useMutation(PUBLISH_REPORT);
@@ -116,7 +119,6 @@ export const RaReportListing: React.FC = (props: any) => {
           distinctTargetArray
         )
       );
-
       setNewData(temp);
     }
     if (partner.partnerId) {
@@ -125,10 +127,6 @@ export const RaReportListing: React.FC = (props: any) => {
           clientname: propsClientName,
         }
       })
-      // if (props.location.state.refetchData) {
-      //   // getReportListingData()
-      //   // refetchReportListing();
-      // }
     }
     if (partner.partnerId == undefined) {
       getReportListingData({
@@ -137,10 +135,6 @@ export const RaReportListing: React.FC = (props: any) => {
           status: "Done"
         }
       })
-      if (props.location.state.refetchData) {
-        // getReportListingData()
-        // refetchReportListing();
-      }
     }
   }, [dataReportListing]);
 
