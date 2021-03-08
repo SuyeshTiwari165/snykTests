@@ -34,7 +34,7 @@ function App() {
     setTimeout(function () {
       logout();
       window.location.replace("/login");
-    }, 1000 * 60 * 60);
+    }, 3600000);
   }
   let routes;
 
