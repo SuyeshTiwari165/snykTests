@@ -68,3 +68,8 @@
   border-radius: 10px !important;
   width: 100% !important
 }
+
+.upBtn input {
+  margin-bottom: 15px;
+}
+
