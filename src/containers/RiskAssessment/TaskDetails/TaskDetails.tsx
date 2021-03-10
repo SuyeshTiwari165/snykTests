@@ -260,12 +260,21 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
+    // let data = {
+    //   editData: true,
+    //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+    //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+    //   clientInfo: clientInfo, targetInfo: targetInfo
+    // };
     let data = {
-      editData: true,
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-      clientInfo: clientInfo, targetInfo: targetInfo
-    };
+      editData: true,
+      clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+      targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+    }
     if (props.location.state && props.location.state.windowsNetwork) {
       history.push(routeConstant.WINDOWS_NETWORK, data);
     } else if (props.location.state && props.location.state.LinuxNetwork) {

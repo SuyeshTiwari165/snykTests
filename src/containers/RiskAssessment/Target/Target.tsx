@@ -225,8 +225,20 @@ export const Target: React.FC = (props: any) => {
           targetName: targetName,
         },
       });
-
       // getTaskData();
+    }
+    if(props.location.state != undefined && props.location.state.editData && props.location.state.editData === true) {
+      console.log("props.location.state",props.location.state)
+      setSubmitDisabled(false);
+      setFileUploaded(true)
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: "Connection Already Tested"
+      }));
     }
   }, []);
 
@@ -256,7 +268,7 @@ export const Target: React.FC = (props: any) => {
   }, [formState]);
 
   useEffect(() => {
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   }, [name, ipRange, userName, password, vpnUserName, vpnPassword]);
 
   useEffect(() => {
@@ -721,7 +733,9 @@ export const Target: React.FC = (props: any) => {
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state && props.location.state.clientInfo,
-        targetInfo: targetInfo
+        targetInfo: targetInfo,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
       };
       history.push(routeConstant.LINUX_NETWORK, data);
     }, 500);
@@ -736,10 +750,13 @@ export const Target: React.FC = (props: any) => {
     setTimeout(() => {
       if (props.location.state) {
         data = {
-          LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-          windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+          LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+          windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
           editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-          clientInfo: props.location.state.clientInfo, targetInfo: targetInfo
+          clientInfo: props.location.state && props.location.state.clientInfo,
+          targetInfo: targetInfo,
+          editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+          editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
         }
       }
       history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -1152,7 +1169,7 @@ export const Target: React.FC = (props: any) => {
             disabled= {!fileUploaded}
             onClick={onClickTestConnection}
           >
-            Test Connection
+            {props.location.state != undefined && props.location.state.editData ?  "Retry" : "Test Connection"}
               </Button>
             <Button
             onClick={handleSubmitDialogBox}

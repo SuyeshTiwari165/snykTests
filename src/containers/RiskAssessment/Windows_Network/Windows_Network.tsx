@@ -169,6 +169,18 @@ export const Windows_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
+    if(props.location.state != undefined && props.location.state.editWindowsData && props.location.state.editWindowsData === true) {
+      console.log("props.location.state.editWindowsData",props.location.state.editWindowsData)
+      SetConnectionSuccess(true);
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: "Connection Already Tested"
+      }));
+    }
   }, []);
 
   useEffect(() => {
@@ -177,6 +189,19 @@ export const Windows_Network: React.FC = (props: any) => {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function() {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
 
   if (backdrop) return <SimpleBackdrop />;
 
@@ -188,7 +213,7 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const handleSubmitDialogBox = () => {
     if (editDataId) {
-      setSubmitDisabled(true)
+      // setSubmitDisabled(true)
       let input = {
         partner: partnerId,
         client: clientId,
@@ -226,13 +251,27 @@ export const Windows_Network: React.FC = (props: any) => {
           setShowDialogBox(false)
           let data = {};
           setTimeout(() => {
+            if(connectionSuccess) {
             data = {
               LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
               windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
               editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
               clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null
+              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+              editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+              editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : true,
             }
+          }else {
+            data = {
+              LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+              windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+              editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+              clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+              editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+              editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+            }
+          }
             history.push(routeConstant.TASK_DETAILS, data);
           }, 1000);
           // setTimeout(() => {
@@ -287,7 +326,7 @@ export const Windows_Network: React.FC = (props: any) => {
       ...isError,
       ipRange: isErrIpRange,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -298,7 +337,7 @@ export const Windows_Network: React.FC = (props: any) => {
       ...isError,
       userName: isErrUserName,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDomainName(event.target.value);
@@ -308,7 +347,7 @@ export const Windows_Network: React.FC = (props: any) => {
       ...isError,
       domainName: isErrUserName,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const handleVpnUserNameChange = (
@@ -321,7 +360,7 @@ export const Windows_Network: React.FC = (props: any) => {
       ...isError,
       vpnUserName: isErrVpnUserName,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const onClickTestConnection = () => {
@@ -489,10 +528,28 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
+    // let  data = {
+    //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+    //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+    //   editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+    //   clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+    //   targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+    //   editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+    //   editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+    // }
+    let data = {
+      editData: true,
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+      // editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+      clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
+      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+    }
     if (props.location.state && props.location.state.LinuxNetwork) {
-      history.push(routeConstant.LINUX_NETWORK, props.location.state);
+      history.push(routeConstant.LINUX_NETWORK, data);
     } else {
-      history.push(routeConstant.TARGET, props.location.state);
+      history.push(routeConstant.TARGET, data);
     }
   };
 
@@ -504,7 +561,7 @@ export const Windows_Network: React.FC = (props: any) => {
       ...isError,
       password: isErrPassword,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
   return (
     <React.Fragment>
@@ -688,7 +745,7 @@ export const Windows_Network: React.FC = (props: any) => {
             variant={"contained"}
             onClick={onClickTestConnection}
           >
-            Test Connection
+            {props.location.state != undefined && props.location.state.editWindowsData ?  "Retry" : "Test Connection"}
         </Button>
         <Button
             onClick={handleSubmitDialogBox}
