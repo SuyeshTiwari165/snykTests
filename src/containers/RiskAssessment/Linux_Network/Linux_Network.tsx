@@ -92,6 +92,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
+  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);
   const [createTarget] = useMutation(CREATE_TARGET);
   const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
@@ -156,6 +157,19 @@ export const Linux_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
+    console.log("PROPS>",props.location.state)
+    if(props.location.state != undefined && props.location.state.editLinuxData && props.location.state.editLinuxData === true) {
+      console.log("props.location.state.editLinuxData",props.location.state.editLinuxData)
+      setSubmitDisabled(false);
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: true,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: false,
+        errMessage: "Connection Already Tested"
+      }));
+    }
   }, []);
 
   useEffect(() => {
@@ -170,6 +184,19 @@ export const Linux_Network: React.FC = (props: any) => {
       };
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function() {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
   let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
@@ -197,12 +224,25 @@ export const Linux_Network: React.FC = (props: any) => {
   const handleClose = () => {
     setShowDialogBox(false);
     setTimeout(() => {
+      if(connectionSuccess){
       data = {
         LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo
+        clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
       }
+    }else {
+      data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+      }
+    }
       history.push(routeConstant.TASK_DETAILS, data);
     }, 500);
   };
@@ -237,7 +277,7 @@ export const Linux_Network: React.FC = (props: any) => {
       ...isError,
       vpnUserName: isErrVpnUserName,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
  
   const handlePasswordChange = (
@@ -250,7 +290,7 @@ export const Linux_Network: React.FC = (props: any) => {
       ...isError,
       vpnPassword: isErrVpnPassword,
     }));
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const handleAlertClose = () => {
@@ -271,13 +311,27 @@ export const Linux_Network: React.FC = (props: any) => {
   let data = {};
   const handleOkay = () => {
     setTimeout(() => {
+      if(connectionSuccess) {
+        data = {
+          LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+          windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+          editData: props.location.state.editData ? props.location.state.editData : false,
+          editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
+          editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+          clientInfo: props.location.state.clientInfo,
+          targetInfo: props.location.state.targetInfo
+        };
+      } else {
       data = {
         LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state.editData ? props.location.state.editData : false,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
         clientInfo: props.location.state.clientInfo,
         targetInfo: props.location.state.targetInfo
       };
+    }
       history.push(routeConstant.WINDOWS_NETWORK, data);
     }, 1000);
   };
@@ -285,7 +339,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
   const handleSubmitDialogBox = () => {
     if (editDataId) {
-      setSubmitDisabled(true)
+      // setSubmitDisabled(true)
       let input = {
         partner: partnerId,
         client: clientId,
@@ -489,8 +543,15 @@ export const Linux_Network: React.FC = (props: any) => {
 
 
   const handleBack = () => {
-    let data = {};
-    history.push(routeConstant.TARGET, props.location.state);
+    let data = {  editData: true,
+      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+      clientInfo: clientInfo, targetInfo: targetInfo,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
+    };
+      history.push(routeConstant.TARGET,data);  
+    // history.push(routeConstant.TARGET,data);
   };
   return (
     <React.Fragment>
@@ -644,13 +705,14 @@ export const Linux_Network: React.FC = (props: any) => {
             handleCancel={handleClose}
             handleClose={handleClose}
           ></AlertBox>
+
           <Button
             type="button"
             color="primary"
             variant={"contained"}
             onClick={onClickTestConnection}
           >
-            Test Connection
+            {props.location.state != undefined && props.location.state.editLinuxData ?  "Retry" : "Test Connection"}
         </Button>
         <Button
             onClick={handleSubmitDialogBox}

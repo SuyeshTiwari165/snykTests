@@ -511,7 +511,11 @@ export const RaReportListing: React.FC = (props: any) => {
               paging: true,
               sorting: true,
               search: false,
-              filter: true
+              filter: true,
+              draggable: false,
+              pageSize: 25,
+              pageSizeOptions: [25, 50, 75, 100] // rows selection options
+
             }}
             onOrderChange={(orderedColumnId: any, orderDirection: any) => {
               orderFunc(orderedColumnId, orderDirection);
