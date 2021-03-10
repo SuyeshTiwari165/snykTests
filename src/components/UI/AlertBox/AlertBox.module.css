@@ -48,3 +48,13 @@
   padding: 16px !important;
   border-top: 1px solid #0051A8;
 }
+.AlertBoxFooter a, .AlertBoxFooter a:hover{
+  text-decoration: none !important;
+}
+.AlertBoHeader{
+  text-align:center;
+  border-bottom: 1px solid #0051A8;
+}
+.AlertBoHeader h1 {
+  margin-bottom: 0px !important;;
+}

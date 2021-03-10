@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { Link } from "react-router-dom";
 import CloseIcon from "@material-ui/icons/Close";
 import { Button } from "../Form/Button/Button";
-
+import { Typography } from "@material-ui/core";
 
 const AlertBox = (props: any) => {
   return (
@@ -26,14 +26,16 @@ const AlertBox = (props: any) => {
       }}
     >
       <DialogTitle id="form-dialog-title"  className={styles.AlertBoHeader}>
-        {props.DialogTitle ? props.DialogTitle : ""}
+      <Typography component="h1" variant="h1">
+        {props.DialogTitle ? props.DialogTitle : "Warning"}
+        </Typography>
         {/* <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}> */}
-          <IconButton  className={styles.AlertBoxCloseIcon}
+          {/* <IconButton  className={styles.AlertBoxCloseIcon}
             aria-label="close"
             onClick={props.handleCancel}
           >
             <CloseIcon />
-          </IconButton>
+          </IconButton> */}
         {/* </Link> */}
       </DialogTitle>
       <DialogContent className={styles.AlertBoxBody}>
@@ -46,7 +48,7 @@ const AlertBox = (props: any) => {
           </Button>
         </Link> : null}
         <Link color="primary" to={{ pathname: props.closeButtonPath }}>
-          <Button variant="contained" color="primary" onClick={props.handleClose}>
+          <Button variant="contained" color="secondary" onClick={props.handleClose}>
             {props.CloseButtonName ? props.CloseButtonName : 'Close'}
           </Button>
         </Link>
