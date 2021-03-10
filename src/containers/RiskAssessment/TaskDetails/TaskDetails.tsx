@@ -375,6 +375,7 @@ export const TaskDetails: React.FC = (props: any) => {
             // onChange={handleNameChange}
             required
             disabled = {true}
+            className={styles.disfield}
           >
             Target
           </Input>

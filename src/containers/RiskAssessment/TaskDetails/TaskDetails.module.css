@@ -61,3 +61,7 @@
 .backToListButton button {
   margin-right: 10px;
 }
+
+.disfield input {
+  background-color: #e1e1e1;
+}
