@@ -412,6 +412,8 @@ export const Client: React.FC = (props: any) => {
               onChange={handleChange}
               error={isError.email}
               helperText={isError.email}
+              className={styles.disfield}
+              
             >
               E-mail
               </Input>
