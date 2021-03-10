@@ -367,7 +367,7 @@ export const TaskDetails: React.FC = (props: any) => {
             Task Name
           </Input>
         </Grid>
-        <Grid item md={6} xs={12}>
+        <Grid item md={6} xs={12} className={styles.disfield}>
           <Input
             type="text"
             label="Target"
@@ -375,7 +375,7 @@ export const TaskDetails: React.FC = (props: any) => {
             // onChange={handleNameChange}
             required
             disabled = {true}
-            className={styles.disfield}
+        
           >
             Target
           </Input>

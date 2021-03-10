@@ -402,7 +402,7 @@ export const Client: React.FC = (props: any) => {
               Name
               </Input>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} className={styles.disfield}>
             <Input
               type="text"
               label="Email"
@@ -412,7 +412,7 @@ export const Client: React.FC = (props: any) => {
               onChange={handleChange}
               error={isError.email}
               helperText={isError.email}
-              className={styles.disfield}
+            
               
             >
               E-mail
