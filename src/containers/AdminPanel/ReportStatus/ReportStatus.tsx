@@ -20,6 +20,13 @@ import moment from "moment";
 import { GET_PARTNER } from "../../../graphql/queries/Partners";
 import { GET_CLIENTS } from "../../../graphql/queries/Client";
 import { GET_TARGET_ADMIN } from "../../../graphql/queries/Target";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import MomentUtils from "@date-io/moment";
+import DateFnsUtils from '@date-io/date-fns';
 
 interface Partners {
   id: number;
@@ -78,6 +85,19 @@ export const ReportStatus: React.FC = (props: any) => {
     { title: "Scan End Date", field: "scan_end_date" },
   ];
 
+  const [startSelectedDate, setStartSelectedDate] = React.useState<Date | null>(
+    // new Date('2014-08-18T21:11:54'),
+  );
+  const [endSelectedDate, setEndSelectedDate] = React.useState<Date | null>();
+  
+  const handleDateChange = (date : any) => {
+    setStartSelectedDate(date);
+    setStartDate(date);
+  };
+  const handleEndDateChange = (date : any) => {
+    setEndSelectedDate(date);
+    setEndDate(date);
+  };
   const [
     getReportList,
     { data: dataReportListing, loading: loadingReportListing },
@@ -237,7 +257,9 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterTarget("");
     setFilterClient("");
     setStartDate("");
+    setStartSelectedDate(null)
     setEndDate("");
+    setEndSelectedDate(null)
     if(newValue != null && newValue.partner_id ) {
     getClients({
       variables: {
@@ -276,7 +298,9 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterClient("");
     setFilterPartner("");
     setStartDate("");
+    setStartSelectedDate(null);
     setEndDate("");
+    setEndSelectedDate(null);
     getReportList({
       variables: {
         orderBy : "partner_id__partner_name",
@@ -448,34 +472,45 @@ export const ReportStatus: React.FC = (props: any) => {
             )}
           />
         </div>
-        <div className={styles.FilterDateInput}>
-          <TextField
-            id="startDate"
-            label="Scan Start Date"
-            type="date"
-            variant="outlined"
-            className={styles.outlineDate}
-            value={startDate}
-            onChange={startDateFilter}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </div>
-        <div className={styles.FilterDateInput}>
-          <TextField
-            id="endDate"
-            label="Scan End Date"
-            type="date"
-            variant="outlined"
-            className={styles.outlineDate}
-            value={endDate}
-            onChange={endDateFilter}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </div>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <div className={styles.FilterDateInput}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="startDate"
+              label="Scan Start Date"
+              value={startSelectedDate}
+              // onChange={newDate => handleDateChange(newDate)}
+              onChange={(newDate) => handleDateChange(newDate)}
+              disableFuture={true}
+              autoOk={true}
+              fullWidth
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </div>
+          <div className={styles.FilterDateInput}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="startDate"
+              label="Scan End Date"
+              value={endSelectedDate}
+              onChange={(newDate) => handleEndDateChange(newDate)}
+              disableFuture={true}
+              autoOk={true}
+              fullWidth
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </div>
+        </MuiPickersUtilsProvider>
         <div className={styles.FilterSearchButton}>
           <Button color="primary" variant="contained" onClick={handleSearch}>
             Search
@@ -488,24 +523,25 @@ export const ReportStatus: React.FC = (props: any) => {
         </div>
       </Grid>
       <div className={styles.status_report}>
-      <Paper className={styles.paper}>
-              <MaterialTable
-          title={title}
-          columns={columns}
-          data={newData}
-          options={{
-            thirdSortClick: false,
-            actionsColumnIndex: -1,
-            paging: true,
-            sorting: true,
-            search: false,
-            filter: true,
-            pageSize: 25,
-            draggable: false,
-            pageSizeOptions: [25, 50, 75, 100],
-          }}
-        />
-      </Paper></div>
+        <Paper className={styles.paper}>
+          <MaterialTable
+            title={title}
+            columns={columns}
+            data={newData}
+            options={{
+              thirdSortClick: false,
+              actionsColumnIndex: -1,
+              paging: true,
+              sorting: true,
+              search: false,
+              filter: true,
+              pageSize: 25,
+              draggable: false,
+              pageSizeOptions: [25, 50, 75, 100],
+            }}
+          />
+        </Paper>
+      </div>
     </React.Fragment>
   );
 };

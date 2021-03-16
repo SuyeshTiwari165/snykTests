@@ -9,6 +9,7 @@ mutation createTarget($input: TargetInput!)
       vatTargetId
       targetName
       host
+      vpnFilePath
       partner{
         id
         partnerName
@@ -67,4 +68,23 @@ mutation deleteTarget($id:Int!){
        } 
    }
  }
+`;
+export const CREATE_TARGET_RERUN = gql`
+mutation createTargetRerun($input:TargetInput!) {
+  createTargetRerun(input:$input){
+    targetField{
+      id
+      vpnFilePath
+      partner{
+        id
+         partnerName
+      }
+      client{
+        id
+         clientName
+      }
+     targetName
+    }
+  }
+}
 `;

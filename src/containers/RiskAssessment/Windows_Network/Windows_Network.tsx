@@ -427,6 +427,7 @@ export const Windows_Network: React.FC = (props: any) => {
             }
           })
           .catch(() => {
+            setSubmitDisabled(true)
             setBackdrop(false);
             setFormState((formState) => ({
               ...formState,
@@ -499,6 +500,7 @@ export const Windows_Network: React.FC = (props: any) => {
         }
       })
       .catch(() => {
+        setSubmitDisabled(true)
         setBackdrop(false);
         setFormState((formState) => ({
           ...formState,

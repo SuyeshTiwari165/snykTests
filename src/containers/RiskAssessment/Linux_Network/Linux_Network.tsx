@@ -462,6 +462,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
       }
     }).catch(() => {
+      setSubmitDisabled(true)
       setBackdrop(false)
       setFormState((formState) => ({
         ...formState,
@@ -528,6 +529,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
       }
     }).catch(() => {
+      setSubmitDisabled(true)
       setBackdrop(false)
       setFormState((formState) => ({
         ...formState,
