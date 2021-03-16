@@ -11,6 +11,7 @@ import { GET_TASK_DETAILS } from "../../../graphql/queries/TaskDetails";
 import {
   CREATE_TARGET,
   UPDATE_TARGET,
+  CREATE_TARGET_RERUN,
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
 import AlertBox from "../../../components/UI/AlertBox/AlertBox";
@@ -49,13 +50,16 @@ import stepper from "../common/raStepperList.json";
 import { UPLOAD_VPN_FILE } from "../../../graphql/mutations/Upload";
 import { RA_TARGET_VPNTEST } from "../../../config/index";
 import { TEST_CONNECTION } from "../../../graphql/mutations/VPNConnection"
+import { TEST_LINUX_CONNECTION } from "../../../graphql/mutations/VPNConnection"
+import CancelIcon from "@material-ui/icons/Cancel";
+
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   // const sessionData = useQuery(RA_TARGET_SESSION);
-  const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
+  const targetId = JSON.parse(localStorage.getItem("targetId") || null);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   //add/edit data
   const [name, setName] = useState<String>("");
@@ -65,13 +69,23 @@ export const Target: React.FC = (props: any) => {
   const [linuxDomain, setLinuxDomain] = useState(false);
   const [vpnUserName, setVpnUserName] = useState<String>("");
   const [vpnPassword, setVpnPassword] = useState<String>("");
+  const [linuxUsername, setLinuxUsername] = useState<String>("");
+  const [linuxIpAddress, setLinuxIpAddress] = useState<String>("");
+  const [clientID, setClientID] = useState<String>("");  
+  const [winName,SetWinName] = useState<String>("");
+  const [winUsername,setWinUsername] = useState<String>("");
+  const [targetOldId,setTargetOldId] = useState<String>("");
+  const [vpnFilePath,setVpnFilePath] = useState<String>("");  
+  const [displayVpnFilePath,setDisplayVpnFilePath] = useState<String>("");    
+  const [winIpAddress, setWinIpAddress] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
-  const [selectedFile, setSelectedFile] = useState<any>([
-    {
-    name : "",      
-    lastModifiedDate: null,
-  }
-])
+  const [selectedFile, setSelectedFile] = useState<any>(null)
+//     [
+//     // {
+//     // name : "",      
+//     // lastModifiedDate: null,
+//   // }
+// ])
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
@@ -116,8 +130,11 @@ export const Target: React.FC = (props: any) => {
 
   //queries
   const [createTarget] = useMutation(CREATE_TARGET);
+  const [createReRunTarget] = useMutation(CREATE_TARGET_RERUN);
   const [uploadFile] = useMutation(UPLOAD_VPN_FILE);
   const [testVpnConnection] = useMutation(TEST_CONNECTION);
+  const [testLinuxConnection] = useMutation(TEST_LINUX_CONNECTION);
+
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [
     getTargetData,
@@ -136,11 +153,84 @@ export const Target: React.FC = (props: any) => {
         //     ? data.getCredentialsDetails.edges[0].node.domainPassword
         //     : null
         // );
+
         setVpnUserName(
           data.getCredentialsDetails.edges[0].node
             ? data.getCredentialsDetails.edges[0].node.vpnUsername
             : null
         );
+        setLinuxUsername(
+          data.getCredentialsDetails.edges[0].node  && data.getCredentialsDetails.edges[0].node.domainUsername
+          ? data.getCredentialsDetails.edges[0].node.domainUsername
+          : null
+        )
+        setLinuxIpAddress(
+          data.getCredentialsDetails.edges[0].node  && data.getCredentialsDetails.edges[0].node.linuxIpAddress
+          ? data.getCredentialsDetails.edges[0].node.linuxIpAddress
+          : null
+        )
+        SetWinName(
+          data.getCredentialsDetails.edges[0].node && data.getCredentialsDetails.edges[0].node.winName
+          ? data.getCredentialsDetails.edges[0].node.winName
+          : null
+        )
+        setWinUsername(
+          data.getCredentialsDetails.edges[0].node && data.getCredentialsDetails.edges[0].node.winUsername
+          ? data.getCredentialsDetails.edges[0].node.winUsername
+          : null
+        )
+        setWinIpAddress(
+          data.getCredentialsDetails.edges[0].node
+          ? data.getCredentialsDetails.edges[0].node.winIpAddress
+          : null
+        )
+        setClientID(
+          data.getCredentialsDetails.edges[0].node
+          ? data.getCredentialsDetails.edges[0].node.client.id
+          : null
+        )
+        setTargetOldId (
+          data.getCredentialsDetails.edges[0].node
+          ? data.getCredentialsDetails.edges[0].node.vatTarget.id
+          : null
+        )
+        if(data.getCredentialsDetails.edges[0].node && data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath )
+        console.log("data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath",data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath)
+          setVpnFilePath(  data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath
+            : null)
+            setDisplayVpnFilePath(  data.getCredentialsDetails.edges[0].node
+              ? data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath.split("/")[9]
+              : null)
+            // setSelectedFile(data.getCredentialsDetails.edges[0].node
+            // ? data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath
+            // : null)
+        // const link = document.createElement('a');
+        // link.href = `your_link.pdf`;
+        // document.body.appendChild(link);
+        // console.log("LINK",link)
+        // link.click();
+        
+
+        // fetch(data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath, {
+        //   method: "GET",
+        // })
+        // .then((response) =>{ 
+        //   console.log("RESPONSE1",response)
+        //   response.blob()
+        // })
+        // .then((response) => {
+        //   console.log("RESPONSE2",response)
+        // })
+
+
+        // .then(function(response){
+        //   console.log(response)
+        //   return response.json();
+        // })
+        //  .then(function(myJson) {
+        //     console.log(myJson);
+        //   });
         // setVpnPassword(
         //   data.getCredentialsDetails.edges[0].node
         //     ? data.getCredentialsDetails.edges[0].node.vpnPassword
@@ -239,6 +329,9 @@ export const Target: React.FC = (props: any) => {
         isFailed: false,
         errMessage: "Connection Already Tested"
       }));
+      console.log("localStorage",localStorage.getItem("vpnFilePath"))
+      setVpnFilePath(localStorage.getItem("vpnFilePath") || vpnFilePath  ? localStorage.getItem("vpnFilePath").replace(/\"/g, "") : null);
+      setDisplayVpnFilePath(localStorage.getItem("vpnFilePath") || vpnFilePath  ? localStorage.getItem("vpnFilePath").split("/")[9].replace(/\"/g, "") : null);
     }
   }, []);
 
@@ -248,7 +341,7 @@ export const Target: React.FC = (props: any) => {
       setName(JSON.parse(localStorage.getItem("name") || "{}"));
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || "{}"));
       setUserName(JSON.parse(localStorage.getItem("userName") || "{}"));
-      setPassword(JSON.parse(localStorage.getItem("password") || "{}"));
+      // setPassword(JSON.parse(localStorage.getItem("password") || "{}"));
       setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
     }
@@ -317,7 +410,7 @@ export const Target: React.FC = (props: any) => {
           );
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));          
           // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
@@ -349,76 +442,181 @@ export const Target: React.FC = (props: any) => {
         });
     } else {
       setSubmitDisabled(true)
-      if (partnerId && clientId && name && ipRange && vpnUserName) {
-        let input = {
-          partner: partnerId,
-          client: clientId,
-          targetName: name,
-          host: ipRange,
-          vpnUsername: vpnUserName,
-          vpnPassword: vpnPassword,
-          startDate: startDate,
-        };
-        createTarget({
-          variables: {
-            input,
-          },
-        })
-          .then((userRes) => {
-            setSubmitDisabled(false)
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: true,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: false,
-              errMessage: "Target Created Successfully !",
-            }));
-            // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
-            localStorage.setItem("name", JSON.stringify(name));
-            localStorage.setItem(
-              "targetId",
-              JSON.stringify(userRes.data.createTarget.targetField.id)
-            );
-            if (props.location.state && props.location.state.reRun == true) {
-              localStorage.setItem("re-runTargetName", JSON.stringify(props.location.state.targetName));
-            };
-            localStorage.setItem("ipRange", JSON.stringify(ipRange));
-            localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-            localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-            setShowDialogBox(false)
-            let data = {};
-            let targetInfo = {
-              targetName: name,
-              host: ipRange,
-              userName: userName,
-              password: password,
-            };
-            setTimeout(() => {
-              setLinuxDomain(true);
-              setShowDialogBox(true)
-              setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-            }, 1000);
+     
+      if (partnerId && clientId && name && ipRange && vpnUserName && props.location.state && props.location.state.reRun == true) {
+        if (linuxUsername != null || winIpAddress != null) {
+          let input = {
+            partner: partnerId,
+            client: clientId,
+            targetName: name,
+            host:
+              ipRange != null
+                ? ipRange
+                : JSON.parse(localStorage.getItem("ipRange") || "{}"),
+            vpnUsername:
+              vpnUserName != null
+                ? vpnUserName
+                : JSON.parse(localStorage.getItem("vpnUserName") || "{}"),
+            vpnPassword: vpnPassword ? vpnPassword : null,
+            linuxUsername: linuxUsername ? linuxUsername : null,
+            linuxIpAddress: linuxIpAddress ? linuxIpAddress : null,
+            startDate: startDate,
+            targetOldId: targetOldId,
+            winName: winName ? winName : null,
+            winIpAddress: winIpAddress ? winIpAddress : null,
+            winUsername: winUsername ? winUsername : null,
+          };
+
+          createReRunTarget({
+            variables: {
+              input,
+            },
           })
-          .catch((err) => {
-            setSubmitDisabled(false)
-            let error = err.message;
-            if (
-              error.includes("duplicate key value violates unique constraint")
-            ) {
-              error = " Name already present.";
-            } else {
-              error = err.message;
-            }
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: false,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: true,
-              errMessage: error,
-            }));
-          });
+            .then((userRes) => {
+              console.log("USERRESPONSE of new target", userRes);
+              setSubmitDisabled(false);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "Target Created Successfully !",
+              }));
+              // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+              localStorage.setItem("name", JSON.stringify(name));
+              localStorage.setItem(
+                "targetId",
+                JSON.stringify(userRes.data.createTargetRerun.targetField.id)
+              );
+              localStorage.setItem(
+                "vpnFilePath",
+                JSON.stringify(userRes.data.createTargetRerun.targetField.vpnFilePath)
+              );
+              if (props.location.state && props.location.state.reRun == true) {
+                localStorage.setItem(
+                  "re-runTargetName",
+                  JSON.stringify(props.location.state.targetName)
+                );
+              }
+              localStorage.setItem("ipRange", JSON.stringify(ipRange));
+              localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+              localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+              // localStorage.setItem("vpnFilePath", JSON.stringify(vpnFilePath));
+
+              setShowDialogBox(false);
+              let data = {};
+              let targetInfo = {
+                targetName: name,
+                host: ipRange,
+                userName: userName,
+                password: password,
+              };
+              setTimeout(() => {
+                setLinuxDomain(true);
+                setShowDialogBox(true);
+                setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+              }, 1000);
+            })
+            .catch((err) => {
+              setShowDialogBox(false);
+              setSubmitDisabled(true);
+              let error = err.message;
+              if (
+                error.includes("duplicate key value violates unique constraint")
+              ) {
+                error = " Name already present.";
+              } else {
+                error = err.message;
+              }
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: error,
+              }));
+            });
+        }
+      }
+      else {
+        if (partnerId && clientId && name && ipRange && vpnUserName) {
+          let input = {
+            partner: partnerId,
+            client: clientId,
+            targetName: name,
+            host: ipRange,
+            vpnUsername: vpnUserName,
+            vpnPassword: vpnPassword,
+            startDate: startDate,
+          };
+          createTarget({
+            variables: {
+              input,
+            },
+          })
+            .then((userRes) => {
+              console.log("USERRESPONSE of new target",userRes);
+              setSubmitDisabled(false)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "Target Created Successfully !",
+              }));
+              // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+              localStorage.setItem("name", JSON.stringify(name));
+              localStorage.setItem(
+                "targetId",
+                JSON.stringify(userRes.data.createTarget.targetField.id)
+              );
+              localStorage.setItem(
+                "vpnFilePath",
+                JSON.stringify(userRes.data.createTarget.targetField.vpnFilePath)
+              );
+              if (props.location.state && props.location.state.reRun == true) {
+                localStorage.setItem("re-runTargetName", JSON.stringify(props.location.state.targetName));
+              };
+              localStorage.setItem("ipRange", JSON.stringify(ipRange));
+              localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
+              localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
+              setShowDialogBox(false)
+              let data = {};
+              let targetInfo = {
+                targetName: name,
+                host: ipRange,
+                userName: userName,
+                password: password,
+              };
+              setTimeout(() => {
+                setLinuxDomain(true);
+                setShowDialogBox(true)
+                setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+              }, 1000);
+            })
+            .catch((err) => {
+              setSubmitDisabled(false)
+              let error = err.message;
+              if (
+                error.includes("duplicate key value violates unique constraint")
+              ) {
+                error = " Name already present.";
+              } else {
+                error = err.message;
+              }
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: error,
+              }));
+            });
+        }
       }
     }
   };
@@ -555,6 +753,229 @@ export const Target: React.FC = (props: any) => {
   //     });
   //   }
   // };
+
+  const onClickHandler2 = ( ) => {
+    if (name && vpnUserName) {
+      setBackdrop(true);
+    if (selectedFile && selectedFile.name != null) {
+      let idCardBase64 = "";
+      getBase64(selectedFile, (result: any) => {
+        idCardBase64 = result;
+        var res = result.slice(result.indexOf(",") + 1);
+        if (targetData !== undefined) {
+          if (props.location.state && props.location.state.reRun === true) {
+            uploadFile({
+              variables: {
+                input: {
+                  client: props.location.state.clientInfo.clientId,
+                  targetName: name,
+                  file: res,
+                  vpnUsername: vpnUserName,
+                  vpnPassword: vpnPassword,
+                  type: selectedFile.name.split(".")[1],
+                  targetId:
+                    targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+                },
+              },
+            })
+              .then((response: any) => {
+                setBackdrop(false);
+                // setSelectedFile(null);
+                if (
+                  response.data.uploadFile.success == "File Uploaded Failed"
+                ) {
+                  setFileUploaded(false);
+                  // setSubmitDisabled(true)
+                  setFormState((formState) => ({
+                    ...formState,
+                    isSuccess: false,
+                    isUpdate: false,
+                    isDelete: false,
+                    isFailed: true,
+                    errMessage: " File Upload Failed.",
+                  }));
+                } else {
+                  setFileUploaded(true);
+                  // setSubmitDisabled(false)
+                  setFormState((formState) => ({
+                    ...formState,
+                    isSuccess: true,
+                    isUpdate: false,
+                    isDelete: false,
+                    isFailed: false,
+                    errMessage: "File Uploaded Successfully !!",
+                  }));
+                  onClickTestConnection();
+                }
+              })
+              .catch((error: Error) => {
+                setUploadDisabled(true)
+                setFileUploaded(false);
+                setBackdrop(false);
+                setSelectedFile(null);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " ",
+                }));
+              });
+          }
+        } else {
+          uploadFile({
+            variables: {
+              input: {
+                client: props.location.state.clientInfo.clientId,
+                targetName: name,
+                file: res,
+                vpnUsername: vpnUserName,
+                vpnPassword: vpnPassword,
+                type: selectedFile.name.split(".")[1],
+              },
+            },
+          })
+            .then((response: any) => {
+              setBackdrop(false);
+              // setSelectedFile(null);
+              if (response.data.uploadFile.success == "File Uploaded Failed") {
+                // setSubmitDisabled(true)
+                setFileUploaded(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " File Upload Failed.",
+                }));
+              } else {
+                setFileUploaded(true)
+                // setSubmitDisabled(false)
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: true,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: false,
+                  errMessage: "File Uploaded Successfully !!",
+                }));
+                onClickTestConnection();
+              }
+            })
+            .catch((error: Error) => {
+              setUploadDisabled(true)
+              setFileUploaded(false)
+              setBackdrop(false);
+              setSelectedFile(null);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " ",
+              }));
+            });
+        }
+      });
+    } else {
+      setBackdrop(false);
+      setSelectedFile(null);
+      if(vpnFilePath) {
+
+        uploadFile({
+          variables: {
+            input: {
+              client: props.location.state.clientInfo.clientId,
+              targetName: name,
+              // file: res,
+              vpnUsername: vpnUserName,
+              vpnPassword: vpnPassword,
+              // type: selectedFile.name.split(".")[1],
+              targetId:
+                targetData != undefined ? targetData.getCredentialsDetails.edges[0].node.vatTarget.id : targetId,
+              filePath: vpnFilePath,
+            },
+          },
+        })
+          .then((response: any) => {
+            setBackdrop(false);
+            // setSelectedFile(null);
+            if (
+              response.data.uploadFile.success == "File Uploaded Failed"
+            ) {
+              setFileUploaded(false);
+              // setSubmitDisabled(true)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " File Upload Failed.",
+              }));
+            } else {
+              setFileUploaded(true);
+              // setSubmitDisabled(false)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "File Uploaded Successfully !!",
+              }));
+              onClickTestConnection();
+            }
+          })
+          .catch((error: Error) => {
+            setUploadDisabled(true)
+            setFileUploaded(false);
+            setBackdrop(false);
+            setSelectedFile(null);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " ",
+            }));
+          });
+          
+
+
+
+
+
+
+      } else {
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "Please Choose File to Upload",
+      }));
+      }
+
+
+     
+    }
+  } else {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: "Please Fill Required Fields and Upload File ",
+    }));
+  }
+  }
   const onClickHandler = (event: any) => {
     if (name && vpnUserName && !uploadDisabled) {
       setBackdrop(true);
@@ -715,6 +1136,7 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("password");
     localStorage.removeItem("vpnUserName");
     localStorage.removeItem("vpnPassword");
+    localStorage.removeItem("vpnFilePath");
   };
 
 
@@ -726,6 +1148,7 @@ export const Target: React.FC = (props: any) => {
     vpnPassword: vpnPassword,
   };
   const handleOkay = () => {
+    console.log("DATA",linuxUsername,linuxIpAddress,winName, winUsername)
     setShowDialogBox(false);
     setTimeout(() => {
       data = {
@@ -839,7 +1262,14 @@ export const Target: React.FC = (props: any) => {
     setShowPassword(!showPassword);
   };
 
+  const removeUploadFile = () => {
+    // setFileChanged(true);
+    setSelectedFile(null);
+    setVpnFilePath(null);
+    setDisplayVpnFilePath(null);
+  };
   const onClickTestConnection = () => {
+    // onClickHandler2();
     if (props.location.state.clientInfo) {
       if (props.location.state && props.location.state.reRun === true) {
       setBackdrop(true)
@@ -895,6 +1325,7 @@ export const Target: React.FC = (props: any) => {
 
         }
       }).catch(() => {
+        setSubmitDisabled(true)
         setBackdrop(false)
         setFormState((formState) => ({
           ...formState,
@@ -915,6 +1346,7 @@ export const Target: React.FC = (props: any) => {
             "vpnUsername": vpnUserName,
             "vpnPassword": vpnPassword,
             "host": ipRange,
+            "targetId":targetId ? targetId : null
           }
         }
       }).then((response: any) => {
@@ -958,6 +1390,7 @@ export const Target: React.FC = (props: any) => {
 
         }
       }).catch(() => {
+        setSubmitDisabled(true)
         setBackdrop(false)
         setFormState((formState) => ({
           ...formState,
@@ -986,7 +1419,11 @@ export const Target: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Target : {props.location.state !== undefined && props.location.state.clientInfo !== undefined ? props.location.state.clientInfo.name : null}
+        Target :{" "}
+        {props.location.state !== undefined &&
+        props.location.state.clientInfo !== undefined
+          ? props.location.state.clientInfo.name
+          : null}
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
@@ -1125,18 +1562,47 @@ export const Target: React.FC = (props: any) => {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={6} className={styles.upBtn}>
+        {/* <Grid item xs={12} md={6} className={styles.upBtn}> */}
+        <Grid item xs={12} md={6}>
           <form>
-            <input type="file" name="file" onChange={onChangeHandler} />
-            <Button
+          <label className={styles.lawDocument}>VPN Config File:</label>
+            <input
+              id="fileUpload"
+              type="file"
+              name="file"
+              onChange={onChangeHandler}
+              className={styles.fileInput}
+            />
+            {selectedFile || displayVpnFilePath ? (
+              <div className={styles.uploadLabelWrap}>
+                Uploaded File :
+                <div className={styles.uploadedLabel}>
+                  {selectedFile ? selectedFile.name : displayVpnFilePath }&nbsp;&nbsp;
+                </div>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={removeUploadFile}
+                  className={styles.CloseButton}
+                >
+                  <CancelIcon />
+                </Button>
+              </div>
+            ) : (
+              <label htmlFor="fileUpload" className={styles.fileUploadLable}>
+                Upload File
+              </label>
+            )}
+
+            {/* <Button
               type="button"
               color="primary"
               variant={"contained"}
               disabled={uploadDisabled}
               onClick={onClickHandler}
-            >  
+            >
               Upload
-              </Button>
+            </Button> */}
           </form>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
@@ -1166,12 +1632,14 @@ export const Target: React.FC = (props: any) => {
             type="button"
             color="primary"
             variant={"contained"}
-            disabled= {!fileUploaded}
-            onClick={onClickTestConnection}
+            // disabled={!fileUploaded}
+            onClick={onClickHandler2}
           >
-            {props.location.state != undefined && props.location.state.editData ?  "Retry" : "Test Connection"}
-              </Button>
-            <Button
+            {props.location.state != undefined && props.location.state.editData
+              ? "Retry"
+              : "Test Connection"}
+          </Button>
+          <Button
             onClick={handleSubmitDialogBox}
             color="primary"
             variant={"contained"}

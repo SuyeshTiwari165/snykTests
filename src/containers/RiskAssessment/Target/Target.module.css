@@ -72,4 +72,41 @@
 .upBtn input {
   margin-bottom: 15px;
 }
-
+.uploadLabelWrap {
+  display: flex;
+}
+.uploadedLabel {
+  color: #707070;
+  margin-left: 5px;
+  font-size: 13px;
+}
+.CloseButton {
+  width: 15px !important;
+  min-width: 15px !important;
+  height: 15px;
+  font-weight: 100 !important;
+  font-size: 10px;
+  padding: 0px !important;
+  border-radius: 25px !important;
+}
+.fileUploadLable {
+  padding: 8px 14px !important;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 2px 0 rgba(0, 0, 0, 0.12) !important;
+  line-height: 1.846 !important;
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  border: 1px solid #0051a8 !important;
+  background-color: #0051a8;
+  color: #fff;
+}
+.fileInput {
+  display: none;
+}
+.lawDocument {
+  font-size: 14px;
+  color: #707070;
+  display: flex;
+  padding-bottom: 5px;
+}

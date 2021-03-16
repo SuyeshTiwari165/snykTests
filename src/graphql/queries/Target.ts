@@ -17,6 +17,7 @@ query getTarget($targetName: String) {
           id
           targetName
           host
+	  vpnFilePath
         }
         domainUsername
         domainPassword
