@@ -537,7 +537,7 @@ export const Linux_Network: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: "",
+        errMessage: "Test Connection Failed ",
       }));
     })
     }
