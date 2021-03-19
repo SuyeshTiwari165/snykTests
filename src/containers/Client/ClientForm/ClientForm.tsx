@@ -402,7 +402,7 @@ export const Client: React.FC = (props: any) => {
               Name
               </Input>
           </Grid>
-          <Grid item xs={12} md={6} className={styles.disfield}>
+          <Grid item xs={12} md={6} className={rowData ? styles.disfield : null}>
             <Input
               type="text"
               label="Email"
