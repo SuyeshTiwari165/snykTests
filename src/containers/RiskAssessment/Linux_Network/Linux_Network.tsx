@@ -373,6 +373,9 @@ export const Linux_Network: React.FC = (props: any) => {
           localStorage.setItem("ipAddress", JSON.stringify(ipAddress));
           localStorage.setItem("userName", JSON.stringify(userName));
           localStorage.setItem("password", JSON.stringify(password));
+          if(userRes.data.updateTarget != undefined) {
+		      localStorage.setItem("name", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
+          }
           // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
@@ -543,7 +546,6 @@ export const Linux_Network: React.FC = (props: any) => {
     }
   };
 
-
   const handleBack = () => {
     let data = {  editData: true,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
@@ -626,7 +628,7 @@ export const Linux_Network: React.FC = (props: any) => {
             value={userName}
             onChange={handleUserNameChange}
             required
-            error={isError.userName}
+            error={isError.vpnUserName}
             helperText={isError.userName}
           >
             User Name

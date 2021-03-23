@@ -156,7 +156,8 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   if (targetName !== {} && target === "") {
-    setTarget(JSON.parse(localStorage.getItem("name") || "{}"));
+    let str = localStorage.getItem("name").split('_')[0]
+    setTarget(str.substring(1, str.length) || "{}");
   }
 
   // useEffect(() => {
