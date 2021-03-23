@@ -1137,6 +1137,7 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("vpnUserName");
     localStorage.removeItem("vpnPassword");
     localStorage.removeItem("vpnFilePath");
+    localStorage.removeItem("WinTargetName");
   };
 
 

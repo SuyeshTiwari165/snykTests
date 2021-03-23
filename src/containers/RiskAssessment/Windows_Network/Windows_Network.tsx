@@ -185,7 +185,8 @@ export const Windows_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
-      setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
+      // setTargetName(JSON.parse(localStorage.getItem("WinTargetNae") || "{}"));
+      setTargetName(localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName")) : JSON.parse(localStorage.getItem("name")))
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
     };
   }, []);
@@ -247,6 +248,7 @@ export const Windows_Network: React.FC = (props: any) => {
           setEditDataId(null);
           localStorage.setItem("winUsername", JSON.stringify(userName));
           localStorage.setItem("winPassword", JSON.stringify(password));
+          localStorage.setItem("WinTargetName", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
           setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
