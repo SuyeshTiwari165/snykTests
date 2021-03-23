@@ -16,6 +16,7 @@ export const Logout: any = () => {
   localStorage.removeItem("vpnPassword");
   localStorage.removeItem("winUsername");
   localStorage.removeItem("winPassword");
+  localStorage.removeItem("WinTargetName");
   return window.location.replace("/login");
 };
 export default Logout;

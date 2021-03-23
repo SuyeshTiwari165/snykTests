@@ -157,7 +157,7 @@ export const TaskDetails: React.FC = (props: any) => {
 
   if (targetName !== {} && target === "") {
     let str = localStorage.getItem("name").split('_')[0]
-    setTarget(str.substring(1, str.length) || "{}");
+    setTarget(str.substring(1, str.length-1) || "{}");
   }
 
   // useEffect(() => {
@@ -239,6 +239,7 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("password");
         localStorage.removeItem("vpnUserName");
         localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("WinTargetName");
       })
       .catch((err) => {
         setSubmitDisabled(true)
