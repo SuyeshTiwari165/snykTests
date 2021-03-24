@@ -100,6 +100,19 @@ export const RaReportListing: React.FC = (props: any) => {
       },
     });
   }, []);
+  useEffect(() => {
+    if (
+      formState.isDelete === true ||
+      formState.isFailed === true ||
+      formState.isSuccess === true ||
+      formState.isUpdate === true
+    ) {
+      setTimeout(function () {
+        handleAlertClose();
+      }, ALERT_MESSAGE_TIMER);
+    }
+  }, [formState]);
+  
 
   useEffect(() => {
     if (dataReportListing) {
@@ -273,9 +286,9 @@ export const RaReportListing: React.FC = (props: any) => {
     fetch(DocUrl, {
       method: "GET"
     }).then((response: any) => {
-      setBackdrop(false)
       response.blob().then((blobData: any) => {
         saveAs(blobData, "RA_Report");
+        setBackdrop(false)
       });
     });
   };
@@ -355,6 +368,8 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handlePublishchange = (event: any, rowData: any) => {
+    console.log("event",event);
+    console.log("rowData",rowData)
     if (event.target.checked !== undefined) {
       setBackdrop(true)
       publishReport({
@@ -380,8 +395,18 @@ export const RaReportListing: React.FC = (props: any) => {
             isFailed: false,
             errMessage: "Report Published Successfully !!"
           }));
+          getReportListingData({
+            variables: {
+              clientname: propsClientName,
+            },
+          });
           setSelectedFile({});
         } else {
+          // getReportListingData({
+          //   variables: {
+          //     clientname: propsClientName,
+          //   },
+          // });
           setFormState(formState => ({
             ...formState,
             isSuccess: true,
@@ -603,6 +628,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
                           id="rowData.targetId"
                           checked={published[rowData.targetId]}
+                          disabled= {rowData.publish}
                           onChange={(event: any) => {
                             handlePublish(event, rowData);
                           }}
