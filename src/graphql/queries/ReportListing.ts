@@ -6,12 +6,14 @@ export const GET_REPORT_LISTING = gql`
     $targetid: String
     $status: String
     $publishflag : String
+    $reportCreationFlag: String,
     ) {
     getReportStatus(
       clientId_ClientName: $clientname, 
       vatTargetId_TargetName: $targetid, 
       scanRunStatus: $status,
       vatTargetId_PublishedFlag: $publishflag
+      reportCreationFlag: $reportCreationFlag,
     ) {
       edges {
         node {

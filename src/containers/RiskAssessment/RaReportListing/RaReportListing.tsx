@@ -132,7 +132,8 @@ export const RaReportListing: React.FC = (props: any) => {
       getReportListingData({
         variables: {
           clientname: propsClientName,
-          status: "Done"
+          status: "Done",
+          reportCreationFlag : "Processed" 
         }
       })
     }
