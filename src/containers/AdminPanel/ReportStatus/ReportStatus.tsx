@@ -174,7 +174,8 @@ export const ReportStatus: React.FC = (props: any) => {
   useEffect(() => {
     getReportList({
       variables: {
-        orderBy : "partner_id__partner_name",
+        orderBy : "-scan_start_date",
+        
       }
     });
   }, []);
@@ -182,7 +183,7 @@ export const ReportStatus: React.FC = (props: any) => {
   useEffect(() => {
     getReportList({
       variables: {
-        orderBy : "partner_id__partner_name",
+        orderBy : "-scan_start_date",
         targetid: filterTarget ? filterTarget.name : null,
         status: filterStatus ? filterStatus.name : null,
         partnername: filterPartner ? filterPartner.name : null,
@@ -303,7 +304,7 @@ export const ReportStatus: React.FC = (props: any) => {
     setEndSelectedDate(null);
     getReportList({
       variables: {
-        orderBy : "partner_id__partner_name",
+        orderBy : "-scan_start_date",
       }
     });
   };
