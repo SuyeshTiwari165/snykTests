@@ -178,7 +178,7 @@ export const Login: React.FC<LoginProps> = () => {
                   />
               </div>
               <div className={styles.cyberComplianceLogo}>
-                RA In a Box
+              OB360
               </div>
               <div className={styles.Margin}>
                 <FormControl className={styles.TextField} variant="outlined">
