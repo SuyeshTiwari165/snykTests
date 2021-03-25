@@ -248,6 +248,7 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("vpnUserName");
         localStorage.removeItem("vpnPassword");
         localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
       })
       .catch((err) => {
         setSubmitDisabled(true)

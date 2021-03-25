@@ -17,6 +17,7 @@ export const Logout: any = () => {
   localStorage.removeItem("winUsername");
   localStorage.removeItem("winPassword");
   localStorage.removeItem("WinTargetName");
+  localStorage.removeItem("LinuxTargetName");
   return window.location.replace("/login");
 };
 export default Logout;

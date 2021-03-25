@@ -94,6 +94,8 @@ export const Linux_Network: React.FC = (props: any) => {
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);
+  const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
+  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const [createTarget] = useMutation(CREATE_TARGET);
   const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
     GET_TASK_DETAILS,
@@ -175,7 +177,8 @@ export const Linux_Network: React.FC = (props: any) => {
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
-      setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
+      // setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
+      setTargetName(LinuxTargetName ? LinuxTargetName : name)
       if (localStorage.getItem("vpnUserName") !== null) {
         setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       };
@@ -374,7 +377,8 @@ export const Linux_Network: React.FC = (props: any) => {
           localStorage.setItem("userName", JSON.stringify(userName));
           localStorage.setItem("password", JSON.stringify(password));
           if(userRes.data.updateTarget != undefined) {
-		      localStorage.setItem("name", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
+		      // localStorage.setItem("name", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
+          localStorage.setItem("LinuxTargetName", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
           }
           // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
