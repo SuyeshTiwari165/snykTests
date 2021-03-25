@@ -63,6 +63,7 @@ export const Client: React.FC = (props: any) => {
       setEmail(data.getClient.edges[0].node.emailId)
       setName(data.getClient.edges[0].node.clientName)
       setPhoneNumber(data.getClient.edges[0].node.mobileNumber)
+      setEmailUpdates({...emailUpdates, ["checkedB"] : data.getClient.edges[0].node.mailSend})
     },
   });
 
@@ -71,13 +72,15 @@ export const Client: React.FC = (props: any) => {
     if (props.location.state) {
       getClients({
         variables: {
-          clientName: props.location.state.name
+          orderBy : "client_name",
+          clientName: props.location.state.name,
         },
       });
     setRowData(true);
     setEmail(props.location.state.email != "-" ? props.location.state.email : "")
     setName(props.location.state.name ? props.location.state.name : "")
     setPhoneNumber(props.location.state.phone != "-" ? props.location.state.phone : "")
+    // setEmailUpdates({ ...emailUpdates, "checkedB": props.location.state.mailSend });
     } 
   }, []);
 
@@ -152,6 +155,7 @@ export const Client: React.FC = (props: any) => {
   //   )
   // }
   const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("event.target.name",event.target.name)
     setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
   };
   
@@ -307,7 +311,8 @@ export const Client: React.FC = (props: any) => {
           ClientInput: {
             clientName: name,
             mobileNumber: phoneNumber,
-            emailId: email
+            emailId: email,
+            mailSend : emailUpdates.checkedB
           }
         },
       }).then((res: any) => {

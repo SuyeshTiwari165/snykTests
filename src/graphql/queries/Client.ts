@@ -14,6 +14,7 @@ query getCients($partnerId: Int!
         address
         id
         clientName
+        mailSend
       }
     }
   }
@@ -23,8 +24,9 @@ query getCients($partnerId: Int!
 export const GET_CLIENT = gql`
 query getClient(
   $clientName: String!
+  $orderBy: String
   ) {
-  getClient(clientName: $clientName) {
+  getClient(clientName: $clientName,orderBy: [$orderBy]) {
     edges {
       node {
         id
@@ -32,6 +34,7 @@ query getClient(
         createdDate
         emailId
         mobileNumber
+        mailSend
       }
     }
   }
