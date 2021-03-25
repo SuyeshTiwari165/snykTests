@@ -8,6 +8,7 @@ mutation createCient($input: ClientInput!) {
       clientName
       emailId
       mobileNumber
+      mailSend
     }
   }
 }

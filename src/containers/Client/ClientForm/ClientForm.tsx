@@ -36,6 +36,7 @@ import {
 } from "../../../common/MessageConstants";
 import * as validations from "../../../common/validateRegex";
 import moment from "moment";
+import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -48,6 +49,9 @@ export const Client: React.FC = (props: any) => {
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const [emailUpdates, setEmailUpdates] = React.useState({
+    checkedB: false,
+  });
 
   const [
     getClients,
@@ -147,7 +151,9 @@ export const Client: React.FC = (props: any) => {
   //     </div>
   //   )
   // }
-
+  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
+  };
   
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "Name") {
@@ -252,7 +258,8 @@ export const Client: React.FC = (props: any) => {
           partnerId: partner.partnerId,
           clientName: name,
           mobileNumber: phoneNumber,
-          emailId: email
+          emailId: email,
+          mailSend : emailUpdates.checkedB
         }
       },
     }).then((res: any) => {
@@ -431,6 +438,21 @@ export const Client: React.FC = (props: any) => {
               Phone Number
               </Input>
           </Grid>
+          <Grid item xs={12} md={6}>
+          <FormControlLabel
+            className={styles.CheckboxLabel}
+        control={
+          <Checkbox
+            checked={emailUpdates.checkedB}
+            onChange={handleCheckBoxChange}
+            color="primary"
+            name="checkedB"
+            // value={emailUpdates}
+          />
+        }
+        label="Email Updates"
+      />
+      </Grid>
         </Grid>
       </AddEditForm>
     </React.Fragment>
