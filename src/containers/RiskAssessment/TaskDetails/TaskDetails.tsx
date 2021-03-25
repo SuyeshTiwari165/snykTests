@@ -48,6 +48,9 @@ export const TaskDetails: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
+  // const localName = JSON.stringify(localStorage.getItem("name")) || "{}";
+  const localName = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
+
   // const classes = useStyles(theme);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
@@ -156,8 +159,13 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   if (targetName !== {} && target === "") {
-    let str = localStorage.getItem("name").split('_')[0]
-    setTarget(str.substring(1, str.length-1) || "{}");
+    let substring = "_linux";
+    let substring2 = "_windows";
+    if (localName.includes(substring) || localName.includes(substring2)) {
+      setTarget(localName.split("_")[0]);
+    } else {
+      setTarget(localName);
+    }
   }
 
   // useEffect(() => {

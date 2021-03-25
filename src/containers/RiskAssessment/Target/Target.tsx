@@ -59,7 +59,7 @@ export const Target: React.FC = (props: any) => {
   const client = useApolloClient();
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   // const sessionData = useQuery(RA_TARGET_SESSION);
-  const targetId = JSON.parse(localStorage.getItem("targetId") || null);
+  const targetId = localStorage.getItem("targetId") ? JSON.parse(localStorage.getItem("targetId") || '') :  null;
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   //add/edit data
   const [name, setName] = useState<String>("");
@@ -75,11 +75,12 @@ export const Target: React.FC = (props: any) => {
   const [winName,SetWinName] = useState<String>("");
   const [winUsername,setWinUsername] = useState<String>("");
   const [targetOldId,setTargetOldId] = useState<String>("");
-  const [vpnFilePath,setVpnFilePath] = useState<String>("");  
-  const [displayVpnFilePath,setDisplayVpnFilePath] = useState<String>("");    
+  const [vpnFilePath,setVpnFilePath] = useState<any>("");  
+  const [displayVpnFilePath,setDisplayVpnFilePath] = useState<any>("");    
   const [winIpAddress, setWinIpAddress] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>(null)
+  const localVpnFilePath = JSON.parse(localStorage.getItem("vpnFilePath") || "{}");
 //     [
 //     // {
 //     // name : "",      
@@ -329,9 +330,9 @@ export const Target: React.FC = (props: any) => {
         isFailed: false,
         errMessage: "Connection Already Tested"
       }));
-      console.log("localStorage",localStorage.getItem("vpnFilePath"))
-      setVpnFilePath(localStorage.getItem("vpnFilePath") || vpnFilePath  ? localStorage.getItem("vpnFilePath").replace(/\"/g, "") : null);
-      setDisplayVpnFilePath(localStorage.getItem("vpnFilePath") || vpnFilePath  ? localStorage.getItem("vpnFilePath").split("/")[9].replace(/\"/g, "") : null);
+
+      setVpnFilePath(localVpnFilePath || vpnFilePath  ? localVpnFilePath.replace(/\"/g, "") : null);
+      setDisplayVpnFilePath(localVpnFilePath || vpnFilePath  ? localVpnFilePath.split("/")[9].replace(/\"/g, "") : null);
     }
   }, []);
 

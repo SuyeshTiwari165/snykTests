@@ -63,6 +63,11 @@ export const Windows_Network: React.FC = (props: any) => {
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const VPNUsername = JSON.parse(localStorage.getItem("vpnUserName") || "{}");
   const VPNPassword = JSON.parse(localStorage.getItem("vpnPassword") || "{}");
+  // const WinTargetName = JSON.parse(localStorage.getItem("WinTargetName") || "{}");
+  const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
+  const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
+
+  // const name = JSON.parse(localStorage.getItem("name")|| "{}")
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const partnerId = partner.partnerId;
   const [targetName, setTargetName] = useState<String>("");
@@ -186,7 +191,7 @@ export const Windows_Network: React.FC = (props: any) => {
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
       // setTargetName(JSON.parse(localStorage.getItem("WinTargetNae") || "{}"));
-      setTargetName(localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName")) : JSON.parse(localStorage.getItem("name")))
+      setTargetName(WinTargetName ? WinTargetName : name)
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
     };
   }, []);
