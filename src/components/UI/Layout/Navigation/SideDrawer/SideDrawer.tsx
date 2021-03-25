@@ -194,7 +194,7 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
           <div className={classes.outerBox}>
             {/* <ThemeProvider theme={theme}>
               <Typography component="h6" variant="h6" className={classes.title}>
-                Ra in a Box
+                OB360
               </Typography>
             </ThemeProvider> */}
           
