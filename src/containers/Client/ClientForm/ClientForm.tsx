@@ -63,7 +63,7 @@ export const Client: React.FC = (props: any) => {
       setEmail(data.getClient.edges[0].node.emailId)
       setName(data.getClient.edges[0].node.clientName)
       setPhoneNumber(data.getClient.edges[0].node.mobileNumber)
-      setEmailUpdates({...emailUpdates, ["checkedB"] : data.getClient.edges[0].node.mailSend})
+      setEmailUpdates({...emailUpdates, ["checkedB"] : !data.getClient.edges[0].node.mailSend})
     },
   });
 
@@ -263,7 +263,7 @@ export const Client: React.FC = (props: any) => {
           clientName: name,
           mobileNumber: phoneNumber,
           emailId: email,
-          mailSend : emailUpdates.checkedB
+          mailSend : !emailUpdates.checkedB
         }
       },
     }).then((res: any) => {
@@ -312,7 +312,7 @@ export const Client: React.FC = (props: any) => {
             clientName: name,
             mobileNumber: phoneNumber,
             emailId: email,
-            mailSend : emailUpdates.checkedB
+            mailSend : !emailUpdates.checkedB
           }
         },
       }).then((res: any) => {
@@ -455,7 +455,7 @@ export const Client: React.FC = (props: any) => {
             // value={emailUpdates}
           />
         }
-        label="Email Updates"
+        label="Do Not Email"
       />
       </Grid>
         </Grid>
