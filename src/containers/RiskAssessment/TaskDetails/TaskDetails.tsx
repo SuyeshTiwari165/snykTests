@@ -81,7 +81,8 @@ export const TaskDetails: React.FC = (props: any) => {
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
-
+  const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
+  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   //table
   const columns = [
     { title: "Task Name", field: "taskName" },
@@ -286,7 +287,7 @@ export const TaskDetails: React.FC = (props: any) => {
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
     }
-    if (props.location.state && props.location.state.windowsNetwork) {
+    if (WinTargetName) {
       history.push(routeConstant.WINDOWS_NETWORK, data);
     } else if (props.location.state && props.location.state.LinuxNetwork) {
       history.push(routeConstant.LINUX_NETWORK, data);
