@@ -65,6 +65,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const VPNPassword = JSON.parse(localStorage.getItem("vpnPassword") || "{}");
   // const WinTargetName = JSON.parse(localStorage.getItem("WinTargetName") || "{}");
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
+  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
 
   // const name = JSON.parse(localStorage.getItem("name")|| "{}")
@@ -555,7 +556,9 @@ export const Windows_Network: React.FC = (props: any) => {
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
     }
-    if (props.location.state && props.location.state.LinuxNetwork) {
+    
+
+    if (LinuxTargetName) {
       history.push(routeConstant.LINUX_NETWORK, data);
     } else {
       history.push(routeConstant.TARGET, data);
