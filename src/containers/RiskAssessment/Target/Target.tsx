@@ -1422,7 +1422,7 @@ export const Target: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Target :{" "}
+        Client :{" "}
         {props.location.state !== undefined &&
         props.location.state.clientInfo !== undefined
           ? props.location.state.clientInfo.name
