@@ -370,7 +370,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const handlePublishchange = (event: any, rowData: any) => {
     console.log("event",event);
     console.log("rowData",rowData)
-    if (event.target.checked !== undefined) {
+    // if (event.target.checked !== undefined) {
       setBackdrop(true)
       publishReport({
         variables: {
@@ -378,13 +378,13 @@ export const RaReportListing: React.FC = (props: any) => {
             client: parseInt(props.location.state.clientInfo.clientId),
             targetName: rowData.target,
             partner: props.location.state.clientInfo.partnerId,
-            flagStatus: event.target.checked
+            flagStatus: true
           }
         }
       }).then((response: any) => {
         setBackdrop(false)
         if (
-          event.target.checked !== true && response.data.publishedReport.success ==
+          response.data.publishedReport.success ==
           "Report Published Successfully "
         ) {
           setFormState(formState => ({
@@ -419,7 +419,7 @@ export const RaReportListing: React.FC = (props: any) => {
       }).catch((error: any) => {
         setBackdrop(false)
       })
-    }
+    // }
   };
 
   const handleAddNewReport = () => {
@@ -506,13 +506,11 @@ export const RaReportListing: React.FC = (props: any) => {
               data-testid="cancel-button"
             >
               <img
-                src={
-                  process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"
-                }
+                src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
                 alt="user icon"
               />
-                    &nbsp; Back to List
-                  </Button>
+              &nbsp; Back to List
+            </Button>
             {/* ) : null} */}
             {partner.partnerId ? (
               <Button
@@ -522,7 +520,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 className={styles.ActionButton}
               >
                 <AddCircleIcon className={styles.EditIcon} />
-                  &nbsp; New Risk Assessment
+                &nbsp; New Risk Assessment
               </Button>
             ) : null}
           </Grid>
@@ -540,8 +538,7 @@ export const RaReportListing: React.FC = (props: any) => {
               filter: true,
               draggable: false,
               pageSize: 25,
-              pageSizeOptions: [25, 50, 75, 100] // rows selection options
-
+              pageSizeOptions: [25, 50, 75, 100], // rows selection options
             }}
             onOrderChange={(orderedColumnId: any, orderDirection: any) => {
               orderFunc(orderedColumnId, orderDirection);
@@ -549,104 +546,102 @@ export const RaReportListing: React.FC = (props: any) => {
             actions={[
               partner.partnerId
                 ? {
-                  icon: () => <VisibilityIcon />,
-                  tooltip: "View Data",
-                  onClick: (event: any, rowData: any) => {
-                    handleClickView(rowData);
+                    icon: () => <VisibilityIcon />,
+                    tooltip: "View Data",
+                    onClick: (event: any, rowData: any) => {
+                      handleClickView(rowData);
+                    },
                   }
-                }
                 : null,
               partner.partnerId
-                ? (rowData: any) => (rowData.status == "Done" ? {
-                  // disabled: rowData.status !== "Done",
-                  icon: () => <SyncIcon />,
-                  tooltip: "Re-run",
-                  onClick: (event: any, rowData: any) => {
-                    handleClickOpen(rowData);
-                  }
-                } : null)
+                ? (rowData: any) =>
+                    rowData.status == "Done"
+                      ? {
+                          // disabled: rowData.status !== "Done",
+                          icon: () => <SyncIcon />,
+                          tooltip: "Re-run",
+                          onClick: (event: any, rowData: any) => {
+                            handleClickOpen(rowData);
+                          },
+                        }
+                      : null
                 : null,
-              (rowData: any) => (rowData.status == "Done" ? {
-                // disabled: rowData.status !== "Done",
-                icon: () => <GetAppIcon />,
-                tooltip: "Download",
-                onClick: (event: any, rowData: any) => {
-                  handleDownload(rowData);
-                }
-              } : null),
-              partner.partnerId
-              ? null
-              : (rowData: any) => ({
-                // disabled: rowData.status !== "Done",
-                icon: () => (
-                  <div>
-                    <input
-                      type="file"
-                      name={rowData.targetId}
-                      id={rowData.targetId}
-                      className={styles.uploadButton}
-                      hidden
-                      onChange={(event: any) => {
-                        setSelectedFile({ [rowData.targetId]: event.target.files[0] });
-                      }}
-                    />
-                    <label htmlFor={rowData.targetId}><CloudUploadIcon /></label>
-                  </div>
-                ),
-                tooltip: "Browse",
-                name: "file",
-                type: "file",
-                // onClick: (event: any, rowData: any) => {
-                //   getRowData(rowData);
-                // }
-              }) ,
+              (rowData: any) =>
+                rowData.status == "Done"
+                  ? {
+                      // disabled: rowData.status !== "Done",
+                      icon: () => <GetAppIcon />,
+                      tooltip: "Download",
+                      onClick: (event: any, rowData: any) => {
+                        handleDownload(rowData);
+                      },
+                    }
+                  : null,
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
-                  // disabled: selectedFile == {} ? false : true,
-                  icon: () => <PublishIcon />,
-                  tooltip: "Upload",
-                  name: "file",
-                  id: "file",
-                  onClick: (event: any, rowData: any) => {
-                    handleUpload(rowData);
-                  }
-                }),
-              partner.partnerId
-                ? null
-                : (rowData: any) => ({
-                  // disabled: rowData.status !== "Done",
-                  icon: () => (
-                    <div>
-                      <div className={styles.raswitch}>
-                        <Switch
-                          className={
-                            published[rowData.targetId]
-                              ? styles.PublishSwitch
-                              : styles.PublishSwitchCheck
-                          }
-
-                          id="rowData.targetId"
-                          checked={published[rowData.targetId]}
-                          disabled= {rowData.publish}
-                          onChange={(event: any) => {
-                            handlePublish(event, rowData);
-                          }}
+                    // disabled: rowData.status !== "Done",
+                    icon: () => (
+                      <div>
+                        <input
+                          type="file"
                           name={rowData.targetId}
-                          {...props}
-                        ></Switch>
+                          id={rowData.targetId}
+                          className={styles.uploadButton}
+                          hidden
+                          onChange={(event: any) => {
+                            setSelectedFile({
+                              [rowData.targetId]: event.target.files[0],
+                            });
+                          }}
+                        />
+                        <label htmlFor={rowData.targetId}>
+                          <CloudUploadIcon />
+                        </label>
                       </div>
-                      <span className={styles.PublishSwitchLabels}>
-                        <span className={styles.PublishSwitchNo}>NO</span>
-                        <span className={styles.PublishSwitchYes}>YES</span>
-                      </span>
-                    </div>
-                  ),
-                  tooltip: "Publish",
-                  onClick: (event: any, rowData: any) => {
-                    handlePublishchange(event, rowData);
-                  }
-                })
+                    ),
+                    tooltip: "Browse",
+                    name: "file",
+                    type: "file",
+                    // onClick: (event: any, rowData: any) => {
+                    //   getRowData(rowData);
+                    // }
+                  }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    // disabled: selectedFile == {} ? false : true,
+                    icon: () => <PublishIcon />,
+                    tooltip: "Upload",
+                    name: "file",
+                    id: "file",
+                    onClick: (event: any, rowData: any) => {
+                      handleUpload(rowData);
+                    },
+                  }),
+              partner.partnerId
+                ? null
+                : (rowData: any) => ({
+                    icon: () => (
+                      <div>
+                        <div className={styles.raswitch}>
+                          <Button
+                            color="primary"
+                            variant={"contained"}
+                            data-testid="ok-button"
+                            disabled={rowData.publish}
+                          >
+                            Publish
+                          </Button>
+                        </div>
+                      </div>
+                    ),
+                    name: "Publish",
+                    disabled: rowData.publish,
+                    onClick: (event: any, rowData: any) => {
+                      handlePublishchange(event, rowData);
+                    },
+                  }),
             ]}
           />
         </Paper>
