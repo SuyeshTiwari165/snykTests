@@ -258,3 +258,11 @@ tfoot {
 tfoot td > div {
   flex-wrap: wrap;
 }
+
+.PublishButton {
+  color: #ffffff !important;
+}
+
+.PublishButton:hover {
+  color: #0051A8 !important;
+}
