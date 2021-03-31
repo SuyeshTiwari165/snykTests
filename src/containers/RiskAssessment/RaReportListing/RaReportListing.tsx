@@ -629,6 +629,7 @@ export const RaReportListing: React.FC = (props: any) => {
                             color="primary"
                             variant={"contained"}
                             data-testid="ok-button"
+                            className={styles.PublishButton}
                             disabled={rowData.publish}
                           >
                             Publish
