@@ -370,7 +370,7 @@ export const Target: React.FC = (props: any) => {
   }, []);
 
   // for target data
-  if (targetLoading || taskLoading || backdrop) return <SimpleBackdrop />;
+  // if (targetLoading || taskLoading || backdrop) return <SimpleBackdrop />;
   if (targetError) {
     return <div className="error">Error!</div>;
   }
@@ -543,6 +543,7 @@ export const Target: React.FC = (props: any) => {
       }
       else {
         if (partnerId && clientId && name && ipRange && vpnUserName) {
+          setBackdrop(true);
           let input = {
             partner: partnerId,
             client: clientId,
@@ -558,6 +559,7 @@ export const Target: React.FC = (props: any) => {
             },
           })
             .then((userRes) => {
+              setBackdrop(false);
               console.log("USERRESPONSE of new target",userRes);
               setSubmitDisabled(false)
               setFormState((formState) => ({
@@ -600,6 +602,7 @@ export const Target: React.FC = (props: any) => {
             })
             .catch((err) => {
               setSubmitDisabled(false)
+              setBackdrop(false);
               let error = err.message;
               if (
                 error.includes("duplicate key value violates unique constraint")
@@ -1430,6 +1433,8 @@ export const Target: React.FC = (props: any) => {
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
+      { targetLoading || taskLoading || backdrop ? <SimpleBackdrop /> : null }
+
         <Grid item xs={12}>
           {formState.isSuccess ? (
             <Alert
