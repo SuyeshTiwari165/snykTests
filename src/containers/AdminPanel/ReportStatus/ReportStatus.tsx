@@ -172,15 +172,22 @@ export const ReportStatus: React.FC = (props: any) => {
     });
 
   useEffect(() => {
+    setStartSelectedDate(new Date())
+    setEndSelectedDate(new Date())
+    setStartDate(new Date())
+    setEndDate(new Date())
     getReportList({
       variables: {
         orderBy : "-scan_start_date",
-        
+        scanEndDate: moment(new Date()).format("YYYY-MM-DDT23:00:00") ,
+        scanStartDate : moment(new Date()).format("YYYY-MM-DDT00:00:00") ,
       }
     });
+
   }, []);
 
   useEffect(() => {
+    if(filters != null || filters != undefined) {
     getReportList({
       variables: {
         orderBy : "-scan_start_date",
@@ -192,7 +199,7 @@ export const ReportStatus: React.FC = (props: any) => {
         scanStartDate :startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null,
       },
     });
-
+  }
   }, [filters]);
 
   useEffect(() => {
@@ -298,13 +305,15 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterTarget("");
     setFilterClient("");
     setFilterPartner("");
-    setStartDate("");
-    setStartSelectedDate(null);
-    setEndDate("");
-    setEndSelectedDate(null);
+    setStartSelectedDate(new Date())
+    setEndSelectedDate(new Date())
+    setStartDate(new Date())
+    setEndDate(new Date())
     getReportList({
       variables: {
         orderBy : "-scan_start_date",
+        scanEndDate:  moment(new Date()).format("YYYY-MM-DDT23:00:00"),
+        scanStartDate :moment(new Date()).format("YYYY-MM-DDT00:00:00"),
       }
     });
   };

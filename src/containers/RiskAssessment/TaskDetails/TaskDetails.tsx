@@ -42,6 +42,8 @@ import * as routeConstant from "../../../common/RouteConstants";
 import { setRaStepper } from "../common/SetRaStepper";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
+
 
 export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
@@ -83,6 +85,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
+  const [backdrop, setBackdrop] = useState(false);
   //table
   const columns = [
     { title: "Task Name", field: "taskName" },
@@ -206,11 +209,12 @@ export const TaskDetails: React.FC = (props: any) => {
     }
   }, [dataScanConfig]);
 
-  if (loadingScanConfig) return <Loading />;
+  // if (loadingScanConfig || backdrop) return <SimpleBackdrop />;
   console.log("getScanConfigList.length", dataScanConfig)
 
 
   const handleSubmitDialogBox = () => {
+    setBackdrop(true);
     setSubmitDisabled(true)
     let input = {
       partner: partnerId,
@@ -226,6 +230,7 @@ export const TaskDetails: React.FC = (props: any) => {
       },
     })
       .then((userRes) => {
+        setBackdrop(false);
         setSubmitDisabled(false)
         setFormState((formState) => ({
           ...formState,
@@ -252,6 +257,7 @@ export const TaskDetails: React.FC = (props: any) => {
         localStorage.removeItem("LinuxTargetName");
       })
       .catch((err) => {
+        setBackdrop(false);
         setSubmitDisabled(true)
         console.log("error", err);
         let error = err.message;
@@ -346,6 +352,7 @@ export const TaskDetails: React.FC = (props: any) => {
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
+      { loadingScanConfig || backdrop ? <SimpleBackdrop /> : null }
         <Grid item xs={12}>
           {formState.isFailed ? (
             <Alert
