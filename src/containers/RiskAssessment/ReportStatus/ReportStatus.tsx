@@ -10,6 +10,7 @@ import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
 // import { GET_SCAN_CONFIG } from "../../../graphql/queries/ScanConfig";
 // import { GET_SCANDATA } from "../../../graphql/queries/ScanData";
 // import { GET_TARGET } from "../../../graphql/queries/Target";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import { useQuery, useMutation } from "@apollo/client";
@@ -24,6 +25,7 @@ import { useHistory } from "react-router-dom";
 export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
   const [newData, setNewData] = useState();
+  
   const clientInfo = props.location.state ? props.location.state.clientInfo : null;
   // console.log("props.location.stat", props.location.state)
   //table
@@ -45,7 +47,7 @@ export const ReportStatus: React.FC = (props: any) => {
     data: dataReportListing,
     error: errorReportListing,
     loading: loadingReportListing,
-    // refetch: refetchReportListing,
+    refetch: refetchReportListing,
   } = useQuery(GET_REPORT_LISTING, {
     variables: {
       clientname: staticClientName,
@@ -75,6 +77,9 @@ export const ReportStatus: React.FC = (props: any) => {
     var d = new Date(inputFormat)
     return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
   }
+  useEffect (()=>{
+    refetchReportListing()
+  },[])
 
   useEffect(() => {
     if (dataReportListing) {
@@ -85,7 +90,7 @@ export const ReportStatus: React.FC = (props: any) => {
   }, [dataReportListing]);
 
   //for task data
-  if (loadingReportListing) return <Loading />;
+  if (loadingReportListing) return <SimpleBackdrop />;
   if (errorReportListing) {
     return <div className="error">Error!</div>;
   }

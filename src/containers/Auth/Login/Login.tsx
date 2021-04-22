@@ -18,6 +18,7 @@ import { USER_LOGIN } from "../../../graphql/mutations/User";
 import { GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import Input from "../../../components/UI/Form/Input/Input";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import * as routeConstants from "../../../common/RouteConstants";
@@ -134,7 +135,7 @@ export const Login: React.FC<LoginProps> = () => {
   };
 
   if (loadingAD || showLoading) {
-    return <Loading />;
+    return <SimpleBackdrop />;
   }
 
   const onLogin = () => {
@@ -143,7 +144,7 @@ export const Login: React.FC<LoginProps> = () => {
       setShowLoading(true);
       login({
         variables: {
-          username: email.toLowerCase(),
+          username: email,
           password: password,
         },
       })

@@ -67,7 +67,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
-
+  const[showBackdrop, setShowbackdrop]= useState(true);
   // const name = JSON.parse(localStorage.getItem("name")|| "{}")
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const partnerId = partner.partnerId;
@@ -124,10 +124,7 @@ export const Windows_Network: React.FC = (props: any) => {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
-          console.log("RERUN DATA",data);
-
           if (targetData && data.getCredentialsDetails.edges[0]) {
-            console.log("RERUN targetData",targetData);
             setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
             setUserName(
               data.getCredentialsDetails.edges[0].node
@@ -137,29 +134,11 @@ export const Windows_Network: React.FC = (props: any) => {
             setDomainName(data.getCredentialsDetails.edges[0].node
               ? data.getCredentialsDetails.edges[0].node.winName
               : null);
-
-            // setPassword(
-            //   data.getCredentialsDetails.edges[0].node
-            //     ? data.getCredentialsDetails.edges[0].node.winPassword
-            //     : null
-            // );
+              setShowbackdrop(false)
           }
-          // else {
-          //   // let error = err.message;
-          //   setFormState((formState) => ({
-          //     ...formState,
-          //     isSuccess: false,
-          //     isUpdate: false,
-          //     isDelete: false,
-          //     isFailed: true,
-          //     errMessage: "",
-          //   }));
-          //   setTimeout(() => {
-          //     history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
-          //   }, 1000);
-          // }
         },
         onError: (err) => {
+          setShowbackdrop(false)
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -169,6 +148,7 @@ export const Windows_Network: React.FC = (props: any) => {
             isFailed: true,
             errMessage: error,
           }));
+          history.push(routeConstant.RA_REPORT_LISTING);
         },
         fetchPolicy: "cache-and-network",
       });
@@ -210,7 +190,7 @@ export const Windows_Network: React.FC = (props: any) => {
     }
   }, [formState]);
 
-  if (backdrop) return <SimpleBackdrop />;
+  if (backdrop || showBackdrop) return <SimpleBackdrop />;
 
   const handleOkay = () => {
     setWindowsDomain(true);
@@ -282,11 +262,6 @@ export const Windows_Network: React.FC = (props: any) => {
           }
             history.push(routeConstant.TASK_DETAILS, data);
           }, 1000);
-          // setTimeout(() => {
-          //   setLinuxDomain(true);
-          //   setShowDialogBox(true)
-          //   // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
-          // }, 1000);
         })
         .catch((err) => {
           setShowDialogBox(false)
