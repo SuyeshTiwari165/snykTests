@@ -52,7 +52,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
   // const localName = JSON.stringify(localStorage.getItem("name")) || "{}";
   const localName = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
-
+  const [showbackdrop,setShowbackdrop] = useState(true);
   // const classes = useStyles(theme);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
@@ -146,6 +146,9 @@ export const TaskDetails: React.FC = (props: any) => {
     variables: {
       clientId: clientId,
     },
+    onCompleted:()=>{
+      setShowbackdrop(false)
+    },
 
     fetchPolicy: "cache-and-network",
   });
@@ -171,17 +174,6 @@ export const TaskDetails: React.FC = (props: any) => {
       setTarget(localName);
     }
   }
-
-  // useEffect(() => {
-  //   if (targetName !== null) {
-  //     getTaskData({
-  //       variables: {
-  //         targetName: targetName,
-  //         client_ClientName: clientInfo.name,
-  //       },
-  //     });
-  //   }
-  // }, [targetName]);
 
   useEffect(() => {
     if (
@@ -209,8 +201,8 @@ export const TaskDetails: React.FC = (props: any) => {
     }
   }, [dataScanConfig]);
 
-  // if (loadingScanConfig || backdrop) return <SimpleBackdrop />;
-  console.log("getScanConfigList.length", dataScanConfig)
+  // if (showbackdrop) return <SimpleBackdrop />;
+  
 
 
   const handleSubmitDialogBox = () => {
@@ -278,12 +270,6 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    // let data = {
-    //   editData: true,
-    //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-    //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-    //   clientInfo: clientInfo, targetInfo: targetInfo
-    // };
     let data = {
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
@@ -352,7 +338,7 @@ export const TaskDetails: React.FC = (props: any) => {
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
-      { loadingScanConfig || backdrop ? <SimpleBackdrop /> : null }
+      { showbackdrop || backdrop ? <SimpleBackdrop /> : null }
         <Grid item xs={12}>
           {formState.isFailed ? (
             <Alert

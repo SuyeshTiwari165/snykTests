@@ -39,6 +39,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const [name, setName] = useState<String>("");
   const [published, setPublished] = useState<any>({});
   const [backdrop, setBackdrop] = useState<Boolean>(false);
+  const [showBackdrop, setShowBackdrop] = useState<Boolean>(true);
   const [submitDisabled, setSubmitDisabled] = useState<Boolean>(true);
   const [selectedFile, setSelectedFile] = useState<any>({});
   const history = useHistory();
@@ -87,6 +88,13 @@ export const RaReportListing: React.FC = (props: any) => {
   }] = useLazyQuery(GET_REPORT_LISTING,
     {
       fetchPolicy: "cache-and-network",
+      onCompleted:()=>{
+        setShowBackdrop(false);
+      },
+      onError: error => {
+        // logout()
+        history.push(routeConstant.DASHBOARD);
+      }
     });
 
   const [uploadFile] = useMutation(ZIP_FILE);
@@ -154,7 +162,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   //for task data
-  if (loadingReportListing || backdrop) return <SimpleBackdrop />;
+  if (loadingReportListing || backdrop || showBackdrop) return <SimpleBackdrop />;
   // if (errorReportListing) {
   // history.push({
   //   pathname: routeConstant.DASHBOARD,

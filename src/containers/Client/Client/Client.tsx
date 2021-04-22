@@ -27,6 +27,7 @@ import AssessmentIcon from "@material-ui/icons/Assessment";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DescriptionIcon from "@material-ui/icons/Description";
 import * as routeConstant from "../../../common/RouteConstants";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import { useHistory } from "react-router-dom";
 import logout from "../../Auth/Logout/Logout";
 import { GET_CLIENTS } from "../../../graphql/queries/Client";
@@ -43,7 +44,7 @@ import moment from "moment";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [showBackdrop, setShowBackdrop] = useState<boolean>(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -217,7 +218,7 @@ export const Client: React.FC = (props: any) => {
     history.push(routeConstant.CLIENT_FORM_ADD);
   };
 
-  if (ipLoading) return <Loading />;
+  if (ipLoading || showBackdrop) return <SimpleBackdrop />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (
@@ -319,6 +320,7 @@ export const Client: React.FC = (props: any) => {
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData };
     if (param === "RA") {
+      // setShowBackdrop(true)
       history.push(routeConstant.RA_REPORT_LISTING, data);
     }
     if (param === "View") {
@@ -329,7 +331,7 @@ export const Client: React.FC = (props: any) => {
     if (param === "Delete") {
     }
   };
-  if (createFlag) return <Loading />;
+  if (createFlag) return <SimpleBackdrop />;
 
   return (
     <React.Fragment>

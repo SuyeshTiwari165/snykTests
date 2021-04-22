@@ -58,6 +58,7 @@ export const Target: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
+  const [showbackdrop, setShowbackdrop] =useState(true);
   // const sessionData = useQuery(RA_TARGET_SESSION);
   const targetId = localStorage.getItem("targetId") ? JSON.parse(localStorage.getItem("targetId") || '') :  null;
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
@@ -1433,8 +1434,8 @@ export const Target: React.FC = (props: any) => {
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
-      { targetLoading || taskLoading || backdrop ? <SimpleBackdrop /> : null }
-
+      { taskLoading || backdrop ? <SimpleBackdrop /> : null }
+      {targetLoading ? <SimpleBackdrop/>: null}
         <Grid item xs={12}>
           {formState.isSuccess ? (
             <Alert

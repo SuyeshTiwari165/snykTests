@@ -57,6 +57,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [password, setPassword] = useState<String>("");
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   const networkType = "Linux";
+  const[showbackdrop, setShowbackdrop] = useState(true);
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const [linuxDomain, setLinuxDomain] = useState(false);
@@ -122,28 +123,11 @@ export const Linux_Network: React.FC = (props: any) => {
                 ? data.getCredentialsDetails.edges[0].node.domainUsername
                 : null
             );
-            // setPassword(
-            //   data.getCredentialsDetails.edges[0].node
-            //     ? data.getCredentialsDetails.edges[0].node.domainPassword
-            //     : null
-            // );
           }
-          // else {
-          //   // let error = err.message;
-          //   setFormState((formState) => ({
-          //     ...formState,
-          //     isSuccess: false,
-          //     isUpdate: false,
-          //     isDelete: false,
-          //     isFailed: true,
-          //     errMessage: "",
-          //   }));
-          //   setTimeout(() => {
-          //     history.push(routeConstant.RA_REPORT_LISTING, props.location.state)
-          //   }, 1000);
-          // }
+          setShowbackdrop(false);
         },
         onError: (err) => {
+          setShowbackdrop(false);
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -159,9 +143,9 @@ export const Linux_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
-    console.log("PROPS>",props.location.state)
+    // console.log("PROPS>",props.location.state)
     if(props.location.state != undefined && props.location.state.editLinuxData && props.location.state.editLinuxData === true) {
-      console.log("props.location.state.editLinuxData",props.location.state.editLinuxData)
+      // console.log("props.location.state.editLinuxData",props.location.state.editLinuxData)
       setSubmitDisabled(false);
       setFormState(formState => ({
         ...formState,
