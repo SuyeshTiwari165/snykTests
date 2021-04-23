@@ -247,7 +247,7 @@ export const Windows_Network: React.FC = (props: any) => {
           setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
-          setTimeout(() => {
+          // setTimeout(() => {
             if(connectionSuccess) {
             data = {
               LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
@@ -270,7 +270,7 @@ export const Windows_Network: React.FC = (props: any) => {
             }
           }
             history.push(routeConstant.TASK_DETAILS, data);
-          }, 1000);
+          // }, 1000);
         })
         .catch((err) => {
           setShowDialogBox(false)
