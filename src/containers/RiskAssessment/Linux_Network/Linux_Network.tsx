@@ -210,6 +210,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
   const handleClose = () => {
     setShowDialogBox(false);
+    setBackdrop(true);
     setTimeout(() => {
       if(connectionSuccess){
       data = {
@@ -231,7 +232,8 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }
       history.push(routeConstant.TASK_DETAILS, data);
-    }, 500);
+      setBackdrop(false)
+    }, 100);
   };
 
   const handleMouseDownPassword = (
@@ -545,6 +547,20 @@ export const Linux_Network: React.FC = (props: any) => {
       history.push(routeConstant.TARGET,data);  
     // history.push(routeConstant.TARGET,data);
   };
+
+  const handleSkip = () => {
+    data = {
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+      editData: props.location.state.editData ? props.location.state.editData : false,
+      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+      clientInfo: props.location.state.clientInfo,
+      targetInfo: props.location.state.targetInfo
+    };
+    history.push(routeConstant.WINDOWS_NETWORK, data);
+  };
+
   return (
     <React.Fragment>
       <CssBaseLine />
@@ -684,13 +700,21 @@ export const Linux_Network: React.FC = (props: any) => {
           >
             back
           </Button>
+          <Button
+            variant={"contained"}
+            onClick={handleSkip}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            skip
+          </Button>
           <AlertBox
             DialogTitle={""}
             open={showDialogBox}
             dialogBoxMsg={dialogBoxMsg}
-            pathName={""}
+            // pathName={""}
             handleOkay={handleOkay}
-            cancelButtonPath={""}
+            cancelButtonPath={handleClose}
             closeButtonPath={handleClose}
             buttonName={"Yes"}
             CloseButtonName={"No"}
