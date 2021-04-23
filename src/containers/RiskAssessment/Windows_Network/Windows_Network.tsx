@@ -38,7 +38,6 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
-import Paper from "@material-ui/core/Paper";
 import { TEST_WINDOWS_CONNECTION } from "../../../graphql/mutations/VPNConnection";
 
 
@@ -117,6 +116,18 @@ export const Windows_Network: React.FC = (props: any) => {
     return false;
   };
 
+  
+  const handleAlertClose = () => {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: "",
+    }));
+  };
+
   const
     { data: targetData, loading: targetLoading, error: targetError }
       = useQuery(GET_TARGET, {
@@ -124,6 +135,7 @@ export const Windows_Network: React.FC = (props: any) => {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
+          setShowbackdrop(false)
           if (targetData && data.getCredentialsDetails.edges[0]) {
             setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
             setUserName(
@@ -134,7 +146,6 @@ export const Windows_Network: React.FC = (props: any) => {
             setDomainName(data.getCredentialsDetails.edges[0].node
               ? data.getCredentialsDetails.edges[0].node.winName
               : null);
-              setShowbackdrop(false)
           }
         },
         onError: (err) => {
@@ -156,7 +167,6 @@ export const Windows_Network: React.FC = (props: any) => {
   useEffect(() => {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
     if(props.location.state != undefined && props.location.state.editWindowsData && props.location.state.editWindowsData === true) {
-      console.log("props.location.state.editWindowsData",props.location.state.editWindowsData)
       SetConnectionSuccess(true);
       setFormState(formState => ({
         ...formState,
@@ -171,7 +181,6 @@ export const Windows_Network: React.FC = (props: any) => {
 
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
-      // setTargetName(JSON.parse(localStorage.getItem("WinTargetNae") || "{}"));
       setTargetName(WinTargetName ? WinTargetName : name)
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
     };
@@ -190,7 +199,7 @@ export const Windows_Network: React.FC = (props: any) => {
     }
   }, [formState]);
 
-  if (backdrop || showBackdrop) return <SimpleBackdrop />;
+  if (backdrop || targetLoading) return <SimpleBackdrop />;
 
   const handleOkay = () => {
     setWindowsDomain(true);
@@ -497,42 +506,20 @@ export const Windows_Network: React.FC = (props: any) => {
     }    
   };
 
-  const handleAlertClose = () => {
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: false,
-      errMessage: "",
-    }));
-  };
 
   const handleClose = () => {
     setShowDialogBox(false);
   };
 
   const handleBack = () => {
-    // let  data = {
-    //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-    //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-    //   editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-    //   clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-    //   targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-    //   editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-    //   editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    // }
     let data = {
       editData: true,
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-      // editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
       clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
     }
-    
-
     if (LinuxTargetName) {
       history.push(routeConstant.LINUX_NETWORK, data);
     } else {
@@ -640,8 +627,6 @@ export const Windows_Network: React.FC = (props: any) => {
             Domain Name
           </Input>
         </Grid>
-
-
         <Grid item xs={12} md={6} className={styles.PasswordField}>
           <FormControl className={styles.TextField} variant="outlined">
             <InputLabel classes={{ root: styles.FormLabel }}>
@@ -713,19 +698,6 @@ export const Windows_Network: React.FC = (props: any) => {
           >
             skip
           </Button>
-          {/* <AlertBox
-            DialogTitle={""}
-            open={showDialogBox}
-            dialogBoxMsg={dialogBoxMsg}
-            pathName={""}
-            handleOkay={handleOkay}
-            cancelButtonPath={""}
-            closeButtonPath={handleClose}
-            buttonName={"Yes"}
-            CloseButtonName={"No"}
-            handleCancel={handleClose}
-            handleClose={handleClose}
-          ></AlertBox> */}
           <Button
             type="button"
             color="primary"
@@ -740,7 +712,6 @@ export const Windows_Network: React.FC = (props: any) => {
             variant={"contained"}
             data-testid="ok-button"
             disabled={!connectionSuccess}
-            
           >
             next
           </Button>

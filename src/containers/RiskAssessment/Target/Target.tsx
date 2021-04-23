@@ -317,7 +317,6 @@ export const Target: React.FC = (props: any) => {
           targetName: targetName,
         },
       });
-      // getTaskData();
     }
     if(props.location.state != undefined && props.location.state.editData && props.location.state.editData === true) {
       console.log("props.location.state",props.location.state)
@@ -343,7 +342,6 @@ export const Target: React.FC = (props: any) => {
       setName(JSON.parse(localStorage.getItem("name") || "{}"));
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || "{}"));
       setUserName(JSON.parse(localStorage.getItem("userName") || "{}"));
-      // setPassword(JSON.parse(localStorage.getItem("password") || "{}"));
       setVpnUserName(JSON.parse(localStorage.getItem("vpnUserName") || "{}"));
       setVpnPassword(JSON.parse(localStorage.getItem("vpnPassword") || "{}"));
     }
@@ -370,8 +368,6 @@ export const Target: React.FC = (props: any) => {
     setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
   }, []);
 
-  // for target data
-  // if (targetLoading || taskLoading || backdrop) return <SimpleBackdrop />;
   if (targetError) {
     return <div className="error">Error!</div>;
   }
@@ -405,7 +401,7 @@ export const Target: React.FC = (props: any) => {
           setUploadDisabled(true)
           setFileUploaded(false)
           setEditDataId(null);
-          localStorage.setItem("name", JSON.stringify(name));
+          localStorage.setItem("name", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
           localStorage.setItem(
             "targetId",
             JSON.stringify(userRes.data.updateTarget.targetField.id)
@@ -413,14 +409,10 @@ export const Target: React.FC = (props: any) => {
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
           localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));          
-          // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
-          let data = {};
-          // setTimeout(() => {
           setLinuxDomain(true);
           setShowDialogBox(true)
           setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-          // }, 1000);
         })
         .catch((err) => {
           setShowDialogBox(false)
@@ -444,7 +436,6 @@ export const Target: React.FC = (props: any) => {
         });
     } else {
       setSubmitDisabled(true)
-     
       if (partnerId && clientId && name && ipRange && vpnUserName && props.location.state && props.location.state.reRun == true) {
         if (linuxUsername != null || winIpAddress != null) {
           let input = {
@@ -485,7 +476,6 @@ export const Target: React.FC = (props: any) => {
                 isFailed: false,
                 errMessage: "Target Created Successfully !",
               }));
-              // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
                 "targetId",
@@ -504,8 +494,6 @@ export const Target: React.FC = (props: any) => {
               localStorage.setItem("ipRange", JSON.stringify(ipRange));
               localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
               localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
-              // localStorage.setItem("vpnFilePath", JSON.stringify(vpnFilePath));
-
               setShowDialogBox(false);
               let data = {};
               let targetInfo = {
@@ -1496,7 +1484,7 @@ export const Target: React.FC = (props: any) => {
           <Input
             type="text"
             label="Target Name"
-            value={name}
+            value={name.split("_")[0]}
             onChange={handleNameChange}
             required
             error={isError.name}
