@@ -92,7 +92,7 @@ export const PartnerForm: React.FC = (props: any) => {
 
   useEffect(() => {
     if (param) {
-      setPartnerID(param.partner_id);
+      setPartnerID(param.partnerId ? param.partnerId : param.partner_id);
       setPartnerName(param.name ? param.name : param.partner);
       setEmail(param.email);
       setPhoneNumber(param.phone);

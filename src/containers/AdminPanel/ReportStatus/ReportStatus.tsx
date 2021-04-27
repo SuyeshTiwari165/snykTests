@@ -269,10 +269,10 @@ export const ReportStatus: React.FC = (props: any) => {
     setFilterStatus("");
     setFilterTarget("");
     setFilterClient("");
-    setStartDate("");
-    setStartSelectedDate(null)
-    setEndDate("");
-    setEndSelectedDate(null)
+    setStartDate(new Date());
+    setStartSelectedDate(new Date())
+    setEndDate(new Date());
+    setEndSelectedDate(new Date())
     if(newValue != null && newValue.partner_id ) {
     getClients({
       variables: {
