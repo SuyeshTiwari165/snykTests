@@ -12,6 +12,7 @@ import {
   useQuery,
   useLazyQuery,
 } from "@apollo/client";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
 import logout from "../../Auth/Logout/Logout";
 import TextField from "@material-ui/core/TextField";
@@ -59,7 +60,13 @@ export const ReportStatus: React.FC = (props: any) => {
 
   const title = "Listing of Reports ";
   const [newData, setNewData] = useState();
-
+  useEffect(()=>{
+    getPartners({ 
+      variables: {
+        orderBy : "partner_name"
+      },
+      })
+  },[])
   const columns = [
     {
       title: "Partner Name",
@@ -108,14 +115,12 @@ export const ReportStatus: React.FC = (props: any) => {
     },
     onCompleted: () => {},
   });
-    const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
-      variables: {
-        orderBy : "partner_name"
-      },
+    const [getPartners, { data: Org, loading: loadOrg}] = useLazyQuery(GET_PARTNER, {
       onCompleted: (data: any) => {
-        if (Org.getPartner.edges != null || Org.getPartner.edges != undefined) {
+        console.log("data",data)
+        if (data.getPartner.edges != null || data.getPartner.edges != undefined) {
           let arr: any = [];
-          Org.getPartner.edges.map((element: any, index: any) => {
+          data.getPartner.edges.map((element: any, index: any) => {
             let obj: any = {};
             obj["partner_id"] = element.node.id;
             obj["name"] = element.node.partnerName;
@@ -409,7 +414,7 @@ export const ReportStatus: React.FC = (props: any) => {
     options: getTargetNameList,
     getOptionLabel: (option: { name: String }) => option.name,
   };
-  if (loadingReportListing) return <Loading />;
+  if (loadingReportListing) return <SimpleBackdrop />;
   return (
     <React.Fragment>
       <CssBaseline />

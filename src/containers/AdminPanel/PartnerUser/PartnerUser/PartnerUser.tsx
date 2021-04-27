@@ -10,6 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../../components/UI/Table/MaterialTable";
+import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
 import Loading from "../../../../components/UI/Layout/Loading/Loading";
 import { Link } from "react-router-dom";
 import {
@@ -44,6 +45,7 @@ interface partnerValues {
 export const PartnerUser: React.FC = (propsData: any) => {
   const history = useHistory();
   const [firstName, setFirstName] = useState("");
+  const[showBackdrop, setShowBackdrop] = useState(true);
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -102,6 +104,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     onCompleted: (data: any) => {
       setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
       createTableDataObject(data.getPartnerUserDetails.edges);
+      setShowBackdrop(false)
     },
     fetchPolicy: "cache-and-network",
   });
@@ -127,6 +130,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     GET_PARTNER_USER, {
     onCompleted: (data: any) => {
       createTableDataObject(data.getPartnerUserDetails.edges);
+      setShowBackdrop(false)
     },
     fetchPolicy: "cache-and-network",
   }
@@ -172,7 +176,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     }
   }, [formState]);
 
-  if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <Loading />;
+  if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <SimpleBackdrop />;
 
   function convertDate(inputFormat: any) {
     function pad(s: any) { return (s < 10) ? '0' + s : s; }

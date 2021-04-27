@@ -4,20 +4,15 @@ import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
 import { Button } from "../../../../components/UI/Form/Button/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { AddEditForm } from "../../../../components/UI/AddEditForm/AddEditForm";
-import Input from "../../../../components/UI/Form/Input/Input";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import Alert from "../../../../components/UI/Alert/Alert";
 import { useHistory } from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
 import * as routeConstant from "../../../../common/RouteConstants";
 import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../../components/UI/Table/MaterialTable";
-import Loading from "../../../../components/UI/Layout/Loading/Loading";
-import EditIcon from "@material-ui/icons/Edit";
 import {
   SUCCESS,
   UPDATE,
@@ -26,12 +21,7 @@ import {
   ALERT_MESSAGE_TIMER,
 } from "../../../../common/MessageConstants";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import {
-  CREATE_PARTNER,
-  UPDATE_PARTNER,
-} from "../../../../graphql/mutations/RaPartner";
 import { GET_PARTNER } from "../../../../graphql/queries/Partners";
-import * as validations from "../../../../common/validateRegex";
 import moment from "moment";
 import PeopleIcon from '@material-ui/icons/People';
 
@@ -69,7 +59,9 @@ export const Partner: React.FC = (props: any) => {
     },
     onCompleted: (data: any) => {
       createTableDataObject(data.getPartner.edges);
-
+    },
+    onError: (error: any) => {
+     history.push(routeConstant.ADMIN_DASHBOARD,param)
     },
     fetchPolicy: "cache-and-network"
   });
@@ -168,7 +160,7 @@ export const Partner: React.FC = (props: any) => {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partner_id, rowData);
     }
   };
-  if (loadOrg) return <Loading />;
+  if (loadOrg) return <SimpleBackdrop />;
 
   return (
     <React.Fragment>
@@ -178,8 +170,6 @@ export const Partner: React.FC = (props: any) => {
       </Typography>
       <Grid className={styles.TableWrap}>
         <Grid container>
-          {/* <Grid item xs={6} sm={9} className={styles.FilterWrap}>
-          </Grid> */}
           <Grid item xs={12} className={styles.FilterAddWrap}>
             <div className={styles.FilterInput}>
               <Button
