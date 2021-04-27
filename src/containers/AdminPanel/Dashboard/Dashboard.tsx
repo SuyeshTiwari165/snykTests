@@ -11,6 +11,7 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EditIcon from "@material-ui/icons/Edit";
 import AssessmentIcon from "@material-ui/icons/Assessment";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
@@ -31,7 +32,11 @@ export const Dashboard: React.FC = (props: any) => {
 
   const history = useHistory();
 
-    const { data: partnerData, loading: loadPartner } = useQuery(GET_PARTNER, {
+  useEffect(()=>{
+    getPartnerUsersdata()
+  },[])
+  
+    const{ data: partnerData, error:partnerError , loading: loadPartner } = useQuery(GET_PARTNER, {
       variables: {
         orderBy: "-created_date",
       },
@@ -41,7 +46,8 @@ export const Dashboard: React.FC = (props: any) => {
       },
       fetchPolicy: "cache-and-network",
     });
-  const { data: partnerUsers, loading: loadPartnerUsers } = useQuery(
+
+  const [getPartnerUsersdata ,{ data: partnerUsers, loading: loadPartnerUsers }] = useLazyQuery(
     GET_PARTNER_USERS,
     {
       onCompleted: (data: any) => {
@@ -55,6 +61,9 @@ export const Dashboard: React.FC = (props: any) => {
         setPartnerUserCount(arr.length);
       },
       fetchPolicy: "cache-and-network",
+      onError:()=>{
+        logout()
+      }
     }
   );
 
@@ -80,11 +89,6 @@ export const Dashboard: React.FC = (props: any) => {
     setNewData(arr.slice(0, 5));
   };
 
-  const handleClickOpen = () => {
-    let data: any = { showAddClient: true };
-    history.push(routeConstant.CLIENT, data);
-  };
-
   const partnerClickOpen = () => {
     let data: any = { "AddPartner": true };
     history.push(routeConstant.ADD_PARTNER, data);
@@ -104,16 +108,16 @@ export const Dashboard: React.FC = (props: any) => {
     }
   };
 
-  if (loadPartner || loadPartnerUsers ) return <Loading />;
-  // if (iError) {
-  //   let error = { message: "Error" };
-  //   return (
-  //     <div className="error">
-  //       Error!
-  //       {logout()}
-  //     </div>
-  //   )
-  // }
+  if (loadPartner || loadPartnerUsers ) return <SimpleBackdrop />;
+  if (partnerError) {
+    let error = { message: "Error" };
+    return (
+      <div className="error">
+        Error!
+        {logout()}
+      </div>
+    )
+  }
 
   return (
     <div>

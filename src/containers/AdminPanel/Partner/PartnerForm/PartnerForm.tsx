@@ -15,6 +15,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import * as routeConstant from "../../../../common/RouteConstants";
 import Paper from "@material-ui/core/Paper";
+import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../../components/UI/Table/MaterialTable";
 import { Logout } from "../../../Auth/Logout/Logout";
 import Loading from "../../../../components/UI/Layout/Loading/Loading";
@@ -68,7 +69,7 @@ export const PartnerForm: React.FC = (props: any) => {
 
   const [createPartner] = useMutation(CREATE_PARTNER);
   const [updatePartner] = useMutation(UPDATE_PARTNER);
-
+  
   const { data: partnerData,error: errorPartner, loading: loadPartner, refetch: refetchOrg } = useQuery(GET_PARTNER, {
     variables: {
       orderBy : "partner_name"
@@ -77,11 +78,15 @@ export const PartnerForm: React.FC = (props: any) => {
         createTableDataObject(data.getPartner.edges);
       },
       fetchPolicy: "cache-and-network",
+      onError:()=>{
+        history.push(routeConstant.ADMIN_DASHBOARD,param)
+      }
     }
   );
 
   useEffect(() => {
     setParam(props.location.state);
+    refetchOrg()
   }, []);
 
 
@@ -118,13 +123,13 @@ export const PartnerForm: React.FC = (props: any) => {
       }
     }
   }, [formState]);
-  if (loadPartner) return <Loading />;
+  if (loadPartner) return <SimpleBackdrop />;
   if (errorPartner) {
     let error = { message: "Error" };
     return (
       <div className="error">
         Error!
-        {/* {Logout()} */}
+        { history.push(routeConstant.ADMIN_DASHBOARD,param) }
       </div>
     )
   }
@@ -140,17 +145,6 @@ export const PartnerForm: React.FC = (props: any) => {
     });
     setNewData(arr);
   };
-
-  if (loadPartner) return <Loading />;
-  if (errorPartner) {
-    let error = { message: "Error" };
-    return (
-      <div className="error">
-        Error!
-        {/* {Logout()} */}
-      </div>
-    )
-  }
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
@@ -321,8 +315,7 @@ export const PartnerForm: React.FC = (props: any) => {
       }));
       backToList();
     })
-    .catch((err) => {
-      // setLoader(false)
+    .catch((err) => { history.push(routeConstant.ADMIN_DASHBOARD,param)
       let error = err.message;
       if (
         error.includes(
@@ -444,10 +437,8 @@ export const PartnerForm: React.FC = (props: any) => {
               Address
               </Input>
           </Grid>
-
         </Grid>
       </AddEditForm>
-
     </React.Fragment>
   );
 };
