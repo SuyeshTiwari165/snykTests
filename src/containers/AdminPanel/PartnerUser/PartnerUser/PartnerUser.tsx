@@ -35,6 +35,8 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../../common/MessageConstants";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { DELETE_USER} from "../../../../graphql/mutations/PartnerUser";
 
 interface partnerValues {
   id: number;
@@ -70,6 +72,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     email: "",
     phoneNumber: "",
   });
+  const [userDeleted, SetUserDeleted] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
@@ -98,13 +101,38 @@ export const PartnerUser: React.FC = (propsData: any) => {
     { title: "Created On", field: "created_on" },
     { title: "Phone", field: "phone" },
   ];
+  const [deleteUser] = useMutation(DELETE_USER);
+
+  
+  const createTableDataObject = (data: any) => {
+    let arr: any = [];
+    data.map((element: any, index: any) => {
+      let obj: any = {};
+      obj["id"] = element.node.id;
+      obj["email"] = element.node.userId.username;
+      obj["name"] = element.node.userId.firstName + " " + element.node.userId.lastName;
+      obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
+      obj["first_name"] = element.node.userId.firstName;
+      obj["last_name"] = element.node.userId.lastName;
+      obj['created_on'] = moment(element.node.userId.dateJoined).format(
+        "MM/DD/YYYY hh:mm a");
+      if (partnerdata) {
+        obj["partner_id"] = partnerdata.partner_id;
+      }
+      obj["userID"] = element.node.userId.id;
+      arr.push(obj);
+    });
+    setNewData(arr);
+  };
 
   const [getpartnerUserDataforCompuser, { data: PartnerIDDataforCompuser, loading: loadPartnerIDforCompuser }] = useLazyQuery(
     GET_PARTNER_USER, {
     onCompleted: (data: any) => {
-      setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
-      createTableDataObject(data.getPartnerUserDetails.edges);
       setShowBackdrop(false)
+      if(data.getPartnerUserDetails.edges.length >= 0) {
+      setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
+      }
+      createTableDataObject(data.getPartnerUserDetails.edges);
     },
     fetchPolicy: "cache-and-network",
   });
@@ -112,6 +140,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
   const [getpartnerIDbyUserID, { data: PartnerIDData, loading: loadPartnerID }] = useLazyQuery(
     GET_PARTNER_ID_USER, {
     onCompleted: (data: any) => {
+      setShowBackdrop(false)
       if (data.getPartnerUserDetails.edges[0]) {
         setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
         getpartnerUserDataforCompuser({
@@ -129,8 +158,10 @@ export const PartnerUser: React.FC = (propsData: any) => {
   const [getpartnerUserData, { data: PartneruserData, loading: loadPartneruser }] = useLazyQuery(
     GET_PARTNER_USER, {
     onCompleted: (data: any) => {
-      createTableDataObject(data.getPartnerUserDetails.edges);
       setShowBackdrop(false)
+      // if(data.getPartnerUserDetails.edges.length > 0) {
+      createTableDataObject(data.getPartnerUserDetails.edges);
+      // }
     },
     fetchPolicy: "cache-and-network",
   }
@@ -163,6 +194,50 @@ export const PartnerUser: React.FC = (propsData: any) => {
       })
     }
   }, []);
+
+  useEffect(() => {
+    if (propsData.location.state && propsData.location.state !== null && propsData.location.state.formState) {
+      setFormState(propsData.location.state.formState);
+    }
+    console.log("propsData",propsData)
+    if (propsData.location.state && propsData.location.state !== null && propsData.location.state.partner_id) {
+      getpartnerUserData({
+        variables: {
+          partner: propsData.location.state.partner_id,
+          userType: 'Partner',
+          orderBy: "user_id__first_name", 
+        },
+      })
+    } else if (propsData.location.state && propsData.location.state.propData) {
+      getpartnerUserData({
+        variables: {
+          partner: propsData.location.state.propData.partner_id,
+          userType: 'Partner',
+          orderBy: "user_id__first_name", 
+        },
+      })
+    }
+     else {
+      getpartnerIDbyUserID({
+        variables: {
+          // userId: user.isSuperuser == true ? propsData.location.state.email : user.username,
+          userId: propsData.location.state != null && propsData.location.state.hasOwnProperty("email") ? propsData.location.state.email : user.username,
+        },
+      })
+    }
+  }, [userDeleted]);
+
+  const handleAlertClose = () => {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: "",
+    }));
+  };
+
   useEffect(() => {
     if (
       formState.isDelete === true ||
@@ -176,7 +251,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     }
   }, [formState]);
 
-  if (loadPartnerIDforCompuser || loadPartneruser || loadPartnerID) return <SimpleBackdrop />;
+  if (showBackdrop ) return <SimpleBackdrop />;
 
   function convertDate(inputFormat: any) {
     function pad(s: any) { return (s < 10) ? '0' + s : s; }
@@ -202,37 +277,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     }
   };
 
-  const createTableDataObject = (data: any) => {
-    let arr: any = [];
-    data.map((element: any, index: any) => {
-      let obj: any = {};
-      obj["id"] = element.node.id;
-      obj["email"] = element.node.userId.username;
-      obj["name"] = element.node.userId.firstName + " " + element.node.userId.lastName;
-      obj["phone"] = !element.node.mobileNumber ? "-" : element.node.mobileNumber;
-      obj["first_name"] = element.node.userId.firstName;
-      obj["last_name"] = element.node.userId.lastName;
-      obj['created_on'] = moment(element.node.userId.dateJoined).format(
-        "MM/DD/YYYY hh:mm a");
-      if (partnerdata) {
-        obj["partner_id"] = partnerdata.partner_id;
-      }
-      arr.push(obj);
-    });
-    setNewData(arr);
-  };
 
-
-  const handleAlertClose = () => {
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: false,
-      errMessage: "",
-    }));
-  };
 
   const handleClickOpen = () => {
     let partnerData: any = { "partner_id": partnerID }
@@ -291,6 +336,54 @@ export const PartnerUser: React.FC = (propsData: any) => {
       history.push(routeConstant.PARTNER_USER_FORM_EDIT + rowData.id, rowData);
     }
   };
+  const handleClickDelete = (event: any, rowData: any) => {
+    SetUserDeleted(false);
+    console.log("RowData",rowData);
+    setShowBackdrop(true);
+    deleteUser({
+      variables: {
+        id: rowData.userID
+      },
+    }).then((res: any) => {
+      setShowBackdrop(false);
+      console.log("RES",res.data.deleteUser.status);
+      if(res.data.deleteUser.status == "User is Deleted") {
+        SetUserDeleted(true);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: true,
+        isFailed: false,
+        errMessage: "  " + rowData.name + "  " ,
+      }));
+    }
+    if(res.data.deleteUser.status === "User Not Deleted") {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Failed to Delete Partner  " + rowData.target + " " ,
+      }));
+    }
+    })
+    .catch((err) => {
+      setShowBackdrop(false);
+      let error = err.message;
+         setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
+    
+  }
   return (
     <React.Fragment>
       <CssBaseline />
@@ -385,6 +478,42 @@ export const PartnerUser: React.FC = (propsData: any) => {
               User <strong>{formState.errMessage}</strong> {UPDATE}
             </Alert>
           ) : null}
+           {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {FAILED}
+              {formState.errMessage}
+            </Alert>
+          ) : null}
+           {formState.isDelete ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {DELETE}
+            </Alert>
+          ) : null}
           <div className={styles.ScrollTable}>
             <MaterialTable
               columns={column}
@@ -402,13 +531,13 @@ export const PartnerUser: React.FC = (propsData: any) => {
                     handleClickEdit(rowData, event);
                   },
                 },
-                // {
-                //   icon: () => <DeleteIcon />,
-                //   tooltip: "Delete",
-                //   // onClick: (event: any, rowData: any) => {
-                //   //   handleClickAdd(rowData);
-                //   // },
-                // },
+                {
+                  icon: () => <DeleteIcon />,
+                  tooltip: "Delete",
+                  onClick: (event: any, rowData: any) => {
+                    handleClickDelete(event, rowData);
+                  },
+                },
               ]}
               options={{
                 headerStyle: {

@@ -41,6 +41,8 @@ import {
 } from "../../../common/MessageConstants";
 import * as validations from "../../../common/validateRegex";
 import moment from "moment";
+import {DELETE_CLIENT } from "../../../graphql/mutations/Clients";
+
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -58,6 +60,8 @@ export const Client: React.FC = (props: any) => {
   if (user) {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
+  const [clientDeleted, setClientDeleted] = useState(false);
+
   //table
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
@@ -82,12 +86,15 @@ export const Client: React.FC = (props: any) => {
     errMessage: ""
   });
 
+  const [deleteClient] = useMutation(DELETE_CLIENT);
+
+
   let contactIdArray: any = [];
   const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
     GET_CLIENTS,
     {
       fetchPolicy: "cache-and-network",
-      onCompleted: data => {
+      onCompleted: (data : any) => {
         createTableDataObject(data.getClient.edges);
       },
       onError: error => {
@@ -141,6 +148,44 @@ export const Client: React.FC = (props: any) => {
       setFormState(props.location.state.formState);
     }
   }, []);
+
+  useEffect(() => {
+    if (partner !== "{}") {
+      getClients({
+        variables: {
+          orderBy : "client_name",
+          partnerId: partner.partnerId
+        }
+      });
+    }
+    if (
+      props.location.state !== null &&
+      props.location.state !== undefined &&
+      props.location.state.partner_id
+    ) {
+      getClients({
+        variables: {
+          orderBy : "client_name",
+          partnerId: props.location.state.partner_id
+        }
+      });
+    }
+    if (props.location.state && props.location.state.clientInfo) {
+      getClients({
+        variables: {
+          orderBy : "client_name",
+          partnerId: props.location.state.clientInfo.partnerId
+        }
+      });
+    }
+    if (
+      props.location.state &&
+      props.location.state !== null &&
+      props.location.state.formState
+    ) {
+      setFormState(props.location.state.formState);
+    }
+  }, [clientDeleted]);
 
   useEffect(() => {
     if (
@@ -213,6 +258,52 @@ export const Client: React.FC = (props: any) => {
   const handleClickEdit = (rowData: any) => {
     history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
   };
+  const handleClickDelete = (rowData: any) => {
+    setClientDeleted(false);
+    setShowBackdrop(true);
+    console.log("DELETE",rowData)
+    deleteClient({
+      variables: {
+        id: rowData.clientId
+      },
+    }).then((res: any) => {
+      setShowBackdrop(false);
+      console.log("RES",res.data.deleteClient.status);
+      if(res.data.deleteClient.status === "Client is deleted") {
+        setClientDeleted(true);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: true,
+        isFailed: false,
+        errMessage: "  " + rowData.name + "  " ,
+      }));
+    }
+    if(res.data.deleteClient.status === "Client is not deleted") {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Failed to Delete Client " + rowData.name + " " ,
+      }));
+    }
+    })
+    .catch((err) => {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: err,
+      }));
+    });
+  }
 
   const handleClickOpen = (rowData: any) => {
     history.push(routeConstant.CLIENT_FORM_ADD);
@@ -329,6 +420,7 @@ export const Client: React.FC = (props: any) => {
       handleClickEdit(rowData);
     }
     if (param === "Delete") {
+      handleClickDelete(rowData)
     }
   };
   if (createFlag) return <SimpleBackdrop />;
@@ -416,6 +508,42 @@ export const Client: React.FC = (props: any) => {
               {UPDATE}
             </Alert>
           ) : null}
+           {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {FAILED}
+              <strong>{formState.errMessage}</strong>
+            </Alert>
+          ) : null}
+           {formState.isDelete ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {DELETE}
+            </Alert>
+          ) : null}
           <div className={styles.ScrollTable}>
             <MaterialTable
               columns={column}
@@ -444,7 +572,7 @@ export const Client: React.FC = (props: any) => {
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
                   }
-                }
+                },
                 // {
                 //   icon: () => <VisibilityIcon />,
                 //   tooltip: "View",
@@ -452,13 +580,13 @@ export const Client: React.FC = (props: any) => {
                 //     onRowClick(event, rowData, oldData, 'View');
                 //   },
                 // },
-                // {
-                //   icon: () => <DeleteIcon />,
-                //   tooltip: "Delete",
-                //   onClick: (event: any, rowData: any, oldData: any) => {
-                //     onRowClick(event, rowData, oldData, 'Delete');
-                //   },
-                // },
+                {
+                  icon: () => <DeleteIcon />,
+                  tooltip: "Delete",
+                  onClick: (event: any, rowData: any, oldData: any) => {
+                    onRowClick(event, rowData, oldData, 'Delete');
+                  },
+                },
               ]}
               options={{
                 headerStyle: {

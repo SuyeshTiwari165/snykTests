@@ -24,11 +24,16 @@ import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import { GET_PARTNER } from "../../../../graphql/queries/Partners";
 import moment from "moment";
 import PeopleIcon from '@material-ui/icons/People';
+import DeleteIcon from "@material-ui/icons/Delete";
+import { DELETE_PARTNER } from "../../../../graphql/mutations/RaPartner";
 
 export const Partner: React.FC = (props: any) => {
   const [newData, setNewData] = useState<any>([]);
   const [param, setParam] = useState<any>();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const [partnerDeleted, setPartnerDeleted] = useState<any>(false);
+  const [showBackdrop, setShowBackdrop] = useState<boolean>(false);
+
   //table
   const column = [
     { title: "Name", field: "name" },
@@ -53,7 +58,9 @@ export const Partner: React.FC = (props: any) => {
     errMessage: "",
   });
 
-  const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
+  const [deletePartner] = useMutation(DELETE_PARTNER);
+
+  const { data: Org,error: iError, loading: loadOrg, refetch } = useQuery(GET_PARTNER, {
     variables: {
       orderBy : "-created_date"
     },
@@ -160,7 +167,54 @@ export const Partner: React.FC = (props: any) => {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partner_id, rowData);
     }
   };
-  if (loadOrg) return <SimpleBackdrop />;
+  const handleClickDelete = (event: any, rowData: any) => {
+    console.log("RowData",rowData);
+    setShowBackdrop(true);
+    deletePartner({
+      variables: {
+        id: rowData.partner_id
+      },
+    }).then((res: any) => {
+      setShowBackdrop(false);
+      refetch()
+      console.log("RES",res.data.deletePartner.status);
+      if(res.data.deletePartner.status === "Partner is deleted") {
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: true,
+        isFailed: false,
+        errMessage: "  " + rowData.name + "  " ,
+      }));
+    }
+    if(res.data.deletePartner.status === "Partner is not deleted") {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Failed to Delete Partner  " + rowData.name + " " ,
+      }));
+    }
+    })
+    .catch((err) => {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: err,
+      }));
+    });
+    
+  }
+  
+  if (loadOrg || showBackdrop) return <SimpleBackdrop />;
 
   return (
     <React.Fragment>
@@ -218,6 +272,42 @@ export const Partner: React.FC = (props: any) => {
               Partner <strong>{formState.errMessage}</strong> {UPDATE}
             </Alert>
           ) : null}
+            {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {FAILED}
+              <strong>{formState.errMessage}</strong>
+            </Alert>
+          ) : null}
+           {formState.isDelete ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {DELETE}
+            </Alert>
+          ) : null}
           <MaterialTable
             columns={column}
             data={newData}
@@ -246,6 +336,13 @@ export const Partner: React.FC = (props: any) => {
                 tooltip: "Clients",
                 onClick: (event: any, rowData: any) => {
                   handleClickClient(rowData);
+                },
+              },
+              {
+                icon: () => <DeleteIcon />,
+                tooltip: "Delete",
+                onClick: (event: any, rowData: any) => {
+                  handleClickDelete(event, rowData);
                 },
               },
             ]}

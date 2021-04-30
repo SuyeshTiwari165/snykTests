@@ -1,557 +1,179 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ReportStatus.module.css";
-import Grid from "@material-ui/core/Grid";
-import { Typography} from "@material-ui/core";
-import { Button } from "../../../components/UI/Form/Button/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Input from "../../../components/UI/Form/Input/Input";
 import Paper from "@material-ui/core/Paper";
-import MaterialTable from "../../../components/UI/Table/MaterialTable";
+import Typography from "@material-ui/core/Typography";
+import { Button } from "../../../components/UI/Form/Button/Button";
+// import Input from "../../../components/UI/Form/Input/Input";
+import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
+// import { GET_TASK_DETAILS } from "../../../graphql/queries/TaskDetails";
+// import { GET_SCAN_CONFIG } from "../../../graphql/queries/ScanConfig";
+// import { GET_SCANDATA } from "../../../graphql/queries/ScanData";
+// import { GET_TARGET } from "../../../graphql/queries/Target";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
-import {
-  useQuery,
-  useLazyQuery,
-} from "@apollo/client";
-import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
-import logout from "../../Auth/Logout/Logout";
-import TextField from "@material-ui/core/TextField";
-import { GET_ADMIN_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
-import moment from "moment";
-import { GET_PARTNER } from "../../../graphql/queries/Partners";
-import { GET_CLIENTS } from "../../../graphql/queries/Client";
-import { GET_TARGET_ADMIN } from "../../../graphql/queries/Target";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import MomentUtils from "@date-io/moment";
-import DateFnsUtils from '@date-io/date-fns';
-
-interface Partners {
-  id: number;
-  name: string;
-}
+import MaterialTable from "../../../components/UI/Table/MaterialTable";
+import { useQuery, useMutation } from "@apollo/client";
+import { Grid } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+// import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
+// import TextField from "@material-ui/core/TextField";
+// import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
+import * as routeConstant from "../../../common/RouteConstants";
+import { useHistory } from "react-router-dom";
 
 export const ReportStatus: React.FC = (props: any) => {
-  const [filterName, setFilterName] = useState("");
-  const [filters, setFilters] = useState<object>();
-  const [filterTarget, setFilterTarget] = useState<any>("");
-  const [filterPartner, setFilterPartner] = useState<any>([
-    {
-      partner_id: "",
-      name: "",
-    },
-  ]);
-  const [filterClient, setFilterClient] = useState<any>([
-    {
-      clientName: "",
-      clientid: null,
-    },
-  ]);
-  const [filterStatus, setFilterStatus] = useState<any | null>();
-  const [reset, setReset] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<any>();
-  const [endDate, setEndDate] = useState<any>();
-  const [getPartnerNameList, setPartnerNameList] = useState([]);
-  const [getClientNameList, setClientNameList] = useState([]);
-  const [getTargetNameList, setTargetNameList] = useState([]);
-
-  const title = "Listing of Reports ";
+  const history = useHistory();
   const [newData, setNewData] = useState();
-
+  const clientInfo = props.location.state ? props.location.state.clientInfo : null;
+  // console.log("props.location.stat", props.location.state)
+  //table
   const columns = [
-    {
-      title: "Partner Name",
-      field: "partnername",
-    },
-    {
-      title: "Client Name",
-      field: "clientname",
-    },
-    {
-      title: "Target",
-      field: "target",
-    },
-    { title: "Task Name", field: "taskName" },
-    {
-      title: "Status",
-      field: "status",
-    },
-    {
-      title: "Scan Start Date ",
-      field: "scan_start_date"
-    },
-    { title: "Scan End Date", field: "scan_end_date" },
+    { title: "Target", field: "target" },
+    { title: "Task", field: "task" },
+    { title: "Scan start date", field: "scanStartDate" },
+    { title: "Scan end date", field: "scanEndDate" },
+    { title: "Status", field: "status" },
   ];
+  //show password
+  const title = "Listing of Report Status";
+  const [orderBy, setOrderBy] = useState<String>();
 
-  const [startSelectedDate, setStartSelectedDate] = React.useState<Date | null>(
-    // new Date('2014-08-18T21:11:54'),
-  );
-  const [endSelectedDate, setEndSelectedDate] = React.useState<Date | null>();
-  
-  const handleDateChange = (date : any) => {
-    setStartSelectedDate(date);
-    setStartDate(date);
-  };
-  const handleEndDateChange = (date : any) => {
-    setEndSelectedDate(date);
-    setEndDate(date);
-  };
-  const [
-    getReportList,
-    { data: dataReportListing, loading: loadingReportListing },
-  ] = useLazyQuery(GET_ADMIN_REPORT_LISTING, {
-    fetchPolicy: "cache-and-network",
-    onError: () => {
-      // logout();
+  const staticClientName = clientInfo !== null ? clientInfo.name : undefined;
+  const targetName = props["location"].state.targetName;
+  const targetData = props["location"].state.target;
+  const {
+    data: dataReportListing,
+    error: errorReportListing,
+    loading: loadingReportListing,
+    // refetch: refetchReportListing,
+  } = useQuery(GET_REPORT_LISTING, {
+    variables: {
+      clientname: staticClientName,
+      targetid: targetName,
     },
-    onCompleted: () => {},
   });
-    const { data: Org,error: iError, loading: loadOrg, refetch: refetchOrg } = useQuery(GET_PARTNER, {
-      variables: {
-        orderBy : "partner_name"
-      },
-      onCompleted: (data: any) => {
-        if (Org.getPartner.edges != null || Org.getPartner.edges != undefined) {
-          let arr: any = [];
-          Org.getPartner.edges.map((element: any, index: any) => {
-            let obj: any = {};
-            obj["partner_id"] = element.node.id;
-            obj["name"] = element.node.partnerName;
-            arr.push(obj);
-          });
-          setPartnerNameList(arr);
-        }
-      },
-      fetchPolicy: "cache-and-network",
+  const getDateAndTime = (utcDate: any) => {
+    if (utcDate === "" || utcDate === null) {
+      return null;
+    } else {
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      console.log(convertDate(new Date(utcDate)))
+      return dateAndTime;
     }
-  );
+  };
 
-  const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
-    GET_CLIENTS,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted: (data) => {
-        if (
-          data.getClient.edges != null ||
-          ipData.getClient.edges != undefined
-        ) {
-          let arr: any = [];
-          ipData.getClient.edges.map((element: any, index: any) => {
-            let obj: any = {};
-            obj["name"] = element.node.clientName;
-            obj["clientid"] = element.node.id;
-            arr.push(obj);
-          });
-          setClientNameList(arr);
-        }
-      },
-      onError: (error) => {
-        // logout()
-      },
-    }
-  );
-
-  const [getTargets, { data: targetData, loading: targetLoading }] = useLazyQuery(
-    GET_TARGET_ADMIN,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted: (data) => {
-        if (data.getTarget.edges != null || data.getTarget.edges != undefined) {
-          let arr: any = [];
-          data.getTarget.edges.map((element: any, index: any) => {
-            let obj: any = {};
-            obj["name"] = element.node.targetName;
-            obj["targetid"] = element.node.vatTargetId;
-            arr.push(obj);
-          });
-          setTargetNameList(arr);
-        }
-      }
-    });
-
-  useEffect(() => {
-    setStartSelectedDate(new Date())
-    setEndSelectedDate(new Date())
-    setStartDate(new Date())
-    setEndDate(new Date())
-    getReportList({
-      variables: {
-        orderBy : "-scan_start_date",
-        scanEndDate: moment(new Date()).format("YYYY-MM-DDT23:00:00") ,
-        scanStartDate : moment(new Date()).format("YYYY-MM-DDT00:00:00") ,
-      }
-    });
-
-  }, []);
-
-  useEffect(() => {
-    if(filters != null || filters != undefined) {
-    getReportList({
-      variables: {
-        orderBy : "-scan_start_date",
-        targetid: filterTarget ? filterTarget.name : null,
-        status: filterStatus ? filterStatus.name : null,
-        partnername: filterPartner ? filterPartner.name : null,
-        clientname: filterClient ? filterClient.name : null,
-        scanEndDate: endDate ? moment(endDate).format("YYYY-MM-DDT23:00:00") : null,
-        scanStartDate :startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null,
-      },
-    });
+  function convertDate(inputFormat: any) {
+    function pad(s: any) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat)
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
   }
-  }, [filters]);
 
   useEffect(() => {
     if (dataReportListing) {
-      let distinctTargetArray: any = [];
-      distinctTargetArray = convertTargetArray(
-        dataReportListing.getReportStatus.edges
-      );
       let temp: any = {};
-      temp = convertTableData(
-        dataReportListing.getReportStatus.edges,
-        distinctTargetArray
-      );
+      temp = convertTableData(dataReportListing.getReportStatus.edges);
       setNewData(temp);
     }
   }, [dataReportListing]);
 
-  function convertTargetArray(data: any) {
-    const targetObj = new Set(
-      data.map((x: any) => x.node.vatTargetId.targetName)
-    );
-    let array: any = [];
-    targetObj.forEach((v) => array.push(v));
-    return array;
-  }
-
-  function convertTableData(data: any, targetArr: any) {
-    let arr: any = [];
-    console.log("DATA",data);
-    data.map((element: any) => {
-      let obj: any = {};
-      obj["target"] = element.node.vatTargetId ? element.node.vatTargetId.targetName : null;
-      obj["status"] = element.node.scanRunStatus ? element.node.scanRunStatus : null;
-      obj["scan_start_date"] =element.node.scanStartDate ? moment(element.node.scanStartDate).format("MM/DD/YYYY hh:mm a") : "-";
-      obj["scan_end_date"] =element.node.scanEndDate ? moment(element.node.scanEndDate).format("MM/DD/YYYY hh:mm a"): "-";
-      obj["taskName"] = element.node.vatTaskId ? element.node.vatTaskId.taskName : null;
-      obj["partnername"] = element.node.vatTargetId.partner ? element.node.vatTargetId.partner.partnerName : null;
-      obj["clientname"] = element.node.vatTargetId.client ? element.node.vatTargetId.client.clientName : null;
-      arr.push(obj);
-    });
-    return arr
-   };
-
-  const targetFilter = (event: any, newValue: any) => {
-    setFilterTarget(newValue);
-  };
-  const clientFilter = (event: any, newValue: any) => {
-    setReset(false);
-    setFilterClient(newValue);
-    if(newValue != null && newValue.name && filterPartner != null && filterPartner.name ) {
-    getTargets({
-      variables: {
-        clientName : newValue.name,
-        partnerName :filterPartner.name
-      },
-    })
-  }
-}
-  const partnerFilter = (event: any, newValue: any) => {
-    setReset(false);
-    setFilterPartner(newValue);
-    setFilterStatus("");
-    setFilterTarget("");
-    setFilterClient("");
-    setStartDate("");
-    setStartSelectedDate(null)
-    setEndDate("");
-    setEndSelectedDate(null)
-    if(newValue != null && newValue.partner_id ) {
-    getClients({
-      variables: {
-        orderBy : "client_name",
-        partnerId: newValue.partner_id,
-      },
-    });
-  }
-  };
-  const startDateFilter = (event: any) => {
-    setStartDate(event.target.value);
-  };
-  const endDateFilter = (event: any) => {
-    setEndDate(event.target.value);
-  };
-  const getStatusList = [{ name: "Done" }, { name: "In Progress" }];
-  const getStatus = {
-    options: getStatusList,
-    getOptionLabel: (option: { name: String }) => option.name,
-  };
-
-  const statusFilter = (event: any, newValue: any) => {
-    setReset(false);
-    setFilterStatus(newValue);
-  };
-
-  function handleKeyDown(event: any) {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
-  }
-  const resetForm = () => {
-    setReset(true);
-    setFilterStatus("");
-    setFilterTarget("");
-    setFilterClient("");
-    setFilterPartner("");
-    setStartSelectedDate(new Date())
-    setEndSelectedDate(new Date())
-    setStartDate(new Date())
-    setEndDate(new Date())
-    getReportList({
-      variables: {
-        orderBy : "-scan_start_date",
-        scanEndDate:  moment(new Date()).format("YYYY-MM-DDT23:00:00"),
-        scanStartDate :moment(new Date()).format("YYYY-MM-DDT00:00:00"),
-      }
-    });
-  };
-
-  const handleSearch = () => {
-    let searchData: any = {};
-    if (filterName) {
-      searchData["name_contains"] = filterName.toString();
-    }
-    if (
-      filterTarget !== undefined &&
-      filterTarget !== null &&
-      Object.keys(filterTarget).length !== 0
-    ) {
-      // console.log("filterCategory issue");
-      searchData["target"] = filterTarget;
-    }
-    if (
-      filterPartner !== undefined &&
-      filterPartner !== null &&
-      Object.keys(filterPartner).length !== 0 &&
-      filterPartner !== null
-    ) {
-      searchData["partner"] = filterPartner;
-    }
-    if (
-      filterClient !== undefined &&
-      filterClient !== null &&
-      Object.keys(filterClient).length !== 0 &&
-      filterClient !== null
-    ) {
-      // console.log("filterCategory issue");
-      searchData["client"] = filterClient;
-    }
-    if (
-      filterStatus !== undefined &&
-      filterStatus !== null
-      // filterStatus.length > 0
-    ) {
-      let reportStatusArr = [];
-      for (let i in filterStatus) {
-        reportStatusArr.push(filterStatus[i]);
-      }
-      searchData["report_status_in"] = reportStatusArr;
-    }
-    if (
-      startDate !== undefined &&
-      startDate !== null &&
-      Object.keys(startDate).length !== 0 &&
-      startDate !== null
-    ) {
-      // console.log("filterCategory issue");
-      searchData["startDate"] = startDate;
-    }
-    if (
-      endDate !== undefined &&
-      endDate !== null &&
-      Object.keys(endDate).length !== 0 &&
-      endDate !== null
-    ) {
-      // console.log("filterCategory issue");
-      searchData["endDate"] = endDate;
-    }
-
-    // if (
-    //   filterCompanyType !== undefined &&
-    //   filterCompanyType !== null &&
-    //   filterCompanyType.length > 0
-    // ) {
-    //   let companyTypeArr = [];
-    //   for (let i in filterCompanyType) {
-    //     companyTypeArr.push(filterCompanyType[i].id);
-    //   }
-    //   searchData["company_type_in"] = companyTypeArr;
-    // }
-
-    // console.log("searchData", searchData);
-
-    setFilters(searchData);
-    // console.log(filters)
-    // refetchReportListing();
-  };
-
-  const getPartnerName = {
-    options: getPartnerNameList,
-    getOptionLabel: (option: { name: String }) => option.name,
-  };
-  const getClientName = {
-    options: getClientNameList,
-    getOptionLabel: (option: { name: String }) => option.name,
-  };
-  const getTargetName = {
-    options: getTargetNameList,
-    getOptionLabel: (option: { name: String }) => option.name,
-  };
+  //for task data
   if (loadingReportListing) return <Loading />;
+  if (errorReportListing) {
+    return <div className="error">Error!</div>;
+  }
+
+  function convertTableData(data: any) {
+    let arr: any = [];
+    for (let i in data) {
+      let tempArr: any = {};
+      tempArr["partner"] = data[i].node.partnerId;
+      tempArr["client"] = data[i].node.clientId;
+      tempArr["target"] = data[i].node.vatTargetId
+        ? data[i].node.vatTargetId.targetName
+        : null;
+      tempArr["task"] = data[i].node.vatTaskId
+        ? data[i].node.vatTaskId.taskName
+        : null;
+      tempArr["scanEndDate"] = getDateAndTime(data[i].node.scanEndDate);
+      tempArr["scanStartDate"] = getDateAndTime(data[i].node.scanStartDate);
+      tempArr["status"] = data[i].node.scanRunStatus;
+      arr.push(tempArr);
+    }
+    return arr;
+  }
+  console.log("targetData", targetData)
+  const orderFunc = (orderedColumnId: any, orderDirection: any) => {
+    let orderByColumn;
+    let orderBy = "";
+    if (orderedColumnId >= 0) {
+      if (columns[orderedColumnId]["field"] === "name") {
+        orderByColumn = "name";
+      }
+      // if (columns[orderedColumnId]["field"] === "category") {
+      //   orderByColumn = "category";
+      // }
+      // if (columns[orderedColumnId]["field"] === "is_active") {
+      //   orderByColumn = "is_active";
+      // }
+    }
+    orderBy = orderByColumn + ":" + orderDirection;
+    setOrderBy(orderBy);
+  };
+  const handleBack = () => {
+    let data = {};
+    data = { clientInfo: clientInfo };
+    history.push(routeConstant.RA_REPORT_LISTING, data);
+  };
+
   return (
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
         Report Status
       </Typography>
-      <Grid className={styles.FilterWrap}>
-        <div className={styles.FilterInput}>
-          <AutoCompleteDropDown
-            {...getPartnerName}
-            id="partnerName"
-            value={reset ? null : filterPartner ? filterPartner : null}
-            onChange={partnerFilter}
-            renderInput={(params: any) => (
-              <Input
-                {...params}
-                id="PartnerFilter"
-                label="Partner"
-                onKeyDown={handleKeyDown}
+      {!targetData.publish ?
+        <Typography component="h5" variant="h3">
+          Report Not Published !
+      </Typography> : null}
+      <Grid>
+        <Grid className={styles.FilterWrap}>
+          <div className={styles.backToListButton}>
+            <Button color="secondary" variant="contained" onClick={handleBack}>
+              <img
+                src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
+                alt="user icon"
               />
-            )}
-          />
-        </div>
-
-        <div className={styles.FilterInput}>
-          <AutoCompleteDropDown
-            {...getClientName}
-            id="clientName"
-            value={reset ? null : filterClient != null ? filterClient : null}
-            onChange={clientFilter}
-            renderInput={(params: any) => (
-              <Input
-                {...params}
-                id="ClientFilter"
-                label="Client"
-                onKeyDown={handleKeyDown}
-              />
-            )}
-          />
-        </div>
-        <div className={styles.FilterInput}>
-          <AutoCompleteDropDown
-            {...getTargetName}
-            id="clientName"
-            value={reset ? null : filterTarget != null ? filterTarget : null}
-            onChange={targetFilter}
-            renderInput={(params: any) => (
-              <Input
-                {...params}
-                id="filterTarget"
-                label="Target"
-                onKeyDown={handleKeyDown}
-              />
-            )}
-          />
-        </div>
-        <div className={styles.FilterInput}>
-          <AutoCompleteDropDown
-            {...getStatus}
-            id="StatusFilter"
-            value={reset ? null : filterStatus ? filterStatus : null}
-            onChange={statusFilter}
-            renderInput={(params: any) => (
-              <Input
-                {...params}
-                id="filterStatus"
-                label="Status"
-                onKeyDown={handleKeyDown}
-              />
-            )}
-          />
-        </div>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <div className={styles.FilterDateInput}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"
-              format="MM/dd/yyyy"
-              margin="normal"
-              id="startDate"
-              label="Scan Start Date"
-              value={startSelectedDate}
-              // onChange={newDate => handleDateChange(newDate)}
-              onChange={(newDate) => handleDateChange(newDate)}
-              disableFuture={true}
-              autoOk={true}
-              fullWidth
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
-            />
+              &nbsp; Back to list
+            </Button>
           </div>
-          <div className={styles.FilterDateInput}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"
-              format="MM/dd/yyyy"
-              margin="normal"
-              id="startDate"
-              label="Scan End Date"
-              value={endSelectedDate}
-              onChange={(newDate) => handleEndDateChange(newDate)}
-              disableFuture={true}
-              autoOk={true}
-              fullWidth
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
-            />
-          </div>
-        </MuiPickersUtilsProvider>
-        <div className={styles.FilterSearchButton}>
-          <Button color="primary" variant="contained" onClick={handleSearch}>
-            Search
-          </Button>
-        </div>
-        <div className={styles.FilterResetButton}>
-          <Button color="secondary" variant="contained" onClick={resetForm}>
-            reset
-          </Button>
-        </div>
-      </Grid>
-      <div className={styles.status_report}>
+        </Grid>
         <Paper className={styles.paper}>
+          <div className={styles.report_table}>
           <MaterialTable
             title={title}
             columns={columns}
             data={newData}
             options={{
-              thirdSortClick: false,
               actionsColumnIndex: -1,
               paging: true,
               sorting: true,
               search: false,
               filter: true,
-              pageSize: 25,
-              draggable: false,
-              pageSizeOptions: [25, 50, 75, 100],
             }}
-          />
+            onOrderChange={(orderedColumnId: any, orderDirection: any) => {
+              orderFunc(orderedColumnId, orderDirection);
+            }}
+          /></div>
         </Paper>
-      </div>
+      </Grid>
     </React.Fragment>
   );
 };
