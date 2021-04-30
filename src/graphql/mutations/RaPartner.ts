@@ -22,7 +22,12 @@ mutation updatePartner($id: Int, $partnerdata: PartnerInput!) {
     }
   }
 }
-
 `;
 
-
+export const DELETE_PARTNER = gql`
+  mutation deletePartner($id: Int) {
+    deletePartner(id: $id) {
+      status
+    }
+  }
+`;

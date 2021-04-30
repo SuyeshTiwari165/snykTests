@@ -34,6 +34,8 @@ import {
   ALERT_MESSAGE_TIMER
 } from "../../../common/MessageConstants";
 import Switch from "../../../components/UI/Switch/Switch";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { DELETE_TARGET } from "../../../graphql/mutations/Target";
 
 export const RaReportListing: React.FC = (props: any) => {
   const [name, setName] = useState<String>("");
@@ -80,6 +82,8 @@ export const RaReportListing: React.FC = (props: any) => {
     errMessage: ""
   });
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
+  const [targetDeleted, SetTargetDeleted] = useState(false);
+
   //filter query condition declaration
   const [getReportListingData, {
     data: dataReportListing,
@@ -99,6 +103,8 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const [uploadFile] = useMutation(ZIP_FILE);
   const [publishReport] = useMutation(PUBLISH_REPORT);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
+
 
   useEffect(() => {
     console.log("propsClientName", propsClientName);
@@ -158,7 +164,7 @@ export const RaReportListing: React.FC = (props: any) => {
         }
       })
     }
-  }, [dataReportListing]);
+  }, [dataReportListing || targetDeleted]);
 
 
   //for task data
@@ -376,8 +382,8 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handlePublishchange = (event: any, rowData: any) => {
-    console.log("event",event);
-    console.log("rowData",rowData)
+    // console.log("event",event);
+    // console.log("rowData",rowData)
     // if (event.target.checked !== undefined) {
       setBackdrop(true)
       publishReport({
@@ -454,6 +460,58 @@ export const RaReportListing: React.FC = (props: any) => {
     setOrderBy(orderBy);
   };
 
+  const handleClickDelete = (event: any, rowData: any) => {
+    SetTargetDeleted(false);
+    console.log("RowData",rowData);
+    setShowBackdrop(true);
+    deleteTarget({
+      variables: {
+        id: rowData.targetId
+      },
+    }).then((res: any) => {
+      setShowBackdrop(false);
+      console.log("RES",res.data.deleteTarget.status);
+      if(res.data.deleteTarget.status == "Target Deleted Successfully") {
+        getReportListingData({
+          variables: {
+            clientname: propsClientName,
+          },
+        });
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: true,
+        isFailed: false,
+        errMessage: "  " + rowData.target + "  " ,
+      }));
+    }
+    if(res.data.deleteTarget.status === "Target Not Deleted") {
+      setShowBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Failed to Delete Partner  " + rowData.target + " " ,
+      }));
+    }
+    })
+    .catch((err) => {
+      setShowBackdrop(false);
+      let error = err.message;
+         setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
+    
+  }
   return (
     <React.Fragment>
       <CssBaseline />
@@ -461,44 +519,6 @@ export const RaReportListing: React.FC = (props: any) => {
         Report List
       </Typography>
       <Grid>
-        <Grid item xs={12}>
-          {formState.isSuccess ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              <strong>{formState.errMessage}</strong>
-              {/* {SUCCESS} */}
-            </Alert>
-          ) : null}
-          {formState.isFailed ? (
-            <Alert
-              severity="error"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              {FAILED}
-              {formState.errMessage}
-            </Alert>
-          ) : null}
-        </Grid>
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             {/* {userRole === "SuperUser" ? ( */}
@@ -534,6 +554,62 @@ export const RaReportListing: React.FC = (props: any) => {
           </Grid>
         </Grid>
         <Paper className={styles.paper}>
+        <Grid item xs={12}>
+          {formState.isSuccess ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {SUCCESS}
+            </Alert>
+          ) : null}
+          {formState.isFailed ? (
+            <Alert
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              {FAILED}
+              {formState.errMessage}
+            </Alert>
+          ) : null}
+            {formState.isDelete ? (
+            <Alert
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleAlertClose}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <strong>{formState.errMessage}</strong>
+              {DELETE}
+            </Alert>
+          ) : null}
+        </Grid>
           <MaterialTable
             title={title}
             columns={columns}
@@ -561,6 +637,15 @@ export const RaReportListing: React.FC = (props: any) => {
                     },
                   }
                 : null,
+                (rowData: any) =>
+                rowData.report_status == "Unpublished" ?
+                {
+                  icon: () => <DeleteIcon />,
+                  tooltip: "Delete",
+                  onClick: (event: any, rowData: any) => {
+                    handleClickDelete(event, rowData);
+                  },
+                } : null,
               partner.partnerId
                 ? (rowData: any) =>
                     rowData.status == "Done"

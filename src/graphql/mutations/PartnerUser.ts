@@ -23,7 +23,12 @@ mutation updateUser($id: Int, $userdata: UserInput!) {
     }
   }
 }
-
 `;
 
-
+export const DELETE_USER = gql`
+mutation deleteUser($id: Int!) {
+  deleteUser(id: $id) {
+    status
+  }
+}
+`;

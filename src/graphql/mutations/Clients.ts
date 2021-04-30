@@ -24,7 +24,13 @@ mutation updateClient($id: Int!, $ClientInput: ClientInput!) {
     }
   }
 }
-
 `;
 
+export const DELETE_CLIENT = gql`
+mutation deleteClient ($id:Int) {
+  deleteClient(id:$id){
+ status
+    } 
+     }
+`;
 

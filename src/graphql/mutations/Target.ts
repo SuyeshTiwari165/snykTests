@@ -52,20 +52,7 @@ mutation updateTarget($input: TargetInput!,$id:Int!){
 export const DELETE_TARGET = gql`
 mutation deleteTarget($id:Int!){
   deleteTarget(id:$id){
-    targetField{
-         vatTargetId
-         targetName
-         host
-         partner{
-           id
-           partnerName
-   
-         }
-         client{
-           id
-           clientName
-         }
-       } 
+    status 
    }
  }
 `;

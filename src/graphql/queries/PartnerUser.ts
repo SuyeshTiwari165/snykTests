@@ -9,6 +9,7 @@ query getPartnerUserDetails($partner: Int!,$userType:String,$orderBy : String) {
         partnerId
         clientId
         userId {
+          id
           username
           dateJoined
           firstName
