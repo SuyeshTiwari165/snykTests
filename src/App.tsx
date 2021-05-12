@@ -9,7 +9,7 @@ import { Login } from "./containers/Auth/Login/Login";
 import { Registration } from "./containers/Auth/Registration/Registration";
 import { SessionContext } from "./context/session";
 import { ApolloProvider } from "@apollo/client";
-import gqlClient from "./config/apolloclient";
+import ragqlClient from "./config/apolloclient";
 import { ErrorHandler } from "./containers/ErrorHandler/ErrorHandler";
 import { AuthRoutes } from "./AuthRoutes";
 import { AdminRoutes } from "./AdminRoutes";
@@ -29,7 +29,9 @@ function App() {
     },
   };
   const accessToken = session ? session : null;
-  const client = gqlClient(null);
+  // const client = ragqlClient(accessToken);
+  const client = authenticated ? ragqlClient(accessToken) : ragqlClient(null);
+
   if (accessToken) {
     setTimeout(function () {
       logout();
