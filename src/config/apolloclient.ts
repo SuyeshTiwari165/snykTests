@@ -17,7 +17,7 @@ const ragqlClient = (auth_token: string | null) => {
     return {
       headers: {
         ...headers,
-        Authorization: auth_token ? "Bearer " + auth_token : null,
+        Authorization: auth_token ? "jwt" + " " + auth_token : null,
       },
     };
   });

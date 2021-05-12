@@ -79,6 +79,12 @@ export const Login: React.FC<LoginProps> = () => {
           variables: {
             userId: data.getUserDetails.edges[0].node.username,
           },
+          context :{
+            headers: {
+              // any other headers you require go here
+              'Authorization':  'jwt' + " " +  localStorage.getItem("session") 
+            },
+          }
         })
       }
     },
@@ -152,6 +158,12 @@ export const Login: React.FC<LoginProps> = () => {
           getAdminRole({
             variables: {
               userid: userRes.data.tokenAuth.payload.username
+            },
+            context :{
+              headers: {
+                // any other headers you require go here
+                'Authorization':  'jwt' + " " + userRes.data.tokenAuth.token 
+              },
             }
           })
           localStorage.setItem("session", userRes.data.tokenAuth.token);
