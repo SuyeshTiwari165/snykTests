@@ -1,0 +1,60 @@
+.clickButton {
+  margin-left: 10px !important;
+  display: inline-block !important;
+}
+
+.TabOptions button {
+  border-width: 1px 1px 1px 1px !important;
+  border-style: solid !important;
+  border-color: #0051a8 !important;
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+  border-bottom-right-radius: 10px !important;
+  border-bottom-left-radius: 10px !important;
+  margin-right: 4px !important;
+  color: #707070 !important;
+  font-weight: 600 !important;
+  background-color: white !important;
+  padding: 10px 10px 10px 10px !important;
+  margin-top: 12px;
+}
+
+.TabOptionsActive > span{
+  /* color:#0051a8 !important; */
+  background-color:#0051a8 !important;
+
+}
+
+.TabOptionsInactive {
+  background-color: #fcfdfd !important;
+  margin: 1px;
+}
+
+.para {
+  color: white;
+  z-index: 1;
+  margin: 1px;
+}
+
+.TextField {
+  border-color: #0051a8 !important;
+  border-radius: 12px !important;
+  border-width: 1px !important;
+  width: 100%;
+  height: auto;
+  font-size: 14px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  margin: auto !important;
+  padding: 5px !important;
+}
+
+.subscriptionGrid {
+  padding: 5px !important;
+}
+
+.loginBorder {
+  border-color: #0b0c0e !important;
+  border-radius: 12px !important;
+  border-width: 1px !important;
+  padding: 5px !important;
+}

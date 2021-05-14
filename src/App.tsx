@@ -17,6 +17,8 @@ import styles from "./App.module.css";
 import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme/";
 import logout from "./containers/Auth/Logout/Logout";
+import PgAction from "./containers/Auth/PgAction/PgAction";
+// import PartnerForm from "./containers/PG/Partner/Partner";
 
 function App() {
   const session = localStorage.getItem("session");
@@ -52,6 +54,10 @@ function App() {
       <Switch>
         <Route path="/login" exact component={Login} />
         <Route path="/registration" exact component={Registration} />
+        <Route path="/pg-action" exact component={PgAction} />
+        <Route path="/pg-action" exact component={PgAction} />
+        {/* <Route path={"/pg-partner-form/add/"} exact component={PartnerForm} />
+        <Route path={"/pg-partner-form/edit/" }exact component={PartnerForm} /> */}
         <Route path="/" render={() => <Redirect to="/login" />} />
       </Switch>
     );
