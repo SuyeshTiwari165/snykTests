@@ -1,0 +1,110 @@
+.paper {
+  margin-bottom: 20px;
+  padding: 28px 25px 17px 25px;
+  background-color: #FFF;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
+  border-radius: 20px !important;
+  border: 1px solid #0051A8;
+  position: relative;
+}
+
+.FilterWrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+  align-items: flex-end;
+}
+
+.FilterInput {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+.FilterSearchButton {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.FilterResetButton {
+  margin-bottom: 10px;
+}
+
+.FilterAddWrap {
+  float: right;
+  margin-top: 20px;
+}
+
+.FilterResetButton button {
+  background-color: transparent !important;
+  border: 0px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  box-shadow: none !important;
+}
+
+.FilterResetButton button span {
+  font-weight: 600 !important;
+}
+
+th:first-child {
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+}
+
+th:last-child {
+  border-top-right-radius: 60px;
+  border-bottom-right-radius: 60px;
+}
+
+th {
+  padding: 8px !important;
+  border-bottom: none !important;
+  line-height: 1.5 !important;
+  font-size: 12px !important;
+  color: #002f60;
+  font-weight: 600 !important;
+}
+
+td {
+  padding: 8px !important;
+  line-height: 1.846 !important;
+  color: #707070 !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+}
+
+table>thead {
+  background-color: transparent !important;
+}
+
+.SubscriptionBox>label {
+  margin-right: 25px;
+}
+
+.SubscriptionBox label>span+span {
+  color: #707070 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.TableWrap table button:hover {
+  background-color: transparent !important;
+}
+
+.TableWrap h6 {
+  color: #707070;
+  font-size: 12px;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.EditIcon {
+  height: 18px !important;
+  width: 18px !important;
+}
+.circleIcon {
+  height: 20px !important;
+  width: 20px !important;
+}

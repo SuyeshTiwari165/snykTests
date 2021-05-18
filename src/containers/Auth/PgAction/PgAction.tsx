@@ -12,7 +12,8 @@ import { DialogBox } from "../../../components/UI/DialogBox/DialogBox";
 // Pop-up box
 import FormControl from "@material-ui/core/FormControl";
 import Input from "../../../components/UI/Form/Input/Input";
-
+import { USER_LOGIN } from "../../../graphql/mutations/User";
+import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 
 
 export const PgAction: React.FC = (props: any) => {
@@ -29,59 +30,70 @@ export const PgAction: React.FC = (props: any) => {
   const [raSubscription, setRASubscription] = useState<any>(false);
   const [obSubscription, setOBSubscription] = useState<any>(false);
   const [invalidLogin, setInvalidLogin] = useState(false);
+  const [superAdmin, setSuperAdmin] = useState(false);
 
 
   // Login User to get Authenticated.
-  const onLogin = () => {
-    // login({
-    //   variables: {
-    //     identifier: "webaccessuser@webaccessglobal.com",
-    //     password: "Musu30@in",
-    //   },
-    // })
-    //   .then((userRes) => {
-    //     localStorage.setItem("user", JSON.stringify(userRes.data.login));
-    //     localStorage.setItem("session", userRes.data.login.jwt);
-    //   })
-    //   .catch((Error) => {
-    //     console.log("Error Response", Error);
-    //   });
+  const onAdminLogin = () => {
+    login({
+      variables: {
+        username: "admin@webaccessglobal.com",
+        password: "Musu30@in",
+      },
+    })
+      .then((userRes) => {
+        localStorage.setItem("session", userRes.data.tokenAuth.token);
+      })
+      .catch((Error) => {
+        setInvalidLogin(true);
+      });
   };
 
+  const [login, { data }] = useMutation(USER_LOGIN);
 
 
   const PartnerAdd=()=>{
-    // onLogin()
-    // history.push("/pg-partner-form/add")
+    onAdminLogin();
+    history.push("/pg-partner-form/add")
   };
 
   const PartnerUpdate=()=>{
-    // onLogin()
-    // history.push("/pg-partner-form/edit/")
+    onAdminLogin();
+    history.push("/pg-partner-form/edit/")
+  };
+  const PartnerDelete=()=>{
+    onAdminLogin();
+    history.push("/pg-partner-form/delete/")
   };
 
   const AddPartnerUser = () => {
-    // history.push("/pg-partner-user-form");
+    onAdminLogin();
+    history.push("/pg-partner-user-form/add");
   };
   
   const updatePartnerUser = () => {
-    // history.push("/pg-partner-user-form/edit/");
+    onAdminLogin();
+    history.push("/pg-partner-user-form/edit/");
   };
   const deletePartnerUser = () => {
-    // history.push("/pg-delete-partner-user");
+    onAdminLogin();
+    history.push("/pg-partner-user-form/delete/");
   }
 
 
   // Client
   const addClient = () => {
-    // history.push("/pg-client-form/add");
+    onAdminLogin();
+    history.push("/pg-client-form/add");
   }
   const updateClient = () => {
-    // history.push("/pg-client-form/edit");
+    onAdminLogin();
+    history.push("/pg-client-form/edit");
 
   }
   const deleteClient = () => {
-    // history.push("/pg-client-form/delete");
+    onAdminLogin();
+    history.push("/pg-client-form/delete");
   }
 
 
@@ -94,17 +106,7 @@ export const PgAction: React.FC = (props: any) => {
   }
 
 
-  const navigateTo = () => {
-    let val = {
-      // cc_subscription: ccSubscription,
-      // ra_subscription: raSubscription,
-      ob_subscription: obSubscription
-    }
-    history.push(routeConstant.CLIENT, val);
-  }
-
   const handleValueChange = (event: any) => {
-    console.log("console.log >", event.target.value);
     if (event.target.name === "email") {
       setEmail(event.target.value)
     }
@@ -141,16 +143,13 @@ export const PgAction: React.FC = (props: any) => {
               </Typography>
 
               <Button
-                // className={styles.ContinueButton}
                 onClick={PartnerAdd}
                 variant="contained"
                 color="primary"
-                // type="submit"
               >
                 Add
               </Button>
               <Button
-                // className={styles.ContinueButton}
                 onClick={PartnerUpdate}
                 variant="contained"
                 color="primary"
@@ -160,9 +159,7 @@ export const PgAction: React.FC = (props: any) => {
               <Button
                 variant="contained"
                 color="primary"
-                // className={styles.ContinueButton}
-                // onClick={onLogin}
-                // type="submit"
+                onClick={PartnerDelete}
               >
                 Delete
               </Button>
@@ -274,26 +271,6 @@ export const PgAction: React.FC = (props: any) => {
                 </div>
               ) : null}
               <Grid container className={styles.subscriptionGrid}>
-                {/* <div className={styles.TabOptions}>
-                  <Button
-                    className={ccSubscription ? styles.TabOptionsActive : styles.TabOptionsInactive}
-                    onClick={() => onSelectSubscription('cc')}
-                  >
-                    <div className={ccSubscription ? styles.para : styles.TabOptionsInactive}>
-                      {"CC360"}
-                    </div>
-                  </Button>
-                </div>
-                <div className={styles.TabOptions}>
-                  <Button
-                    className={raSubscription ? styles.TabOptionsActive : styles.TabOptionsInactive}
-                    onClick={() => onSelectSubscription("ra")}
-                  >
-                    <div className={raSubscription ? styles.para : styles.TabOptionsInactive}>
-                      {"RA360"}
-                    </div>
-                  </Button>
-                </div> */}
                 <div className={styles.TabOptions}>
                   <Button
                     className={obSubscription ? styles.TabOptionsActive : styles.TabOptionsInactive}
