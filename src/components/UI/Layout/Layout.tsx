@@ -17,7 +17,7 @@ export const Layout: React.SFC<LayoutProps> = (props) => {
     <>
       <Header />
       <div className={styles.mainContainer}>
-        <SideDrawer />
+        {/* <SideDrawer /> */}
         <main className={styles.Main}>
           <div>{props.children}</div>
         </main>
