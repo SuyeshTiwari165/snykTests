@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import styles from "./PgAction.module.css";
 import { Button } from "../../../components/UI/Form/Button/Button";
-import * as routeConstant from "../../../common/RouteConstants";
 import { Typography } from "@material-ui/core";
 import { useMutation, FetchResult, useLazyQuery } from "@apollo/client";
 import { CompanyUser } from "../../../common/Roles";
 import Grid from "@material-ui/core/Grid";
 import { useHistory } from "react-router-dom";
-import { DialogBox } from "../../../components/UI/DialogBox/DialogBox";
 
 // Pop-up box
 import FormControl from "@material-ui/core/FormControl";
 import Input from "../../../components/UI/Form/Input/Input";
 import { USER_LOGIN } from "../../../graphql/mutations/User";
+import { GET_PARTNER_USERDETAILS } from "../../../graphql/queries/PartnerUser";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
-
+import { GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
+import * as routeConstants from "../../../common/RouteConstants";
 
 export const PgAction: React.FC = (props: any) => {
   const [userRole, setUserRole] = useState();
   const history = useHistory();
-  const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
 
   // Graphql
 
@@ -99,11 +98,75 @@ export const PgAction: React.FC = (props: any) => {
 
 
   const handleClickLogin = () => {
-    // let val = {
-    //   subscription: "cc"
-    // }
-    // loginQuery(email, password);
+    loginOB()
   }
+
+  const loginOB = () => {
+    login({
+      variables: {
+        username : email,
+        password : password,
+      },
+    })
+      .then((userRes) => {
+        localStorage.setItem("session", userRes.data.tokenAuth.token);
+          getAdminRole({
+            variables: {
+              userid: userRes.data.tokenAuth.payload.username
+            },
+            context :{
+              headers: {
+                // any other headers you require go here
+                'Authorization':  'jwt' + " " + userRes.data.tokenAuth.token 
+              },
+            }
+        })
+        console.log(" localStorage",  localStorage.getItem("session"))
+      })
+      .catch((Error) => {
+        setInvalidLogin(true);
+      });
+  };
+  const [getAdminRole, { data: dataAD, loading: loadingAD }] = useLazyQuery(
+    GET_ADMIN_USER, {
+    onCompleted: (data: any) => {
+      localStorage.setItem("user", JSON.stringify(data.getUserDetails.edges[0].node));
+      if (data.getUserDetails.edges[0].node.isSuperuser == false) {
+        getPartnerId({
+          variables: {
+            userId: data.getUserDetails.edges[0].node.username,
+          },
+          context :{
+            headers: {
+              // any other headers you require go here
+              'Authorization':  'jwt' + " " +  localStorage.getItem("session") 
+            },
+          }
+        })
+      }
+    },
+    fetchPolicy: "cache-and-network",
+  }
+  );
+
+  const [getPartnerId, { data: dataPId, loading: loadingPId }] = useLazyQuery(
+    GET_PARTNER_ID_USER, {
+    onCompleted: (data: any) => {
+      localStorage.setItem("partnerData", JSON.stringify(data.getPartnerUserDetails.edges[0].node));
+      window.location.replace(routeConstants.CLIENT);
+    },
+    fetchPolicy: "cache-and-network",
+  }
+  );
+
+
+  const [getPartnerUser, { data: dataCo, loading: loadingCO }] = useLazyQuery(GET_PARTNER_USERDETAILS, {
+    fetchPolicy: "cache-and-network",
+    onCompleted (data: any) {
+    console.log("getPartnerUser", data)
+    },
+    onError (err: any) { }
+  });
 
 
   const handleValueChange = (event: any) => {

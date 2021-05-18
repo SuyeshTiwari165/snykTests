@@ -456,7 +456,7 @@ export const Client: React.FC = (props: any) => {
               </div>
             </div>
           </Grid>
-          {partner.partnerId ? (
+          {/* {partner.partnerId ? (
             <Grid item xs={12} md={12} className={styles.FilterAddWrap}>
               <div className={styles.FilterInput}>
                 <Button
@@ -469,7 +469,7 @@ export const Client: React.FC = (props: any) => {
                 </Button>
               </div>
             </Grid>
-          ) : null}
+          ) : null} */}
         </Grid>
         <Paper className={styles.paper}>
           {formState.isSuccess ? (
@@ -549,23 +549,24 @@ export const Client: React.FC = (props: any) => {
               columns={column}
               data={newData}
               actions={[
-                partner.partnerId
-                  ? {
-                      icon: () => (
-                        <img
-                          className={styles.EditIcon}
-                          src={
-                            process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                          }
-                          alt="edit icon"
-                        />
-                      ),
-                      tooltip: "Edit",
-                      onClick: (event: any, rowData: any, oldData: any) => {
-                        onRowClick(event, rowData, oldData, "Edit");
-                      }
-                    }
-                  : null,
+                // Pg merge
+                // partner.partnerId
+                //   ? {
+                //       icon: () => (
+                //         <img
+                //           className={styles.EditIcon}
+                //           src={
+                //             process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                //           }
+                //           alt="edit icon"
+                //         />
+                //       ),
+                //       tooltip: "Edit",
+                //       onClick: (event: any, rowData: any, oldData: any) => {
+                //         onRowClick(event, rowData, oldData, "Edit");
+                //       }
+                //     }
+                //   : null,
                 {
                   icon: () => <AssessmentIcon />,
                   tooltip: "Risk Assessment",
@@ -580,13 +581,14 @@ export const Client: React.FC = (props: any) => {
                 //     onRowClick(event, rowData, oldData, 'View');
                 //   },
                 // },
-                {
-                  icon: () => <DeleteIcon />,
-                  tooltip: "Delete",
-                  onClick: (event: any, rowData: any, oldData: any) => {
-                    onRowClick(event, rowData, oldData, 'Delete');
-                  },
-                },
+                // Pg merge
+                // {
+                //   icon: () => <DeleteIcon />,
+                //   tooltip: "Delete",
+                //   onClick: (event: any, rowData: any, oldData: any) => {
+                //     onRowClick(event, rowData, oldData, 'Delete');
+                //   },
+                // },
               ]}
               options={{
                 headerStyle: {

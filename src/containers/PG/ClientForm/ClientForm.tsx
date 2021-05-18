@@ -47,9 +47,9 @@ export const ClientForm: React.FC = (props: any) => {
   const [ContactId, setContactId] = useState("");
   const [pgClientId, setPgClientId] = useState("");
   const [pgPartnerId, setPgPartnerId] = useState("");
-  const [emailUpdates, setEmailUpdates] = React.useState({
-    checkedB: false,
-  });
+  // const [emailUpdates, setEmailUpdates] = React.useState({
+  //   checkedB: false,
+  // });
   const [createClient] = useMutation(PG_ADD_CLIENT);
   const [updateClient] = useMutation(PG_UPDATE_CLIENT);
 
@@ -122,7 +122,7 @@ export const ClientForm: React.FC = (props: any) => {
             emailId: email,
             mobileNumber: phoneNumber,
             // address: addre,
-            mailSend: !emailUpdates.checkedB,
+            mailSend: false,
             pg360ClientId:pgClientId,
             subscription: OBsubscription ? "Yes" : "No"
           }
@@ -174,7 +174,7 @@ export const ClientForm: React.FC = (props: any) => {
             emailId: email,
             mobileNumber: phoneNumber,
             // address: addre,
-            mailSend: !emailUpdates.checkedB,
+            mailSend: false,
             subscription: OBsubscription ? "Yes" : "No"
           }
         },
@@ -229,9 +229,9 @@ export const ClientForm: React.FC = (props: any) => {
     setOBsubscription(false);
     // setCreateFlag(false);
   };
-  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
-  };
+  // const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
+  // };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -375,7 +375,7 @@ export const ClientForm: React.FC = (props: any) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
           <FormControlLabel
             className={styles.CheckboxLabel}
         control={
@@ -389,7 +389,7 @@ export const ClientForm: React.FC = (props: any) => {
         }
         label="Do Not Email"
       />
-      </Grid>
+      </Grid> */}
             <Grid item xs={12} md={6}>
             <Button
               onClick={handleSubmit}
