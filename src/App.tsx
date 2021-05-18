@@ -18,7 +18,12 @@ import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme/";
 import logout from "./containers/Auth/Logout/Logout";
 import PgAction from "./containers/Auth/PgAction/PgAction";
-// import PartnerForm from "./containers/PG/Partner/Partner";
+import PartnerForm from "./containers/PG/Partner/Partner";
+import DeletePartner from "./containers/PG/DeletePartner/DeletePartner";
+import PartnerUserForm from "./containers/PG/PartnerUserForm/PartnerUserForm";
+import DeletePartnerUser from "./containers/PG/DeletePartnerUser/DeletePartnerUser";
+import ClientForm from "./containers/PG/ClientForm/ClientForm";
+import DeleteClient from "./containers/PG/DeleteClient/DeleteClient";
 
 function App() {
   const session = localStorage.getItem("session");
@@ -56,8 +61,17 @@ function App() {
         <Route path="/registration" exact component={Registration} />
         <Route path="/pg-action" exact component={PgAction} />
         <Route path="/pg-action" exact component={PgAction} />
-        {/* <Route path={"/pg-partner-form/add/"} exact component={PartnerForm} />
-        <Route path={"/pg-partner-form/edit/" }exact component={PartnerForm} /> */}
+        <Route path={"/pg-partner-form/add/"} exact component={PartnerForm} />
+        <Route path={"/pg-partner-form/edit/" }exact component={PartnerForm} />
+        <Route path={"/pg-partner-form/delete/" }exact component={DeletePartner} />
+        <Route path={"/pg-partner-user-form/add/" }exact component={PartnerUserForm} />
+        <Route path={"/pg-partner-user-form/edit/" }exact component={PartnerUserForm} />
+        <Route path={"/pg-partner-user-form/delete/" }exact component={DeletePartnerUser} />
+        <Route path={"/pg-client-form/add" }exact component={ClientForm} />
+        <Route path={"/pg-client-form/edit" }exact component={ClientForm} />
+        <Route path={"/pg-client-form/delete" }exact component={DeleteClient} />
+
+
         <Route path="/" render={() => <Redirect to="/login" />} />
       </Switch>
     );

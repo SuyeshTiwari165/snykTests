@@ -75,3 +75,38 @@ export const CREATE_INDIVIDUAL = gql`
       }
     }
 `;
+export const PG_CREATE_USER = gql`
+mutation createUser($input:UserInput!)
+{
+  createUser(input:$input)
+{
+  userField{
+    id
+    firstName
+    lastName
+    username   
+    email
+  }}}
+`;
+
+export const PG_UPDATE_USER = gql`
+mutation updateUser($pg360UserId:Int,$input:UserInput!){
+  updateUser(pg360UserId:$pg360UserId,input:$input){
+    userField{
+      username
+      firstName
+      lastName
+      email
+      password
+      }
+    }
+  }
+`;
+
+export const PG_DELETE_USER = gql`
+mutation deleteUser($pg360UserId:Int){
+  deleteUser(pg360UserId:$pg360UserId){
+    status
+  }
+}
+`;
