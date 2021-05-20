@@ -1,14 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const GET_CLIENTS = gql`
-query getCients($partnerId: Int!
+query getCients($partnerId_PartnerName:String
   $orderBy: String
   ){
-  getClient (orderBy: [$orderBy],partnerId:$partnerId){
+  getClient (orderBy: [$orderBy],partner_PartnerName:$partnerId_PartnerName){
     edges{
       node{
         emailId
-        partnerId
         mobileNumber
         createdDate
         address

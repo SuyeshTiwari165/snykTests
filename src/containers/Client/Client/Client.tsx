@@ -112,11 +112,12 @@ export const Client: React.FC = (props: any) => {
   }
 
   useEffect(() => {
+    console.log("props",partner)
     if (partner !== "{}") {
       getClients({
         variables: {
           orderBy : "client_name",
-          partnerId: partner.partnerId
+          partnerId_PartnerName: partner.partnerId.partnerName
         }
       });
     }
@@ -154,7 +155,7 @@ export const Client: React.FC = (props: any) => {
       getClients({
         variables: {
           orderBy : "client_name",
-          partnerId: partner.partnerId
+          partnerId_PartnerName: partner.partnerId.partnerName
         }
       });
     }

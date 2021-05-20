@@ -1,13 +1,21 @@
 import { gql } from '@apollo/client';
-
+// From Admin
 export const GET_PARTNER_USER = gql`
-query getPartnerUserDetails($partner: Int!,$userType:String,$orderBy : String) {
-  getPartnerUserDetails(partnerId: $partner,userType:$userType, orderBy: [$orderBy]) {
+query getPartnerUserDetails($partner: String!, $userType: String, $orderBy: String) {
+  getPartnerUserDetails(partnerId_PartnerName: $partner, userType: $userType, orderBy: [$orderBy]) {
     edges {
       node {
         id
-        partnerId
-        clientId
+        partnerId {
+          id
+          partnerName
+          subscription
+          pg360PartnerId
+        }
+        clientId {
+          id
+          clientName
+        }
         userId {
           id
           username
@@ -23,16 +31,19 @@ query getPartnerUserDetails($partner: Int!,$userType:String,$orderBy : String) {
   }
 }
 
-
 `;
+// To Display all partner users Count
 export const GET_PARTNER_USERS= gql`
 query getPartnerUserDetails {
-  getPartnerUserDetails {
+  getPartnerUserDetails(userType: "Partner") {
     edges {
       node {
         id
-        partnerId
-        clientId
+        partnerId {
+          id
+          partnerName
+          subscription
+        }
         userId {
           username
           dateJoined
@@ -46,10 +57,7 @@ query getPartnerUserDetails {
     }
   }
 }
-
-
 `;
-
 
 export const GET_PARTNER_USERDETAILS = gql`
 query getUserDetails($userid: String!) {
@@ -75,8 +83,11 @@ query getPartnerUserDetails($userId: String!){
     edges{
       node{
         id
-        partnerId
-        clientId
+        partnerId{
+          id
+         partnerName
+        subscription
+        }
         userId{
           email
           id

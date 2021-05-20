@@ -62,7 +62,7 @@ export const Dashboard: React.FC = (props: any) => {
       },
       fetchPolicy: "cache-and-network",
       onError:()=>{
-        logout()
+        // logout()
       }
     }
   );
@@ -114,7 +114,7 @@ export const Dashboard: React.FC = (props: any) => {
     return (
       <div className="error">
         Error!
-        {logout()}
+        {/* {logout()} */}
       </div>
     )
   }
