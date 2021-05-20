@@ -50,7 +50,7 @@ export const Dashboard: React.FC = () => {
       getClients({
         variables: {
           orderBy : "-created_date",
-          partnerId: partner.partnerId
+          partnerId_PartnerName: partner.partnerId.partnerName
         },
       });
   }, []);
