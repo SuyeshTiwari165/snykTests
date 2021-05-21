@@ -382,8 +382,6 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handlePublishchange = (event: any, rowData: any) => {
-    // console.log("event",event);
-    // console.log("rowData",rowData)
     // if (event.target.checked !== undefined) {
       setBackdrop(true)
       publishReport({
@@ -391,7 +389,7 @@ export const RaReportListing: React.FC = (props: any) => {
           input: {
             client: parseInt(props.location.state.clientInfo.clientId),
             targetName: rowData.target,
-            partner: props.location.state.clientInfo.partnerName,
+            // partner: props.location.state.clientInfo.partnerId,
             flagStatus: true
           }
         }

@@ -273,11 +273,11 @@ export const ReportStatus: React.FC = (props: any) => {
     setStartSelectedDate(new Date())
     setEndDate(new Date());
     setEndSelectedDate(new Date())
-    if(newValue != null && newValue.partner_id ) {
+    if(newValue != null && newValue.name ) {
     getClients({
       variables: {
         orderBy : "client_name",
-        partnerId: newValue.partner_id,
+        partnerId_PartnerName: newValue.name,
       },
     });
   }

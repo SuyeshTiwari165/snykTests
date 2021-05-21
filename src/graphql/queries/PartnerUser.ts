@@ -12,10 +12,6 @@ query getPartnerUserDetails($partner: String!, $userType: String, $orderBy: Stri
           subscription
           pg360PartnerId
         }
-        clientId {
-          id
-          clientName
-        }
         userId {
           id
           username
