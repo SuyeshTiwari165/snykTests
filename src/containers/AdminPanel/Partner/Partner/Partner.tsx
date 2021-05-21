@@ -119,7 +119,7 @@ export const Partner: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
       let obj: any = {};
-      obj["partner_id"] = element.node.id;
+      obj["partner_id"] = element.node.partnerName;
       obj["name"] = element.node.partnerName;
       obj["email"] = element.node.emailId;
       obj["phone"] = element.node.mobileNumber;

@@ -112,8 +112,8 @@ export const Client: React.FC = (props: any) => {
   }
 
   useEffect(() => {
-    console.log("props",partner)
-    if (partner !== "{}") {
+    // On Login from tool
+    if (partner.hasOwnProperty("partnerId")) {
       getClients({
         variables: {
           orderBy : "client_name",
@@ -129,7 +129,7 @@ export const Client: React.FC = (props: any) => {
       getClients({
         variables: {
           orderBy : "client_name",
-          partnerId: props.location.state.partner_id
+          partnerId_PartnerName: props.location.state.partner_id
         }
       });
     }
@@ -137,7 +137,7 @@ export const Client: React.FC = (props: any) => {
       getClients({
         variables: {
           orderBy : "client_name",
-          partnerId: props.location.state.clientInfo.partnerId
+          partnerId_PartnerName: props.location.state.clientInfo.partnerId
         }
       });
     }
@@ -150,43 +150,43 @@ export const Client: React.FC = (props: any) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (partner !== "{}") {
-      getClients({
-        variables: {
-          orderBy : "client_name",
-          partnerId_PartnerName: partner.partnerId.partnerName
-        }
-      });
-    }
-    if (
-      props.location.state !== null &&
-      props.location.state !== undefined &&
-      props.location.state.partner_id
-    ) {
-      getClients({
-        variables: {
-          orderBy : "client_name",
-          partnerId: props.location.state.partner_id
-        }
-      });
-    }
-    if (props.location.state && props.location.state.clientInfo) {
-      getClients({
-        variables: {
-          orderBy : "client_name",
-          partnerId: props.location.state.clientInfo.partnerId
-        }
-      });
-    }
-    if (
-      props.location.state &&
-      props.location.state !== null &&
-      props.location.state.formState
-    ) {
-      setFormState(props.location.state.formState);
-    }
-  }, [clientDeleted]);
+  // useEffect(() => {
+  //   if (partner !== "{}") {
+  //     getClients({
+  //       variables: {
+  //         orderBy : "client_name",
+  //         partnerId_PartnerName: partner.partnerId
+  //       }
+  //     });
+  //   }
+  //   if (
+  //     props.location.state !== null &&
+  //     props.location.state !== undefined &&
+  //     props.location.state.partner_id
+  //   ) {
+  //     getClients({
+  //       variables: {
+  //         orderBy : "client_name",
+  //         partnerId: props.location.state.partner_id
+  //       }
+  //     });
+  //   }
+  //   if (props.location.state && props.location.state.clientInfo) {
+  //     getClients({
+  //       variables: {
+  //         orderBy : "client_name",
+  //         partnerId: props.location.state.clientInfo.partnerId
+  //       }
+  //     });
+  //   }
+  //   if (
+  //     props.location.state &&
+  //     props.location.state !== null &&
+  //     props.location.state.formState
+  //   ) {
+  //     setFormState(props.location.state.formState);
+  //   }
+  // }, [clientDeleted]);
 
   useEffect(() => {
     if (
@@ -236,7 +236,7 @@ export const Client: React.FC = (props: any) => {
         ? "-"
         : element.node.mobileNumber;
       obj["clientId"] = element.node.id;
-      obj["partnerId"] = element.node.partnerId;
+      obj["partnerId"] = element.node.partner.partnerName;
       obj["createdOn"] = moment(element.node.createdDate).format(
         "MM/DD/YYYY hh:mm a"
       );
@@ -410,8 +410,9 @@ export const Client: React.FC = (props: any) => {
   };
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
-    let data: any = { clientInfo: rowData };
+    let data: any = { clientInfo: rowData, partnerId : partner };
     if (param === "RA") {
+      console.log("data",data);
       // setShowBackdrop(true)
       history.push(routeConstant.RA_REPORT_LISTING, data);
     }
