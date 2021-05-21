@@ -69,7 +69,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const[showBackdrop, setShowbackdrop]= useState(true);
   // const name = JSON.parse(localStorage.getItem("name")|| "{}")
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
-  const partnerId = partner.partnerId;
+  const partnerId = partner.partnerId.id;
   const [targetName, setTargetName] = useState<String>("");
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const [backdrop, setBackdrop] = useState(false);

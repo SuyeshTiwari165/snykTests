@@ -81,8 +81,8 @@ export const TaskDetails: React.FC = (props: any) => {
   //static values for partner and client are given.
   const tempScheduleDate = new Date().toISOString();
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const partnerId = partner.partnerId;
-  const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
+  const partnerId = partner.partnerId.id;
+  const clientId = clientInfo ? clientInfo.name : undefined;
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const [backdrop, setBackdrop] = useState(false);

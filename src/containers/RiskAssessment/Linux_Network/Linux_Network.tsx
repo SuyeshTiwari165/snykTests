@@ -91,7 +91,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const partnerId = partner.partnerId;
+  const partnerId = partner.partnerId.id;
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);

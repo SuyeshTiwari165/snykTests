@@ -391,7 +391,7 @@ export const RaReportListing: React.FC = (props: any) => {
           input: {
             client: parseInt(props.location.state.clientInfo.clientId),
             targetName: rowData.target,
-            partner: props.location.state.clientInfo.partnerId,
+            partner: props.location.state.clientInfo.partnerName,
             flagStatus: true
           }
         }

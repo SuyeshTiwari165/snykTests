@@ -439,7 +439,7 @@ export const Target: React.FC = (props: any) => {
       if (partnerId && clientId && name && ipRange && vpnUserName && props.location.state && props.location.state.reRun == true) {
         if (linuxUsername != null || winIpAddress != null) {
           let input = {
-            partner: partnerId,
+            partner: partnerId.id,
             client: clientId,
             targetName: name,
             host:
@@ -534,7 +534,7 @@ export const Target: React.FC = (props: any) => {
         if (partnerId && clientId && name && ipRange && vpnUserName) {
           setBackdrop(true);
           let input = {
-            partner: partnerId,
+            partner: partnerId.id,
             client: clientId,
             targetName: name,
             host: ipRange,
