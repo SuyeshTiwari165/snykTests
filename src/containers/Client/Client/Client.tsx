@@ -95,7 +95,12 @@ export const Client: React.FC = (props: any) => {
     {
       fetchPolicy: "cache-and-network",
       onCompleted: (data : any) => {
+        if(userRole === "CompanyUser") {
         createTableDataObject(data.getClient.edges);
+      }
+      if(userRole === "SuperUser") {
+        createTableDataObjectAdmin(data.getClient.edges);
+      }
       },
       onError: error => {
         // logout()
@@ -225,10 +230,11 @@ export const Client: React.FC = (props: any) => {
       return dateAndTime;
     }
   };
-
-  const createTableDataObject = (data: any) => {
+  
+  const createTableDataObjectAdmin = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
+      console.log("element.node",element.node)
       let obj: any = {};
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
       obj["name"] = element.node.clientName;
@@ -240,8 +246,33 @@ export const Client: React.FC = (props: any) => {
       obj["createdOn"] = moment(element.node.createdDate).format(
         "MM/DD/YYYY hh:mm a"
       );
+      obj["subscription"] = element.node.subscription
       arr.push(obj);
     });
+  
+    setNewData(arr);
+  };
+  const createTableDataObject = (data: any) => {
+    let arr: any = [];
+    data.map((element: any) => {
+      console.log("element.node",element.node)
+      if(element.node.subscription === "Yes") {
+      let obj: any = {};
+      obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
+      obj["name"] = element.node.clientName;
+      obj["phone"] = !element.node.mobileNumber
+        ? "-"
+        : element.node.mobileNumber;
+      obj["clientId"] = element.node.id;
+      obj["partnerId"] = element.node.partner.partnerName;
+      obj["createdOn"] = moment(element.node.createdDate).format(
+        "MM/DD/YYYY hh:mm a"
+      );
+      obj["subscription"] = element.node.subscription
+      arr.push(obj);
+      }
+    });
+  
     setNewData(arr);
   };
 
@@ -411,6 +442,7 @@ export const Client: React.FC = (props: any) => {
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData, partnerId : partner };
+    console.log("rowData",rowData)
     if (param === "RA") {
       console.log("data",data);
       // setShowBackdrop(true)
@@ -575,7 +607,7 @@ export const Client: React.FC = (props: any) => {
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
                   }
-                },
+                }
                 // {
                 //   icon: () => <VisibilityIcon />,
                 //   tooltip: "View",
