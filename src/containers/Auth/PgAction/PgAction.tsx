@@ -15,6 +15,7 @@ import { GET_PARTNER_USERDETAILS } from "../../../graphql/queries/PartnerUser";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 import { GET_PARTNER_ID_USER } from "../../../graphql/queries/PartnerUser";
 import * as routeConstants from "../../../common/RouteConstants";
+import Paper from "@material-ui/core/Paper";
 
 export const PgAction: React.FC = (props: any) => {
   const [userRole, setUserRole] = useState();
@@ -29,6 +30,8 @@ export const PgAction: React.FC = (props: any) => {
   const [raSubscription, setRASubscription] = useState<any>(false);
   const [obSubscription, setOBSubscription] = useState<any>(false);
   const [invalidLogin, setInvalidLogin] = useState(false);
+  const [invalidSubs, setInvalidSubs] = useState(false);
+
   const [superAdmin, setSuperAdmin] = useState(false);
 
 
@@ -152,8 +155,14 @@ export const PgAction: React.FC = (props: any) => {
   const [getPartnerId, { data: dataPId, loading: loadingPId }] = useLazyQuery(
     GET_PARTNER_ID_USER, {
     onCompleted: (data: any) => {
+      if(data.getPartnerUserDetails.edges[0].node.partnerId.subscription === "Yes") {
       localStorage.setItem("partnerData", JSON.stringify(data.getPartnerUserDetails.edges[0].node));
       window.location.replace(routeConstants.CLIENT);
+      } else {
+        setInvalidSubs(true);
+        console.log("NO subscription");
+        localStorage.removeItem("session");
+      }
     },
     fetchPolicy: "cache-and-network",
   }
@@ -179,16 +188,7 @@ export const PgAction: React.FC = (props: any) => {
   }
 
   const onSelectSubscription = (val: any) => {
-    if (val === "cc") {
-      setCCSubscription(true)
-    } else {
-      setCCSubscription(false)
-    }
-    if (val === "ra") {
-      setRASubscription(true)
-    } else {
-      setRASubscription(false)
-    }
+    setInvalidSubs(false);
     if (val === "ob") {
       setOBSubscription(true)
     } else {
@@ -198,6 +198,8 @@ export const PgAction: React.FC = (props: any) => {
 
   return (
       <React.Fragment>
+              <Paper>
+
         <Grid>
           <Grid container>
             <Grid item xs={12} md={7} lg={5}>
@@ -328,11 +330,22 @@ export const PgAction: React.FC = (props: any) => {
                   </Input>
                 </FormControl>
               </Grid>
-              {invalidLogin ? (
-                <div className={styles.Errors}>
-                  Incorrect username or password.
-                </div>
-              ) : null}
+              {invalidSubs ? (
+              <span>
+                {obSubscription ?
+                  <div className={styles.Errors}>
+                    You do not have subscription of OB360.
+                  </div>
+                : null }
+              </span>
+            ) : null}
+            {invalidLogin ? (
+              <span>
+                  <div className={styles.Errors}>
+                     Incorrect username or password..
+                  </div>
+              </span>
+            ) : null}
               <Grid container className={styles.subscriptionGrid}>
                 <div className={styles.TabOptions}>
                   <Button
@@ -357,6 +370,8 @@ export const PgAction: React.FC = (props: any) => {
             </Grid>
           </Grid>
         </Grid>
+        </Paper>
+
       </React.Fragment>
   );
 };

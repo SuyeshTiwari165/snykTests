@@ -14,6 +14,7 @@ query getCients($partnerId_PartnerName:String
         id
         clientName
         mailSend
+        subscription
         partner {
           id
           partnerName
