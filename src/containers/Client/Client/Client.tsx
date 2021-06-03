@@ -42,6 +42,8 @@ import {
 import * as validations from "../../../common/validateRegex";
 import moment from "moment";
 import {DELETE_CLIENT } from "../../../graphql/mutations/Clients";
+import Cookies from 'js-cookie';
+import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 
 
 export const Client: React.FC = (props: any) => {
@@ -54,8 +56,10 @@ export const Client: React.FC = (props: any) => {
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
-  const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
+  const partner = Cookies.get('partnerData') || ""
+  const user = Cookies.getJSON('user')
+  // const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
   if (user) {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
@@ -110,22 +114,32 @@ export const Client: React.FC = (props: any) => {
   );
 
   let column: any;
-  if (partner.partnerId) {
+  // if (partner.partnerId) {
     column = CompanyUsercolumns;
-  } else {
-    column = SuperUsercolumns;
-  }
+  // } else {
+    // column = SuperUsercolumns;
+  // }
+
+  useEffect(() => {
+    let partnerdata =  JSON.parse(partner)
+    let userdata = JSON.parse(user)
+    localStorage.setItem("user", JSON.stringify(userdata.data.getUserDetails.edges[0].node));
+    localStorage.setItem("partnerData", JSON.stringify(partnerdata.data.getPartnerUserDetails.edges[0].node));
+  }, [partner]);
 
   useEffect(() => {
     // On Login from tool
-    if (partner.hasOwnProperty("partnerId")) {
+    let partnerdata =  JSON.parse(partner)
+    if(partnerdata.data != null) {
+    if (partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty("partnerId")) {
       getClients({
         variables: {
           orderBy : "client_name",
-          partnerId_PartnerName: partner.partnerId.partnerName
+          partnerId_PartnerName:partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.partnerName
         }
       });
     }
+  }
     if (
       props.location.state !== null &&
       props.location.state !== undefined &&
@@ -234,7 +248,6 @@ export const Client: React.FC = (props: any) => {
   const createTableDataObjectAdmin = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
-      console.log("element.node",element.node)
       let obj: any = {};
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
       obj["name"] = element.node.clientName;
@@ -255,7 +268,6 @@ export const Client: React.FC = (props: any) => {
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
-      console.log("element.node",element.node)
       if(element.node.subscription === "Yes") {
       let obj: any = {};
       obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
@@ -270,7 +282,12 @@ export const Client: React.FC = (props: any) => {
       );
       obj["subscription"] = element.node.subscription
       arr.push(obj);
-      }
+      } 
+      // if(element.node.subscription === "No") {
+      //   let obj: any = {};
+      //   obj["name"] = "You don't have any client subscribed for CyberCompliance360"
+      //   arr.push(obj);
+      // }
     });
   
     setNewData(arr);

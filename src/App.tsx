@@ -24,9 +24,11 @@ import PartnerUserForm from "./containers/PG/PartnerUserForm/PartnerUserForm";
 import DeletePartnerUser from "./containers/PG/DeletePartnerUser/DeletePartnerUser";
 import ClientForm from "./containers/PG/ClientForm/ClientForm";
 import DeleteClient from "./containers/PG/DeleteClient/DeleteClient";
+import Cookies from 'js-cookie'
 
 function App() {
-  const session = localStorage.getItem("session");
+  // const session = localStorage.getItem("session");
+  const session = Cookies.getJSON('session');
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [authenticated, setAuthenticated] = useState(session ? true : false);
   const values = {

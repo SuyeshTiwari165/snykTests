@@ -546,7 +546,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 className={styles.ActionButton}
               >
                 <AddCircleIcon className={styles.EditIcon} />
-                &nbsp; New Risk Assessment
+                &nbsp; Vulnerability Test
               </Button>
             ) : null}
           </Grid>
