@@ -20,9 +20,9 @@ export const Logout: any = () => {
   localStorage.removeItem("winPassword");
   localStorage.removeItem("WinTargetName");
   localStorage.removeItem("LinuxTargetName");
-  Cookies.remove('user', { path: '', domain: '.wastaging.com' });
-  Cookies.remove('session', { path: '', domain: '.wastaging.com' });
-  Cookies.remove('partnerData', { path: '', domain: '.wastaging.com' });
+  Cookies.remove('user', { path: '', domain: process.env.REACT_APP_DOMAIN });
+  Cookies.remove('session', { path: '', domain: process.env.REACT_APP_DOMAIN });
+  Cookies.remove('partnerData', { path: '', domain: process.env.REACT_APP_DOMAIN });
   return window.location.replace("/login");
 };
 export default Logout;
