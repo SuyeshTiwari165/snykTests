@@ -5,6 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
+import * as Sentry from "@sentry/react";
+
+Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 ReactDOM.render(
   <React.StrictMode>
