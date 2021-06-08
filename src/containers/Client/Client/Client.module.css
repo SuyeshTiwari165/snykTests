@@ -133,3 +133,12 @@ td button:hover {
 tfoot td > div {
   flex-wrap: wrap;
 }
+.OBLogoImg {
+  display: block;
+  max-width: 83px;
+  max-height: 83px;
+  margin-bottom: 7px;
+}
+.OBLogoImg img{
+  width: 100%;
+}

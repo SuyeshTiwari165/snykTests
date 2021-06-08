@@ -479,6 +479,14 @@ export const Client: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
+      <Grid className={styles.OBLogoImg}>
+        <img
+          src={
+            process.env.PUBLIC_URL + "/icons/svg-icon/risk-assessments.svg"
+          }
+          alt="user icon"
+        />
+    </Grid>
       <Typography component="h5" variant="h1">Client</Typography>
       <Grid>
         <Grid container className={styles.backToListButtonPanel}>
