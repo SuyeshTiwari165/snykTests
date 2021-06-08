@@ -57,8 +57,8 @@ export const Client: React.FC = (props: any) => {
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const partner = Cookies.get('partnerData') || ""
-  const user = Cookies.getJSON('user')
+  const partner = Cookies.get('ob_partnerData') || ""
+  const user = Cookies.getJSON('ob_user')
   // const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
   if (user) {

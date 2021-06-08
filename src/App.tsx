@@ -28,7 +28,7 @@ import Cookies from 'js-cookie'
 
 function App() {
   // const session = localStorage.getItem("session");
-  const session = Cookies.getJSON('session');
+  const session = Cookies.getJSON('ob_session');
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [authenticated, setAuthenticated] = useState(session ? true : false);
   const values = {
