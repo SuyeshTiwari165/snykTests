@@ -514,7 +514,8 @@ export const RaReportListing: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Report List
+        {/* Report List */}
+        Vulnerability List
       </Typography>
       <Grid>
         <Grid container className={styles.backToListButtonPanel}>
