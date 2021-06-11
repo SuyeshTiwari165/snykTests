@@ -564,8 +564,15 @@ export const Linux_Network: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseLine />
-      <Typography component="h5" variant="h1">
+      {/* <Typography component="h5" variant="h1">
         Linux Network :
+      </Typography> */}
+        <Typography component="h5" variant="h1">
+      Vulnerability Test for {" "}
+        {props.location.state !== undefined &&
+        props.location.state.clientInfo !== undefined
+          ? props.location.state.clientInfo.name
+          : null}
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>

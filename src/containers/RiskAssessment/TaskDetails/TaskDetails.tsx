@@ -333,8 +333,15 @@ export const TaskDetails: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Typography component="h5" variant="h1">
+      {/* <Typography component="h5" variant="h1">
         Task
+      </Typography> */}
+    <Typography component="h5" variant="h1">
+      Vulnerability Test for {" "}
+        {props.location.state !== undefined &&
+        props.location.state.clientInfo !== undefined
+          ? props.location.state.clientInfo.name
+          : null}
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>

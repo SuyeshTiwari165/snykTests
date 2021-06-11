@@ -541,8 +541,12 @@ export const Windows_Network: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseLine />
       <Typography component="h5" variant="h1">
-        Windows Network :
-        </Typography>
+      Vulnerability Test for {" "}
+        {props.location.state !== undefined &&
+        props.location.state.clientInfo !== undefined
+          ? props.location.state.clientInfo.name
+          : null}
+      </Typography>
       <RaStepper />
       <Grid container spacing={3}>
         <Grid item xs={12}>

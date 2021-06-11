@@ -143,10 +143,10 @@ export const ReportStatus: React.FC = (props: any) => {
       <Typography component="h5" variant="h1">
         Task Status
       </Typography>
-      {!targetData.publish ?
+      {/* {!targetData.publish ?
         <Typography component="h5" variant="h3">
           Report Not Published !
-      </Typography> : null}
+      </Typography> : null} */}
       <Grid>
         <Grid className={styles.FilterWrap}>
           <div className={styles.backToListButton}>

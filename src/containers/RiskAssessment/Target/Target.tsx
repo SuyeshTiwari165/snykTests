@@ -1414,7 +1414,7 @@ export const Target: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Client :{" "}
+      Vulnerability Test for {" "}
         {props.location.state !== undefined &&
         props.location.state.clientInfo !== undefined
           ? props.location.state.clientInfo.name
