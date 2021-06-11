@@ -628,7 +628,7 @@ export const Client: React.FC = (props: any) => {
                 //   : null,
                 {
                   icon: () => <AssessmentIcon />,
-                  tooltip: "Risk Assessment",
+                  tooltip: "Vulnerability Test",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
                   }
