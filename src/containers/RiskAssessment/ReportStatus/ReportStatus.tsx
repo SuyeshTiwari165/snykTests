@@ -45,7 +45,7 @@ export const ReportStatus: React.FC = (props: any) => {
     data: dataReportListing,
     error: errorReportListing,
     loading: loadingReportListing,
-    // refetch: refetchReportListing,
+    refetch: refetchReportListing,
   } = useQuery(GET_REPORT_LISTING, {
     variables: {
       clientname: staticClientName,
@@ -76,6 +76,10 @@ export const ReportStatus: React.FC = (props: any) => {
     return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
   }
 
+  useEffect(() => {
+    refetchReportListing();
+  }, []);
+  
   useEffect(() => {
     if (dataReportListing) {
       let temp: any = {};
@@ -137,7 +141,7 @@ export const ReportStatus: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        Report Status
+        Task Status
       </Typography>
       {!targetData.publish ?
         <Typography component="h5" variant="h3">
@@ -167,6 +171,9 @@ export const ReportStatus: React.FC = (props: any) => {
               sorting: true,
               search: false,
               filter: true,
+              draggable: false,
+              pageSize: 25,
+              pageSizeOptions: [25, 50, 75, 100], // rows selection options     
             }}
             onOrderChange={(orderedColumnId: any, orderDirection: any) => {
               orderFunc(orderedColumnId, orderDirection);
