@@ -22,6 +22,7 @@ import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import Input from "../../../components/UI/Form/Input/Input";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import * as routeConstants from "../../../common/RouteConstants";
+import Cookies from 'js-cookie';
 
 export interface LoginProps { }
 
@@ -72,6 +73,8 @@ export const Login: React.FC<LoginProps> = () => {
     GET_ADMIN_USER, {
     onCompleted: (data: any) => {
       localStorage.setItem("user", JSON.stringify(data.getUserDetails.edges[0].node));
+      Cookies.set('ob_user', dataAD);
+
       if (data.getUserDetails.edges[0].node.isSuperuser == true) {
         window.location.replace(routeConstants.ADMIN_DASHBOARD);
       } else {
@@ -167,6 +170,7 @@ export const Login: React.FC<LoginProps> = () => {
             }
           })
           localStorage.setItem("session", userRes.data.tokenAuth.token);
+          Cookies.set('ob_session', userRes.data.tokenAuth.token);
         })
         .catch((Error) => {
           setInvalidLogin(true);
