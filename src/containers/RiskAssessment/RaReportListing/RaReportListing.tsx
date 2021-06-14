@@ -114,6 +114,18 @@ export const RaReportListing: React.FC = (props: any) => {
       },
     });
   }, []);
+
+  const handleAlertClose = () => {
+    setFormState(formState => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: false,
+      errMessage: ""
+    }));
+  };
+
   useEffect(() => {
     if (
       formState.isDelete === true ||
@@ -281,16 +293,7 @@ export const RaReportListing: React.FC = (props: any) => {
     });
   };
 
-  const handleAlertClose = () => {
-    setFormState(formState => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: false,
-      errMessage: ""
-    }));
-  };
+
 
   const handleDownload = (rowData: any) => {
     setBackdrop(true)
@@ -651,7 +654,7 @@ export const RaReportListing: React.FC = (props: any) => {
                       ? {
                           // disabled: rowData.status !== "Done",
                           icon: () => <SyncIcon />,
-                          tooltip: "Re-run",
+                          tooltip: "Make a copy",
                           onClick: (event: any, rowData: any) => {
                             handleClickOpen(rowData);
                           },

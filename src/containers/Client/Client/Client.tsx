@@ -58,20 +58,24 @@ export const Client: React.FC = (props: any) => {
   const [rowData, setRowData] = useState(false);
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partner = Cookies.get('ob_partnerData') || ""
-  const user = Cookies.getJSON('ob_user')
+  const user = Cookies.getJSON('ob_user') || "" 
   // const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
   if (user) {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
+  if(user.getUserDetails) {
+    userRole = user.getUserDetails.edges[0].node.isSuperuser == true ? "SuperUser" : "CompanyUser"
+  }
+  console.log("userrole",userRole)
   const [clientDeleted, setClientDeleted] = useState(false);
 
   //table
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
-    { title: "Phone", field: "phone" },
-    { title: "Created on", field: "createdOn" }
+    // { title: "Phone", field: "phone" },
+    // { title: "Created on", field: "createdOn" }
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -114,21 +118,28 @@ export const Client: React.FC = (props: any) => {
   );
 
   let column: any;
-  // if (partner.partnerId) {
+  if(userRole === "CompanyUser") {
     column = CompanyUsercolumns;
-  // } else {
-    // column = SuperUsercolumns;
-  // }
+  } else {
+    column = SuperUsercolumns;
+  }
 
   useEffect(() => {
+    if( props.location.state == null ||
+      props.location.state == undefined && partner !== null && user !== null) {
     let partnerdata =  JSON.parse(partner)
     let userdata = JSON.parse(user)
     localStorage.setItem("user", JSON.stringify(userdata.data.getUserDetails.edges[0].node));
     localStorage.setItem("partnerData", JSON.stringify(partnerdata.data.getPartnerUserDetails.edges[0].node));
+      }
   }, [partner]);
+  
 
   useEffect(() => {
     // On Login from tool
+
+    if( props.location.state == null ||
+      props.location.state == undefined && partner !== null && user !== null) {
     let partnerdata =  JSON.parse(partner)
     if(partnerdata.data != null) {
     if (partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty("partnerId")) {
@@ -140,6 +151,7 @@ export const Client: React.FC = (props: any) => {
       });
     }
   }
+}
     if (
       props.location.state !== null &&
       props.location.state !== undefined &&
@@ -480,7 +492,7 @@ export const Client: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseline />
 
-      <Typography component="h5" variant="h1">Client</Typography>
+      <Typography component="h5" variant="h1">Clients</Typography>
       <Grid>
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
