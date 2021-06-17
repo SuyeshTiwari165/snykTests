@@ -30,7 +30,7 @@ import * as routeConstant from "../../../common/RouteConstants";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import { useHistory } from "react-router-dom";
 import logout from "../../Auth/Logout/Logout";
-import { GET_CLIENTS } from "../../../graphql/queries/Client";
+import { GET_CLIENTS, GET_CLIENT_AND_LATEST_REPORTS  } from "../../../graphql/queries/Client";
 // import { GET_PARTNER_SUBSCRIPTION } from "../../graphql/queries/PartnerSubscription";
 import {
   SUCCESS,
@@ -67,13 +67,14 @@ export const Client: React.FC = (props: any) => {
   if(user.getUserDetails) {
     userRole = user.getUserDetails.edges[0].node.isSuperuser == true ? "SuperUser" : "CompanyUser"
   }
-  console.log("userrole",userRole)
   const [clientDeleted, setClientDeleted] = useState(false);
 
   //table
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
     { title: "Email", field: "email" },
+    { title: "Target Name", field: "targetName" },
+    { title: "Last Target Generated on", field: "lastReportGenerated" },
     // { title: "Phone", field: "phone" },
     // { title: "Created on", field: "createdOn" }
   ];
@@ -104,6 +105,7 @@ export const Client: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
       onCompleted: (data : any) => {
         if(userRole === "CompanyUser") {
+          let partnerdata =  JSON.parse(partner)
         createTableDataObject(data.getClient.edges);
       }
       if(userRole === "SuperUser") {
@@ -111,11 +113,23 @@ export const Client: React.FC = (props: any) => {
       }
       },
       onError: error => {
-        // logout()
-        history.push(routeConstant.DASHBOARD);
+        logout()
+        // history.push(routeConstant.DASHBOARD);
       }
     }
   );
+  const [getClientsAndReports, { data: ClientReportData, loading: ClientReportLoading }] = useLazyQuery(
+    GET_CLIENT_AND_LATEST_REPORTS,
+    {
+      fetchPolicy: "cache-and-network",
+      onError: error => {
+        logout()
+        // history.push(routeConstant.DASHBOARD);
+      }
+    }
+  );
+
+  
 
   let column: any;
   if(userRole === "CompanyUser") {
@@ -134,24 +148,34 @@ export const Client: React.FC = (props: any) => {
       }
   }, [partner]);
   
+  useEffect(() => {
+    if (ipData != undefined) {
+      createTableDataObject(ipData.getClient.edges);
+    }
+  }, [ClientReportData]);
+
 
   useEffect(() => {
     // On Login from tool
-
-    if( props.location.state == null ||
+    if (props.location.state == null ||
       props.location.state == undefined && partner !== null && user !== null) {
-    let partnerdata =  JSON.parse(partner)
-    if(partnerdata.data != null) {
-    if (partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty("partnerId")) {
-      getClients({
-        variables: {
-          orderBy : "client_name",
-          partnerId_PartnerName:partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.partnerName
+      let partnerdata = JSON.parse(partner)
+      if (partnerdata.data != null) {
+        if (partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty("partnerId")) {
+          getClients({
+            variables: {
+              orderBy: "client_name",
+              partnerId_PartnerName: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.partnerName
+            }
+          });
+          getClientsAndReports({
+            variables: {
+              partnerId: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
+            }
+          });
         }
-      });
+      }
     }
-  }
-}
     if (
       props.location.state !== null &&
       props.location.state !== undefined &&
@@ -159,7 +183,7 @@ export const Client: React.FC = (props: any) => {
     ) {
       getClients({
         variables: {
-          orderBy : "client_name",
+          orderBy: "client_name",
           partnerId_PartnerName: props.location.state.partner_id
         }
       });
@@ -167,10 +191,18 @@ export const Client: React.FC = (props: any) => {
     if (props.location.state && props.location.state.clientInfo) {
       getClients({
         variables: {
-          orderBy : "client_name",
+          orderBy: "client_name",
           partnerId_PartnerName: props.location.state.clientInfo.partnerId
         }
       });
+      if (partner != "") {
+        let partnerdata = JSON.parse(partner)
+        getClientsAndReports({
+          variables: {
+            partnerId: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
+          }
+        });
+      }
     }
     if (
       props.location.state &&
@@ -232,31 +264,6 @@ export const Client: React.FC = (props: any) => {
     }
   }, [formState]);
 
-  function convertDate(inputFormat: any) {
-    function pad(s: any) {
-      return s < 10 ? "0" + s : s;
-    }
-    var d = new Date(inputFormat);
-    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("/");
-  }
-
-  const getDateAndTime = (utcDate: any) => {
-    if (utcDate === "" || utcDate === null) {
-      return null;
-    } else {
-      var dateFormat: any = new Date(utcDate);
-      var hours = dateFormat.getHours();
-      var minutes = dateFormat.getMinutes();
-      var ampm = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      var strTime = hours + ":" + minutes + " " + ampm;
-      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
-      return dateAndTime;
-    }
-  };
-  
   const createTableDataObjectAdmin = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
@@ -277,6 +284,7 @@ export const Client: React.FC = (props: any) => {
   
     setNewData(arr);
   };
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
@@ -293,6 +301,16 @@ export const Client: React.FC = (props: any) => {
         "MM/DD/YYYY hh:mm a"
       );
       obj["subscription"] = element.node.subscription
+        if (ClientReportData) {
+          for (let i in ClientReportData.reportForPg) {
+            ClientReportData.reportForPg[i].data.map((data: any) => {
+              if (element.node.id === data.clientId.toString()) {
+                obj["lastReportGenerated"] = moment(data.targetCreationDate).format("MM/DD/YYYY hh:mm a");
+                obj["targetName"] = data.targetName
+              }
+            })
+          }
+        }
       arr.push(obj);
       } 
       // if(element.node.subscription === "No") {
@@ -322,7 +340,6 @@ export const Client: React.FC = (props: any) => {
   const handleClickDelete = (rowData: any) => {
     setClientDeleted(false);
     setShowBackdrop(true);
-    console.log("DELETE",rowData)
     deleteClient({
       variables: {
         id: rowData.clientId
