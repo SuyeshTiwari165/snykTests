@@ -44,3 +44,20 @@ query getClient(
   }
 }
 `;
+export const GET_CLIENT_AND_LATEST_REPORTS = gql`
+query reportForPg($partnerId:Int!,$pageNumber:Int,$page_size:Int){
+   reportForPg(partnerId:$partnerId,pageNumber:$pageNumber,pageSize:$page_size){
+  page
+    pageSize
+    totalRecords
+    data{
+      clientName
+      clientId
+      email
+      targetName
+      targetId
+      status
+      targetCreationDate
+    }
+  }}
+  `;
