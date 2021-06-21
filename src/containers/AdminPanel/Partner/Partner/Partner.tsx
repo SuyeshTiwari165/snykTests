@@ -223,7 +223,7 @@ export const Partner: React.FC = (props: any) => {
         Partner
       </Typography>
       <Grid className={styles.TableWrap}>
-        <Grid container>
+        {/* <Grid container>
           <Grid item xs={12} className={styles.FilterAddWrap}>
             <div className={styles.FilterInput}>
               <Button
@@ -236,7 +236,7 @@ export const Partner: React.FC = (props: any) => {
                 </Button>
             </div>
           </Grid>
-        </Grid>
+        </Grid> */}
         <Paper className={styles.paper}>
           {formState.isSuccess ? (
             <Alert

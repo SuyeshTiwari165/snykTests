@@ -206,7 +206,7 @@ export const Linux_Network: React.FC = (props: any) => {
     return false;
   };
 
-  if (backdrop) return <SimpleBackdrop />;
+  // if (backdrop) return <SimpleBackdrop />;
 
   const handleClose = () => {
     setShowDialogBox(false);
@@ -575,6 +575,7 @@ export const Linux_Network: React.FC = (props: any) => {
           : null}
       </Typography>
       <RaStepper />
+      {backdrop ? <SimpleBackdrop/>: null}
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isSuccess ? (

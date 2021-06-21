@@ -1535,7 +1535,7 @@ export const Target: React.FC = (props: any) => {
               value={vpnPassword}
               onChange={handleVpnPasswordChange}
               required
-              error={isError.vpnPassword}
+              // error={isError.vpnPassword}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton

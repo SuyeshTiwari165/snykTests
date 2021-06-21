@@ -157,6 +157,10 @@
 }
 .RALogoImg{
   display: block;
-  width: 83px;
+  /* width: 83px; */
   margin-bottom: 7px;
+}
+.RALogoImg img {
+  width: 130px;
+  height: auto;
 }

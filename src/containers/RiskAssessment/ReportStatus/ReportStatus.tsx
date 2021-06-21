@@ -10,7 +10,8 @@ import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
 // import { GET_SCAN_CONFIG } from "../../../graphql/queries/ScanConfig";
 // import { GET_SCANDATA } from "../../../graphql/queries/ScanData";
 // import { GET_TARGET } from "../../../graphql/queries/Target";
-import Loading from "../../../components/UI/Layout/Loading/Loading";
+// import Loading from "../../../components/UI/Layout/Loading/Loading";
+import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import { useQuery, useMutation } from "@apollo/client";
 import { Grid } from "@material-ui/core";
@@ -89,7 +90,7 @@ export const ReportStatus: React.FC = (props: any) => {
   }, [dataReportListing]);
 
   //for task data
-  if (loadingReportListing) return <Loading />;
+  // if (loadingReportListing) return <Loading />;
   if (errorReportListing) {
     return <div className="error">Error!</div>;
   }
@@ -148,6 +149,7 @@ export const ReportStatus: React.FC = (props: any) => {
           Report Not Published !
       </Typography> : null} */}
       <Grid>
+      {loadingReportListing ? <SimpleBackdrop/>: null}
         <Grid className={styles.FilterWrap}>
           <div className={styles.backToListButton}>
             <Button color="secondary" variant="contained" onClick={handleBack}>
