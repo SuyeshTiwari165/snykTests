@@ -10,36 +10,49 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "../../Form/Button/Button";
 import Logout from "../../../../containers/Auth/Logout/Logout";
+import Cookies from 'js-cookie';
 
-export const Header: React.FC = () => (
-  <div className={styles.Header} data-testid="Header">
-    <Card className={styles.root}>
-      <Grid container>
-      <Grid item xs={12} className={styles.RALogoImg}>
-      <div>
-                <img
-                    src={
-                      process.env.PUBLIC_URL +
-                      "/icons/svg-icon/risk-assessments.svg"
-                    }
-                    alt="user icon"
-                  />
-              </div>
-      </Grid>
-        <Grid item xs={12} className={styles.userInfo}>
-          <span className={styles.userNameLabel}>
-            {JSON.parse(localStorage.getItem("user") || "{}").username}{" "}
+export const Header: React.FC = () => {
+  // const user =  JSON.parse(localStorage.getItem("user") || "{}");
+  const user = Cookies.getJSON('ob_user') || ""
+  let userRole: any;
+  let userdata: any;
+  let username: any;
+
+  try {
+    userdata = JSON.parse(user)
+    username = userdata.data.getUserDetails.edges[0].node.firstName + " " + userdata.data.getUserDetails.edges[0].node.lastName
+  }
+  catch (e) {
+    userdata = user
+    username = user.getUserDetails.edges[0].node.username 
+  }
+  return (
+    <div className={styles.Header} data-testid="Header">
+      <Card className={styles.root}>
+        <Grid container>
+        <Grid item xs={12} className={styles.RALogoImg}>
+          <div>
+            <img src={process.env.PUBLIC_URL + "/OB360.png"} alt="user icon" />
+          </div>
+        </Grid>
+          <Grid item xs={12} className={styles.userInfo}>
+            <>
+              <span className={styles.userNameLabel}>
+                {username}
             &nbsp;&nbsp;|&nbsp;&nbsp;
           </span>
-          <span className={styles.userNameLabel}>
-            <a className={styles.logout} onClick={Logout}>
-              Logout
+              <span className={styles.userNameLabel}>
+                <a className={styles.logout} onClick={Logout}>
+                  Logout
             </a>
-          </span>
+              </span>
+            </>
+          </Grid>
         </Grid>
-      </Grid>
-    </Card>
-  </div>
-);
+      </Card>
+    </div>
+  );
+}
 
 export default Header;

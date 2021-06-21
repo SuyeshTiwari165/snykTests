@@ -431,14 +431,14 @@ export const PartnerUser: React.FC = (propsData: any) => {
                     &nbsp; Back to List
                   </Button>
                 ) : null}
-                <Button
+                {/* <Button
                   color="primary"
                   variant="contained"
                   onClick={handleClickOpen}
                 >
                   <AddCircleIcon className={styles.EditIcon} />
                     &nbsp; User
-                  </Button>
+                  </Button> */}
               </div>
             </div>
           </Grid>

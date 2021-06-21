@@ -199,7 +199,7 @@ export const Windows_Network: React.FC = (props: any) => {
     }
   }, [formState]);
 
-  if (backdrop || targetLoading) return <SimpleBackdrop />;
+  // if (backdrop || targetLoading) return <SimpleBackdrop />;
 
   const handleOkay = () => {
     setWindowsDomain(true);
@@ -548,6 +548,7 @@ export const Windows_Network: React.FC = (props: any) => {
           : null}
       </Typography>
       <RaStepper />
+      {backdrop || targetLoading  ? <SimpleBackdrop/>: null}
       <Grid container spacing={3}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
