@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.36 20"><defs><style>.cls-1{fill:none;}.cls-1,.cls-2{stroke:#0072ed;stroke-miterlimit:10;stroke-width:0.73px;}.cls-2{fill:#0072ed;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_2-2" data-name="Layer 2"><rect class="cls-1" x="0.37" y="0.37" width="19.26" height="19.26" rx="4.15"/><path class="cls-1" d="M22.83,14.44l-2.18-.84a1.59,1.59,0,0,1-1-1.48V8.28a1.6,1.6,0,0,1,.8-1.38l2.19-1.25A1.59,1.59,0,0,1,25,7V13A1.58,1.58,0,0,1,22.83,14.44Z"/><path class="cls-2" d="M14.42,9.16,8,5.47a1,1,0,0,0-1.45.83v7.39A1,1,0,0,0,8,14.53l6.4-3.7A1,1,0,0,0,14.42,9.16Z"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="25.36" height="19.99" viewBox="0 0 25.36 19.99">
+  <g id="video" transform="translate(-0.005 -0.005)">
+    <g id="Layer_2" data-name="Layer 2">
+      <rect id="Rectangle_326" data-name="Rectangle 326" width="19.26" height="19.26" rx="4.15" transform="translate(0.37 0.37)" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.73"/>
+      <path id="Path_785" data-name="Path 785" d="M22.83,14.44l-2.18-.84a1.59,1.59,0,0,1-1-1.48V8.28a1.6,1.6,0,0,1,.8-1.38l2.19-1.25A1.59,1.59,0,0,1,25,7v6a1.58,1.58,0,0,1-2.17,1.44Z" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.73"/>
+      <path id="Path_786" data-name="Path 786" d="M14.42,9.16,8,5.47a1,1,0,0,0-1.45.83v7.39A1,1,0,0,0,8,14.53l6.4-3.7a1,1,0,0,0,.02-1.67Z" fill="#f06601" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.73"/>
+    </g>
+  </g>
+</svg>

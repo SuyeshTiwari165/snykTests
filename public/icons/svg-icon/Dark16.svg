@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21.5 21.24"><defs><style>.cls-1,.cls-2{fill:#002f60;}.cls-2,.cls-3{stroke:#002f60;stroke-miterlimit:10;stroke-width:0.72px;}.cls-3{fill:none;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_2-2" data-name="Layer 2"><path class="cls-1" d="M7,4.46h7.57a.27.27,0,0,0,0-.54H7a.27.27,0,0,0,0,.54Z"/><path class="cls-1" d="M7,7.38h7.57a.27.27,0,0,0,0-.54H7a.27.27,0,0,0,0,.54Z"/><path class="cls-1" d="M7,10.3h7.57a.27.27,0,0,0,0-.53H7a.27.27,0,0,0,0,.53Z"/><path class="cls-2" d="M9.06,1.36,9.78.78a1.33,1.33,0,0,1,1.94,0l.73.59"/><path class="cls-3" d="M16.84,4.9,20.67,8a1.7,1.7,0,0,1,.47,1.17V19a1.9,1.9,0,0,1-1.9,1.9h-17A1.9,1.9,0,0,1,.36,19V9.16a1.71,1.71,0,0,1,.18-.77A1.84,1.84,0,0,1,.84,8l4-3.21"/><path class="cls-3" d="M4.73,10.71V3.22a1.89,1.89,0,0,1,1.9-1.89h8.24a1.89,1.89,0,0,1,1.9,1.89v7.4"/><path class="cls-3" d="M.54,8.39l9.55,5.07a1.4,1.4,0,0,0,1.32,0L21,8.39"/><polygon class="cls-1" points="4.53 5.12 0.74 8.18 4.57 10.35 4.53 5.12"/><polygon class="cls-1" points="16.8 5.12 20.59 8.18 16.77 10.35 16.8 5.12"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.26" viewBox="0 0 21.5 21.26">
+  <g id="Dark16" transform="translate(0 0)">
+    <g id="Layer_2" data-name="Layer 2">
+      <path id="Path_788" data-name="Path 788" d="M7,4.46h7.57a.27.27,0,1,0,0-.54H7a.27.27,0,0,0,0,.54Z" fill="#f06601"/>
+      <path id="Path_789" data-name="Path 789" d="M7,7.38h7.57a.27.27,0,1,0,0-.54H7a.27.27,0,0,0,0,.54Z" fill="#f06601"/>
+      <path id="Path_790" data-name="Path 790" d="M7,10.3h7.57a.27.27,0,0,0,0-.53H7a.27.27,0,0,0,0,.53Z" fill="#f06601"/>
+      <path id="Path_791" data-name="Path 791" d="M9.06,1.36,9.78.78a1.33,1.33,0,0,1,1.94,0l.73.59" fill="#f06601" stroke="#002f60" stroke-miterlimit="10" stroke-width="0.72"/>
+      <path id="Path_792" data-name="Path 792" d="M16.84,4.9,20.67,8a1.7,1.7,0,0,1,.47,1.17V19a1.9,1.9,0,0,1-1.9,1.9h-17A1.9,1.9,0,0,1,.36,19V9.16a1.71,1.71,0,0,1,.18-.77A1.84,1.84,0,0,1,.84,8l4-3.21" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72"/>
+      <path id="Path_793" data-name="Path 793" d="M4.73,10.71V3.22a1.89,1.89,0,0,1,1.9-1.89h8.24a1.89,1.89,0,0,1,1.9,1.89v7.4" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72"/>
+      <path id="Path_794" data-name="Path 794" d="M.54,8.39l9.55,5.07a1.4,1.4,0,0,0,1.32,0L21,8.39" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72"/>
+      <path id="Path_795" data-name="Path 795" d="M4.53,5.12.74,8.18l3.83,2.17Z" fill="#f06601"/>
+      <path id="Path_796" data-name="Path 796" d="M16.8,5.12l3.79,3.06-3.82,2.17Z" fill="#f06601"/>
+    </g>
+  </g>
+</svg>

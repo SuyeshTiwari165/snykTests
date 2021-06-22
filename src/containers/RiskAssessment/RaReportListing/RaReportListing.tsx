@@ -617,6 +617,11 @@ export const RaReportListing: React.FC = (props: any) => {
             columns={columns}
             data={newData}
             options={{
+              headerStyle: {
+                background: 'linear-gradient(#fef9f5,#fef9f5)',
+              
+               
+              },
               actionsColumnIndex: -1,
               paging: true,
               sorting: true,

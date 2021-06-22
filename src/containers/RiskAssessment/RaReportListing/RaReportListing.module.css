@@ -5,7 +5,7 @@
   -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 2px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 2px 0 rgba(0, 0, 0, 0.12);
   border-radius: 20px !important;
-  border: 1px solid #0051a8;
+  border: 1px solid #f06601;
   position: relative;
 }
 
@@ -87,7 +87,7 @@ th {
 
 th span, th div {
   font-size: 12px !important;
-  color: #002f60 !important;
+  color: #000000 !important;
   font-weight: 600 !important;
 }
 
@@ -148,7 +148,7 @@ tfoot {
 
 .PublishSwitch>span>span>span, .PublishSwitchCheck>span>span>span {
   width: 48px;
-  background-color: #0051a8;
+  background-color: #f06601;
   height: 28px;
   border-radius: 25px;
 }
@@ -180,7 +180,7 @@ tfoot {
 }
 
 .PublishSwitchCheck+span .PublishSwitchYes, .PublishSwitch+span .PublishSwitchNo {
-  color: #0051a8;
+  color: #f06601 ;
   font-size: 5px;
 }
 
@@ -211,7 +211,7 @@ tfoot {
   box-shadow: none !important;
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051a8 !important;
+  color: #f06601  !important;
   outline: 0 !important;
   text-transform: unset !important;
   padding-right: 0px !important;
@@ -221,7 +221,7 @@ tfoot {
 .backToListButton button:hover {
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051A8 !important;
+  color: #f06601  !important;
   text-transform: unset !important;
   background: transparent !important;
   border: none !important;
@@ -250,7 +250,7 @@ tfoot {
   font-size: 14px !important;
   text-transform: uppercase !important;
   border: 1px solid #0051a8 !important;
-  background-color: #0051a8 !important;
+  background-color: #f06601  !important;
   color: #fff !important;
   margin-left: 10px;
 }

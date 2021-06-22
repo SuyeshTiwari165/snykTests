@@ -9,11 +9,11 @@ export default {
   primary: {
     contrastText: white,
     // dark: "#0051A8",
-    main: "#0051A8"
+    main: "#F06601"
     // light: "#03b053"
   },
   secondary: {
-    contrastText: '#0051A8',
+    contrastText: '#F06601',
     dark: white,
     main: white,
     light: white
@@ -43,7 +43,7 @@ export default {
     light: colors.red[400]
   },
   text: {
-    primary: "#0051a8",
+    primary: "#F06601",
     secondary: "#707070",
     link: colors.blue[600]
   },

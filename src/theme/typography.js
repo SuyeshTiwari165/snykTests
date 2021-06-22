@@ -5,8 +5,11 @@ export default {
   h1: {
     color: palette.text.primary,
     fontWeight: 400,
-    fontSize: "24px",
-    marginBottom: "35px !important"
+    fontSize: "24px !important",
+    marginBottom: "35px !important",
+    paddingbottom: "10.5px",
+    margin: "46px 0 23px",
+    margintop: 0
   },
 
   h2: {

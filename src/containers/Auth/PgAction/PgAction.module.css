@@ -6,7 +6,7 @@
 .TabOptions button {
   border-width: 1px 1px 1px 1px !important;
   border-style: solid !important;
-  border-color: #0051a8 !important;
+  border-color: #f06601  !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
   border-bottom-right-radius: 10px !important;
@@ -37,7 +37,7 @@
 }
 
 .TextField {
-  border-color: #0051a8 !important;
+  border-color: #f06601  !important;
   border-radius: 12px !important;
   border-width: 1px !important;
   width: 100%;

@@ -1,11 +1,11 @@
 .paper {
   margin-bottom: 20px;
-  padding: 28px 25px 17px 25px;
+  padding: 15px;
   background-color: #fff;
   -webkit-box-shadow: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%);
   border-radius: 20px !important;
-  border: 1px solid #0051a8;
+  border: 1px solid #f06601;
   position: relative;
 }
 
@@ -62,13 +62,14 @@ th {
   border-bottom: none !important;
   line-height: 1.5 !important;
   font-size: 12px !important;
-  color: #002f60;
+  color: #f06601 !important;
   font-weight: 600 !important;
 }
 
 table>thead {
   background-color: transparent !important;
 }
+
 
 .ScrollTable>div {
   max-height: calc(100vh - 351px) !important;
@@ -104,7 +105,7 @@ td button:hover {
 .backToListButton button {
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051A8 !important;
+  color: #f06601  !important;
   text-transform: unset !important;
   background: transparent !important;
   border: none !important;
@@ -114,7 +115,7 @@ td button:hover {
 .backToListButton button:hover {
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051A8 !important;
+  color: #f06601  !important;
   text-transform: unset !important;
   background: transparent !important;
   border: none !important;

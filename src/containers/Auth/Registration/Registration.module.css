@@ -39,7 +39,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border-color: #0051A8;
+  border-color: #f06601 ;
   border-style: solid;
   border-width: 1px;
   max-width: 350px !important;
@@ -71,14 +71,14 @@
 }
 
 .Registration a {
-  color: #0051A8;
+  color: #f06601 ;
   text-decoration: none;
   font-size: 16px;
   font-weight: bolder;
 }
 
 .Registration a:visited {
-  color: #0051A8;
+  color: #f06601 ;
 }
 
 /* .Registration hr {
@@ -99,12 +99,12 @@
 }
 
 .RegistrationLogo {
-  color: #0051A8;
+  color: #f06601 ;
   font-size: 28px;
 }
 
 .InputField {
-  border-color: #0051A8 !important;
+  border-color: #f06601  !important;
   border-radius: 12px !important;
   border-width: 2px !important;
   width: 320px;
@@ -128,7 +128,7 @@
 }
 
 .ContinueButton {
-  background-color: #0051A8 !important;
+  background-color: #f06601  !important;
   border: solid 1px #0051A8 !important;
   width: 345px;
   border-radius: 12px !important;

@@ -21,7 +21,7 @@
 /*Change border for textfield*/
 
 .ReactInput:focus, .ReactInput:hover fieldset, .ReactInput input+fieldset {
-  border-color: #0051A8 !important;
+  border-color: #f06601  !important;
   border-width: 1px !important;
   border-radius: 10px !important;
 }
