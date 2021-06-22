@@ -6,7 +6,7 @@
     0 0 2px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 2px 0 rgba(0, 0, 0, 0.12);
   border-radius: 20px !important;
-  border: 1px solid #0051a8;
+  border: 1px solid #f06601;
   position: relative;
 }
 .FilterWrap {
@@ -48,7 +48,7 @@
   box-shadow: none !important;
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051a8 !important;
+  color: #f06601  !important;
   outline: 0 !important;
   text-transform: unset !important;
   padding-right: 0px !important;

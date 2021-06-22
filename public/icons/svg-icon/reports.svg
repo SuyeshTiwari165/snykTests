@@ -1,1 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.22 22"><defs><style>.cls-1{fill:#002f60;}.cls-1,.cls-2{stroke:#002f60;stroke-miterlimit:10;stroke-width:0.72px;}.cls-2{fill:none;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_2-2" data-name="Layer 2"><rect class="cls-1" x="0.38" y="0.36" width="4.71" height="18.05" rx="1.16"/><rect class="cls-2" x="8.76" y="4.41" width="4.71" height="14" rx="1.02"/><rect class="cls-1" x="17.15" y="9.37" width="4.71" height="9.04" rx="0.82"/><rect class="cls-2" x="0.36" y="19.97" width="21.5" height="1.68" rx="0.55"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="22.2" height="21.65" viewBox="0 0 22.2 21.65">
+  <g id="reports" transform="translate(-0.02)">
+    <g id="Layer_2" data-name="Layer 2">
+      <rect id="Rectangle_320" data-name="Rectangle 320" width="4.71" height="18.05" rx="1.16" transform="translate(0.38 0.36)" fill="#f06601" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72"/>
+      <g id="Rectangle_321" data-name="Rectangle 321" transform="translate(8.76 4.41)" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72">
+        <rect width="4.71" height="14" rx="1.02" stroke="none"/>
+        <rect x="0.36" y="0.36" width="3.99" height="13.28" rx="0.66" fill="none"/>
+      </g>
+      <rect id="Rectangle_322" data-name="Rectangle 322" width="4.71" height="9.04" rx="0.82" transform="translate(17.15 9.37)" fill="#f06601" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72"/>
+      <g id="Rectangle_323" data-name="Rectangle 323" transform="translate(0.36 19.97)" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="0.72">
+        <rect width="21.5" height="1.68" rx="0.55" stroke="none"/>
+        <rect x="0.36" y="0.36" width="20.78" height="0.96" rx="0.19" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -673,9 +673,9 @@ export const Client: React.FC = (props: any) => {
               ]}
               options={{
                 headerStyle: {
-                  backgroundColor: "#EFF6FD",
-                  color: "#002F60"
-                },
+                  background: 'linear-gradient(#fef9f5,#fef9f5)',
+              },
+
                 thirdSortClick: false,
                 actionsColumnIndex: -1,
                 paging: true,

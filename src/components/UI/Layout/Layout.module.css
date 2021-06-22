@@ -5,7 +5,7 @@
 
 .mainContainer {
   display: flex;
-  background-color: #EFF6FD;
+  background-color: #fef9f5;
   box-shadow: inset 0px 5px 10px 1px #ccc;
   min-height: calc(100vh - 101px);
   position: relative;

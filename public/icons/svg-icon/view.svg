@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.49 8.93"><defs><style>.cls-1,.cls-2{fill:none;stroke:#0072ed;stroke-miterlimit:10;}.cls-1{stroke-width:2.5px;}.cls-2{stroke-width:1.53px;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_2-2" data-name="Layer 2"><circle class="cls-1" cx="10.17" cy="4.54" r="3.06"/><path class="cls-2" d="M19.5,4.9a.54.54,0,0,0,0-.88A17,17,0,0,0,10.2.77,16.89,16.89,0,0,0,1.05,3.91.68.68,0,0,0,1.05,5,16.89,16.89,0,0,0,10.2,8.16,17,17,0,0,0,19.5,4.9Z"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="20.48" height="8.921" viewBox="0 0 20.48 8.921">
+  <g id="view" transform="translate(-0.012 -0.004)">
+    <g id="Layer_2" data-name="Layer 2">
+      <circle id="Ellipse_41" data-name="Ellipse 41" cx="3.06" cy="3.06" r="3.06" transform="translate(7.11 1.48)" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="2.5"/>
+      <path id="Path_787" data-name="Path 787" d="M19.5,4.9a.54.54,0,0,0,0-.88A17,17,0,0,0,10.2.77,16.89,16.89,0,0,0,1.05,3.91.68.68,0,0,0,1.05,5,16.89,16.89,0,0,0,10.2,8.16,17,17,0,0,0,19.5,4.9Z" fill="none" stroke="#f06601" stroke-miterlimit="10" stroke-width="1.53"/>
+    </g>
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 /*Change border for textfield*/
 
 .ReactAutoComplete:focus, .ReactAutoComplete:hover fieldset, .ReactAutoComplete fieldset {
-  border-color: #0051A8 !important;
+  border-color: #f06601  !important;
   border-width: 1px !important;
   border-radius: 10px !important;
 }
@@ -21,7 +21,7 @@
   margin: 5px 0px 0px 5px;
 }
 .ReactAutoComplete label+div > div svg{
-  color: #0051A8 !important;
+  color: #f06601  !important;
 }
 .ReactAutoComplete label+div > div +input +div, .ReactAutoComplete label+div >input +div {
   background-color: #fff;

@@ -58,7 +58,7 @@
 }
 
 .InputField {
-  border-color: #0051A8 !important;
+  border-color: #f06601  !important;
   border-radius: 12px !important;
   border-width: 1px !important;
   width: 320px;
@@ -138,7 +138,7 @@ table>thead {
   box-shadow: none !important;
   font-size: 12px !important;
   font-weight: normal !important;
-  color: #0051A8 !important;
+  color: #f06601  !important;
   outline: 0 !important;
   text-transform: unset !important;
   padding-right: 0px !important;
