@@ -23,6 +23,9 @@ import { RA_STEPPER } from "../../../../graphql/mutations/RaStepper";
 import stepper from "../../common/raStepperList.json";
 import * as routeConstants from "../../../../common/RouteConstants";
 
+import rarerunStepperList from "../../common/raRerunStepperList.json"
+import { getActiveFormStep } from "../../../../services/Data";
+
 const ColorlibConnector = withStyles({
   alternativeLabel: {
     top: 22,
@@ -66,9 +69,10 @@ export default function RaStepper(props: any) {
   const [propsData, setPropsData] = useState<any>();
   const history = useHistory();
   const classes = useStyles();
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<any>(0);
   const [step, setStep] = useState<number>(0);
-  const allSteps: any = [
+
+  const allSteps2: any = [
     {
       title: "Target",
       path: routeConstants.TARGET,
@@ -87,35 +91,154 @@ export default function RaStepper(props: any) {
     },
 
   ];
-  if (nextValue.data) {
-    if (activeStep !== nextValue.data.activeStep) {
-      for (let index in allSteps) {
-        if (nextValue.data.raStep === allSteps[index].title) {
-          setActiveStep(nextValue.data.activeStep);
-          console.log("nextValue.data.raStep",nextValue.data.raStep)
-          console.log("setActiveStep---------",nextValue.data.activeStep)
-          setStep(nextValue.data.activeStep);
-          setPropsData(nextValue.data.propsData)
+  const rerun: any = [
+    {
+      title: "Target",
+      path: routeConstants.TARGET,
+    },
+    {
+      title: "Windows Network",
+      path: routeConstants.WINDOWS_NETWORK,
+    },
+    {
+      title: "Linux Network",
+      path: routeConstants.LINUX_NETWORK,
+    },
+    {
+      title: "Task",
+      path: routeConstants.TASK_DETAILS,
+    },
+
+  ];
+  let RerunStepperObject = rarerunStepperList;
+
+  function getSteps() {
+    let stepArray: any = [];
+    try {
+    if (nextValue.data && nextValue.data!=undefined && nextValue.data.propsData != undefined && nextValue.data.propsData.targetName != undefined && nextValue.data.propsData.targetName.includes('windows')) {
+      stepArray = rerun
+    }
+    else {
+
+      stepArray = allSteps2
+    }
+  }
+  catch {
+    stepArray = allSteps2
+  }
+    for (var i = 0; i < stepArray.length; i++) {
+      if (stepArray[i].title === "Dashboard" || stepArray[i].title === "Logout") {
+        stepArray.splice(i, 1);
+      }
+    }
+    // if (CSetUserToken === undefined) {
+    //   stepArray = topStepperMenu;
+    // } else {
+    //   if(param != undefined && param.hasOwnProperty("flowType") && param.flowType.type === "Standard") {
+    //     stepArray = csetStandardTopStepperMenu;
+    //   }else {
+    //   stepArray = csetTopStepperMenu;
+    //   }
+    // }
+
+    // for (var i = 0; i < stepArray.length; i++) {
+    //   if (stepArray[i].title === "Dashboard" || stepArray[i].title === "Logout") {
+    //     stepArray.splice(i, 1);
+    //   }
+    // }
+    console.log("stepArray",stepArray)
+    return stepArray;
+  }
+
+  useEffect(() => {
+    if (nextValue.data) {
+      if (nextValue.data.propsData.reRun && nextValue.data.propsData.targetName.includes('windows')) {
+        if (activeStep !== nextValue.data.activeStep) {
+          console.log("nextValue", nextValue)
+          // if (nextValue.data.raStep  === stepperObject.Target.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === stepperObject.WindowsNetwork.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === stepperObject.LinuxNetwork.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === stepperObject.Task.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // }
+          for (let index in rerun) {
+            if (nextValue.data.raStep === rerun[index].title) {
+              setActiveStep(nextValue.data.activeStep);
+              console.log("nextValue.data.raStep", nextValue.data.raStep)
+              console.log("setActiveStep---------", nextValue.data.activeStep)
+              setStep(nextValue.data.activeStep);
+              setPropsData(nextValue.data.propsData)
+            }
+          }
+        }
+      } else {
+        if (activeStep !== nextValue.data.activeStep) {
+          for (let index in allSteps) {
+            if (nextValue.data.raStep === allSteps[index].title) {
+              setActiveStep(nextValue.data.activeStep);
+              console.log("nextValue.data.raStep", nextValue.data.raStep)
+              console.log("setActiveStep---------", nextValue.data.activeStep)
+              setStep(nextValue.data.activeStep);
+              setPropsData(nextValue.data.propsData)
+            }
+          }
+          // if (nextValue.data.raStep  === RerunStepperObject.Target.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === RerunStepperObject.WindowsNetwork.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === RerunStepperObject.LinuxNetwork.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // } if (nextValue.data.raStep  === RerunStepperObject.Task.name) {
+          //   setActiveStep(nextValue.data.activeStep);
+          //   setStep(nextValue.data.activeStep);
+          // }
         }
       }
     }
-  }
+  }, [nextValue.data]);
+  const allSteps = getSteps();
+
   const handleTab = (e: any, i: number, label: any) => {
     setActiveStep(i);
-    console.log("i---------",i)
+    console.log("i---------", i)
     setStep(i);
     e.preventDefault();
-    history.push(label.path,propsData);
+    history.push(label.path, propsData);
   };
-  console.log("activeStep---------",activeStep)
   return (
     <div className={classes.root}>
       <Stepper
         alternativeLabel
         className={styles.ReactStepper}
+        // activeStep={parseInt(activeStep) > getActiveFormStep() ? activeStep : getActiveFormStep()}
         activeStep={activeStep}
         connector={<ColorlibConnector />}
       >
+        {/* {nextValue.data != undefined && nextValue.data.propsData.reRun && nextValue.data.propsData.targetName.includes('windows') ?
+          <> */}
+        {/* {rerun.map((label: any, i: number) => (
+              <Step className={styles.ReactStep}>
+                <Button
+                  color={Number(step) === i ? "primary" : "secondary"}
+                  variant="contained"
+                  onClick={(e: any) => handleTab(e, i, label)}
+                >
+                  {label.title}
+                </Button>
+              </Step>
+            ))} */}
+        {/* </>
+          : <> */}
         {allSteps.map((label: any, i: number) => (
           <Step className={styles.ReactStep}>
             <Button
@@ -127,6 +250,8 @@ export default function RaStepper(props: any) {
             </Button>
           </Step>
         ))}
+        {/* </>} */}
+
       </Stepper>
     </div>
   );
