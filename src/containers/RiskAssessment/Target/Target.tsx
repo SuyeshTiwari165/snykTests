@@ -52,6 +52,10 @@ import { RA_TARGET_VPNTEST } from "../../../config/index";
 import { TEST_CONNECTION } from "../../../graphql/mutations/VPNConnection"
 import { TEST_LINUX_CONNECTION } from "../../../graphql/mutations/VPNConnection"
 import CancelIcon from "@material-ui/icons/Cancel";
+import rerunstepper from "../common/raRerunStepperList.json";
+import {
+  setActiveFormStep,
+} from "../../../services/Data";
 
 
 export const Target: React.FC = (props: any) => {
@@ -82,6 +86,7 @@ export const Target: React.FC = (props: any) => {
   const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>(null)
   const localVpnFilePath = JSON.parse(localStorage.getItem("vpnFilePath") || "{}");
+  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
 //     [
 //     // {
 //     // name : "",      
@@ -143,6 +148,7 @@ export const Target: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
+      setActiveFormStep(0);
       if (targetData && data.getCredentialsDetails.edges[0]) {
         setIpRange(data.getCredentialsDetails.edges[0].node.vatTarget.host);
         //   setUserName(
@@ -365,7 +371,36 @@ export const Target: React.FC = (props: any) => {
   }, [name, ipRange, userName, password, vpnUserName, vpnPassword]);
 
   useEffect(() => {
+    try {
+    console.log("ReRunTargetName",ReRunTargetName);
+    if(props.location.state.reRun && props.location.state.targetName.includes("_windows")) {
+      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, props.location.state);
+    } 
+    else if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
+      let data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      }
+      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, data);
+    }else {
+    setActiveFormStep(0)
     setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
+    }
+  } catch {
+    if(props.location.state.reRun && props.location.state.targetName.includes("_windows")) {
+      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, props.location.state);
+    } 
+    else {
+    setActiveFormStep(0)
+    setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
+    }
+  }
   }, []);
 
   if (targetError) {
@@ -409,10 +444,42 @@ export const Target: React.FC = (props: any) => {
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
           localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));          
+            try {
+            // Rerun Of Windows Navigate
+             if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
+              console.log("RErun of Windows")
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+                  clientInfo: props.location.state && props.location.state.clientInfo,
+                  targetInfo: targetInfo,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                };
+                history.push(routeConstant.WINDOWS_NETWORK, data);
+              }
+            // Rerun Of Linux Navigate
+            // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
+              else {
+                console.log("Rerun of Linux")
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+                  clientInfo: props.location.state && props.location.state.clientInfo,
+                  targetInfo: targetInfo,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                };
+                history.push(routeConstant.LINUX_NETWORK, data);
+              }
+            } catch {
           setShowDialogBox(false)
           setLinuxDomain(true);
           setShowDialogBox(true)
           setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+            }
         })
         .catch((err) => {
           setShowDialogBox(false)
@@ -502,11 +569,39 @@ export const Target: React.FC = (props: any) => {
                 userName: userName,
                 password: password,
               };
-              setTimeout(() => {
-                setLinuxDomain(true);
-                setShowDialogBox(true);
-                setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-              }, 1000);
+              // Rerun Of Windows Navigate
+              if(winIpAddress != null) {
+                console.log("RErun of Windows")
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+                  clientInfo: props.location.state && props.location.state.clientInfo,
+                  targetInfo: targetInfo,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                };
+                history.push(routeConstant.WINDOWS_NETWORK, data);
+              }
+            // Rerun Of Linux Navigate
+              if(linuxUsername != null) {
+                console.log("Rerun of Linux")
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+                  clientInfo: props.location.state && props.location.state.clientInfo,
+                  targetInfo: targetInfo,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                };
+                history.push(routeConstant.LINUX_NETWORK, data);
+              }
+              // setTimeout(() => {
+              //   setLinuxDomain(true);
+              //   setShowDialogBox(true);
+              //   setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+              // }, 1000);
             })
             .catch((err) => {
               setShowDialogBox(false);

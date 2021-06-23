@@ -25,6 +25,7 @@ import DeletePartnerUser from "./containers/PG/DeletePartnerUser/DeletePartnerUs
 import ClientForm from "./containers/PG/ClientForm/ClientForm";
 import DeleteClient from "./containers/PG/DeleteClient/DeleteClient";
 import Cookies from 'js-cookie'
+import LogoutPage from "./containers/Auth/LogoutPage/LogoutPage";
 
 function App() {
   // const session = localStorage.getItem("session");
@@ -72,6 +73,7 @@ function App() {
         <Route path={"/pg-client-form/add" }exact component={ClientForm} />
         <Route path={"/pg-client-form/edit" }exact component={ClientForm} />
         <Route path={"/pg-client-form/delete" }exact component={DeleteClient} />
+        <Route path={"/logout" }exact component={LogoutPage} />
 
 
         <Route path="/" render={() => <Redirect to="/login" />} />
