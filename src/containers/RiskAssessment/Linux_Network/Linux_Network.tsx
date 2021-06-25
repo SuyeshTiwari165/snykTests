@@ -40,6 +40,10 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
+import rerunstepper from "../common/raRerunStepperList.json";
+import {
+  setActiveFormStep,
+} from "../../../services/Data";
 
 export const Linux_Network: React.FC = (props: any) => {
   const history = useHistory();
@@ -142,7 +146,30 @@ export const Linux_Network: React.FC = (props: any) => {
       });
 
   useEffect(() => {
+    try {
+    if(ReRunTargetName.includes("_windows")) {
+      setActiveFormStep(2);
+      let data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      }
+      setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
+      console.log("WINDOWS RERUN ")
+    } else {
+      setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
+      setActiveFormStep(1);
+    }
+  }catch {
     setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
+    setActiveFormStep(1);
+    }
+    // setRaStepper(client, stepper.LinuxNetwork.name, stepper.LinuxNetwork.value, props.location.state);
     // console.log("PROPS>",props.location.state)
     if(props.location.state != undefined && props.location.state.editLinuxData && props.location.state.editLinuxData === true) {
       // console.log("props.location.state.editLinuxData",props.location.state.editLinuxData)
@@ -369,11 +396,57 @@ export const Linux_Network: React.FC = (props: any) => {
           // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
+          try {
+            // Rerun Of Windows Navigate
+             if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
+              console.log("RErun of Windows")
+              if(connectionSuccess) {
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state.editData ? props.location.state.editData : false,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                  clientInfo: props.location.state.clientInfo,
+                  targetInfo: props.location.state.targetInfo
+                };
+              } else {
+              data = {
+                LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                editData: props.location.state.editData ? props.location.state.editData : false,
+                editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                clientInfo: props.location.state.clientInfo,
+                targetInfo: props.location.state.targetInfo
+              };
+            }
+                // data = {
+                //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                //   editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+                //   clientInfo: props.location.state && props.location.state.clientInfo,
+                //   targetInfo: targetInfo,
+                //   editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
+                //   editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                // };
+                history.push(routeConstant.TASK_DETAILS, data);
+                
+              }
+            // Rerun Of Linux Navigate
+            // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
+              else {
+                setLinuxDomain(true);
+            setShowDialogBox(true)
+            setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
+              }
+            } catch {
           setTimeout(() => {
             setLinuxDomain(true);
             setShowDialogBox(true)
             setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
           }, 1000);
+        }
         })
         .catch((err) => {
           setShowDialogBox(false)
@@ -537,19 +610,78 @@ export const Linux_Network: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
+try {
+    if(ReRunTargetName.includes("_windows")) {
+      setActiveFormStep(1);
+      let data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      }
+      setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
+      console.log("WINDOWS RERUN ")
+      history.push(routeConstant.WINDOWS_NETWORK,data); 
+    } else {
+      setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
+      setActiveFormStep(0);
+      let data = {  editData: true,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        clientInfo: clientInfo, targetInfo: targetInfo,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
+      };
+        history.push(routeConstant.TARGET,data); 
+    }
+  }catch {
+    setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
+    setActiveFormStep(0);
     let data = {  editData: true,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
       clientInfo: clientInfo, targetInfo: targetInfo,
-      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
     };
-      history.push(routeConstant.TARGET,data);
+      history.push(routeConstant.TARGET,data); 
+  }
+
+    // let data = {  editData: true,
+    //   editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+    //   LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+    //   windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+    //   clientInfo: clientInfo, targetInfo: targetInfo,
+    //   editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
+    // };
+    //   history.push(routeConstant.TARGET,data);  
     // history.push(routeConstant.TARGET,data);
   };
 
   const handleSkip = () => {
-    data = {
+try {
+    if(ReRunTargetName.includes("_windows")) {
+      setActiveFormStep(3);
+      let data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      }
+      setRaStepper(client, rerunstepper.Task.name, rerunstepper.Task.value, data);
+      console.log("WINDOWS RERUN ")
+      history.push(routeConstant.TASK_DETAILS,data); 
+    }
+else {
+    let data = {
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
       editData: props.location.state.editData ? props.location.state.editData : false,
@@ -560,6 +692,19 @@ export const Linux_Network: React.FC = (props: any) => {
     };
     history.push(routeConstant.WINDOWS_NETWORK, data);
   };
+}catch {
+  let data = {
+    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+    windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+    editData: props.location.state.editData ? props.location.state.editData : false,
+    editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+    editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+    clientInfo: props.location.state.clientInfo,
+    targetInfo: props.location.state.targetInfo
+  };
+  history.push(routeConstant.WINDOWS_NETWORK, data);
+}
+}
 
   return (
     <React.Fragment>
