@@ -2,8 +2,8 @@
 
 .GridBox {
     background-color: #fff !important;
-    border: 1px solid #0051A8 !important;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12) !important;
+    border: 1px solid #f06601 !important;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%) !important;
     border-radius: 20px !important;
     padding: 15px !important;
     margin-bottom: 35px !important;
@@ -12,8 +12,8 @@
 .dash_block {
     display: inline-block !important;
     background-color: #fff;
-    border: 1px solid #0051A8;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
+    border: 1px solid #f06601;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%);
     border-radius: 20px;
     justify-content: center;
     vertical-align: top;
@@ -29,8 +29,8 @@
 
 .tableGrid {
     background-color: #fff !important;
-    border: 1px solid #0051A8 !important;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12) !important;
+    border: 1px solid #f06601 !important;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%) !important;
     border-radius: 20px !important;
     padding: 15px !important;
     margin-bottom: 35px !important;

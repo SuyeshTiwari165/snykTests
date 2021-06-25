@@ -43,10 +43,6 @@ import { setRaStepper } from "../common/SetRaStepper";
 import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
-import rerunstepper from "../common/raRerunStepperList.json";
-import {
-  setActiveFormStep,
-} from "../../../services/Data";
 
 
 export const TaskDetails: React.FC = (props: any) => {
@@ -206,7 +202,7 @@ export const TaskDetails: React.FC = (props: any) => {
   }, [dataScanConfig]);
 
   // if (showbackdrop) return <SimpleBackdrop />;
-  
+
 
 
   const handleSubmitDialogBox = () => {
@@ -274,51 +270,6 @@ export const TaskDetails: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-    console.log("WinTargetName",WinTargetName)
-    console.log("WinTargetName props.location.state.LinuxNetwork",props.location.state.LinuxNetwork)
-
-      try {
-        if (ReRunTargetName != {} ||  ReRunTargetName.includes("_windows") ) {
-          let data = {
-            LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-            windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-            editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-            clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-            targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-            editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-            editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-            targetName : ReRunTargetName ? ReRunTargetName : targetName
-          }
-          if (WinTargetName) {
-            setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
-            history.push(routeConstant.WINDOWS_NETWORK, data);
-          } else if (props.location.state && props.location.state.LinuxNetwork) {
-            setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
-            history.push(routeConstant.LINUX_NETWORK, data);
-          } else {
-            setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, data);
-            history.push(routeConstant.TARGET, data);
-          }
-        } else {
-          let data = {
-            LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-            windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-            editData: true,
-            clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-            targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-            editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-            editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-          }
-          if (WinTargetName) {
-            history.push(routeConstant.WINDOWS_NETWORK, data);
-          } else if (props.location.state && props.location.state.LinuxNetwork) {
-            history.push(routeConstant.LINUX_NETWORK, data);
-          } else {
-            history.push(routeConstant.TARGET, data);
-          }
-        }
-    }
-    catch{
     let data = {
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
@@ -335,7 +286,6 @@ export const TaskDetails: React.FC = (props: any) => {
     } else {
       history.push(routeConstant.TARGET, data);
     }
-  }
   };
 
   const handleAlertClose = () => {
@@ -437,7 +387,7 @@ export const TaskDetails: React.FC = (props: any) => {
             // onChange={handleNameChange}
             required
             disabled = {true}
-        
+
           >
             Target
           </Input>
@@ -471,7 +421,7 @@ export const TaskDetails: React.FC = (props: any) => {
           <Button
             variant={"contained"}
             onClick={handleBack}
-            color="secondary"
+            color="primary"
             data-testid="cancel-button"
           >
             back

@@ -8,7 +8,7 @@ export default {
   white,
   primary: {
     contrastText: white,
-    // dark: "#0051A8",
+    // dark: "#f06601",
     main: "#F06601"
     // light: "#03b053"
   },

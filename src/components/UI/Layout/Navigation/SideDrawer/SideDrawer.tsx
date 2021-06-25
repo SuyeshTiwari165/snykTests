@@ -153,7 +153,7 @@ const useStyles = makeStyles((theme: Theme) =>
         height: "auto",
         padding: "0px",
         minHeight: "49px",
-        // backgroundColor: "#0051a8",
+        // backgroundColor: "#f06601",
         marginBottom: "8px",
         boxShadow: "inset 1px 2px 2px -1px #ccc",
       }
@@ -165,7 +165,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     iconButton: {
       margin: "0 10px 0 0",
-      color: "#0051A8"
+      color: "#f06601"
     },
     closedIcon: {
       margin: "12px 12px 12px 15px"

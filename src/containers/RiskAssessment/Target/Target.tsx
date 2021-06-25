@@ -52,10 +52,6 @@ import { RA_TARGET_VPNTEST } from "../../../config/index";
 import { TEST_CONNECTION } from "../../../graphql/mutations/VPNConnection"
 import { TEST_LINUX_CONNECTION } from "../../../graphql/mutations/VPNConnection"
 import CancelIcon from "@material-ui/icons/Cancel";
-import rerunstepper from "../common/raRerunStepperList.json";
-import {
-  setActiveFormStep,
-} from "../../../services/Data";
 
 
 export const Target: React.FC = (props: any) => {
@@ -76,20 +72,19 @@ export const Target: React.FC = (props: any) => {
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [linuxUsername, setLinuxUsername] = useState<String>("");
   const [linuxIpAddress, setLinuxIpAddress] = useState<String>("");
-  const [clientID, setClientID] = useState<String>("");  
+  const [clientID, setClientID] = useState<String>("");
   const [winName,SetWinName] = useState<String>("");
   const [winUsername,setWinUsername] = useState<String>("");
   const [targetOldId,setTargetOldId] = useState<String>("");
-  const [vpnFilePath,setVpnFilePath] = useState<any>("");  
-  const [displayVpnFilePath,setDisplayVpnFilePath] = useState<any>("");    
+  const [vpnFilePath,setVpnFilePath] = useState<any>("");
+  const [displayVpnFilePath,setDisplayVpnFilePath] = useState<any>("");
   const [winIpAddress, setWinIpAddress] = useState<String>("");
   const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>(null)
   const localVpnFilePath = JSON.parse(localStorage.getItem("vpnFilePath") || "{}");
-  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
 //     [
 //     // {
-//     // name : "",      
+//     // name : "",
 //     // lastModifiedDate: null,
 //   // }
 // ])
@@ -148,7 +143,6 @@ export const Target: React.FC = (props: any) => {
     { data: targetData, loading: targetLoading, error: targetError },
   ] = useLazyQuery(GET_TARGET, {
     onCompleted: (data: any) => {
-      setActiveFormStep(0);
       if (targetData && data.getCredentialsDetails.edges[0]) {
         setIpRange(data.getCredentialsDetails.edges[0].node.vatTarget.host);
         //   setUserName(
@@ -218,12 +212,12 @@ export const Target: React.FC = (props: any) => {
         // document.body.appendChild(link);
         // console.log("LINK",link)
         // link.click();
-        
+
 
         // fetch(data.getCredentialsDetails.edges[0].node.vatTarget.vpnFilePath, {
         //   method: "GET",
         // })
-        // .then((response) =>{ 
+        // .then((response) =>{
         //   console.log("RESPONSE1",response)
         //   response.blob()
         // })
@@ -371,36 +365,7 @@ export const Target: React.FC = (props: any) => {
   }, [name, ipRange, userName, password, vpnUserName, vpnPassword]);
 
   useEffect(() => {
-    try {
-    console.log("ReRunTargetName",ReRunTargetName);
-    if(props.location.state.reRun && props.location.state.targetName.includes("_windows")) {
-      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, props.location.state);
-    } 
-    else if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
-      let data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
-      }
-      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, data);
-    }else {
-    setActiveFormStep(0)
     setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
-    }
-  } catch {
-    if(props.location.state.reRun && props.location.state.targetName.includes("_windows")) {
-      setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, props.location.state);
-    } 
-    else {
-    setActiveFormStep(0)
-    setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
-    }
-  }
   }, []);
 
   if (targetError) {
@@ -443,43 +408,11 @@ export const Target: React.FC = (props: any) => {
           );
           localStorage.setItem("ipRange", JSON.stringify(ipRange));
           localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
-          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));          
-            try {
-            // Rerun Of Windows Navigate
-             if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
-              console.log("RErun of Windows")
-                data = {
-                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-                  clientInfo: props.location.state && props.location.state.clientInfo,
-                  targetInfo: targetInfo,
-                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-                };
-                history.push(routeConstant.WINDOWS_NETWORK, data);
-              }
-            // Rerun Of Linux Navigate
-            // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
-              else {
-                console.log("Rerun of Linux")
-                data = {
-                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-                  clientInfo: props.location.state && props.location.state.clientInfo,
-                  targetInfo: targetInfo,
-                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-                };
-                history.push(routeConstant.LINUX_NETWORK, data);
-              }
-            } catch {
+          localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
           setShowDialogBox(false)
           setLinuxDomain(true);
           setShowDialogBox(true)
           setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-            }
         })
         .catch((err) => {
           setShowDialogBox(false)
@@ -569,39 +502,11 @@ export const Target: React.FC = (props: any) => {
                 userName: userName,
                 password: password,
               };
-              // Rerun Of Windows Navigate
-              if(winIpAddress != null) {
-                console.log("RErun of Windows")
-                data = {
-                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-                  clientInfo: props.location.state && props.location.state.clientInfo,
-                  targetInfo: targetInfo,
-                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-                };
-                history.push(routeConstant.WINDOWS_NETWORK, data);
-              }
-            // Rerun Of Linux Navigate
-              if(linuxUsername != null) {
-                console.log("Rerun of Linux")
-                data = {
-                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-                  editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-                  clientInfo: props.location.state && props.location.state.clientInfo,
-                  targetInfo: targetInfo,
-                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-                };
-                history.push(routeConstant.LINUX_NETWORK, data);
-              }
-              // setTimeout(() => {
-              //   setLinuxDomain(true);
-              //   setShowDialogBox(true);
-              //   setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-              // }, 1000);
+              setTimeout(() => {
+                setLinuxDomain(true);
+                setShowDialogBox(true);
+                setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+              }, 1000);
             })
             .catch((err) => {
               setShowDialogBox(false);
@@ -837,7 +742,7 @@ export const Target: React.FC = (props: any) => {
   //             errMessage: " ",
   //           }));
   //         });
-  //       } 
+  //       }
   //     });
   //   }
   // };
@@ -1032,7 +937,7 @@ export const Target: React.FC = (props: any) => {
               errMessage: " ",
             }));
           });
-          
+
 
 
 
@@ -1051,7 +956,7 @@ export const Target: React.FC = (props: any) => {
       }
 
 
-     
+
     }
   } else {
     setFormState((formState) => ({
@@ -1386,7 +1291,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful",
+            errMessage: " Test Connection Successful!",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
@@ -1451,7 +1356,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful",
+            errMessage: " Test Connection Successful!",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
@@ -1516,7 +1421,7 @@ export const Target: React.FC = (props: any) => {
           : null}
       </Typography>
       <RaStepper />
-      <Grid container spacing={3}>
+      <Grid container spacing={3} className={styles.AlertWrap}>
       { taskLoading || backdrop ? <SimpleBackdrop /> : null }
       {targetLoading ? <SimpleBackdrop/>: null}
         <Grid item xs={12}>
@@ -1701,8 +1606,9 @@ export const Target: React.FC = (props: any) => {
           <Button
             variant={"contained"}
             onClick={handleBack}
-            color="secondary"
+            color="primary"
             data-testid="cancel-button"
+
           >
             back
           </Button>

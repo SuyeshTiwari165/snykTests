@@ -39,10 +39,6 @@ import {
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
 import { TEST_WINDOWS_CONNECTION } from "../../../graphql/mutations/VPNConnection";
-import rerunstepper from "../common/raRerunStepperList.json";
-import {
-  setActiveFormStep,
-} from "../../../services/Data";
 
 
 export const Windows_Network: React.FC = (props: any) => {
@@ -120,7 +116,7 @@ export const Windows_Network: React.FC = (props: any) => {
     return false;
   };
 
-  
+
   const handleAlertClose = () => {
     setFormState((formState) => ({
       ...formState,
@@ -169,31 +165,7 @@ export const Windows_Network: React.FC = (props: any) => {
       });
 
   useEffect(() => {
-    console.log("ReRunTargetName",ReRunTargetName)
-    // setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
-    try {
-    if(ReRunTargetName.includes("_windows")) {
-      setActiveFormStep(1);
-      let data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
-      }
-      setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
-      console.log("WINDOWS RERUN ")
-    } else {
     setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
-    setActiveFormStep(2);
-    }
-  }catch {
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
-    setActiveFormStep(2);
-    }
     if(props.location.state != undefined && props.location.state.editWindowsData && props.location.state.editWindowsData === true) {
       SetConnectionSuccess(true);
       setFormState(formState => ({
@@ -297,16 +269,7 @@ export const Windows_Network: React.FC = (props: any) => {
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
             }
           }
-          try {
-            if (ReRunTargetName != {} && ReRunTargetName.includes("_windows") ) {
-            history.push(routeConstant.LINUX_NETWORK, data);
-            } else {
-              history.push(routeConstant.TASK_DETAILS, data);
-            }
-          }
-          catch {
             history.push(routeConstant.TASK_DETAILS, data);
-          }
           // }, 1000);
         })
         .catch((err) => {
@@ -333,32 +296,9 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleSkip = () => {
-    try {
-    if (ReRunTargetName != {} && ReRunTargetName.includes("_windows") ) {
-      console.log("ReRunTargetName if ",ReRunTargetName)
-    let  data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
-      }
-      setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
-      history.push(routeConstant.LINUX_NETWORK, data);
-    }
-    else {
-    let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-    setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
+    let data = {};
+    data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
     history.push(routeConstant.TASK_DETAILS, data);
-    }
-  }catch {
-    let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-    setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
-    history.push(routeConstant.TASK_DETAILS, data);
-  }
   };
 
   const handleMouseDownPassword = (
@@ -448,7 +388,7 @@ export const Windows_Network: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Test Connection Successful",
+                errMessage: "Test Connection Successful!",
               }));
             } else if (
               response.data.windowsVpnTest.success ==
@@ -521,7 +461,7 @@ export const Windows_Network: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: "Test Connection Successful",
+            errMessage: "Test Connection Successful!",
           }));
         } else if (
           response.data.windowsVpnTest.success ==
@@ -563,7 +503,7 @@ export const Windows_Network: React.FC = (props: any) => {
           errMessage: "",
         }));
       });
-    }    
+    }
   };
 
 
@@ -572,22 +512,6 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleBack = () => {
-try {
-    if (ReRunTargetName != {} &&  ReRunTargetName.includes("_windows") ) {
-      let data = {
-       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-       editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-       clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-       targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-       targetName : ReRunTargetName ? ReRunTargetName : targetName
-     }
-     setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, data);
-     history.push(routeConstant.TARGET, data);
-   }
-   else {
     let data = {
       editData: true,
       LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
@@ -601,25 +525,6 @@ try {
     } else {
       history.push(routeConstant.TARGET, data);
     }
-   }
-  }catch {
-    let data = {
-      editData: true,
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
-      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
-      clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
-      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    }
-    if (LinuxTargetName) {
-      history.push(routeConstant.LINUX_NETWORK, data);
-    } else {
-      history.push(routeConstant.TARGET, data);
-    }
-  }
-
-
-   
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -644,7 +549,7 @@ try {
       </Typography>
       <RaStepper />
       {backdrop || targetLoading  ? <SimpleBackdrop/>: null}
-      <Grid container spacing={3}>
+      <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
             <Alert
@@ -785,7 +690,7 @@ try {
           <Button
             variant={"contained"}
             onClick={handleBack}
-            color="secondary"
+            color="primary"
             data-testid="cancel-button"
           >
             back
@@ -793,7 +698,7 @@ try {
           <Button
             variant={"contained"}
             onClick={handleSkip}
-            color="secondary"
+            color="primary"
             data-testid="cancel-button"
           >
             skip

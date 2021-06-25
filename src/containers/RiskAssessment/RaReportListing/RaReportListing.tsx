@@ -556,7 +556,7 @@ export const RaReportListing: React.FC = (props: any) => {
           </Grid>
         </Grid>
         <Paper className={styles.paper}>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={styles.AlertWrap}>
           {formState.isSuccess ? (
             <Alert
               severity="success"
