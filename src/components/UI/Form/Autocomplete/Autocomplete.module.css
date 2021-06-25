@@ -17,7 +17,7 @@
 }
 .ReactAutoComplete label+div > div {
   background-color: #fff;
-  border: 1px solid #0051A8;
+  border: 1px solid #f06601;
   margin: 5px 0px 0px 5px;
 }
 .ReactAutoComplete label+div > div svg{

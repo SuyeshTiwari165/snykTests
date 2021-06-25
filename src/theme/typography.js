@@ -6,10 +6,9 @@ export default {
     color: palette.text.primary,
     fontWeight: 400,
     fontSize: "24px !important",
-    marginBottom: "35px !important",
-    paddingbottom: "10.5px",
-    margin: "46px 0 23px",
-    margintop: 0
+    paddingBottom : "10.5px",
+    margin: "0px 0 23px",
+
   },
 
   h2: {
@@ -41,7 +40,7 @@ export default {
     color: palette.text.secondary,
     FontSize: "50px",
     fontWeight: 400,
-    bgcolor: "#0051A8",
+    bgcolor: "#f06601",
     paddingTop: "3px",
     paddingBottom: "3px",
     paddingRight: "14px",

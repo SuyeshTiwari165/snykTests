@@ -54,7 +54,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border-color: #0051a8;
+  border-color: #f06601;
   border-style: solid;
   border-width: 1px;
   max-width: 350px !important;
@@ -63,7 +63,7 @@
 }
 
 .InputField {
-  border-color: #0051a8 !important;
+  border-color: #f06601 !important;
   border-radius: 12px !important;
   border-width: 1px !important;
   height: auto;
@@ -76,8 +76,8 @@
 }
 
 .ContinueButton {
-  background-color: #0051a8 !important;
-  border: solid 1px #0051a8 !important;
+  background-color: #f06601 !important;
+  border: solid 1px #f06601 !important;
   width: 100%;
   border-radius: 20px !important;
   margin-top: 0px;
@@ -118,14 +118,14 @@
 }
 
 .Login a {
-  color: #0051a8;
+  color: #f06601;
   text-decoration: none;
   font-size: 16px;
   font-weight: bolder;
 }
 
 .Login a:visited {
-  color: #0051a8;
+  color: #f06601;
 }
 
 .Login hr {
@@ -140,7 +140,7 @@
   border-style: solid;
 }
 .TextField {
-  border-color: #0051a8 !important;
+  border-color: #f06601 !important;
   border-radius: 12px !important;
   border-width: 1px !important;
   width: 100%;

@@ -672,8 +672,9 @@ export const Client: React.FC = (props: any) => {
                 // },
               ]}
               options={{
-                headerStyle: {
+                 headerStyle: {
                   background: 'linear-gradient(#fef9f5,#fef9f5)',
+                  whiteSpace: 'nowrap'
               },
 
                 thirdSortClick: false,

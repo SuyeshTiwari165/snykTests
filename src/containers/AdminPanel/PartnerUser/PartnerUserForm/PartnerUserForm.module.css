@@ -5,7 +5,7 @@
   -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
   border-radius: 20px !important;
-  border: 1px solid #0051A8;
+  border: 1px solid #f06601;
   position: relative;
 }
 
@@ -93,7 +93,7 @@ table>thead {
 }
 
 .ScrollTable>div {
-  max-height: 250calc(100vh - 351px)px !important;
+  max-height: 250calc(100vh - 345px) !important;
   overflow-x: auto !important;
 }
 .ConfirmPasswordWrap label+div{
@@ -116,4 +116,11 @@ table>thead {
   transform: translate(14px, 16px) scale(1);
   color: #707070 !important;
   font-size: 14px;
+}
+.table tfoot tr td{
+  width: 100% !important;
+  display: flex !important;
+}
+.table tfoot tr td > div {
+  justify-content: flex-end;
 }

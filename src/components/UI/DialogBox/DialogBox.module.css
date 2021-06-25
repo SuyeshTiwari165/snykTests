@@ -3,7 +3,7 @@
   margin-top: 66px !important;
   /* WIDTH:50%; */
   /* width: 500px !important; */
-  border-bottom: 1px solid #0051A8 !important;
+  border-bottom: 1px solid #f06601 !important;
   width: auto !important;
     max-width: 800px !important;
     height: auto !important
@@ -23,7 +23,7 @@
 
 .DialogActions {
   padding: 16px !important;
-  border-top: 1px solid #0051A8;
+  border-top: 1px solid #f06601;
 }
 
 .DialogTitle, .DialogBody {

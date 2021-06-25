@@ -186,11 +186,15 @@ export const Login: React.FC<LoginProps> = () => {
           <form className={styles.Login} onSubmit={onLogin} noValidate>
             <div className={styles.Box}>
               <div className={styles.RALogoImg}>
-              <img src={process.env.PUBLIC_URL + "/OB360.png"} alt="user icon" />
+                <img
+                    src={
+                      process.env.PUBLIC_URL +
+                      "/OB360.png"
+                    }
+                    alt="user icon"
+                  />
               </div>
-              {/* <div className={styles.cyberComplianceLogo}>
-              OB360
-              </div> */}
+
               <div className={styles.Margin}>
                 <FormControl className={styles.TextField} variant="outlined">
                   <Input

@@ -143,3 +143,13 @@ tfoot td > div {
 .OBLogoImg img{
   width: 100%;
 }
+
+.table tfoot tr td{
+  width: 100% !important;
+  display: flex !important;
+}
+
+.table tfoot tr td >div {
+  justify-content: flex-end !important;
+}
+
