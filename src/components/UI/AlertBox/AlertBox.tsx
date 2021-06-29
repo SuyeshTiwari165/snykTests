@@ -27,7 +27,7 @@ const AlertBox = (props: any) => {
     >
       <DialogTitle id="form-dialog-title"  className={styles.AlertBoHeader}>
       <Typography component="h1" variant="h1">
-        {props.DialogTitle ? props.DialogTitle : "Warning"}
+        {props.DialogTitle ? props.DialogTitle : "Please Confirm"}
         </Typography>
         {/* <Link color="primary" to={{ pathname: props.cancelButtonPath ? props.cancelButtonPath : "" }}> */}
           {/* <IconButton  className={styles.AlertBoxCloseIcon}

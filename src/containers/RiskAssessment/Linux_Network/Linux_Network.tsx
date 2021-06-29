@@ -295,7 +295,7 @@ export const Linux_Network: React.FC = (props: any) => {
     }));
     // setSubmitDisabled(checkValidation);
   };
-
+ 
   const handlePasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -437,8 +437,32 @@ export const Linux_Network: React.FC = (props: any) => {
             // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
               else {
                 setLinuxDomain(true);
-            setShowDialogBox(true)
-            setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
+            // setShowDialogBox(true)
+            // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
+            setTimeout(() => {
+              if(connectionSuccess) {
+                data = {
+                  LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                  windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                  editData: props.location.state.editData ? props.location.state.editData : false,
+                  editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
+                  editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                  clientInfo: props.location.state.clientInfo,
+                  targetInfo: props.location.state.targetInfo
+                };
+              } else {
+              data = {
+                LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+                windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
+                editData: props.location.state.editData ? props.location.state.editData : false,
+                editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+                editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+                clientInfo: props.location.state.clientInfo,
+                targetInfo: props.location.state.targetInfo
+              };
+            }
+              history.push(routeConstant.WINDOWS_NETWORK, data);
+            }, 500);
               }
             } catch {
           setTimeout(() => {

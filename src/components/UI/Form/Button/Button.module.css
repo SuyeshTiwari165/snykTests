@@ -8,3 +8,20 @@
   text-transform: uppercase !important;
   border: 1px solid #f06601 !important;
 }
+.ButtonDisabled {
+  padding: 3px 14px !important;
+  box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%) !important;
+  line-height: 1.846 !important;
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  border: 1px solid #ccc !important;
+  display: inline-block;
+  margin-left: 10px;
+  text-decoration: none !important;
+  outline: 0 !important;
+  background-color: #B0B0B0	 !important;
+  background-image: none !important;
+  color: #fff !important;
+} 

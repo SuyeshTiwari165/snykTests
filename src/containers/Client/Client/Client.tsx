@@ -387,7 +387,7 @@ export const Client: React.FC = (props: any) => {
     history.push(routeConstant.CLIENT_FORM_ADD);
   };
 
-  if (ipLoading || showBackdrop) return <SimpleBackdrop />;
+  // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
   // if (iError) {
   //   let error = { message: "Error" };
   //   return (
@@ -511,6 +511,7 @@ export const Client: React.FC = (props: any) => {
 
       <Typography component="h5" variant="h1">Clients</Typography>
       <Grid>
+      {ipLoading || showBackdrop  ? <SimpleBackdrop/>: null}
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
