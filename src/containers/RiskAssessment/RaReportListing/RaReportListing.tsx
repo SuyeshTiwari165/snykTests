@@ -304,7 +304,7 @@ export const RaReportListing: React.FC = (props: any) => {
       method: "GET"
     }).then((response: any) => {
       response.blob().then((blobData: any) => {
-        saveAs(blobData, "RA_Report");
+        saveAs(blobData, rowData.target);
         setBackdrop(false)
       });
     });

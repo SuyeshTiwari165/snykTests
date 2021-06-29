@@ -72,7 +72,7 @@ export const Client: React.FC = (props: any) => {
   //table
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
-    { title: "Email", field: "email" },
+    // { title: "Email", field: "email" },
     { title: "Target Name", field: "targetName" },
     { title: "Last Target Generated on", field: "lastReportGenerated" },
     // { title: "Phone", field: "phone" },
