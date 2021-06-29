@@ -1,4 +1,4 @@
-.paper {
+/* .paper {
     margin-bottom: 20px;
     padding: 15px;
     background-color: #fff;
@@ -9,5 +9,27 @@
     position: relative;
     justify-content: center;
     display: flex;
+  }
+   */
+   .paper {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    -webkit-box-shadow: none !important;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%);
+    border-radius: 20px !important;
+    border: 1px solid #f06601;
+    position: relative;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    height: 100px;
+  }
+  .logoutPage {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
   }
   

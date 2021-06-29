@@ -45,7 +45,7 @@ function App() {
   if (accessToken) {
     setTimeout(function () {
       logout();
-      window.location.replace("/login");
+      window.location.replace("/logout");
     }, 3600000);
   }
   let routes;
@@ -76,7 +76,7 @@ function App() {
         <Route path={"/logout" }exact component={LogoutPage} />
 
 
-        <Route path="/" render={() => <Redirect to="/login" />} />
+        <Route path="/" render={() => <Redirect to="/logout" />} />
       </Switch>
     );
   }
