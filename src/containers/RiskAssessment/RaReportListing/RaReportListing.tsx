@@ -180,7 +180,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   //for task data
-  if (loadingReportListing || backdrop || showBackdrop) return <SimpleBackdrop />;
+  // if (loadingReportListing || backdrop || showBackdrop) return <SimpleBackdrop />;
   // if (errorReportListing) {
   // history.push({
   //   pathname: routeConstant.DASHBOARD,
@@ -521,6 +521,7 @@ export const RaReportListing: React.FC = (props: any) => {
         Vulnerability List
       </Typography>
       <Grid>
+      {loadingReportListing || backdrop || showBackdrop  ? <SimpleBackdrop/>: null}
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             {/* {userRole === "SuperUser" ? ( */}
