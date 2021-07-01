@@ -348,7 +348,7 @@ export const Partner: React.FC = (props: any) => {
             ]}
             options={{
               headerStyle: {
-                backgroundColor: "#EFF6FD",
+                backgroundColor: "#fef9f5",
                 color: "#002F60",
               },
               actionsColumnIndex: -1,

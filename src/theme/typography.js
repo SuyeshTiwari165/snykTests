@@ -8,7 +8,6 @@ export default {
     fontSize: "24px !important",
     paddingBottom : "10.5px",
     margin: "0px 0 23px",
-
   },
 
   h2: {

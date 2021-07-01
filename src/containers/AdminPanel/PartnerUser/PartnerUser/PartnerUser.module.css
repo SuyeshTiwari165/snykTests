@@ -131,7 +131,9 @@ table>thead {
   max-height: calc(100vh - 345px) !important;
   overflow-x: auto !important;
 }
-
+.ScrollTable svg{
+  fill:#e53935 !important;
+}
 .BackToButton {
   background-color: transparent !important;
   border: 0px !important;
@@ -159,15 +161,15 @@ table>thead {
   height:18px !important;
 }
 
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
+tfoot  {
+  display: table-footer-group !important;
 }
-
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
-}
-.table tfoot tr td > div {
+tfoot tr td > div{
   justify-content: flex-end;
+}
+tfoot button{
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
 }

@@ -80,7 +80,6 @@ th:last-child {
 }
 
 th {
-  padding: 0px 20px 0px 16px !important;
   border-bottom: none !important;
 }
 
@@ -96,6 +95,9 @@ table>thead {
   max-height: 250calc(100vh - 351px)px !important;
   overflow-x: auto !important;
 }
+.ScrollTable svg{
+  fill:#e53935 !important;
+}
 .ConfirmPasswordWrap label+div{
   width:100%;
   background-color: #fff;
@@ -104,10 +106,15 @@ table>thead {
   width:100%;
 }
 
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
+tfoot  {
+  display: table-footer-group !important;
 }
-.table tfoot tr td > div {
+tfoot tr td > div{
   justify-content: flex-end;
+}
+tfoot button{
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
 }

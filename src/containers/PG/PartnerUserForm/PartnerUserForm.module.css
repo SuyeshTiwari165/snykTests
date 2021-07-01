@@ -80,7 +80,6 @@ th:last-child {
 }
 
 th {
-  padding: 0px 20px 0px 16px !important;
   border-bottom: none !important;
 }
 
@@ -96,6 +95,7 @@ table>thead {
   max-height: 250calc(100vh - 351px)px !important;
   overflow-x: auto !important;
 }
+
 .ConfirmPasswordWrap label+div{
   width:100%;
   background-color: #fff;

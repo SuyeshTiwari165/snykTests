@@ -61,7 +61,7 @@
   }
 
   .TableWrap thead tr th {
-    background-color: #eff6fd !important;
+    background-color: #fef9f5 !important;
     vertical-align: middle !important;
     line-height: 1.5 !important;
     color: #f06601 ;
@@ -169,13 +169,8 @@ th:nth-child(7) {
 
 tfoot td > div {
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
-
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
-}
-
-.table tfoot tr td >div {
-  justify-content: flex-end !important;
+tfoot  {
+  display: table-footer-group !important;
 }

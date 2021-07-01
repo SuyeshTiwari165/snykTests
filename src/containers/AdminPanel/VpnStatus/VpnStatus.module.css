@@ -11,4 +11,8 @@
 
   tfoot td > div {
     flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  tfoot  {
+    display: table-footer-group !important;
   }
