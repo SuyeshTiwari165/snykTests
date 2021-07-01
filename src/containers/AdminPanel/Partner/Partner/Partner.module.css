@@ -65,6 +65,17 @@ th {
   color: #002f60;
   font-weight: 600 !important;
 }
+th:first-child {
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+  padding-left: 20px;
+}
+
+th:last-child {
+  border-top-right-radius: 60px;
+  border-bottom-right-radius: 60px;
+  padding-right: 20px;
+}
 
 td {
   padding: 8px !important;
@@ -109,14 +120,15 @@ table>thead {
   width: 20px !important;
   height: 20px !important;
 }
-tfoot td > div {
-  flex-wrap: wrap;
+tfoot  {
+  display: table-footer-group !important;
 }
-
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
-}
-.table tfoot tr td > div {
+tfoot tr td > div{
   justify-content: flex-end;
+}
+tfoot button{
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
 }

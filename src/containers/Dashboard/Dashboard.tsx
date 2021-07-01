@@ -126,7 +126,7 @@ export const Dashboard: React.FC = () => {
     <div>
       <React.Fragment>
         <CssBaseline />
-        <Grid container spacing={3} className={styles.GridBox}>
+        <Grid container className={styles.GridBox}>
           <Grid item xs={12} md={6} className={styles.FilterAddWrap}>
             <div className={styles.dash_block}>
               <div className={styles.dash_head}>Clients</div>
@@ -164,67 +164,68 @@ export const Dashboard: React.FC = () => {
         </Grid>
         {/* </Container> */}
       </React.Fragment>
-      <Grid className={styles.recentTypo} item xs={12}>
-        <Typography component="h2" variant="h1" gutterBottom>
+      
+        <Typography component="h1" variant="h1" gutterBottom>
           Recently added clients
         </Typography>
-      </Grid>
-      <Grid>
-        <Paper className={styles.tableGrid}>
-          <MaterialTable
-            columns={column}
-            data={newData}
-            actions={[
-              // RAsubscription
-              //   ? {
-              //     icon: () => <AssessmentIcon />,
-              //     tooltip: "Risk Assessment",
-              //     onClick: (event: any, rowData: any, oldData: any) => {
-              //       onRowClick(event, rowData, oldData, "RA");
-              //     },
-              //   }
-              //   : null,
-              // {
-              //   icon: () => <VisibilityIcon />,
-              //   tooltip: "View",
-              //   onClick: (event: any, rowData: any, oldData: any) => {
-              //     onRowClick(event, rowData, oldData, 'View');
-              //   },
-              // },
-              {
-                icon: () => <img className={styles.EditIcon}
-                src={
-                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                }
-                alt="edit icon"
-              />,
-                tooltip: "Edit",
-                onClick: (event: any, rowData: any, oldData: any) => {
-                  onRowClick(event, rowData, oldData, 'Edit');
+      <Grid container>
+        <Grid item sm={12}>
+          <Paper className={styles.tableGrid}>
+            <MaterialTable
+              columns={column}
+              data={newData}
+              actions={[
+                // RAsubscription
+                //   ? {
+                //     icon: () => <AssessmentIcon />,
+                //     tooltip: "Risk Assessment",
+                //     onClick: (event: any, rowData: any, oldData: any) => {
+                //       onRowClick(event, rowData, oldData, "RA");
+                //     },
+                //   }
+                //   : null,
+                // {
+                //   icon: () => <VisibilityIcon />,
+                //   tooltip: "View",
+                //   onClick: (event: any, rowData: any, oldData: any) => {
+                //     onRowClick(event, rowData, oldData, 'View');
+                //   },
+                // },
+                {
+                  icon: () => <img className={styles.EditIcon}
+                  src={
+                    process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                  }
+                  alt="edit icon"
+                />,
+                  tooltip: "Edit",
+                  onClick: (event: any, rowData: any, oldData: any) => {
+                    onRowClick(event, rowData, oldData, 'Edit');
+                  },
                 },
-              },
-              // {
-              //   icon: () => <DeleteIcon />,
-              //   tooltip: "Delete",
-              //   onClick: (event: any, rowData: any, oldData: any) => {
-              //     onRowClick(event, rowData, oldData, 'Delete');
-              //   },
-              // },
-            ]}
-            options={{
-              headerStyle: {
-                backgroundColor: "#EFF6FD",
-                color: "#002F60",
-              },
-              actionsColumnIndex: -1,
-              paging: false,
-              sorting: true,
-              search: false,
-              filter: true,
-              draggable: false,
-            }}
-          />
-        </Paper>
+                // {
+                //   icon: () => <DeleteIcon />,
+                //   tooltip: "Delete",
+                //   onClick: (event: any, rowData: any, oldData: any) => {
+                //     onRowClick(event, rowData, oldData, 'Delete');
+                //   },
+                // },
+              ]}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fef9f5",
+                  color: "#002F60",
+                },
+                actionsColumnIndex: -1,
+                paging: false,
+                sorting: true,
+                search: false,
+                filter: true,
+                draggable: false,
+              }}
+            />
+          </Paper>
+        </Grid>
       </Grid>
     </div>
   );

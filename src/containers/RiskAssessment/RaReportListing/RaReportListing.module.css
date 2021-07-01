@@ -82,7 +82,7 @@ th {
   font-size: 12px !important;
   color: #002f60 !important;
   font-weight: 600 !important;
-  background-color: #eff6fd !important;
+  background-color: #fef9f5 !important;
 }
 
 th span, th div {
@@ -100,6 +100,9 @@ table>thead {
   overflow-x: auto !important;
 
 }
+.ScrollTable svg{
+  fill:#e53935 !important;
+}
 
 td button {
   padding: 0px 10px !important;
@@ -116,6 +119,7 @@ td {
 
 tfoot {
   border-top: 1px solid #eee;
+  display: table-footer-group !important;
 }
 
 .EditIcon {
@@ -258,8 +262,8 @@ tfoot {
 
 tfoot td > div {
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
-
 .PublishButton {
   color: #ffffff !important;
   border-radius: 20px !important;
@@ -278,16 +282,20 @@ tfoot td > div {
 }
 
 .AlertWrap >div >div + div{
-
-    vertical-align: middle !important;
-    line-height: 1.5 !important;
-
-    font-size: 16px;
-    font-weight: 500 !important;
-    padding: 8px;
+  vertical-align: middle !important;
+  line-height: 1.5 !important;
+  font-size: 16px;
+  font-weight: 500 !important;
+  padding: 8px;
 }
 
 .AlertWrap >div >div + div + div > button span svg{
   width: 2em;
   height: 1.5em;
+}
+tfoot button{
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
 }

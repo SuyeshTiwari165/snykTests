@@ -21,7 +21,7 @@
 
 .SelectedItem.OpenItem, .SelectedItem.OpenItem:hover, .OpenItem:hover {
   border: 1px solid #f06601 !important;
-  background-color: #EFF6FD !important;
+  background-color: #fef9f5 !important;
 }
 
 .OpenItem {
@@ -50,7 +50,7 @@
 
 .SelectedItem.ClosedItem, .SelectedItem.ClosedItem:hover, .ClosedItem:hover {
   /* border: 1px solid #f06601 !important; */
-  background-color: #EFF6FD !important;
+  background-color: #fef9f5 !important;
   padding:13px !important;
   box-shadow: inset 0px 11px 8px -10px #CCC !important;
 }

@@ -74,7 +74,15 @@ table>thead {
   max-height: calc(100vh - 345px) !important;
   overflow-x: auto !important;
 }
-
+.ScrollTable svg{
+  fill:#e53935 !important;
+}
+tfoot button {
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
+}
 td button {
   padding: 0px 10px !important;
   color: #f06601 !important;
@@ -89,17 +97,12 @@ td {
 }
 tfoot {
   border-top: 1px solid #eee;
+  display: table-footer-group !important;
+}
+tfoot tr td > div{
+  justify-content: flex-end;
 }
 
 .disfield input {
   background-color: #e1e1e1;
-}
-
-.table tfoot tr td{
-  width: 100% !important;
-  display: flex !important;
-}
-
-.table tfoot tr td > div {
-  justify-content: flex-end !important;
 }

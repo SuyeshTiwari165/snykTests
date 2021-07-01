@@ -68,6 +68,17 @@
 th:nth-child(5) {
   text-align: left !important;
 }
-tfoot td > div {
+
+tfoot  {
+  display: table-footer-group !important;
+}
+tfoot tr td > div{
+  justify-content: flex-end;
   flex-wrap: wrap;
+}
+tfoot button{
+  color: #e53935 !important;
+}
+tfoot svg {
+  fill:#e53935 !important;
 }
