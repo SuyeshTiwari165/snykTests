@@ -36,6 +36,10 @@ import {
 import Switch from "../../../components/UI/Switch/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { DELETE_TARGET } from "../../../graphql/mutations/Target";
+import { DialogBox } from "../../../components/UI/DialogBox/DialogBox";
+import AlertBox from "../../../components/UI/AlertBox/AlertBox";
+import * as msgConstant from "../../../common/MessageConstants";
+import logout from "../../Auth/Logout/Logout";
 
 export const RaReportListing: React.FC = (props: any) => {
   const [name, setName] = useState<String>("");
@@ -83,7 +87,9 @@ export const RaReportListing: React.FC = (props: any) => {
   });
   const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   const [targetDeleted, SetTargetDeleted] = useState(false);
-
+  const [rowData2, setRowData] = useState<any>({});
+  const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
+  const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   //filter query condition declaration
   const [getReportListingData, {
     data: dataReportListing,
@@ -96,8 +102,8 @@ export const RaReportListing: React.FC = (props: any) => {
         setShowBackdrop(false);
       },
       onError: error => {
-        // logout()
-        history.push(routeConstant.DASHBOARD);
+        logout()
+        // history.push(routeConstant.DASHBOARD);
       }
     });
 
@@ -160,7 +166,7 @@ export const RaReportListing: React.FC = (props: any) => {
       );
       setNewData(temp);
     }
-    if (partner.partnerId) {
+    if (partner.partnerId && propsClientName!= undefined) {
       getReportListingData({
         variables: {
           clientname: propsClientName,
@@ -462,29 +468,38 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleClickDelete = (event: any, rowData: any) => {
-    SetTargetDeleted(false);
-    console.log("RowData",rowData);
     setShowBackdrop(true);
+    setOpenDialogBox(true);
+    // setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+    setDialogBoxMsg("Are you sure you want to remove" + rowData.target);
+    setRowData(rowData);
+  }
+
+  const confirmDelete = async () => {
+    closeDialogBox();
+      // SetTargetDeleted(false);
     deleteTarget({
       variables: {
-        id: rowData.targetId
+        id: rowData2.targetId
       },
     }).then((res: any) => {
       setShowBackdrop(false);
-      console.log("RES",res.data.deleteTarget.status);
       if(res.data.deleteTarget.status == "Target Deleted Successfully") {
+        console.log("propsClientName",propsClientName)
+        if(propsClientName != undefined) {
         getReportListingData({
           variables: {
             clientname: propsClientName,
           },
         });
+      }
       setFormState((formState) => ({
         ...formState,
         isSuccess: false,
         isUpdate: false,
         isDelete: true,
         isFailed: false,
-        errMessage: "  " + rowData.target + "  " ,
+        errMessage: "  " + rowData2.target + "  " ,
       }));
     }
     if(res.data.deleteTarget.status === "Target Not Deleted") {
@@ -495,7 +510,7 @@ export const RaReportListing: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: " Failed to Delete Partner  " + rowData.target + " " ,
+        errMessage: " Failed to Delete Partner  " + rowData2.target + " " ,
       }));
     }
     })
@@ -511,8 +526,12 @@ export const RaReportListing: React.FC = (props: any) => {
         errMessage: error,
       }));
     });
-    
+
   }
+  const closeDialogBox = () => {
+    setShowBackdrop(false);
+    setOpenDialogBox(false);
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -522,6 +541,31 @@ export const RaReportListing: React.FC = (props: any) => {
       </Typography>
       <Grid>
       {loadingReportListing || backdrop || showBackdrop  ? <SimpleBackdrop/>: null}
+      <DialogBox
+        open={openDialogBox}
+        handleOk={confirmDelete}
+        handleCancel={closeDialogBox}
+        buttonOk={"Yes"}
+        buttonCancel={"No"}
+        classes={{
+          root: styles.MainOfficeDialogRoot,
+          container: styles.MainOfficeDialogboxContainer,
+          paper: styles.MainOfficeDialogboxPaper,
+          scrollPaper: styles.MainOfficeScrollPaper,
+        }}
+      >
+        <div className={styles.DialogBoxTitle}>
+          <Typography component="h1" variant="h1">
+            Please Confirm
+          </Typography>
+        </div>
+        <div className={styles.DialogBoxContext}>
+          <p>
+            {dialogBoxMsg}
+          </p>
+        </div>
+      </DialogBox>
+
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             {/* {userRole === "SuperUser" ? ( */}

@@ -646,7 +646,18 @@ export const Target: React.FC = (props: any) => {
           })
             .then((userRes) => {
               setBackdrop(false);
-              console.log("USERRESPONSE of new target",userRes);
+              if(userRes.data.createTarget.targetField ==  null){
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Name already present.",
+                }));
+                // setSubmitDisabled(true)
+              }
+              else {
               setSubmitDisabled(false)
               setFormState((formState) => ({
                 ...formState,
@@ -685,6 +696,7 @@ export const Target: React.FC = (props: any) => {
                 setShowDialogBox(true)
                 setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
               }, 1000);
+            }
             })
             .catch((err) => {
               setSubmitDisabled(false)
