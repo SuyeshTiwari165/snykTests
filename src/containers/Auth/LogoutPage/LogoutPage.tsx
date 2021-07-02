@@ -8,6 +8,15 @@ export const LogoutPage: React.FC = (props: any) => {
     <React.Fragment>
     <div className={styles.logoutPage}>
       <Paper className={styles.paper}>
+        <div className={styles.RALogoImg}>
+          <img
+            src={
+              process.env.PUBLIC_URL +
+              "/OB360.png"
+            }
+            alt="user icon"
+          />
+        </div>
         <Typography component="h5" variant="h3">
           You have Successfully Logged out from OB360
         </Typography>

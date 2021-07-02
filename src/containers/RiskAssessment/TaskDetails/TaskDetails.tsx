@@ -500,6 +500,7 @@ try {
             onClick={handleBack}
             color="primary"
             data-testid="cancel-button"
+            className={styles.borderLess}
           >
             back
           </Button>

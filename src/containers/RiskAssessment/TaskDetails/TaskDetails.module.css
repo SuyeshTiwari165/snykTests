@@ -65,3 +65,15 @@
 .disfield input {
   background-color: #e1e1e1;
 }
+.borderLess{
+  font-family: Roboto,sans-serif;
+  color: #F06601 !important;
+  padding: 4px 14px !important;
+  line-height: 1.846 !important;
+  border-radius: 20px !important;
+  font-weight: 500!important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
