@@ -42,6 +42,10 @@ export const Header: React.FC = () => {
                 {username}
             &nbsp;&nbsp;|&nbsp;&nbsp;
           </span>
+			<span className={styles.userNameLabel}>
+                <a className={styles.logout}>Help</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+              </span>
               <span className={styles.userNameLabel}>
                 <a className={styles.logout} onClick={Logout}>
                   Logout

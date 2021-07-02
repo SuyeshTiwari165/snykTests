@@ -1530,9 +1530,9 @@ export const Target: React.FC = (props: any) => {
           : null}
       </Typography>
       <RaStepper />
-      <Grid container spacing={3} className={styles.AlertWrap}>
       { taskLoading || backdrop ? <SimpleBackdrop /> : null }
       {targetLoading ? <SimpleBackdrop/>: null}
+      <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
             <Alert
@@ -1713,6 +1713,7 @@ export const Target: React.FC = (props: any) => {
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
+            className={styles.borderLess}
             variant={"contained"}
             onClick={handleBack}
             color="primary"

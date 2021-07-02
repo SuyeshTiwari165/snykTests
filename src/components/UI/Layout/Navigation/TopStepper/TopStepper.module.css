@@ -16,8 +16,7 @@
 }
 
 .ReactStep button:disabled{
-  border:1px solid #707070 !important;
-  background-color: #fff;
+  background-color: #f06601 !important;
   color: #707070;
   font-weight: normal !important;
   opacity: 0.65;

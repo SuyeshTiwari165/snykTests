@@ -75,19 +75,41 @@
 .AlertWrap >div >div >div > svg{
   width: 2em;
   height: 1.5em;
+  font-size:1.2rem;
 }
 
 .AlertWrap >div >div >div + div{
-
-    vertical-align: middle !important;
-    line-height: 1.5 !important;
-
-    font-size: 16px;
-    font-weight: 500 !important;
-    padding: 8px;
+  line-height: 1.5 !important;
+  font-size: 16px;
+  font-weight: 500 !important;
+  padding: 0px;
+  align-items: center;
+  display: inline-flex;
 }
 
 .AlertWrap >div >div >div + div + div > button span svg{
   width: 2em;
   height: 1.5em;
+  font-size:1.2rem;
+}
+.AlertWrap > div > div > div {
+  padding: 0px;
+  align-items: center;
+}
+.PasswordField label{
+  transform : translate(14px, 16px) scale(1);
+  color: #707070 !important;
+  font-size: 14px;
+}
+.borderLess{
+    font-family: Roboto,sans-serif;
+    color: #F06601 !important;
+    padding: 4px 14px !important;
+    line-height: 1.846 !important;
+    border-radius: 20px !important;
+    font-weight: 500!important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
 }

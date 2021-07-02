@@ -783,6 +783,7 @@ try {
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
+            className={styles.borderLess}
             variant={"contained"}
             onClick={handleBack}
             color="primary"
@@ -791,6 +792,7 @@ try {
             back
           </Button>
           <Button
+            className={styles.borderLess}
             variant={"contained"}
             onClick={handleSkip}
             color="primary"

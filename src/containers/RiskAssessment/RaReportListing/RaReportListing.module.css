@@ -80,9 +80,9 @@ th {
   border-bottom: none !important;
   line-height: 1.5 !important;
   font-size: 12px !important;
-  color: #002f60 !important;
+  color: #F06601 !important;
   font-weight: 600 !important;
-  background-color: #fef9f5 !important;
+  background: #fef9f5 !important;
 }
 
 th span, th div {
@@ -276,26 +276,63 @@ tfoot td > div {
   background-color: rgb(0, 56, 117) !important;
 }
 
-.AlertWrap >div >div > svg{
+.AlertWrap >div >div >div > svg{
   width: 2em;
   height: 1.5em;
+  font-size:1.2rem;
 }
 
-.AlertWrap >div >div + div{
-  vertical-align: middle !important;
+.AlertWrap >div >div >div + div{
   line-height: 1.5 !important;
   font-size: 16px;
   font-weight: 500 !important;
-  padding: 8px;
+  padding: 0px;
+  align-items: center;
+  display: inline-flex;
 }
 
-.AlertWrap >div >div + div + div > button span svg{
+.AlertWrap >div >div >div + div + div > button span svg{
   width: 2em;
   height: 1.5em;
+  font-size:1.2rem;
+}
+.AlertWrap > div > div > div {
+  padding: 0px;
+  align-items: center;
 }
 tfoot button{
   color: #e53935 !important;
 }
 tfoot svg {
   fill:#e53935 !important;
+}
+.DialogBoxTitle {
+  text-align: center;
+  border-bottom: 1px solid #f06601;
+  padding: 16px 24px;
+}
+.DialogBoxTitle h1 {
+  margin-bottom: 0px !important;
+}
+.DialogBoxContext {
+  padding: 16px !important;
+}
+.DialogBoxContext p {
+  font-size: 1rem;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #707070;
+  margin: 0px;
+}
+.MainOfficeDialogboxPaper{
+  height: 200px !important;
+  border-radius: 24px !important;
+  margin-top: 66px !important;
+  border-bottom: 1px solid #f06601 !important;
+  width: auto !important;
+  max-width: 800px !important;
+}
+.MainOfficeScrollPaper {
+  align-items: center !important;
 }
