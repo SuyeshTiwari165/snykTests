@@ -36,16 +36,12 @@ import { GET_PARTNER } from "../../../../graphql/queries/Partners";
 import * as validations from "../../../../common/validateRegex";
 
 export const PartnerForm: React.FC = (props: any) => {
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [partnerName, setPartnerName] = useState("");
   const [email, setEmail] = useState("");
   const [partnerID, setPartnerID] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [newData, setNewData] = useState<any>([]);
-  const [rowData, setRowData] = useState<any>();
-  const [partnerSubsID, setPartnerSubsID] = useState<any>();
-  const [foundErrors, setFoundError] = useState(false);
   const [param, setParam] = useState<any>();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -57,7 +53,6 @@ export const PartnerForm: React.FC = (props: any) => {
   });
   const history = useHistory();
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [addPartner, setAddPartner] = useState(false);
 
   const [formState, setFormState] = useState({
     isSuccess: false,

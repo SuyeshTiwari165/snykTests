@@ -222,10 +222,10 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
     </div>
   );
 
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.replace("/login");
-  };
+  // const handleLogout = () => {
+  //   localStorage.clear();
+  //   window.location.replace("/login");
+  // };
 
   const popper = (
     <Popper
@@ -260,7 +260,7 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
   const container =
     window !== undefined ? () => window.document.body : undefined;
   const session = localStorage.getItem("session");
-  const accessToken = session ? session : null;
+  // const accessToken = session ? session : null;
 
   return (
     <nav
