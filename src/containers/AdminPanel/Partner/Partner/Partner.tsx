@@ -31,7 +31,6 @@ export const Partner: React.FC = (props: any) => {
   const [newData, setNewData] = useState<any>([]);
   const [param, setParam] = useState<any>();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const [partnerDeleted, setPartnerDeleted] = useState<any>(false);
   const [showBackdrop, setShowBackdrop] = useState<boolean>(false);
 
   //table
@@ -42,14 +41,7 @@ export const Partner: React.FC = (props: any) => {
     { title: "Created On", field: "created_on" },
   ];
 
-  const [isError, setIsError] = useState<any>({
-    partnerName: "",
-    address: "",
-    email: "",
-    phoneNumber: "",
-  });
   const history = useHistory();
-  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
@@ -98,22 +90,22 @@ export const Partner: React.FC = (props: any) => {
     return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
   }
 
-  const getDateAndTime = (utcDate: any) => {
-    if (utcDate === "" || utcDate === null) {
-      return null;
-    } else {
-      var dateFormat: any = new Date(utcDate);
-      var hours = dateFormat.getHours();
-      var minutes = dateFormat.getMinutes();
-      var ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
-      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
-      return dateAndTime;
-    }
-  };
+  // const getDateAndTime = (utcDate: any) => {
+  //   if (utcDate === "" || utcDate === null) {
+  //     return null;
+  //   } else {
+  //     var dateFormat: any = new Date(utcDate);
+  //     var hours = dateFormat.getHours();
+  //     var minutes = dateFormat.getMinutes();
+  //     var ampm = hours >= 12 ? 'PM' : 'AM';
+  //     hours = hours % 12;
+  //     hours = hours ? hours : 12; // the hour '0' should be '12'
+  //     minutes = minutes < 10 ? '0' + minutes : minutes;
+  //     var strTime = hours + ':' + minutes + ' ' + ampm;
+  //     var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+  //     return dateAndTime;
+  //   }
+  // };
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];

@@ -42,11 +42,9 @@ import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
 
 export const RaReportListing: React.FC = (props: any) => {
-  const [name, setName] = useState<String>("");
   const [published, setPublished] = useState<any>({});
   const [backdrop, setBackdrop] = useState<Boolean>(false);
   const [showBackdrop, setShowBackdrop] = useState<Boolean>(true);
-  const [submitDisabled, setSubmitDisabled] = useState<Boolean>(true);
   const [selectedFile, setSelectedFile] = useState<any>({});
   const history = useHistory();
   const [newData, setNewData] = useState();
@@ -68,7 +66,6 @@ export const RaReportListing: React.FC = (props: any) => {
   ];
   const columns = partner.partnerId ? CompnyUserColumns : AdminColumns;
   const title = "Listing of Reports";
-  const [filters, setFilters] = useState<any>({});
   const [orderBy, setOrderBy] = useState<String>();
   //static values
   const propsClientName = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.name : undefined;
@@ -85,7 +82,6 @@ export const RaReportListing: React.FC = (props: any) => {
     isDelete: false,
     errMessage: ""
   });
-  const [haveOtherOffice, setHaveOtherOffice] = useState(true);
   const [targetDeleted, SetTargetDeleted] = useState(false);
   const [rowData2, setRowData] = useState<any>({});
   const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
@@ -94,7 +90,6 @@ export const RaReportListing: React.FC = (props: any) => {
   const [getReportListingData, {
     data: dataReportListing,
     loading: loadingReportListing,
-    refetch: refetchReportListing
   }] = useLazyQuery(GET_REPORT_LISTING,
     {
       fetchPolicy: "cache-and-network",
@@ -386,9 +381,9 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   let checked: boolean;
-  const handlePublish = (event: any, rowdata: any) => {
-    setPublished({ ...published, [rowdata.targetId]: event.target.checked });
-  };
+  // const handlePublish = (event: any, rowdata: any) => {
+  //   setPublished({ ...published, [rowdata.targetId]: event.target.checked });
+  // };
 
   const handlePublishchange = (event: any, rowData: any) => {
     // if (event.target.checked !== undefined) {
@@ -471,7 +466,7 @@ export const RaReportListing: React.FC = (props: any) => {
     setShowBackdrop(true);
     setOpenDialogBox(true);
     // setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
-    setDialogBoxMsg("Are you sure you want to remove" + rowData.target);
+    setDialogBoxMsg("Are you sure you want to remove " + rowData.target + "?");
     setRowData(rowData);
   }
 

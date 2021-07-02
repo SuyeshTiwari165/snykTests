@@ -115,24 +115,6 @@ export default function TopStepper(props: any) {
       }
     }
   }
-  const handleTab = (e: any, i: number, label: any) => {
-    // setActiveStep(i);
-    setStep(i);
-    e.preventDefault();
-    history.push(label.path);
-  };
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
 
   return (
     // <ApolloProvider client={client}>

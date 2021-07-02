@@ -25,11 +25,8 @@ import { Link } from 'react-router-dom'
 
 export const Dashboard: React.FC = () => {
   const [clientCount, setClientCount] = useState();
-  const [partnerCount, setPartnerCount] = useState();
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
+  // const contact = JSON.parse(localStorage.getItem("contact") || "{}");
   const [newData, setNewData] = useState();
-  const [CCsubscription, setCCsubscription] = useState(false);
-  const [RAsubscription, setRAsubscription] = useState(false);
   const history = useHistory();
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
 
@@ -80,14 +77,14 @@ export const Dashboard: React.FC = () => {
     { title: "Created on", field: "created_on" },
   ];
 
-  const handleClickOpen = () => {
-    let data: any = { showAddClient: true };
-    history.push(routeConstant.CLIENT, data);
-  };
-  const partnerClickOpen = () => {
-    let data: any = { "showPartnerUser": true };
-    history.push(routeConstant.PARTNER_USER, data);
-  };
+  // const handleClickOpen = () => {
+  //   let data: any = { showAddClient: true };
+  //   history.push(routeConstant.CLIENT, data);
+  // };
+  // const partnerClickOpen = () => {
+  //   let data: any = { "showPartnerUser": true };
+  //   history.push(routeConstant.PARTNER_USER, data);
+  // };
 
   const handleClickEdit = (rowData: any) => {
     history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
@@ -101,12 +98,8 @@ export const Dashboard: React.FC = () => {
     if (param === "RA") {
       history.push(routeConstant.RA_REPORT_LISTING, data);
     }
-    if (param === "View") {
-    }
     if (param === "Edit") {
       handleClickEdit(rowData);
-    }
-    if (param === "Delete") {
     }
   };
 

@@ -18,83 +18,76 @@ import * as routeConstants from "../../../common/RouteConstants";
 import Paper from "@material-ui/core/Paper";
 
 export const PgAction: React.FC = (props: any) => {
-  const [userRole, setUserRole] = useState();
   const history = useHistory();
 
   // Graphql
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  // const [subscription, setSubscription] = useState("");
-  const [ccSubscription, setCCSubscription] = useState<any>(false);
-  const [raSubscription, setRASubscription] = useState<any>(false);
   const [obSubscription, setOBSubscription] = useState<any>(false);
   const [invalidLogin, setInvalidLogin] = useState(false);
   const [invalidSubs, setInvalidSubs] = useState(false);
 
-  const [superAdmin, setSuperAdmin] = useState(false);
-
-
   // Login User to get Authenticated.
-  const onAdminLogin = () => {
-    login({
-      variables: {
-        username: "admin@webaccessglobal.com",
-        password: "Musu30@in",
-      },
-    })
-      .then((userRes) => {
-        localStorage.setItem("session", userRes.data.tokenAuth.token);
-      })
-      .catch((Error) => {
-        setInvalidLogin(true);
-      });
-  };
+  // const onAdminLogin = () => {
+  //   login({
+  //     variables: {
+  //       username: "admin@webaccessglobal.com",
+  //       password: "Musu30@in",
+  //     },
+  //   })
+  //     .then((userRes) => {
+  //       localStorage.setItem("session", userRes.data.tokenAuth.token);
+  //     })
+  //     .catch((Error) => {
+  //       setInvalidLogin(true);
+  //     });
+  // };
 
   const [login, { data }] = useMutation(USER_LOGIN);
 
 
   const PartnerAdd=()=>{
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-form/add")
   };
 
   const PartnerUpdate=()=>{
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-form/edit/")
   };
   const PartnerDelete=()=>{
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-form/delete/")
   };
 
   const AddPartnerUser = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-user-form/add");
   };
   
   const updatePartnerUser = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-user-form/edit/");
   };
   const deletePartnerUser = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-partner-user-form/delete/");
   }
 
 
   // Client
   const addClient = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-client-form/add");
   }
   const updateClient = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-client-form/edit");
 
   }
   const deleteClient = () => {
-    onAdminLogin();
+    // onAdminLogin();
     history.push("/pg-client-form/delete");
   }
 
