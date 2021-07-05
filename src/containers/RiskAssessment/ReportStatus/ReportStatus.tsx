@@ -21,6 +21,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 // import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
+import Logout from "../../Auth/Logout/Logout";
 
 export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
@@ -92,7 +93,8 @@ export const ReportStatus: React.FC = (props: any) => {
   //for task data
   // if (loadingReportListing) return <Loading />;
   if (errorReportListing) {
-    return <div className="error">Error!</div>;
+    // return <div className="error">Error!</div>;
+    Logout();
   }
 
   function convertTableData(data: any) {

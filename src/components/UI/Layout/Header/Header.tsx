@@ -29,7 +29,9 @@ export const Header: React.FC = () => {
       userdata.data.getUserDetails.edges[0].node.lastName;
   } catch (e) {
     userdata = user;
+    if(user !== undefined) {
     username = user.getUserDetails.edges[0].node.username;
+    }
   }
   return (
     <div className={styles.Header} data-testid="Header">

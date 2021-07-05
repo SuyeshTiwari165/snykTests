@@ -60,7 +60,6 @@ export const Linux_Network: React.FC = (props: any) => {
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
-  const networkType = "Linux";
   const[showbackdrop, setShowbackdrop] = useState(true);
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);

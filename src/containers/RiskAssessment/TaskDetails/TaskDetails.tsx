@@ -153,6 +153,18 @@ export const TaskDetails: React.FC = (props: any) => {
     onCompleted:()=>{
       setShowbackdrop(false)
     },
+    onError: (err) => {
+      setShowbackdrop(false);
+      let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    },
 
     fetchPolicy: "cache-and-network",
   });
