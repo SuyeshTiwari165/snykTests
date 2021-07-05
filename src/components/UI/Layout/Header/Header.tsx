@@ -21,6 +21,11 @@ export const Header: React.FC = () => {
   let userdata: any;
   let username: any;
 
+  const getHelpManual = () => {
+    let ra_manual = process.env.PUBLIC_URL + "/user_manual/OB360_Manual.pdf"
+    window.open(ra_manual, '_blank');
+  }
+
   try {
     userdata = JSON.parse(user);
     username =
@@ -52,7 +57,7 @@ export const Header: React.FC = () => {
                 &nbsp;&nbsp;|&nbsp;&nbsp;
               </span>
               <span className={styles.userNameLabel}>
-                <a className={styles.logout}>Help</a>
+                <a className={styles.logout}  onClick={getHelpManual} >Help</a>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
               </span>
               <span className={styles.userNameLabel}>
