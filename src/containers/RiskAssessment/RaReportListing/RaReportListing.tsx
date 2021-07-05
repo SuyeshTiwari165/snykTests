@@ -308,6 +308,18 @@ export const RaReportListing: React.FC = (props: any) => {
         saveAs(blobData, rowData.target);
         setBackdrop(false)
       });
+    })
+    .catch((err) => {
+      setBackdrop(false);
+      let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
     });
   };
 
@@ -432,10 +444,18 @@ export const RaReportListing: React.FC = (props: any) => {
             errMessage: " Report Un-Published Successfully !!"
           }));
         }
-      }).catch((error: any) => {
+      }).catch((err: any) => {
         setBackdrop(false)
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
       })
-    // }
   };
 
   const handleAddNewReport = () => {

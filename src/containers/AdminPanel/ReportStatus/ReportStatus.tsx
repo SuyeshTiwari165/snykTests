@@ -111,7 +111,7 @@ export const ReportStatus: React.FC = (props: any) => {
   ] = useLazyQuery(GET_ADMIN_REPORT_LISTING, {
     fetchPolicy: "cache-and-network",
     onError: () => {
-      // logout();
+      logout();
     },
     onCompleted: () => {},
   });
@@ -128,6 +128,9 @@ export const ReportStatus: React.FC = (props: any) => {
           });
           setPartnerNameList(arr);
         }
+      },
+      onError: () => {
+        logout();
       },
       fetchPolicy: "cache-and-network",
     }
