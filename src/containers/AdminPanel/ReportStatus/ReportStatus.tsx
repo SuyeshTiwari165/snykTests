@@ -285,12 +285,7 @@ export const ReportStatus: React.FC = (props: any) => {
     });
   }
   };
-  const startDateFilter = (event: any) => {
-    setStartDate(event.target.value);
-  };
-  const endDateFilter = (event: any) => {
-    setEndDate(event.target.value);
-  };
+
   const getStatusList = [{ name: "Done" }, { name: "In Progress" }];
   const getStatus = {
     options: getStatusList,

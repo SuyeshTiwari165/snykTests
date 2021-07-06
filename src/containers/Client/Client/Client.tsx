@@ -55,7 +55,6 @@ export const Client: React.FC = (props: any) => {
   const [newData, setNewData] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
-  const [rowData, setRowData] = useState(false);
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partner = Cookies.get('ob_partnerData') || ""
   const user = Cookies.getJSON('ob_user') || "" 
@@ -383,9 +382,9 @@ export const Client: React.FC = (props: any) => {
     });
   }
 
-  const handleClickOpen = (rowData: any) => {
-    history.push(routeConstant.CLIENT_FORM_ADD);
-  };
+  // const handleClickOpen = (rowData: any) => {
+  //   history.push(routeConstant.CLIENT_FORM_ADD);
+  // };
 
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
   // if (iError) {
@@ -398,56 +397,56 @@ export const Client: React.FC = (props: any) => {
   //   )
   // }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.name === "Name") {
-      setName(event.target.value);
-      let err = event.target.value === "" || null ? "Required" : "";
-      setIsError((error: any) => ({
-        ...error,
-        name: err
-      }));
-    }
-    if (event.target.name === "email") {
-      setEmail(event.target.value);
-      // let err = event.target.value === "" || null ? "Required" : "";
-      // setIsError((error: any) => ({
-      //   ...error,
-      //   email: err,
-      // }));
-      //  if (!err) {
-      if (
-        event.target.value &&
-        !validations.EMAIL_REGEX.test(event.target.value)
-      ) {
-        let errors = "Please enter valid email address.";
-        setIsError((error: any) => ({
-          ...error,
-          email: errors
-        }));
-      } else {
-        setIsError({ error: null });
-      }
-      // }
-    }
-    if (event.target.name === "phoneNumber") {
-      setPhoneNumber(event.target.value);
-      // let err = event.target.value === "" || null ? "Required" : "";
-      // setIsError((error: any) => ({
-      //   ...error,
-      //   phoneNumber: err,
-      // }));
-      // if (!err) {
-      //   if (phoneNumber.length < 9 ) {
-      //     let errors = "Please enter valid Phone no.";
-      //     setIsError((error: any) => ({
-      //       ...error,
-      //       phoneNumber: errors,
-      //     }));
-      //   }
-      // }
-    }
-    setSubmitDisabled(checkValidation);
-  };
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.name === "Name") {
+  //     setName(event.target.value);
+  //     let err = event.target.value === "" || null ? "Required" : "";
+  //     setIsError((error: any) => ({
+  //       ...error,
+  //       name: err
+  //     }));
+  //   }
+  //   if (event.target.name === "email") {
+  //     setEmail(event.target.value);
+  //     // let err = event.target.value === "" || null ? "Required" : "";
+  //     // setIsError((error: any) => ({
+  //     //   ...error,
+  //     //   email: err,
+  //     // }));
+  //     //  if (!err) {
+  //     if (
+  //       event.target.value &&
+  //       !validations.EMAIL_REGEX.test(event.target.value)
+  //     ) {
+  //       let errors = "Please enter valid email address.";
+  //       setIsError((error: any) => ({
+  //         ...error,
+  //         email: errors
+  //       }));
+  //     } else {
+  //       setIsError({ error: null });
+  //     }
+  //     // }
+  //   }
+  //   if (event.target.name === "phoneNumber") {
+  //     setPhoneNumber(event.target.value);
+  //     // let err = event.target.value === "" || null ? "Required" : "";
+  //     // setIsError((error: any) => ({
+  //     //   ...error,
+  //     //   phoneNumber: err,
+  //     // }));
+  //     // if (!err) {
+  //     //   if (phoneNumber.length < 9 ) {
+  //     //     let errors = "Please enter valid Phone no.";
+  //     //     setIsError((error: any) => ({
+  //     //       ...error,
+  //     //       phoneNumber: errors,
+  //     //     }));
+  //     //   }
+  //     // }
+  //   }
+  //   setSubmitDisabled(checkValidation);
+  // };
 
   const checkValidation = () => {
     let validation = false;
@@ -456,35 +455,35 @@ export const Client: React.FC = (props: any) => {
     // }
     return validation;
   };
-  const handleInputErrors = () => {
-    let foundErrors = false;
-    if (!name) {
-      let err = "Name is Required";
-      setIsError((error: any) => ({
-        ...error,
-        name: err
-      }));
-      foundErrors = true;
-    }
-    // if(!email) {
-    //   let errors = "Required";
-    //   setIsError((error: any) => ({
-    //     ...error,
-    //     email: errors,
-    //   }));
-    //   foundErrors = true;
-    // }
-    if (email && !validations.EMAIL_REGEX.test(email)) {
-      let errors = "Please enter valid email address.";
-      setIsError((error: any) => ({
-        ...error,
-        email: errors
-      }));
-      foundErrors = true;
-    }
+  // const handleInputErrors = () => {
+  //   let foundErrors = false;
+  //   if (!name) {
+  //     let err = "Name is Required";
+  //     setIsError((error: any) => ({
+  //       ...error,
+  //       name: err
+  //     }));
+  //     foundErrors = true;
+  //   }
+  //   // if(!email) {
+  //   //   let errors = "Required";
+  //   //   setIsError((error: any) => ({
+  //   //     ...error,
+  //   //     email: errors,
+  //   //   }));
+  //   //   foundErrors = true;
+  //   // }
+  //   if (email && !validations.EMAIL_REGEX.test(email)) {
+  //     let errors = "Please enter valid email address.";
+  //     setIsError((error: any) => ({
+  //       ...error,
+  //       email: errors
+  //     }));
+  //     foundErrors = true;
+  //   }
 
-    return foundErrors;
-  };
+  //   return foundErrors;
+  // };
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData, partnerId : partner };
@@ -493,8 +492,6 @@ export const Client: React.FC = (props: any) => {
       console.log("data",data);
       // setShowBackdrop(true)
       history.push(routeConstant.RA_REPORT_LISTING, data);
-    }
-    if (param === "View") {
     }
     if (param === "Edit") {
       handleClickEdit(rowData);

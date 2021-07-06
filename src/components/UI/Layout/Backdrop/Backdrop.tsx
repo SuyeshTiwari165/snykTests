@@ -20,9 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function SimpleBackdrop() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
   return (
-    <Backdrop className={classes.backdrop} open={open}>
+    <Backdrop className={classes.backdrop} open={true}>
       <div className={styles.CenterItems}>
         <div className={styles.LoadingPadding}>
           <CircularProgress style={{ color: "white" }} />
