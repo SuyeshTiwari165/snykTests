@@ -259,7 +259,7 @@ export const SideDrawer: React.SFC<SideDrawerProps> = props => {
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
-  const session = localStorage.getItem("session");
+  // const session = localStorage.getItem("session");
   // const accessToken = session ? session : null;
 
   return (

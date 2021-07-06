@@ -79,7 +79,6 @@ export default function TopStepper(props: any) {
   var stepperObject = stepper;
   // const nextValue = useQuery(CLIENT_COMPLIANCESTEPPER);
   let nextValue: any;
-  const history = useHistory();
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [step, setStep] = useState<number>(0);

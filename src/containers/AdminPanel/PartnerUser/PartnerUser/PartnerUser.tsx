@@ -46,24 +46,15 @@ interface partnerValues {
 
 export const PartnerUser: React.FC = (propsData: any) => {
   const history = useHistory();
-  const [firstName, setFirstName] = useState("");
   const[showBackdrop, setShowBackdrop] = useState(true);
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [partnerID, setPartnerID] = useState<any>();
   const [confirmPassword, setConfirmPassword] = useState("");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [partnerList, setPartnerList] = useState("");
-  const [partner, setPartner] = useState<any>("");
   const [newData, setNewData] = useState([]);
-  const [param, setParam] = useState<any>();
   const [rowData, setRowData] = useState<any>();
-  const [passRegError, setPassRegError] = useState(false);
   const [confirmPassError, setConfirmPassError] = useState(false);
-  const [adminRole, setAdminRole] = useState(false);
   const [isError, setIsError] = useState<any>({
     firstName: "",
     lastName: "",
@@ -259,70 +250,70 @@ export const PartnerUser: React.FC = (propsData: any) => {
     return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
   }
 
-  const getDateAndTime = (utcDate: any) => {
-    if (utcDate === "" || utcDate === null) {
-      return null;
-    } else {
-      var dateFormat: any = new Date(utcDate);
-      var hours = dateFormat.getHours();
-      var minutes = dateFormat.getMinutes();
-      var ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
-      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
-      console.log(convertDate(new Date(utcDate)))
-      return dateAndTime;
-    }
-  };
+  // const getDateAndTime = (utcDate: any) => {
+  //   if (utcDate === "" || utcDate === null) {
+  //     return null;
+  //   } else {
+  //     var dateFormat: any = new Date(utcDate);
+  //     var hours = dateFormat.getHours();
+  //     var minutes = dateFormat.getMinutes();
+  //     var ampm = hours >= 12 ? 'PM' : 'AM';
+  //     hours = hours % 12;
+  //     hours = hours ? hours : 12; // the hour '0' should be '12'
+  //     minutes = minutes < 10 ? '0' + minutes : minutes;
+  //     var strTime = hours + ':' + minutes + ' ' + ampm;
+  //     var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+  //     console.log(convertDate(new Date(utcDate)))
+  //     return dateAndTime;
+  //   }
+  // };
 
 
 
-  const handleClickOpen = () => {
-    let partnerData: any = { "partner_id": partnerID }
-    history.push(routeConstant.PARTNER_USER_FORM_ADD, propsData.location.state ? propsData.location.state : partnerData);
-  };
+  // const handleClickOpen = () => {
+  //   let partnerData: any = { "partner_id": partnerID }
+  //   history.push(routeConstant.PARTNER_USER_FORM_ADD, propsData.location.state ? propsData.location.state : partnerData);
+  // };
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  // const handleMouseDownPassword = (
+  //   event: React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   event.preventDefault();
+  // };
 
-  const getPartnerList = {
-    options: partnerList,
-    getOptionLabel: (option: partnerValues) => (option.name ? option.name : ""),
-  };
+  // const getPartnerList = {
+  //   options: partnerList,
+  //   getOptionLabel: (option: partnerValues) => (option.name ? option.name : ""),
+  // };
 
-  const handlePasswordChange = () => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPassword(event.target.value);
-    let err = event.target.value === "" || null ? "Password is Required" : "";
-    setIsError((error: any) => ({
-      ...error,
-      password: err,
-    }));
-    // setPasswordError(false);
-  };
-  const handleConfirmPasswordChange = () => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setConfirmPassword(event.target.value);
-    let err =
-      event.target.value === "" || null ? "Confirm Password is Required" : "";
-    setIsError((error: any) => ({
-      ...error,
-      confirmPassword: err,
-    }));
-    if (password != event.target.value) {
-      setConfirmPassError(true);
-    } else {
-      setConfirmPassError(false);
-      setIsError({ error: null });
-    }
-  };
+  // const handlePasswordChange = () => (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   setPassword(event.target.value);
+  //   let err = event.target.value === "" || null ? "Password is Required" : "";
+  //   setIsError((error: any) => ({
+  //     ...error,
+  //     password: err,
+  //   }));
+  //   // setPasswordError(false);
+  // };
+  // const handleConfirmPasswordChange = () => (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   setConfirmPassword(event.target.value);
+  //   let err =
+  //     event.target.value === "" || null ? "Confirm Password is Required" : "";
+  //   setIsError((error: any) => ({
+  //     ...error,
+  //     confirmPassword: err,
+  //   }));
+  //   if (password != event.target.value) {
+  //     setConfirmPassError(true);
+  //   } else {
+  //     setConfirmPassError(false);
+  //     setIsError({ error: null });
+  //   }
+  // };
   let propuserData = propsData.location.state
   const handleClickEdit = (rowData: any, event: any) => {
     let PartnerUserData = { rowData, propuserData }

@@ -333,12 +333,11 @@ export const PartnerForm: React.FC = (props: any) => {
     });
   }
 
-  const handleClickAdd = (rowData: any) => {
-    let viewdata: any = { propsData: rowData };
-    history.push(routeConstant.PARTNER_USER, viewdata);
-  };
+  // const handleClickAdd = (rowData: any) => {
+  //   let viewdata: any = { propsData: rowData };
+  //   history.push(routeConstant.PARTNER_USER, viewdata);
+  // };
 
-  const deleteTableRow = (rowData: any) => { };
 
   const backToList = () => {
     history.push(routeConstant.ADD_PARTNER,props.location.state);

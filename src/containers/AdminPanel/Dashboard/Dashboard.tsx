@@ -36,7 +36,7 @@ export const Dashboard: React.FC = (props: any) => {
     getPartnerUsersdata()
   },[])
   
-    const{ data: partnerData, error:partnerError , loading: loadPartner } = useQuery(GET_PARTNER, {
+    const{ error:partnerError , loading: loadPartner } = useQuery(GET_PARTNER, {
       variables: {
         orderBy: "-created_date",
       },
@@ -47,7 +47,7 @@ export const Dashboard: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
     });
 
-  const [getPartnerUsersdata ,{ data: partnerUsers, loading: loadPartnerUsers }] = useLazyQuery(
+  const [getPartnerUsersdata ,{ loading: loadPartnerUsers }] = useLazyQuery(
     GET_PARTNER_USERS,
     {
       onCompleted: (data: any) => {
@@ -99,12 +99,9 @@ export const Dashboard: React.FC = (props: any) => {
     if (param === "RA") {
       history.push(routeConstant.RA_REPORT_LISTING, data);
     }
-    if (param === "View") {
-    }
+
     if (param === "Edit") {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partnerId, rowData);
-    }
-    if (param === "Delete") {
     }
   };
 

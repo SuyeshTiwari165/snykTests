@@ -65,7 +65,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rowData, setRowData] = useState<any>();
-  const [passRegError, setPassRegError] = useState(false);
+  // const [passRegError, setPassRegError] = useState(false);
   const [confirmPassError, setConfirmPassError] = useState(false);
   const [isError, setIsError] = useState<any>({
     firstName: "",
@@ -82,7 +82,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
       ? propsData.location.state
       : null;
   }
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  // const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 
   const [getpartnerUserData, { data: PartneruserData, loading: loadPartner }] = useLazyQuery(

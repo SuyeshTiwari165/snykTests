@@ -123,9 +123,9 @@ export const Partner: React.FC = (props: any) => {
     setNewData(arr);
   };
 
-  const handleClickOpen = () => {
-    history.push(routeConstant.PARTNER_FORM_ADD);
-  };
+  // const handleClickOpen = () => {
+  //   history.push(routeConstant.PARTNER_FORM_ADD);
+  // };
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
