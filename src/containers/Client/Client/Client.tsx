@@ -499,6 +499,10 @@ export const Client: React.FC = (props: any) => {
     if (param === "Delete") {
       handleClickDelete(rowData)
     }
+    if (param === "Add") {
+      let data = { clientInfo: rowData };
+      history.push(routeConstant.TARGET, data);
+    }
   };
   if (createFlag) return <SimpleBackdrop />;
 
@@ -646,13 +650,23 @@ export const Client: React.FC = (props: any) => {
                 //       }
                 //     }
                 //   : null,
+                userRole != "SuperUser" ? 
                 {
-                  icon: () => <AssessmentIcon />,
+                  icon: () => <AddCircleIcon className={styles.CircleIcon} />,
+                  tooltip: "Create Vulnerability Test",
+                  onClick: (event: any, rowData: any, oldData :any) => {
+                    onRowClick(event, rowData, oldData, "Add");
+                  },
+                }
+                : null,
+                {
+                  icon: () => <VisibilityIcon />,
                   tooltip: "Vulnerability Test",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
                   }
                 }
+                
                 // {
                 //   icon: () => <VisibilityIcon />,
                 //   tooltip: "View",
