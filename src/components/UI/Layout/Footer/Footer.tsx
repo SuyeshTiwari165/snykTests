@@ -3,7 +3,7 @@ import styles from './Footer.module.css';
 
 export const Footer: React.FC = () => (
   <div className={styles.Footer} data-testid="Footer">
-    OB360 | © Copyright 2020
+    © 2021 - All Rights Reserved, PIISecured
   </div>
 );
 

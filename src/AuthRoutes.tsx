@@ -18,7 +18,7 @@ import ClientForm from "./containers/Client/ClientForm/ClientForm";
 import TopStepperRoute from "./common/TopStepperRoute";
 import LayoutRoute from "./common/LayoutRoute";
 
-const defaultRedirect = () => <Redirect to={routeConstants.DASHBOARD} />;
+const defaultRedirect = () => <Redirect to={routeConstants.CLIENT} />;
 
 export const AuthRoutes = (
   <Switch>

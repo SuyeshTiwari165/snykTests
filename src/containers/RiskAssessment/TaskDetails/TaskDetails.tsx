@@ -75,7 +75,7 @@ export const TaskDetails: React.FC = (props: any) => {
 
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
-  console.log("prioror", props.location.state)
+
   //add/edit data
 
   const [name, setName] = useState<String>("");
@@ -225,7 +225,17 @@ try {
   setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
   }
 }catch {
-    setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+  let data = {
+    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+    windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+    editData: true,
+    clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+    targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+    editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+    editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+    targetName : ReRunTargetName ? ReRunTargetName : targetName
+  }
+    setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
 }
   }, []);
 

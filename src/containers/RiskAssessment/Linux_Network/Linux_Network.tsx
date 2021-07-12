@@ -495,6 +495,7 @@ export const Linux_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
+    if(handleInputErrors()) {
       if(localStorage.getItem("runTargetName") != null && targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && targetData.getCredentialsDetails.edges &&  targetData.getCredentialsDetails.edges.length > 0) {        console.log("targetData.getCredentialsDetails",targetData);
         setBackdrop(true)
     testVpnConnection({
@@ -630,6 +631,16 @@ export const Linux_Network: React.FC = (props: any) => {
       }));
     })
     }
+  } else {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: " Please Fill Required Fields",
+    }));
+  }
   };
 
   const handleBack = () => {
@@ -729,6 +740,35 @@ else {
 }
 }
 
+const handleInputErrors = () => {
+  let error = true;
+  if (userName === "" || userName === null ) {
+    error = false;
+    // let isErrVpnUserName = userName.length <= 0 ? "Required" : "";
+    setIsError((isError: any) => ({
+      ...isError,
+      vpnUserName: "Required",
+    }));
+  }
+  if (ipAddress === "" ||ipAddress === null) {
+    error = false;
+    // let isErrName = ipAddress.length <= 0 ? "Required" : "";
+    setIsError((error: any) => ({
+      ...error,
+      ipAddress: "Required",
+    }));
+  }
+  // if (password === "" ||password === null) {
+  //   error = false;
+  //   // let isErrName = ipAddress.length <= 0 ? "Required" : "";
+  //   setIsError((isError: any) => ({
+  //     ...isError,
+  //     vpnPassword: "Required",
+  //   }));
+  // }
+  return error;
+};
+
   return (
     <React.Fragment>
       <CssBaseLine />
@@ -804,12 +844,12 @@ else {
         <Grid item xs={12} md={6}>
           <Input
             type="text"
-            label=" User Name"
+            label=" Username"
             value={userName}
             onChange={handleUserNameChange}
             required
             error={isError.vpnUserName}
-            helperText={isError.userName}
+            helperText={isError.vpnUserName}
           >
             User Name
           </Input>

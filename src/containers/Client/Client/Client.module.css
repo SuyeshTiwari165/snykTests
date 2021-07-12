@@ -82,6 +82,7 @@ table>thead {
 td button {
   padding: 0px 10px !important;
   color: #0072ed !important;
+  justify-content: right !important;
 }
 
 td {
@@ -90,6 +91,9 @@ td {
   color: #707070 !important;
   font-size: 12px !important;
   font-weight: normal !important;
+}
+td > div {
+  justify-content: right !important;
 }
 
 tfoot {
@@ -152,4 +156,10 @@ tfoot button{
 }
 tfoot svg {
   fill:#e53935 !important;
+}
+/* .Component-horizontalScrollContainer-5 div {
+  justify-content: right !important;
+} */
+table > tbody > tr > td > div {
+  justify-content: flex-end !important;
 }
