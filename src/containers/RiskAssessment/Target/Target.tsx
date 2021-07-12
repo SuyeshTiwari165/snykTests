@@ -88,6 +88,7 @@ export const Target: React.FC = (props: any) => {
   const [selectedFile, setSelectedFile] = useState<any>(null)
   const localVpnFilePath = JSON.parse(localStorage.getItem("vpnFilePath") || "{}");
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
+  const [fileEvent,setFileEvent] = useState<any>();
 
 //     [
 //     // {
@@ -535,7 +536,6 @@ export const Target: React.FC = (props: any) => {
             },
           })
             .then((userRes) => {
-              console.log("USERRESPONSE of new target", userRes);
               setSubmitDisabled(false);
               setFormState((formState) => ({
                 ...formState,
@@ -723,13 +723,19 @@ export const Target: React.FC = (props: any) => {
     }
   };
 
-  const onChangeHandler = (event: any) => {
-    setSelectedFile(event.target.files[0])
-    // if (event.target.files[0] && name && vpnUserName && vpnPassword) {
+  const onChangeHandler = (event: any,removeCase:any) => {
+    if(event.target !== undefined){
+      setSelectedFile(event.target.files[0])
+      setFileEvent(event)
       if (event.target.files[0]) {
       setUploadDisabled(false)
     } else {
       setUploadDisabled(true)
+      }
+    }
+     if(removeCase === "remove"){
+      event.target.value = null
+      setSelectedFile(null)
     }
   };
 
@@ -857,7 +863,8 @@ export const Target: React.FC = (props: any) => {
   // };
 
   const onClickHandler2 = ( ) => {
-    if (name && vpnUserName) {
+    // if (name && vpnUserName && ipRange) {
+      if(handleInputErrors()) {
       setBackdrop(true);
     if (selectedFile && selectedFile.name != null) {
       let idCardBase64 = "";
@@ -899,14 +906,14 @@ export const Target: React.FC = (props: any) => {
                 } else {
                   setFileUploaded(true);
                   // setSubmitDisabled(false)
-                  setFormState((formState) => ({
-                    ...formState,
-                    isSuccess: true,
-                    isUpdate: false,
-                    isDelete: false,
-                    isFailed: false,
-                    errMessage: "File Uploaded Successfully !!",
-                  }));
+                  // setFormState((formState) => ({
+                  //   ...formState,
+                  //   isSuccess: true,
+                  //   isUpdate: false,
+                  //   isDelete: false,
+                  //   isFailed: false,
+                  //   errMessage: "File Uploaded Successfully !!",
+                  // }));
                   onClickTestConnection();
                 }
               })
@@ -955,14 +962,14 @@ export const Target: React.FC = (props: any) => {
               } else {
                 setFileUploaded(true)
                 // setSubmitDisabled(false)
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "File Uploaded Successfully !!",
-                }));
+                // setFormState((formState) => ({
+                //   ...formState,
+                //   isSuccess: true,
+                //   isUpdate: false,
+                //   isDelete: false,
+                //   isFailed: false,
+                //   errMessage: "File Uploaded Successfully !!",
+                // }));
                 onClickTestConnection();
               }
             })
@@ -1021,14 +1028,14 @@ export const Target: React.FC = (props: any) => {
             } else {
               setFileUploaded(true);
               // setSubmitDisabled(false)
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: true,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: false,
-                errMessage: "File Uploaded Successfully !!",
-              }));
+              // setFormState((formState) => ({
+              //   ...formState,
+              //   isSuccess: true,
+              //   isUpdate: false,
+              //   isDelete: false,
+              //   isFailed: false,
+              //   errMessage: "File Uploaded Successfully !!",
+              // }));
               onClickTestConnection();
             }
           })
@@ -1060,7 +1067,7 @@ export const Target: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: "Please Choose File to Upload",
+        errMessage: " Please Choose File to Upload",
       }));
       }
 
@@ -1074,7 +1081,7 @@ export const Target: React.FC = (props: any) => {
       isUpdate: false,
       isDelete: false,
       isFailed: true,
-      errMessage: "Please Fill Required Fields and Upload File ",
+      errMessage: " Please Fill Required Fields and Upload File ",
     }));
   }
   }
@@ -1121,14 +1128,14 @@ export const Target: React.FC = (props: any) => {
                 } else {
                   setFileUploaded(true);
                   // setSubmitDisabled(false)
-                  setFormState((formState) => ({
-                    ...formState,
-                    isSuccess: true,
-                    isUpdate: false,
-                    isDelete: false,
-                    isFailed: false,
-                    errMessage: "File Uploaded Successfully !!",
-                  }));
+                  // setFormState((formState) => ({
+                  //   ...formState,
+                  //   isSuccess: true,
+                  //   isUpdate: false,
+                  //   isDelete: false,
+                  //   isFailed: false,
+                  //   errMessage: "File Uploaded Successfully !!",
+                  // }));
                 }
               })
               .catch((error: Error) => {
@@ -1176,14 +1183,14 @@ export const Target: React.FC = (props: any) => {
               } else {
                 setFileUploaded(true)
                 // setSubmitDisabled(false)
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "File Uploaded Successfully !!",
-                }));
+                // setFormState((formState) => ({
+                //   ...formState,
+                //   isSuccess: true,
+                //   isUpdate: false,
+                //   isDelete: false,
+                //   isFailed: false,
+                //   errMessage: " File Uploaded Successfully !!",
+                // }));
               }
             })
             .catch((error: Error) => {
@@ -1371,7 +1378,9 @@ export const Target: React.FC = (props: any) => {
     setSelectedFile(null);
     setVpnFilePath(null);
     setDisplayVpnFilePath(null);
+    onChangeHandler(fileEvent,"remove")
   };
+  
   const onClickTestConnection = () => {
     // onClickHandler2();
     if (props.location.state.clientInfo) {
@@ -1390,7 +1399,6 @@ export const Target: React.FC = (props: any) => {
         }
       }).then((response: any) => {
         setBackdrop(false)
-        console.log("RESPONSE",response);
         if (response.data.vpnConnection.success == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
@@ -1412,7 +1420,19 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: "You are already connected with another VPN. Please disconnect then try again",
+            errMessage: " You are already connected with another VPN. Please disconnect then try again",
+          }));
+        }
+        else if(response.data.vpnConnection.success == "Target name is already present") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Target Name Already Present",
           }));
         }
          else {
@@ -1424,7 +1444,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: "Test Connection Failed ",
+            errMessage: " Test Connection Failed ",
           }));
 
         }
@@ -1480,6 +1500,18 @@ export const Target: React.FC = (props: any) => {
             errMessage: "You are already connected with another VPN. Please disconnect then try again",
           }));
         }
+        else if(response.data.vpnConnection.success == "Target name is already present") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Target Name Already Present",
+          }));
+        }
          else {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
@@ -1489,7 +1521,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: "Test Connection Failed ",
+            errMessage: " Test Connection Failed ",
           }));
 
         }
@@ -1517,6 +1549,41 @@ export const Target: React.FC = (props: any) => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
+  };
+
+  const handleInputErrors = () => {
+    let error = true;
+    if (vpnUserName === "") {
+      error = false;
+      let isErrVpnUserName = vpnUserName.length <= 0 ? "Required" : "";
+      setIsError((error: any) => ({
+        ...error,
+        vpnUserName: isErrVpnUserName,
+      }));
+    }
+    if (name === "") {
+      error = false;
+      let isErrName = name.length <= 0 ? "Required" : "";
+      setIsError((error: any) => ({
+        ...error,
+        name: isErrName,
+      }));
+    }
+    if (ipRange === "") {
+      error = false;
+      let isErrIpRange = ipRange.length <= 0 ? "Required" : "";
+      setIsError((error: any) => ({
+        ...error,
+        ipRange: isErrIpRange,
+      }));
+    }
+    // if (vpnPassword === "") {
+    // setIsError((isError: any) => ({
+    //     ...isError,
+    //     vpnPassword: "Required",
+    //   }));
+    // }
+    return error;
   };
 
   return (
@@ -1618,7 +1685,7 @@ export const Target: React.FC = (props: any) => {
         <Grid item xs={12} md={6}>
           <Input
             type="text"
-            label="VPN User Name"
+            label="VPN Username"
             value={vpnUserName}
             onChange={handleVpnUserNameChange}
             required
@@ -1672,16 +1739,18 @@ export const Target: React.FC = (props: any) => {
         <Grid item xs={12} md={6}>
           <form>
           <label className={styles.lawDocument}>VPN Config File:</label>
-            <input
+          <input
               id="fileUpload"
               type="file"
               name="file"
-              onChange={onChangeHandler}
+              onChange={(event)=>onChangeHandler(event,"")}
               className={styles.fileInput}
             />
             {selectedFile || displayVpnFilePath ? (
               <div className={styles.uploadLabelWrap}>
+                <div className = {styles.uploadLabelName}>
                 Uploaded File :
+                </div>
                 <div className={styles.uploadedLabel}>
                   {selectedFile ? selectedFile.name : displayVpnFilePath }&nbsp;&nbsp;
                 </div>

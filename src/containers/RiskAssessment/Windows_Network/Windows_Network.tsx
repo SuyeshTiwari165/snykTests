@@ -169,7 +169,6 @@ export const Windows_Network: React.FC = (props: any) => {
       });
 
   useEffect(() => {
-    console.log("ReRunTargetName",ReRunTargetName)
     // setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
     try {
     if(ReRunTargetName.includes("_windows")) {
@@ -187,11 +186,31 @@ export const Windows_Network: React.FC = (props: any) => {
       setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
       console.log("WINDOWS RERUN ")
     } else {
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
+      let data = {
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        editData: true,
+        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      }
+    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, data);
     setActiveFormStep(2);
     }
   }catch {
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
+    let data = {
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+      editData: true,
+      clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
+      targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
+      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+      targetName : ReRunTargetName ? ReRunTargetName : targetName
+    }
+    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, data);
     setActiveFormStep(2);
     }
     if(props.location.state != undefined && props.location.state.editWindowsData && props.location.state.editWindowsData === true) {
@@ -272,7 +291,6 @@ export const Windows_Network: React.FC = (props: any) => {
           localStorage.setItem("winUsername", JSON.stringify(userName));
           localStorage.setItem("winPassword", JSON.stringify(password));
           localStorage.setItem("WinTargetName", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
-          setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
           setShowDialogBox(false)
           let data = {};
           // setTimeout(() => {
@@ -280,7 +298,7 @@ export const Windows_Network: React.FC = (props: any) => {
             data = {
               LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
               windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-              editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
+              editData: props.location.state && props.location.state.editData ? props.location.state.editData : true,
               clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
               targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
               editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
@@ -297,6 +315,7 @@ export const Windows_Network: React.FC = (props: any) => {
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
             }
           }
+          setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
           try {
             if (ReRunTargetName != {} && ReRunTargetName.includes("_windows") ) {
             history.push(routeConstant.LINUX_NETWORK, data);
@@ -416,6 +435,7 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = () => {
+    if(handleInputErrors()) {
     if(localStorage.getItem("runTargetName") != null && targetData && targetData != null || targetData != undefined && targetData.getCredentialsDetails && targetData.getCredentialsDetails.edges &&  targetData.getCredentialsDetails.edges.length > 0) {        console.log("targetData.getCredentialsDetails",targetData);
         setBackdrop(true);
         testWindowsConnection({
@@ -564,6 +584,16 @@ export const Windows_Network: React.FC = (props: any) => {
         }));
       });
     }
+  } else {
+    setFormState((formState) => ({
+      ...formState,
+      isSuccess: false,
+      isUpdate: false,
+      isDelete: false,
+      isFailed: true,
+      errMessage: " Please Fill Required Fields",
+    }));
+  }
   };
 
 
@@ -631,6 +661,43 @@ try {
       password: isErrPassword,
     }));
     // setSubmitDisabled(checkValidation);
+  };
+  const handleInputErrors = () => {
+    let error = true;
+    if (userName === "" || userName === null) {
+      error = false;
+      // let isErrVpnUserName = userName.length <= 0 ? "Required" : "";
+      setIsError((isError: any) => ({
+        ...isError,
+        userName:  "Required",
+      }));
+    }
+    if (ipAddress === "" || ipAddress  === null) {
+      error = false;
+      // let isErrName = ipAddress.length <= 0 ? "Required" : "";
+      setIsError((error: any) => ({
+        ...error,
+        ipRange:  "Required",
+      }));
+    }
+    if (domainName === "" || domainName === null) {
+      error = false;
+      // let isErrName = domainName.length <= 0 ? "Required" : "";
+      setIsError((error: any) => ({
+        ...error,
+        domainName: "Required",
+      }));
+    }
+    // if (password === "" ||password === null) {
+    //   error = false;
+    //   // let isErrName = ipAddress.length <= 0 ? "Required" : "";
+    //   setIsError((isError: any) => ({
+    //     ...isError,
+    //     password: "Required",
+    //   }));
+    // }
+    
+    return error;
   };
   return (
     <React.Fragment>

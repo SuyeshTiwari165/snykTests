@@ -504,12 +504,13 @@ export const Client: React.FC = (props: any) => {
       history.push(routeConstant.TARGET, data);
     }
   };
-  if (createFlag) return <SimpleBackdrop />;
+  // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
+
 
   return (
     <React.Fragment>
       <CssBaseline />
-
+      {ipLoading || showBackdrop  ? <SimpleBackdrop/>: null}
       <Typography component="h5" variant="h1">Clients</Typography>
       <Grid>
       {ipLoading || showBackdrop  ? <SimpleBackdrop/>: null}
@@ -628,6 +629,7 @@ export const Client: React.FC = (props: any) => {
             </Alert>
           ) : null}
           <div className={styles.ScrollTable}>
+
             <MaterialTable
               columns={column}
               data={newData}
@@ -661,7 +663,7 @@ export const Client: React.FC = (props: any) => {
                 : null,
                 {
                   icon: () => <VisibilityIcon />,
-                  tooltip: "Vulnerability Test",
+                  tooltip: "View Vulnerability Tests",
                   onClick: (event: any, rowData: any, oldData: any) => {
                     onRowClick(event, rowData, oldData, "RA");
                   }
