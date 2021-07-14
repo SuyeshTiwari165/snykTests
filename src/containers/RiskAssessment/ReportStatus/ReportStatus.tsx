@@ -38,7 +38,7 @@ export const ReportStatus: React.FC = (props: any) => {
   ];
   //show password
   const title = "Listing of Report Status";
-  const [orderBy, setOrderBy] = useState<String>();
+  // const [orderBy, setOrderBy] = useState<String>();
 
   const staticClientName = clientInfo !== null ? clientInfo.name : undefined;
   const targetName = props["location"].state.targetName;
@@ -132,7 +132,7 @@ export const ReportStatus: React.FC = (props: any) => {
       // }
     }
     orderBy = orderByColumn + ":" + orderDirection;
-    setOrderBy(orderBy);
+    // setOrderBy(orderBy);
   };
   const handleBack = () => {
     let data = {};

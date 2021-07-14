@@ -35,7 +35,7 @@ export const ClientForm: React.FC = (props: any) => {
   });
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [error, setError] = useState<any>(true);
+  // const [error, setError] = useState<any>(true);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [OBsubscription, setOBsubscription] = useState<any>(false);
@@ -44,7 +44,7 @@ export const ClientForm: React.FC = (props: any) => {
     lastName: "",
     email: "",
   });
-  const [ContactId, setContactId] = useState("");
+  // const [ContactId, setContactId] = useState("");
   const [pgClientId, setPgClientId] = useState("");
   const [pgPartnerId, setPgPartnerId] = useState("");
   // const [emailUpdates, setEmailUpdates] = React.useState({
@@ -221,7 +221,7 @@ export const ClientForm: React.FC = (props: any) => {
   const backToList = () => {
     history.push("/pg-action");
     setIsError({ error: null });
-    setContactId("");
+    // setContactId("");
     setFirstName("");
     setLastName("");
     setEmail("");

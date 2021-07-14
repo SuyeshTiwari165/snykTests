@@ -37,11 +37,11 @@ export const PartnerForm: React.FC = (props: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   //table
-  const column = [
-    { title: "Name", field: "name" },
-    { title: "Email", field: "email" },
-    { title: "Phone", field: "phone" },
-  ];
+  // const column = [
+  //   { title: "Name", field: "name" },
+  //   { title: "Email", field: "email" },
+  //   { title: "Phone", field: "phone" },
+  // ];
 
   const [isError, setIsError] = useState<any>({
     partnerName: "",
@@ -52,7 +52,7 @@ export const PartnerForm: React.FC = (props: any) => {
   });
 
   const history = useHistory();
-  const [submitDisabled, setSubmitDisabled] = useState(true);
+  // const [submitDisabled, setSubmitDisabled] = useState(true);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [OBsubscription, setOBsubscription] = useState<any>(false);
   const [formState, setFormState] = useState({
@@ -108,7 +108,7 @@ const [updatePartner] = useMutation(PG_UPDATE_PARTNER);
     if (event.target.name === "address") {
       setAddress(event.target.value);
     }
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const checkValidation = () => {
@@ -183,6 +183,7 @@ const [updatePartner] = useMutation(PG_UPDATE_PARTNER);
   }
 
   const UpdatePartner = () => {
+    setShowBackdrop(true)
     updatePartner({
       variables: {
         pg360parterid: pgpartnerId,
@@ -209,10 +210,12 @@ const [updatePartner] = useMutation(PG_UPDATE_PARTNER);
         isFailed: false,
         errMessage: " " + partnerName + " ",
       }));
+      setShowBackdrop(false)
       // backToList();
     })
     .catch((err) => {
       // setLoader(false)
+      setShowBackdrop(false)
       let error = err.message;
       if (
         error.includes(

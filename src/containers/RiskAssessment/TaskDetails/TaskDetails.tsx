@@ -59,22 +59,22 @@ export const TaskDetails: React.FC = (props: any) => {
   const [showbackdrop,setShowbackdrop] = useState(true);
   // const classes = useStyles(theme);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
-  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
+  // const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const targetName = JSON.parse(localStorage.getItem("name") || "{}");
-  let scanConfigListItems = props.location.state
-    ? props.location.state.scanConfigList
-    : null;
+  // let scanConfigListItems = props.location.state
+  //   ? props.location.state.scanConfigList
+  //   : null;
   const scanListCheckBox: any = props.location.state
     ? props.location.state.scanConfigList
     : null;
 
   //Autocomplete list
-  const [getScanDataList, setScanDataList] = useState([]);
-  const [getTargetList, setTargetList] = useState([]);
+  // const [getScanDataList, setScanDataList] = useState([]);
+  // const [getTargetList, setTargetList] = useState([]);
   const [getScanConfigList, setScanConfigList] = useState([]);
 
   // Show form
-  const [showForm, setShowForm] = useState<boolean>(false);
+  // const [showForm, setShowForm] = useState<boolean>(false);
 
   //add/edit data
 
@@ -88,16 +88,16 @@ export const TaskDetails: React.FC = (props: any) => {
   const partnerId = partner.partnerId.id;
   const clientId = clientInfo ? clientInfo.name : undefined;
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
-  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
+  // const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const [backdrop, setBackdrop] = useState(false);
   //table
-  const columns = [
-    { title: "Task Name", field: "taskName" },
-    { title: "Target", field: "target" },
-    { title: "Scan Configuration", field: "scanConfig" },
-  ];
+  // const columns = [
+  //   { title: "Task Name", field: "taskName" },
+  //   { title: "Target", field: "target" },
+  //   { title: "Scan Configuration", field: "scanConfig" },
+  // ];
   //show password
-  const title = "Listing of Task";
+  // const title = "Listing of Task";
 
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
@@ -121,7 +121,6 @@ export const TaskDetails: React.FC = (props: any) => {
     },
     onCompleted: (data: any) => {
       if (data.getTask.edges[0]) {
-        console.log("data.getTask.edges[0]", data.getTask.edges[0].node.vatScanConfigList)
         setScanConfig(data.getTask.edges[0].node.vatScanConfigList);
       }
     },
@@ -143,9 +142,9 @@ export const TaskDetails: React.FC = (props: any) => {
 
   const {
     data: dataScanConfig,
-    error: errorScanConfig,
-    loading: loadingScanConfig,
-    refetch: refetchScanConfig,
+    // error: errorScanConfig,
+    // loading: loadingScanConfig,
+    // refetch: refetchScanConfig,
   } = useQuery(GET_SCAN_CONFIG, {
     variables: {
       clientId: clientId,
@@ -276,7 +275,7 @@ try {
           isFailed: false,
           errMessage: "",
         }));
-        setShowForm(false);
+        // setShowForm(false);
         let data = {};
         data = { refetchData: true, clientInfo: clientInfo };
         history.push(routeConstant.RA_REPORT_LISTING, data);

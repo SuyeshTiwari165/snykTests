@@ -49,12 +49,7 @@ import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
   const [showBackdrop, setShowBackdrop] = useState<boolean>(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [newData, setNewData] = useState([]);
-  const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [createFlag, setCreateFlag] = useState(false);
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partner = Cookies.get('ob_partnerData') || ""
   const user = Cookies.getJSON('ob_user') || "" 
@@ -80,12 +75,6 @@ export const Client: React.FC = (props: any) => {
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
 
-  const [isError, setIsError] = useState<any>({
-    address: "",
-    email: "",
-    phoneNumber: ""
-  });
-
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
@@ -104,7 +93,6 @@ export const Client: React.FC = (props: any) => {
       fetchPolicy: "cache-and-network",
       onCompleted: (data : any) => {
         if(userRole === "CompanyUser") {
-          let partnerdata =  JSON.parse(partner)
         createTableDataObject(data.getClient.edges);
       }
       if(userRole === "SuperUser") {
@@ -117,7 +105,7 @@ export const Client: React.FC = (props: any) => {
       }
     }
   );
-  const [getClientsAndReports, { data: ClientReportData, loading: ClientReportLoading }] = useLazyQuery(
+  const [getClientsAndReports, { data: ClientReportData}] = useLazyQuery(
     GET_CLIENT_AND_LATEST_REPORTS,
     {
       fetchPolicy: "cache-and-network",
@@ -448,13 +436,13 @@ export const Client: React.FC = (props: any) => {
   //   setSubmitDisabled(checkValidation);
   // };
 
-  const checkValidation = () => {
-    let validation = false;
-    // if (isError.name !== "") {
-    //   validation = true;
-    // }
-    return validation;
-  };
+  // const checkValidation = () => {
+  //   let validation = false;
+  //   // if (isError.name !== "") {
+  //   //   validation = true;
+  //   // }
+  //   return validation;
+  // };
   // const handleInputErrors = () => {
   //   let foundErrors = false;
   //   if (!name) {

@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function RaStepper(props: any) {
-  var stepperObject = stepper;
+  // var stepperObject = stepper;
   const nextValue = useQuery(RA_STEPPER);
   const [propsData, setPropsData] = useState<any>();
   const history = useHistory();
@@ -110,7 +110,7 @@ export default function RaStepper(props: any) {
     },
 
   ];
-  let RerunStepperObject = rarerunStepperList;
+  // let RerunStepperObject = rarerunStepperList;
 
   function getSteps() {
     let stepArray: any = [];

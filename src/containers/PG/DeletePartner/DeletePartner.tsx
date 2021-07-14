@@ -26,8 +26,8 @@ export const DeletePartner: React.FC = (props: any) => {
   const [element, setElement] = useState<any>();
   const history = useHistory();
   const [pgID, setPgID] = useState("");
-  const [newData, setNewData] = useState<any>([]);
-  const [clientId, setClientId] = useState<any>("");
+  // const [newData, setNewData] = useState<any>([]);
+  // const [clientId, setClientId] = useState<any>("");
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
@@ -35,8 +35,8 @@ export const DeletePartner: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
-  const [PartnerId, setPartnerId] = useState("");
-  const [subscriptionList, setSubscriptionList] = useState<any>();
+  // const [PartnerId, setPartnerId] = useState("");
+  // const [subscriptionList, setSubscriptionList] = useState<any>();
 
   useEffect(() => {
     if (
