@@ -63,7 +63,7 @@ export const Target: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
-  const [showbackdrop, setShowbackdrop] =useState(true);
+  // const [showbackdrop, setShowbackdrop] =useState(true);
   // const sessionData = useQuery(RA_TARGET_SESSION);
   const targetId = localStorage.getItem("targetId") ? JSON.parse(localStorage.getItem("targetId") || '') :  null;
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export const Target: React.FC = (props: any) => {
   const [vpnFilePath,setVpnFilePath] = useState<any>("");
   const [displayVpnFilePath,setDisplayVpnFilePath] = useState<any>("");
   const [winIpAddress, setWinIpAddress] = useState<String>("");
-  const [scanConfigList, setScanConfigList] = useState<any>([]);
+  // const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>(null)
   const localVpnFilePath = JSON.parse(localStorage.getItem("vpnFilePath") || "{}");
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
@@ -276,17 +276,17 @@ export const Target: React.FC = (props: any) => {
     },
     fetchPolicy: "cache-and-network",
   });
-  const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
-    GET_TASK_DETAILS,
-    {
-      onCompleted: (data: any) => {
-        if (data.getTask.edges) {
-          setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
-        }
-      },
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  // const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
+  //   GET_TASK_DETAILS,
+  //   {
+  //     onCompleted: (data: any) => {
+  //       if (data.getTask.edges) {
+  //         setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+  //       }
+  //     },
+  //     fetchPolicy: "cache-and-network",
+  //   }
+  // );
 
   const checkValidation = () => {
     if (
@@ -685,12 +685,12 @@ export const Target: React.FC = (props: any) => {
               localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
               setShowDialogBox(false)
               let data = {};
-              let targetInfo = {
-                targetName: name,
-                host: ipRange,
-                userName: userName,
-                password: password,
-              };
+              // let targetInfo = {
+              //   targetName: name,
+              //   host: ipRange,
+              //   userName: userName,
+              //   password: password,
+              // };
               setTimeout(() => {
                 setLinuxDomain(true);
                 setShowDialogBox(true)
@@ -1085,153 +1085,153 @@ export const Target: React.FC = (props: any) => {
     }));
   }
   }
-  const onClickHandler = (event: any) => {
-    if (name && vpnUserName && !uploadDisabled) {
-      setBackdrop(true);
-    if (selectedFile && selectedFile.name != null) {
-      let idCardBase64 = "";
-      getBase64(selectedFile, (result: any) => {
-        idCardBase64 = result;
-        var res = result.slice(result.indexOf(",") + 1);
-        if (targetData !== undefined) {
-          if (props.location.state && props.location.state.reRun === true) {
-            uploadFile({
-              variables: {
-                input: {
-                  client: props.location.state.clientInfo.clientId,
-                  targetName: name,
-                  file: res,
-                  vpnUsername: vpnUserName,
-                  vpnPassword: vpnPassword,
-                  type: selectedFile.name.split(".")[1],
-                  targetId:
-                    targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
-                },
-              },
-            })
-              .then((response: any) => {
-                setBackdrop(false);
-                // setSelectedFile(null);
-                if (
-                  response.data.uploadFile.success == "File Uploaded Failed"
-                ) {
-                  setFileUploaded(false);
-                  // setSubmitDisabled(true)
-                  setFormState((formState) => ({
-                    ...formState,
-                    isSuccess: false,
-                    isUpdate: false,
-                    isDelete: false,
-                    isFailed: true,
-                    errMessage: " File Upload Failed.",
-                  }));
-                } else {
-                  setFileUploaded(true);
-                  // setSubmitDisabled(false)
-                  // setFormState((formState) => ({
-                  //   ...formState,
-                  //   isSuccess: true,
-                  //   isUpdate: false,
-                  //   isDelete: false,
-                  //   isFailed: false,
-                  //   errMessage: "File Uploaded Successfully !!",
-                  // }));
-                }
-              })
-              .catch((error: Error) => {
-                setUploadDisabled(true)
-                setFileUploaded(false);
-                setBackdrop(false);
-                setSelectedFile(null);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " ",
-                }));
-              });
-          }
-        } else {
-          uploadFile({
-            variables: {
-              input: {
-                client: props.location.state.clientInfo.clientId,
-                targetName: name,
-                file: res,
-                vpnUsername: vpnUserName,
-                vpnPassword: vpnPassword,
-                type: selectedFile.name.split(".")[1],
-              },
-            },
-          })
-            .then((response: any) => {
-              setBackdrop(false);
-              // setSelectedFile(null);
-              if (response.data.uploadFile.success == "File Uploaded Failed") {
-                // setSubmitDisabled(true)
-                setFileUploaded(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " File Upload Failed.",
-                }));
-              } else {
-                setFileUploaded(true)
-                // setSubmitDisabled(false)
-                // setFormState((formState) => ({
-                //   ...formState,
-                //   isSuccess: true,
-                //   isUpdate: false,
-                //   isDelete: false,
-                //   isFailed: false,
-                //   errMessage: " File Uploaded Successfully !!",
-                // }));
-              }
-            })
-            .catch((error: Error) => {
-              setUploadDisabled(true)
-              setFileUploaded(false)
-              setBackdrop(false);
-              setSelectedFile(null);
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: " ",
-              }));
-            });
-        }
-      });
-    } else {
-      setBackdrop(false);
-      setSelectedFile(null);
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: "Please Choose File to Upload",
-      }));
-    }
-  } else {
-    setFormState((formState) => ({
-      ...formState,
-      isSuccess: false,
-      isUpdate: false,
-      isDelete: false,
-      isFailed: true,
-      errMessage: "Please Fill Required Fields and Upload File ",
-    }));
-  }
-  };
+  // const onClickHandler = (event: any) => {
+  //   if (name && vpnUserName && !uploadDisabled) {
+  //     setBackdrop(true);
+  //   if (selectedFile && selectedFile.name != null) {
+  //     let idCardBase64 = "";
+  //     getBase64(selectedFile, (result: any) => {
+  //       idCardBase64 = result;
+  //       var res = result.slice(result.indexOf(",") + 1);
+  //       if (targetData !== undefined) {
+  //         if (props.location.state && props.location.state.reRun === true) {
+  //           uploadFile({
+  //             variables: {
+  //               input: {
+  //                 client: props.location.state.clientInfo.clientId,
+  //                 targetName: name,
+  //                 file: res,
+  //                 vpnUsername: vpnUserName,
+  //                 vpnPassword: vpnPassword,
+  //                 type: selectedFile.name.split(".")[1],
+  //                 targetId:
+  //                   targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+  //               },
+  //             },
+  //           })
+  //             .then((response: any) => {
+  //               setBackdrop(false);
+  //               // setSelectedFile(null);
+  //               if (
+  //                 response.data.uploadFile.success == "File Uploaded Failed"
+  //               ) {
+  //                 setFileUploaded(false);
+  //                 // setSubmitDisabled(true)
+  //                 setFormState((formState) => ({
+  //                   ...formState,
+  //                   isSuccess: false,
+  //                   isUpdate: false,
+  //                   isDelete: false,
+  //                   isFailed: true,
+  //                   errMessage: " File Upload Failed.",
+  //                 }));
+  //               } else {
+  //                 setFileUploaded(true);
+  //                 // setSubmitDisabled(false)
+  //                 // setFormState((formState) => ({
+  //                 //   ...formState,
+  //                 //   isSuccess: true,
+  //                 //   isUpdate: false,
+  //                 //   isDelete: false,
+  //                 //   isFailed: false,
+  //                 //   errMessage: "File Uploaded Successfully !!",
+  //                 // }));
+  //               }
+  //             })
+  //             .catch((error: Error) => {
+  //               setUploadDisabled(true)
+  //               setFileUploaded(false);
+  //               setBackdrop(false);
+  //               setSelectedFile(null);
+  //               setFormState((formState) => ({
+  //                 ...formState,
+  //                 isSuccess: false,
+  //                 isUpdate: false,
+  //                 isDelete: false,
+  //                 isFailed: true,
+  //                 errMessage: " ",
+  //               }));
+  //             });
+  //         }
+  //       } else {
+  //         uploadFile({
+  //           variables: {
+  //             input: {
+  //               client: props.location.state.clientInfo.clientId,
+  //               targetName: name,
+  //               file: res,
+  //               vpnUsername: vpnUserName,
+  //               vpnPassword: vpnPassword,
+  //               type: selectedFile.name.split(".")[1],
+  //             },
+  //           },
+  //         })
+  //           .then((response: any) => {
+  //             setBackdrop(false);
+  //             // setSelectedFile(null);
+  //             if (response.data.uploadFile.success == "File Uploaded Failed") {
+  //               // setSubmitDisabled(true)
+  //               setFileUploaded(false);
+  //               setFormState((formState) => ({
+  //                 ...formState,
+  //                 isSuccess: false,
+  //                 isUpdate: false,
+  //                 isDelete: false,
+  //                 isFailed: true,
+  //                 errMessage: " File Upload Failed.",
+  //               }));
+  //             } else {
+  //               setFileUploaded(true)
+  //               // setSubmitDisabled(false)
+  //               // setFormState((formState) => ({
+  //               //   ...formState,
+  //               //   isSuccess: true,
+  //               //   isUpdate: false,
+  //               //   isDelete: false,
+  //               //   isFailed: false,
+  //               //   errMessage: " File Uploaded Successfully !!",
+  //               // }));
+  //             }
+  //           })
+  //           .catch((error: Error) => {
+  //             setUploadDisabled(true)
+  //             setFileUploaded(false)
+  //             setBackdrop(false);
+  //             setSelectedFile(null);
+  //             setFormState((formState) => ({
+  //               ...formState,
+  //               isSuccess: false,
+  //               isUpdate: false,
+  //               isDelete: false,
+  //               isFailed: true,
+  //               errMessage: " ",
+  //             }));
+  //           });
+  //       }
+  //     });
+  //   } else {
+  //     setBackdrop(false);
+  //     setSelectedFile(null);
+  //     setFormState((formState) => ({
+  //       ...formState,
+  //       isSuccess: false,
+  //       isUpdate: false,
+  //       isDelete: false,
+  //       isFailed: true,
+  //       errMessage: "Please Choose File to Upload",
+  //     }));
+  //   }
+  // } else {
+  //   setFormState((formState) => ({
+  //     ...formState,
+  //     isSuccess: false,
+  //     isUpdate: false,
+  //     isDelete: false,
+  //     isFailed: true,
+  //     errMessage: "Please Fill Required Fields and Upload File ",
+  //   }));
+  // }
+  // };
   const handleBack = () => {
     let data = {};
     data = { refetchData: true, clientInfo: clientInfo };
@@ -1321,16 +1321,16 @@ export const Target: React.FC = (props: any) => {
     setSubmitDisabled(checkValidation);
   };
 
-  const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(event.target.value);
-    let value = event.target.value;
-    let isErrUserName = value.length <= 0 ? "Required" : "";
-    setIsError((isError: any) => ({
-      ...isError,
-      userName: isErrUserName,
-    }));
-    setSubmitDisabled(checkValidation);
-  };
+  // const handleUserNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setUserName(event.target.value);
+  //   let value = event.target.value;
+  //   let isErrUserName = value.length <= 0 ? "Required" : "";
+  //   setIsError((isError: any) => ({
+  //     ...isError,
+  //     userName: isErrUserName,
+  //   }));
+  //   setSubmitDisabled(checkValidation);
+  // };
 
   const handleVpnUserNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -1345,22 +1345,22 @@ export const Target: React.FC = (props: any) => {
     setSubmitDisabled(checkValidation);
   };
 
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-    let value = event.target.value;
-    let isErrPassword = value.length <= 0 ? "Required" : "";
-    setIsError((isError: any) => ({
-      ...isError,
-      password: isErrPassword,
-    }));
-    setSubmitDisabled(checkValidation);
-  };
+  // const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPassword(event.target.value);
+  //   let value = event.target.value;
+  //   let isErrPassword = value.length <= 0 ? "Required" : "";
+  //   setIsError((isError: any) => ({
+  //     ...isError,
+  //     password: isErrPassword,
+  //   }));
+  //   setSubmitDisabled(checkValidation);
+  // };
 
   const handleVpnPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setVpnPassword(event.target.value);
-    let value = event.target.value;
+    // let value = event.target.value;
     // let isErrVpnPassword = value.length <= 0 ? "Required" : "";
     // setIsError((isError: any) => ({
     //   ...isError,
@@ -1369,9 +1369,9 @@ export const Target: React.FC = (props: any) => {
     setSubmitDisabled(checkValidation);
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleClickShowPassword = () => {
+  //   setShowPassword(!showPassword);
+  // };
 
   const removeUploadFile = () => {
     // setFileChanged(true);
@@ -1597,7 +1597,7 @@ export const Target: React.FC = (props: any) => {
           : null}
       </Typography>
       <RaStepper />
-      { taskLoading || backdrop ? <SimpleBackdrop /> : null }
+      { backdrop ? <SimpleBackdrop /> : null }
       {targetLoading ? <SimpleBackdrop/>: null}
       <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>

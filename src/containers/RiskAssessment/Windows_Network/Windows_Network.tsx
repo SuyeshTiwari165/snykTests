@@ -51,12 +51,12 @@ export const Windows_Network: React.FC = (props: any) => {
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
   const [domainName, setDomainName] = useState<String>("");
-  const [vpnUserName, setVpnUserName] = useState<String>("");
+  // const [vpnUserName, setVpnUserName] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
-  const [dialogBoxMsg, setDialogBoxMsg] = useState("");
-  const [linuxDomain, setWindowsDomain] = useState(false);
-  const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
+  // const [dialogBoxMsg, setDialogBoxMsg] = useState("");
+  // const [linuxDomain, setWindowsDomain] = useState(false);
+  // const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [ipAddress, setIpAddress] = useState<String>("");
@@ -70,9 +70,8 @@ export const Windows_Network: React.FC = (props: any) => {
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
-  const[showBackdrop, setShowbackdrop]= useState(true);
   // const name = JSON.parse(localStorage.getItem("name")|| "{}")
-  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
+  // const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
   const partnerId = partner.partnerId.id;
   const [targetName, setTargetName] = useState<String>("");
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
@@ -91,7 +90,7 @@ export const Windows_Network: React.FC = (props: any) => {
     vpnUserName: "",
     vpnPassword: "",
   });
-  const [submitDisabled, setSubmitDisabled] = useState(true);
+  // const [submitDisabled, setSubmitDisabled] = useState(true);
   const [formState, setFormState] = useState({
     isSuccess: false,
     isUpdate: false,
@@ -102,23 +101,23 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
-  const checkValidation = () => {
-    if (
-      isError.name !== "" ||
-      isError.ipRange !== "" ||
-      isError.userName !== "" ||
-      isError.password !== "" ||
-      isError.vpnUserName !== "" ||
-      isError.vpnPassword !== "" ||
-      !ipRange ||
-      !userName ||
-      !password ||
-      !connectionSuccess
-    ) {
-      return true;
-    }
-    return false;
-  };
+  // const checkValidation = () => {
+  //   if (
+  //     isError.name !== "" ||
+  //     isError.ipRange !== "" ||
+  //     isError.userName !== "" ||
+  //     isError.password !== "" ||
+  //     isError.vpnUserName !== "" ||
+  //     isError.vpnPassword !== "" ||
+  //     !ipRange ||
+  //     !userName ||
+  //     !password ||
+  //     !connectionSuccess
+  //   ) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
 
   const handleAlertClose = () => {
@@ -133,13 +132,12 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const
-    { data: targetData, loading: targetLoading, error: targetError }
+    { data: targetData, loading: targetLoading }
       = useQuery(GET_TARGET, {
         variables: {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
         },
         onCompleted: (data: any) => {
-          setShowbackdrop(false)
           if (targetData && data.getCredentialsDetails.edges[0]) {
             setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
             setUserName(
@@ -153,7 +151,6 @@ export const Windows_Network: React.FC = (props: any) => {
           }
         },
         onError: (err) => {
-          setShowbackdrop(false)
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -248,11 +245,11 @@ export const Windows_Network: React.FC = (props: any) => {
 
   // if (backdrop || targetLoading) return <SimpleBackdrop />;
 
-  const handleOkay = () => {
-    setWindowsDomain(true);
-    setShowDialogBox(true)
-    setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
-  };
+  // const handleOkay = () => {
+  //   setWindowsDomain(true);
+  //   setShowDialogBox(true)
+  //   setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
+  // };
 
   const handleSubmitDialogBox = () => {
     if (editDataId) {
@@ -286,12 +283,12 @@ export const Windows_Network: React.FC = (props: any) => {
             isFailed: false,
             errMessage: "Windows Credentials Updated Successfully !.",
           }));
-          setSubmitDisabled(false)
+          // setSubmitDisabled(false)
           setEditDataId(null);
           localStorage.setItem("winUsername", JSON.stringify(userName));
           localStorage.setItem("winPassword", JSON.stringify(password));
           localStorage.setItem("WinTargetName", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
-          setShowDialogBox(false)
+          // setShowDialogBox(false)
           let data = {};
           // setTimeout(() => {
             if(connectionSuccess) {
@@ -329,8 +326,8 @@ export const Windows_Network: React.FC = (props: any) => {
           // }, 1000);
         })
         .catch((err) => {
-          setShowDialogBox(false)
-          setSubmitDisabled(true)
+          // setShowDialogBox(false)
+          // setSubmitDisabled(true)
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
@@ -421,18 +418,18 @@ export const Windows_Network: React.FC = (props: any) => {
     // setSubmitDisabled(checkValidation);
   };
 
-  const handleVpnUserNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVpnUserName(event.target.value);
-    let value = event.target.value;
-    let isErrVpnUserName = value.length <= 0 ? "Required" : "";
-    setIsError((isError: any) => ({
-      ...isError,
-      vpnUserName: isErrVpnUserName,
-    }));
-    // setSubmitDisabled(checkValidation);
-  };
+  // const handleVpnUserNameChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   setVpnUserName(event.target.value);
+  //   let value = event.target.value;
+  //   let isErrVpnUserName = value.length <= 0 ? "Required" : "";
+  //   setIsError((isError: any) => ({
+  //     ...isError,
+  //     vpnUserName: isErrVpnUserName,
+  //   }));
+  //   // setSubmitDisabled(checkValidation);
+  // };
 
   const onClickTestConnection = () => {
     if(handleInputErrors()) {
@@ -461,7 +458,7 @@ export const Windows_Network: React.FC = (props: any) => {
               "Authentication succeeded, connection successful"
             ) {
               SetConnectionSuccess(true);
-              setSubmitDisabled(false);
+              // setSubmitDisabled(false);
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: true,
@@ -475,7 +472,7 @@ export const Windows_Network: React.FC = (props: any) => {
               "VPN is Connected,Please Disconnect"
             ) {
               SetConnectionSuccess(false);
-              setSubmitDisabled(true);
+              // setSubmitDisabled(true);
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
@@ -487,7 +484,7 @@ export const Windows_Network: React.FC = (props: any) => {
               }));
             } else {
               SetConnectionSuccess(false);
-              setSubmitDisabled(true);
+              // setSubmitDisabled(true);
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
@@ -499,7 +496,7 @@ export const Windows_Network: React.FC = (props: any) => {
             }
           })
           .catch(() => {
-            setSubmitDisabled(true)
+            // setSubmitDisabled(true)
             setBackdrop(false);
             setFormState((formState) => ({
               ...formState,
@@ -534,7 +531,7 @@ export const Windows_Network: React.FC = (props: any) => {
           "Authentication succeeded, connection successful"
         ) {
           SetConnectionSuccess(true);
-          setSubmitDisabled(false);
+          // setSubmitDisabled(false);
           setFormState((formState) => ({
             ...formState,
             isSuccess: true,
@@ -548,7 +545,7 @@ export const Windows_Network: React.FC = (props: any) => {
           "VPN is Connected,Please Disconnect"
         ) {
           SetConnectionSuccess(false);
-          setSubmitDisabled(true);
+          // setSubmitDisabled(true);
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -560,7 +557,7 @@ export const Windows_Network: React.FC = (props: any) => {
           }));
         } else {
           SetConnectionSuccess(false);
-          setSubmitDisabled(true);
+          // setSubmitDisabled(true);
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -572,7 +569,7 @@ export const Windows_Network: React.FC = (props: any) => {
         }
       })
       .catch(() => {
-        setSubmitDisabled(true)
+        // setSubmitDisabled(true)
         setBackdrop(false);
         setFormState((formState) => ({
           ...formState,
@@ -597,9 +594,9 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
 
-  const handleClose = () => {
-    setShowDialogBox(false);
-  };
+  // const handleClose = () => {
+  //   setShowDialogBox(false);
+  // };
 
   const handleBack = () => {
 try {

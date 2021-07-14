@@ -32,7 +32,7 @@ export const Dashboard: React.FC = () => {
 
   const [
     getClients,
-    { data: ipData, loading: ipLoading },
+    { loading: ipLoading },
   ] = useLazyQuery(GET_CLIENTS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {

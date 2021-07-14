@@ -43,8 +43,8 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   // const [confirmPassword, setConfirmPassword] = useState("");
-  const [showBackdrop, setShowBackdrop] = useState(false);
-  const [submitDisabled, setSubmitDisabled] = useState(true);
+  // const [showBackdrop, setShowBackdrop] = useState(false);
+  // const [submitDisabled, setSubmitDisabled] = useState(true);
   // const [partnerID, setPartnerID] = useState<any>();
   let PartnerID: any;
 
@@ -62,13 +62,13 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     pgID: "",
     pgUserID: "",
   });
-  const contact = JSON.parse(localStorage.getItem("contact") || "{}");
-  let partnerUserdata: any;
-  if (propsData.location.state !== null) {
-    partnerUserdata = propsData.location.state
-      ? propsData.location.state.propsData
-      : null;
-  }
+  // const contact = JSON.parse(localStorage.getItem("contact") || "{}");
+  // let partnerUserdata: any;
+  // if (propsData.location.state !== null) {
+  //   partnerUserdata = propsData.location.state
+  //     ? propsData.location.state.propsData
+  //     : null;
+  // }
 
   const [formState, setFormState] = useState({
     isSuccess: false,
@@ -123,7 +123,7 @@ export const PartnerUserForm: React.FC = (propsData: any) => {
     if (event.target.name === "phoneNumber") {
       setPhoneNumber(event.target.value);
     }
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
   const checkValidation = () => {

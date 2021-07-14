@@ -48,7 +48,7 @@ import {
 export const Linux_Network: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
-  const [scanConfigList, setScanConfigList] = useState<any>([]);
+  // const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [ipAddress, setIpAddress] = useState<String>("");
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
@@ -60,10 +60,10 @@ export const Linux_Network: React.FC = (props: any) => {
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
-  const[showbackdrop, setShowbackdrop] = useState(true);
+  // const[showbackdrop, setShowbackdrop] = useState(true);
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
-  const [linuxDomain, setLinuxDomain] = useState(false);
+  // const [linuxDomain, setLinuxDomain] = useState(false);
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   if (props.location.state) {
@@ -100,20 +100,20 @@ export const Linux_Network: React.FC = (props: any) => {
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);
   const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
-  const [createTarget] = useMutation(CREATE_TARGET);
-  const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
-    GET_TASK_DETAILS,
-    {
-      onCompleted: (data: any) => {
-        if (data.getTask.edges && data.getTask.edges[0]) {
-          setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
-        }
-      },
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  // const [createTarget] = useMutation(CREATE_TARGET);
+  // const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
+  //   GET_TASK_DETAILS,
+  //   {
+  //     onCompleted: (data: any) => {
+  //       if (data.getTask.edges && data.getTask.edges[0]) {
+  //         // setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+  //       }
+  //     },
+  //     fetchPolicy: "cache-and-network",
+  //   }
+  // );
   const
-    { data: targetData, loading: targetLoading, error: targetError }
+    { data: targetData }
       = useQuery(GET_TARGET, {
         variables: {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
@@ -127,10 +127,10 @@ export const Linux_Network: React.FC = (props: any) => {
                 : null
             );
           }
-          setShowbackdrop(false);
+          // setShowbackdrop(false);
         },
         onError: (err) => {
-          setShowbackdrop(false);
+          // setShowbackdrop(false);
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -212,7 +212,7 @@ export const Linux_Network: React.FC = (props: any) => {
   }, [formState]);
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
-  let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
+  // let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
 
   const checkValidation = () => {
     if (
@@ -268,9 +268,9 @@ export const Linux_Network: React.FC = (props: any) => {
     event.preventDefault();
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleClickShowPassword = () => {
+  //   setShowPassword(!showPassword);
+  // };
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIpAddress(event.target.value);
     let value = event.target.value;
@@ -435,7 +435,7 @@ export const Linux_Network: React.FC = (props: any) => {
             // Rerun Of Linux Navigate
             // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
               else {
-                setLinuxDomain(true);
+                // setLinuxDomain(true);
             // setShowDialogBox(true)
             // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
             setTimeout(() => {
@@ -465,7 +465,7 @@ export const Linux_Network: React.FC = (props: any) => {
               }
             } catch {
           setTimeout(() => {
-            setLinuxDomain(true);
+            // setLinuxDomain(true);
             setShowDialogBox(true)
             setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
           }, 1000);

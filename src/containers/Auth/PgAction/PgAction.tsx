@@ -44,7 +44,7 @@ export const PgAction: React.FC = (props: any) => {
   //     });
   // };
 
-  const [login, { data }] = useMutation(USER_LOGIN);
+  const [login] = useMutation(USER_LOGIN);
 
 
   const PartnerAdd=()=>{
@@ -123,7 +123,7 @@ export const PgAction: React.FC = (props: any) => {
         setInvalidLogin(true);
       });
   };
-  const [getAdminRole, { data: dataAD, loading: loadingAD }] = useLazyQuery(
+  const [getAdminRole] = useLazyQuery(
     GET_ADMIN_USER, {
     onCompleted: (data: any) => {
       localStorage.setItem("user", JSON.stringify(data.getUserDetails.edges[0].node));
@@ -145,7 +145,7 @@ export const PgAction: React.FC = (props: any) => {
   }
   );
 
-  const [getPartnerId, { data: dataPId, loading: loadingPId }] = useLazyQuery(
+  const [getPartnerId] = useLazyQuery(
     GET_PARTNER_ID_USER, {
     onCompleted: (data: any) => {
       if(data.getPartnerUserDetails.edges[0].node.partnerId.subscription === "Yes") {
@@ -162,13 +162,13 @@ export const PgAction: React.FC = (props: any) => {
   );
 
 
-  const [getPartnerUser, { data: dataCo, loading: loadingCO }] = useLazyQuery(GET_PARTNER_USERDETAILS, {
-    fetchPolicy: "cache-and-network",
-    onCompleted (data: any) {
-    console.log("getPartnerUser", data)
-    },
-    onError (err: any) { }
-  });
+  // const [getPartnerUser, { data: dataCo, loading: loadingCO }] = useLazyQuery(GET_PARTNER_USERDETAILS, {
+  //   fetchPolicy: "cache-and-network",
+  //   onCompleted (data: any) {
+  //   console.log("getPartnerUser", data)
+  //   },
+  //   onError (err: any) { }
+  // });
 
 
   const handleValueChange = (event: any) => {

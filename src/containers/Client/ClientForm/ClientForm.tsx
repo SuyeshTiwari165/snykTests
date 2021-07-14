@@ -35,17 +35,17 @@ import {
   ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
 import * as validations from "../../../common/validateRegex";
-import moment from "moment";
-import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
+// import moment from "moment";
+import Checkbox from '@material-ui/core/Checkbox';
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  // const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loader, setLoader] = useState(false);
-  const [submitDisabled, setSubmitDisabled] = useState(true);
+  // const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
   const [rowData, setRowData] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
@@ -55,7 +55,7 @@ export const Client: React.FC = (props: any) => {
 
   const [
     getClients,
-    { data: ipData, loading: ipLoading },
+    { loading: ipLoading },
   ] = useLazyQuery(GET_CLIENT, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -85,12 +85,12 @@ export const Client: React.FC = (props: any) => {
   }, []);
 
   //table
-  const column = [
-    { title: "Company Name", field: "name" },
-    { title: "Email", field: "email" },
-    { title: "Phone", field: "phone" },
-    { title: "Created on", field: "createdon" },
-  ];
+  // const column = [
+  //   { title: "Company Name", field: "name" },
+  //   { title: "Email", field: "email" },
+  //   { title: "Phone", field: "phone" },
+  //   { title: "Created on", field: "createdon" },
+  // ];
 
   const [isError, setIsError] = useState<any>({
     address: "",
@@ -106,8 +106,8 @@ export const Client: React.FC = (props: any) => {
     errMessage: "",
   });
 
-  const [createClient, { data: createDataCL }] = useMutation(CREATE_CLIENT);
-  const [updateClient, { data: updateDataCL }] = useMutation(UPDATE_CLIENT);
+  const [createClient] = useMutation(CREATE_CLIENT);
+  const [updateClient] = useMutation(UPDATE_CLIENT);
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
@@ -204,16 +204,16 @@ export const Client: React.FC = (props: any) => {
       //   }
       // }
     }
-    setSubmitDisabled(checkValidation);
+    // setSubmitDisabled(checkValidation);
   };
 
-  const checkValidation = () => {
-    let validation = false;
-    // if (isError.name !== "") {
-    //   validation = true;
-    // }
-    return validation;
-  };
+  // const checkValidation = () => {
+  //   let validation = false;
+  //   // if (isError.name !== "") {
+  //   //   validation = true;
+  //   // }
+  //   return validation;
+  // };
   const handleInputErrors = () => {
     let foundErrors = false;
     if (!name) {
@@ -354,7 +354,7 @@ export const Client: React.FC = (props: any) => {
   const backToList = () => {
     history.push(routeConstant.CLIENT,props.location.state);
     setIsError({ error: null });
-    setOpenEdit(false);
+    // setOpenEdit(false);
     setRowData(false);
     setName("");
     setEmail("");
