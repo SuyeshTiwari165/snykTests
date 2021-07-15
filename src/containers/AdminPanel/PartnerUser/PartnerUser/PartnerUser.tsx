@@ -47,22 +47,22 @@ interface partnerValues {
 export const PartnerUser: React.FC = (propsData: any) => {
   const history = useHistory();
   const[showBackdrop, setShowBackdrop] = useState(true);
-  // const [password, setPassword] = useState("");
-  // const [partnerID, setPartnerID] = useState<any>();
-  // const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [partnerID, setPartnerID] = useState<any>();
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  // const [partnerList, setPartnerList] = useState("");
+  const [partnerList, setPartnerList] = useState("");
   const [newData, setNewData] = useState([]);
-  // const [rowData, setRowData] = useState<any>();
-  // const [confirmPassError, setConfirmPassError] = useState(false);
-  // const [isError, setIsError] = useState<any>({
-  //   firstName: "",
-  //   lastName: "",
-  //   password: "",
-  //   confirmPassword: "",
-  //   email: "",
-  //   phoneNumber: "",
-  // });
+  const [rowData, setRowData] = useState<any>();
+  const [confirmPassError, setConfirmPassError] = useState(false);
+  const [isError, setIsError] = useState<any>({
+    firstName: "",
+    lastName: "",
+    password: "",
+    confirmPassword: "",
+    email: "",
+    phoneNumber: "",
+  });
   const [userDeleted, SetUserDeleted] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -120,9 +120,9 @@ export const PartnerUser: React.FC = (propsData: any) => {
     GET_PARTNER_USER, {
     onCompleted: (data: any) => {
       setShowBackdrop(false)
-      // if(data.getPartnerUserDetails.edges.length >= 0) {
-      // setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
-      // }
+      if(data.getPartnerUserDetails.edges.length >= 0) {
+      setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
+      }
       createTableDataObject(data.getPartnerUserDetails.edges);
     },
     fetchPolicy: "cache-and-network",
@@ -133,7 +133,7 @@ export const PartnerUser: React.FC = (propsData: any) => {
     onCompleted: (data: any) => {
       setShowBackdrop(false)
       if (data.getPartnerUserDetails.edges[0]) {
-        // setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
+        setPartnerID(data.getPartnerUserDetails.edges[0].node.partnerId)
         getpartnerUserDataforCompuser({
           variables: {
             orderBy: "user_id__first_name",
@@ -379,14 +379,14 @@ export const PartnerUser: React.FC = (propsData: any) => {
     <React.Fragment>
       <CssBaseline />
       <Typography component="h5" variant="h1">
-        {/* {!openEdit ? (
+        {!openEdit ? (
           "Users"
         ) : (
             <div>
               {rowData ? "Edit User: " : "Add User "}
               {rowData ? rowData.name : null}
             </div>
-          )} */}
+          )}
       </Typography>
       <Grid>
         <Grid container>

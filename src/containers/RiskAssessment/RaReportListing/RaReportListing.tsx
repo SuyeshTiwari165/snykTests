@@ -42,7 +42,7 @@ import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
 
 export const RaReportListing: React.FC = (props: any) => {
-  // const [published, setPublished] = useState<any>({});
+  const [published, setPublished] = useState<any>({});
   const [backdrop, setBackdrop] = useState<Boolean>(false);
   const [showBackdrop, setShowBackdrop] = useState<Boolean>(true);
   const [selectedFile, setSelectedFile] = useState<any>({});
@@ -50,10 +50,10 @@ export const RaReportListing: React.FC = (props: any) => {
   const [newData, setNewData] = useState();
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  // let userRole: any;
-  // if (user) {
-  //   userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
-  // }
+  let userRole: any;
+  if (user) {
+    userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
+  }
   //table
 
   const CompnyUserColumns = [
@@ -66,7 +66,7 @@ export const RaReportListing: React.FC = (props: any) => {
   ];
   const columns = partner.partnerId ? CompnyUserColumns : AdminColumns;
   const title = "Listing of Reports";
-  // const [orderBy, setOrderBy] = useState<String>();
+  const [orderBy, setOrderBy] = useState<String>();
   //static values
   const propsClientName = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.name : undefined;
   const propsClientId = props.location.state && props.location.state.clientInfo
@@ -153,12 +153,12 @@ export const RaReportListing: React.FC = (props: any) => {
         distinctTargetArray
       );
 
-      // setPublished(
-      //   getPublishDataList(
-      //     dataReportListing.getReportStatus.edges,
-      //     distinctTargetArray
-      //   )
-      // );
+      setPublished(
+        getPublishDataList(
+          dataReportListing.getReportStatus.edges,
+          distinctTargetArray
+        )
+      );
       setNewData(temp);
     }
     if (partner.partnerId && propsClientName!= undefined) {
@@ -202,7 +202,7 @@ export const RaReportListing: React.FC = (props: any) => {
     for (let i in targetArr) {
       let tempArr: any = {};
       tempArr["target"] = targetArr[i];
-      // let statusVar = false;
+      let statusVar = false;
       let targetId = 0;
       let targetHost;
       let targetIpAddress;
@@ -254,17 +254,17 @@ export const RaReportListing: React.FC = (props: any) => {
     let tempArr: any = {};
     for (let i in targetArr) {
       let targetId = 0;
-      // let statusVar = false;
+      let statusVar = false;
       // tempArr["target"] = targetArr[i];
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          // if (
-          //   data[j].node.scanRunStatus !== "Done" ||
-          //   data[j].node.scanRunStatus === "In Progress"
-          // ) {
-          //   statusVar = true;
-          // }
+          if (
+            data[j].node.scanRunStatus !== "Done" ||
+            data[j].node.scanRunStatus === "In Progress"
+          ) {
+            statusVar = true;
+          }
           targetId = data[j].node.vatTargetId.id;
         }
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
@@ -479,7 +479,7 @@ export const RaReportListing: React.FC = (props: any) => {
       // }
     }
     orderBy = orderByColumn + ":" + orderDirection;
-    // setOrderBy(orderBy);
+    setOrderBy(orderBy);
   };
 
   const handleClickDelete = (event: any, rowData: any) => {

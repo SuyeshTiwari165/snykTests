@@ -44,11 +44,12 @@ import rerunstepper from "../common/raRerunStepperList.json";
 import {
   setActiveFormStep,
 } from "../../../services/Data";
+import Tooltip from '@material-ui/core/Tooltip';
 
 export const Linux_Network: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
-  // const [scanConfigList, setScanConfigList] = useState<any>([]);
+  const [scanConfigList, setScanConfigList] = useState<any>([]);
   const [ipAddress, setIpAddress] = useState<String>("");
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
@@ -60,12 +61,14 @@ export const Linux_Network: React.FC = (props: any) => {
   const [vpnPassword, setVpnPassword] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
-  // const[showbackdrop, setShowbackdrop] = useState(true);
+  const[showbackdrop, setShowbackdrop] = useState(true);
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
-  // const [linuxDomain, setLinuxDomain] = useState(false);
+  const [linuxDomain, setLinuxDomain] = useState(false);
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
+  const [open, setOpen] = React.useState(false);
+
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
@@ -100,20 +103,20 @@ export const Linux_Network: React.FC = (props: any) => {
   const [testVpnConnection] = useMutation(TEST_LINUX_CONNECTION);
   const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
-  // const [createTarget] = useMutation(CREATE_TARGET);
-  // const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
-  //   GET_TASK_DETAILS,
-  //   {
-  //     onCompleted: (data: any) => {
-  //       if (data.getTask.edges && data.getTask.edges[0]) {
-  //         // setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
-  //       }
-  //     },
-  //     fetchPolicy: "cache-and-network",
-  //   }
-  // );
+  const [createTarget] = useMutation(CREATE_TARGET);
+  const [getTaskData, { data: taskData, loading: taskLoading }] = useLazyQuery(
+    GET_TASK_DETAILS,
+    {
+      onCompleted: (data: any) => {
+        if (data.getTask.edges && data.getTask.edges[0]) {
+          setScanConfigList(data.getTask.edges[0].node.vatScanConfigList);
+        }
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
   const
-    { data: targetData }
+    { data: targetData, loading: targetLoading, error: targetError }
       = useQuery(GET_TARGET, {
         variables: {
           targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
@@ -127,10 +130,10 @@ export const Linux_Network: React.FC = (props: any) => {
                 : null
             );
           }
-          // setShowbackdrop(false);
+          setShowbackdrop(false);
         },
         onError: (err) => {
-          // setShowbackdrop(false);
+          setShowbackdrop(false);
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -212,7 +215,7 @@ export const Linux_Network: React.FC = (props: any) => {
   }, [formState]);
 
   let clientID = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.clientId : undefined;
-  // let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
+  let host = props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo.host : undefined;
 
   const checkValidation = () => {
     if (
@@ -268,9 +271,9 @@ export const Linux_Network: React.FC = (props: any) => {
     event.preventDefault();
   };
 
-  // const handleClickShowPassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIpAddress(event.target.value);
     let value = event.target.value;
@@ -435,7 +438,7 @@ export const Linux_Network: React.FC = (props: any) => {
             // Rerun Of Linux Navigate
             // if (ReRunTargetName != {} ||  ReRunTargetName.includes("_linux") ) {
               else {
-                // setLinuxDomain(true);
+                setLinuxDomain(true);
             // setShowDialogBox(true)
             // setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
             setTimeout(() => {
@@ -465,7 +468,7 @@ export const Linux_Network: React.FC = (props: any) => {
               }
             } catch {
           setTimeout(() => {
-            // setLinuxDomain(true);
+            setLinuxDomain(true);
             setShowDialogBox(true)
             setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
           }, 1000);
@@ -653,12 +656,11 @@ try {
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
         targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        editLinuxData: props.location.state && props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
+        editWindowsData:props.location.state && props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
         targetName : ReRunTargetName ? ReRunTargetName : targetName
       }
       setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
-      console.log("WINDOWS RERUN ")
       history.push(routeConstant.WINDOWS_NETWORK,data); 
     } else {
       setRaStepper(client, stepper.Target.name, stepper.Target.value, props.location.state);
@@ -668,7 +670,7 @@ try {
         LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
         clientInfo: clientInfo, targetInfo: targetInfo,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
+        editWindowsData: props.location.state && props.location.state.editWindowsData ? props.location.state.editWindowsData : false, 
       };
         history.push(routeConstant.TARGET,data); 
     }
@@ -758,17 +760,23 @@ const handleInputErrors = () => {
       ipAddress: "Required",
     }));
   }
-  // if (password === "" ||password === null) {
-  //   error = false;
-  //   // let isErrName = ipAddress.length <= 0 ? "Required" : "";
-  //   setIsError((isError: any) => ({
-  //     ...isError,
-  //     vpnPassword: "Required",
-  //   }));
-  // }
+  if (password === "" ||password === null) {
+    error = false;
+    // let isErrName = ipAddress.length <= 0 ? "Required" : "";
+    setIsError((isError: any) => ({
+      ...isError,
+      vpnPassword: "Required",
+    }));
+  }
   return error;
 };
+const handleToolTipClose = () => {
+  setOpen(false);
+};
 
+const handleToolTipOpen = () => {
+  setOpen(true);
+};
   return (
     <React.Fragment>
       <CssBaseLine />
@@ -857,7 +865,7 @@ const handleInputErrors = () => {
         <Grid item xs={12} md={6} className={styles.PasswordField}>
           <FormControl className={styles.TextField} variant="outlined">
             <InputLabel classes={{ root: styles.FormLabel }}>
-              Password
+              Password *
             </InputLabel>
             <OutlinedInput
               classes={{
@@ -866,7 +874,7 @@ const handleInputErrors = () => {
                 focused: styles.InputField,
               }}
               type={showPassword ? "text" : "password"}
-              label="Password"
+              label="Password *"
               value={password}
               onChange={handlePasswordChange}
               required
@@ -889,12 +897,17 @@ const handleInputErrors = () => {
                 error={isError.vpnPassword}
                 classes={{ root: styles.FormHelperText }}
               >
-                Please enter a password.
+                Required
               </FormHelperText>
             ) : null}
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6}>
+        <span className={styles.IPTooltip}>
+        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
+            <p><b>Enter IP Address only</b> </p>
+            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
+          </React.Fragment>}>
           <Input
             type="text"
             label="IP List"
@@ -906,6 +919,8 @@ const handleInputErrors = () => {
           >
             IP List
           </Input>
+          </Tooltip>
+        </span>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
