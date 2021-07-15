@@ -174,3 +174,7 @@
 .uploadLabelName {
   display: inline-block;
 }
+.UploadTooltip {
+position: relative;
+right: 3%;
+}
