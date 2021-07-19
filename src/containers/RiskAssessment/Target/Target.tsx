@@ -58,6 +58,8 @@ import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import {
   setActiveFormStep,
 } from "../../../services/Data";
+import Cookies from 'js-cookie';
+import logout from "../../Auth/Logout/Logout";
 
 
 export const Target: React.FC = (props: any) => {
@@ -92,6 +94,7 @@ export const Target: React.FC = (props: any) => {
   const [fileEvent,setFileEvent] = useState<any>();
   const [open, setOpen] = React.useState(false);
   const [uploadToolOpen, setUploadToolOpen] = React.useState(false);
+  const session = Cookies.getJSON('ob_session');
 
 //     [
 //     // {
@@ -337,28 +340,33 @@ export const Target: React.FC = (props: any) => {
   };
 
   useEffect(() => {
-    if (targetName !== null) {
-      getTargetData({
-        variables: {
-          targetName: targetName,
-        },
-      });
-    }
-    if(props.location.state != undefined && props.location.state.editData && props.location.state.editData === true) {
-      console.log("props.location.state",props.location.state)
-      setSubmitDisabled(false);
-      setFileUploaded(true)
-      setFormState(formState => ({
-        ...formState,
-        isSuccess: true,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: false,
-        errMessage: "Connection Already Tested"
-      }));
+    if (Cookies.getJSON('ob_session')) {
+      if (targetName !== null) {
+        getTargetData({
+          variables: {
+            targetName: targetName,
+          },
+        });
+      }
+      if (props.location.state != undefined && props.location.state.editData && props.location.state.editData === true) {
+        console.log("props.location.state", props.location.state)
+        setSubmitDisabled(false);
+        setFileUploaded(true)
+        setFormState(formState => ({
+          ...formState,
+          isSuccess: true,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: false,
+          errMessage: "Connection Already Tested"
+        }));
 
-      setVpnFilePath(localVpnFilePath || vpnFilePath  ? localVpnFilePath.replace(/\"/g, "") : null);
-      setDisplayVpnFilePath(localVpnFilePath || vpnFilePath  ? localVpnFilePath.split("/")[9].replace(/\"/g, "") : null);
+        setVpnFilePath(localVpnFilePath || vpnFilePath ? localVpnFilePath.replace(/\"/g, "") : null);
+        setDisplayVpnFilePath(localVpnFilePath || vpnFilePath ? localVpnFilePath.split("/")[9].replace(/\"/g, "") : null);
+      }
+    }
+    else {
+      logout();
     }
   }, []);
 
@@ -427,6 +435,9 @@ export const Target: React.FC = (props: any) => {
   }
 
   const handleSubmitDialogBox = () => {
+    if(!Cookies.getJSON('ob_session'))  {
+      logout();
+    }
     if (editDataId) {
       setSubmitDisabled(true)
       let input = {
@@ -880,6 +891,7 @@ export const Target: React.FC = (props: any) => {
   // };
 
   const onClickHandler2 = ( ) => {
+    if(Cookies.getJSON('ob_session'))  {
     // if (name && vpnUserName && ipRange) {
       if(handleInputErrors()) {
       setBackdrop(true);
@@ -1127,6 +1139,9 @@ export const Target: React.FC = (props: any) => {
       errMessage: " Please Fill Required Fields and Upload File ",
     }));
   }
+} else {
+  logout();
+}
   }
   const onClickHandler = (event: any) => {
     if (name && vpnUserName && !uploadDisabled) {
@@ -1276,6 +1291,7 @@ export const Target: React.FC = (props: any) => {
   }
   };
   const handleBack = () => {
+    if(Cookies.getJSON('ob_session'))  {
     let data = {};
     data = { refetchData: true, clientInfo: clientInfo };
     history.push(routeConstant.RA_REPORT_LISTING, data);
@@ -1291,6 +1307,10 @@ export const Target: React.FC = (props: any) => {
     localStorage.removeItem("vpnFilePath");
     localStorage.removeItem("WinTargetName");
     localStorage.removeItem("LinuxTargetName");
+    }
+    else {
+      logout();
+    }
   };
 
 

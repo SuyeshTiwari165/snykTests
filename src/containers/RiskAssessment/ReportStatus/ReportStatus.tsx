@@ -4,24 +4,16 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Button } from "../../../components/UI/Form/Button/Button";
-// import Input from "../../../components/UI/Form/Input/Input";
 import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
-// import { GET_TASK_DETAILS } from "../../../graphql/queries/TaskDetails";
-// import { GET_SCAN_CONFIG } from "../../../graphql/queries/ScanConfig";
-// import { GET_SCANDATA } from "../../../graphql/queries/ScanData";
-// import { GET_TARGET } from "../../../graphql/queries/Target";
-// import Loading from "../../../components/UI/Layout/Loading/Loading";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import { useQuery, useMutation } from "@apollo/client";
 import { Grid } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-// import AutoCompleteDropDown from "../../../components/UI/Form/Autocomplete/Autocomplete";
-// import TextField from "@material-ui/core/TextField";
-// import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import Logout from "../../Auth/Logout/Logout";
+import Cookies from 'js-cookie';
 
 export const ReportStatus: React.FC = (props: any) => {
   const history = useHistory();
@@ -79,7 +71,12 @@ export const ReportStatus: React.FC = (props: any) => {
   }
 
   useEffect(() => {
-    refetchReportListing();
+    if (Cookies.getJSON("ob_session")) { 
+      refetchReportListing();
+    } else{
+      Logout();
+    }
+    
   }, []);
   
   useEffect(() => {
@@ -116,7 +113,6 @@ export const ReportStatus: React.FC = (props: any) => {
     }
     return arr;
   }
-  console.log("targetData", targetData)
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {
     let orderByColumn;
     let orderBy = "";
