@@ -40,6 +40,7 @@ import { DialogBox } from "../../../components/UI/DialogBox/DialogBox";
 import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
+import Cookies from 'js-cookie';
 
 export const RaReportListing: React.FC = (props: any) => {
   const [published, setPublished] = useState<any>({});
@@ -108,12 +109,16 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   useEffect(() => {
+    if (Cookies.getJSON("ob_session")) { 
     console.log("propsClientName", propsClientName);
     getReportListingData({
       variables: {
         clientname: propsClientName,
       },
     });
+  } else{
+    logout();
+  }
   }, []);
 
   const handleAlertClose = () => {
@@ -281,10 +286,18 @@ export const RaReportListing: React.FC = (props: any) => {
   }
 
   const handleClickView = (rowData: any) => {
-    history.push({
-      pathname: routeConstant.REPORT_STATUS,
-      state: { targetName: rowData.target, clientInfo: clientInfo, target: rowData }
-    });
+    if (Cookies.getJSON("ob_session")) {
+      history.push({
+        pathname: routeConstant.REPORT_STATUS,
+        state: {
+          targetName: rowData.target,
+          clientInfo: clientInfo,
+          target: rowData,
+        },
+      });
+    } else {
+      logout();
+    }
   };
 
   const handleClickOpen = (rowData: any) => {
@@ -297,6 +310,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   const handleDownload = (rowData: any) => {
+    if (Cookies.getJSON("ob_session")) { 
     setBackdrop(true)
     let intTargetId = parseInt(rowData.targetId);
     const DocUrl =
@@ -321,6 +335,9 @@ export const RaReportListing: React.FC = (props: any) => {
         errMessage: error,
       }));
     });
+  } else {
+    logout();
+  }
   };
 
   const getBase64 = (file: any, cb: any) => {

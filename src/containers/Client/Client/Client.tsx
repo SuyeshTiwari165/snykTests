@@ -156,99 +156,77 @@ export const Client: React.FC = (props: any) => {
 
   useEffect(() => {
     // On Login from tool
-    if (props.location.state == null ||
-      props.location.state == undefined && partner !== null && user !== null) {
-      let partnerdata = JSON.parse(partner)
-      if (partnerdata.data != null) {
-        if (partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty("partnerId")) {
-          getClients({
-            variables: {
-              orderBy: "client_name",
-              partnerId_PartnerName: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.partnerName
-            }
-          });
-          getClientsAndReports({
-            variables: {
-              partnerId: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
-            }
-          });
+    if (Cookies.getJSON("ob_session")) {
+      if (
+        props.location.state == null ||
+        (props.location.state == undefined && partner !== null && user !== null)
+      ) {
+        let partnerdata = JSON.parse(partner);
+        if (partnerdata.data != null) {
+          if (
+            partnerdata.data.getPartnerUserDetails.edges[0].node.hasOwnProperty(
+              "partnerId"
+            )
+          ) {
+            getClients({
+              variables: {
+                orderBy: "client_name",
+                partnerId_PartnerName:
+                  partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
+                    .partnerName,
+              },
+            });
+            getClientsAndReports({
+              variables: {
+                partnerId:
+                  partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
+                    .id,
+              },
+            });
+          }
         }
       }
-    }
-    if (
-      props.location.state !== null &&
-      props.location.state !== undefined &&
-      props.location.state.partner_id
-    ) {
-      getClients({
-        variables: {
-          orderBy: "client_name",
-          partnerId_PartnerName: props.location.state.partner_id
-        }
-      });
-    }
-    if (props.location.state && props.location.state.clientInfo) {
-      getClients({
-        variables: {
-          orderBy: "client_name",
-          partnerId_PartnerName: props.location.state.clientInfo.partnerId
-        }
-      });
-      if (partner != "") {
-        let partnerdata = JSON.parse(partner)
-        getClientsAndReports({
+      if (
+        props.location.state !== null &&
+        props.location.state !== undefined &&
+        props.location.state.partner_id
+      ) {
+        getClients({
           variables: {
-            partnerId: partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
-          }
+            orderBy: "client_name",
+            partnerId_PartnerName: props.location.state.partner_id,
+          },
         });
       }
-    }
-    if (
-      props.location.state &&
-      props.location.state !== null &&
-      props.location.state.formState
-    ) {
-      setFormState(props.location.state.formState);
+      if (props.location.state && props.location.state.clientInfo) {
+        getClients({
+          variables: {
+            orderBy: "client_name",
+            partnerId_PartnerName: props.location.state.clientInfo.partnerId,
+          },
+        });
+        if (partner != "") {
+          let partnerdata = JSON.parse(partner);
+          getClientsAndReports({
+            variables: {
+              partnerId:
+                partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
+                  .id,
+            },
+          });
+        }
+      }
+      if (
+        props.location.state &&
+        props.location.state !== null &&
+        props.location.state.formState
+      ) {
+        setFormState(props.location.state.formState);
+      }
+    } else {
+      logout();
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (partner !== "{}") {
-  //     getClients({
-  //       variables: {
-  //         orderBy : "client_name",
-  //         partnerId_PartnerName: partner.partnerId
-  //       }
-  //     });
-  //   }
-  //   if (
-  //     props.location.state !== null &&
-  //     props.location.state !== undefined &&
-  //     props.location.state.partner_id
-  //   ) {
-  //     getClients({
-  //       variables: {
-  //         orderBy : "client_name",
-  //         partnerId: props.location.state.partner_id
-  //       }
-  //     });
-  //   }
-  //   if (props.location.state && props.location.state.clientInfo) {
-  //     getClients({
-  //       variables: {
-  //         orderBy : "client_name",
-  //         partnerId: props.location.state.clientInfo.partnerId
-  //       }
-  //     });
-  //   }
-  //   if (
-  //     props.location.state &&
-  //     props.location.state !== null &&
-  //     props.location.state.formState
-  //   ) {
-  //     setFormState(props.location.state.formState);
-  //   }
-  // }, [clientDeleted]);
 
   useEffect(() => {
     if (
