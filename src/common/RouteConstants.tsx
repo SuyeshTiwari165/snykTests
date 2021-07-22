@@ -8,6 +8,7 @@ export const CLIENT_FORM_EDIT = "/client-form/edit/";
 
 //------------RA ROUTES---------------//
 export const TARGET = "/target";
+export const ADVANCE_TARGET = "/advance-target";
 export const TASK_DETAILS = "/task-details";
 export const LINUX_NETWORK = "/linux-network-details";
 export const WINDOWS_NETWORK = "/windows-network-details";
