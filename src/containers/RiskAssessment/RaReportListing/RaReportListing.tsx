@@ -478,6 +478,12 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleAddNewReport = () => {
     let data = {};
     data = { clientInfo: clientInfo };
+    history.push(routeConstant.ADVANCE_TARGET, data);
+  };
+
+  const handleAddNewAdvanceReport = () => {
+    let data = {};
+    data = { clientInfo: clientInfo };
     history.push(routeConstant.TARGET, data);
   };
 
@@ -627,7 +633,19 @@ export const RaReportListing: React.FC = (props: any) => {
                 className={styles.ActionButton}
               >
                 <AddCircleIcon className={styles.EditIcon} />
-                &nbsp; Vulnerability Test
+                &nbsp; External Vulnerability Test
+              </Button>
+            ) : null}
+              {partner.partnerId ? (
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleAddNewAdvanceReport}
+                className={styles.ActionButton}
+              >
+                <AddCircleIcon className={styles.EditIcon} />
+                <AddCircleIcon className={styles.EditIcon} />
+                &nbsp; Advanced Vulnerability Test
               </Button>
             ) : null}
           </Grid>

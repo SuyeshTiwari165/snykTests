@@ -467,9 +467,12 @@ export const Client: React.FC = (props: any) => {
     let data: any = { clientInfo: rowData, partnerId : partner };
     console.log("rowData",rowData)
     if (param === "RA") {
-      console.log("data",data);
       // setShowBackdrop(true)
+      if (Cookies.getJSON('ob_session')) {
       history.push(routeConstant.RA_REPORT_LISTING, data);
+      } else {
+        logout();
+      }
     }
     if (param === "Edit") {
       handleClickEdit(rowData);
@@ -478,8 +481,12 @@ export const Client: React.FC = (props: any) => {
       handleClickDelete(rowData)
     }
     if (param === "Add") {
+      if (Cookies.getJSON('ob_session')) {
       let data = { clientInfo: rowData };
       history.push(routeConstant.TARGET, data);
+      } else{
+        logout();
+      }
     }
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
