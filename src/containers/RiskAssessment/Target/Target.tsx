@@ -666,6 +666,7 @@ export const Target: React.FC = (props: any) => {
             vpnUsername: vpnUserName,
             vpnPassword: vpnPassword,
             startDate: startDate,
+            scanType : "Advanced"
           };
           createTarget({
             variables: {
