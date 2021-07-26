@@ -49,6 +49,7 @@ import {
 } from "../../../services/Data";
 import Cookies from 'js-cookie';
 import logout from "../../Auth/Logout/Logout";
+import { ContactSupportOutlined } from "@material-ui/icons";
 
 
 export const TaskDetails: React.FC = (props: any) => {
@@ -73,7 +74,7 @@ export const TaskDetails: React.FC = (props: any) => {
   //Autocomplete list
   const [getScanDataList, setScanDataList] = useState([]);
   const [getTargetList, setTargetList] = useState([]);
-  const [getScanConfigList, setScanConfigList] = useState([]);
+  const [getScanConfigList, setScanConfigList] = useState<any>([]);
 
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -243,7 +244,11 @@ try {
 
   useEffect(() => {
     if (getScanConfigList.length === 0 && dataScanConfig) {
-      setScanConfigList(dataScanConfig.getScanConfigurationdata.edges);
+      let arr : any = []
+      dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast')).map((filteredName: any) => {
+        arr.push(filteredName)
+      });
+      setScanConfigList(arr);
     }
   }, [dataScanConfig]);
 
