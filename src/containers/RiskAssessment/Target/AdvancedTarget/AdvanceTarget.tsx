@@ -268,6 +268,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         taskName: name + "_" + moment(new Date()).format("DD"),
         vatTarget: name,
         vatScanConfig: scanConfig,
+        // vatScanConfig : "599ff530-0dbf-4edb-a54a-0d49f0ca67d3",
         scheduleDate: tempScheduleDate,
       };
       createTask({
@@ -421,7 +422,12 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                   <em>{"(e.g. 192.168.x.xx)"}</em>{" "}
                   <p>
                     <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255)"}
-                  </p>{" "}
+                  </p>
+                  <p>
+                    <b>For Domain/URL </b>{" "}
+                  <em>{"(e.g. webaccessnet.com)"}</em>{" "}
+                  </p>
+                  {" "}
                 </React.Fragment>
               }
             >

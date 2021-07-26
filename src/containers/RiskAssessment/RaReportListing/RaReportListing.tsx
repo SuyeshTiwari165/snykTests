@@ -41,6 +41,7 @@ import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
 import Cookies from 'js-cookie';
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 
 export const RaReportListing: React.FC = (props: any) => {
   const [published, setPublished] = useState<any>({});
@@ -214,6 +215,7 @@ export const RaReportListing: React.FC = (props: any) => {
       let publishFlag = "";
       for (let j in data) {
         if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+          tempArr["scanType"] = data[j].node.vatTargetId.scanType
           if (data[j].node.vatTargetId.publishedFlag == "Published") {
             tempArr["report_status"] = "Published";
             tempArr["status"] = "Done";
@@ -227,6 +229,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
           if (partner.partnerId == undefined) {
             if (data[j].node.scanRunStatus == "Done") {
+              
               tempArr["status"] = "Done";
             }
             if (data[j].node.scanRunStatus == "In Progress") {
@@ -643,8 +646,8 @@ export const RaReportListing: React.FC = (props: any) => {
                 onClick={handleAddNewAdvanceReport}
                 className={styles.ActionButton}
               >
-                <AddCircleIcon className={styles.EditIcon} />
-                <AddCircleIcon className={styles.EditIcon} />
+                {/* <AddCircleIcon className={styles.EditIcon} /> */}
+                <AddToPhotosIcon className={styles.EditIcon} />
                 &nbsp; Advanced Vulnerability Test
               </Button>
             ) : null}
@@ -750,7 +753,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 } : null,
               partner.partnerId
                 ? (rowData: any) =>
-                    rowData.status == "Done"
+                    rowData.status == "Done" && rowData.scanType != "External"
                       ? {
                           // disabled: rowData.status !== "Done",
                           icon: () => <SyncIcon />,

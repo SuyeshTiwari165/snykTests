@@ -23,6 +23,7 @@ export const GET_REPORT_LISTING = gql`
             vatTargetId
             publishedFlag
             host
+            scanType
           }
           vatTaskId {
             id

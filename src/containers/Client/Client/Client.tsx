@@ -16,6 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import {
   CREATE_CLIENT,
   UPDATE_CLIENT
@@ -488,6 +489,15 @@ export const Client: React.FC = (props: any) => {
         logout();
       }
     }
+    if (param === "AddExternal") {
+      if (Cookies.getJSON('ob_session')) {
+      let data = { clientInfo: rowData };
+      history.push(routeConstant.ADVANCE_TARGET, data);
+      } else{
+        logout();
+      }
+    }
+    
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
 
@@ -640,7 +650,17 @@ export const Client: React.FC = (props: any) => {
                 userRole != "SuperUser" ? 
                 {
                   icon: () => <AddCircleIcon className={styles.CircleIcon} />,
-                  tooltip: "Create Vulnerability Test",
+                  // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
+                  tooltip: "Create External Vulnerability Test",
+                  onClick: (event: any, rowData: any, oldData :any) => {
+                    onRowClick(event, rowData, oldData, "AddExternal");
+                  },
+                }
+                : null,
+                userRole != "SuperUser" ? 
+                {
+                  icon: () => <AddToPhotosIcon className={styles.CircleIcon} />,
+                  tooltip: "Create Advanced Vulnerability Test",
                   onClick: (event: any, rowData: any, oldData :any) => {
                     onRowClick(event, rowData, oldData, "Add");
                   },
