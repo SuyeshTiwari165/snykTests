@@ -97,7 +97,10 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       if (data.getScanConfigurationdata.edges[0]) {
         let arr: any = [];
         data.getScanConfigurationdata.edges.map((element: any) => {
+          if(element.node.scanConfigName === 'Full and fast') {
             arr.push(element.node.vatScanConfigId)
+          }
+
         });
         setScanConfig(arr);
         // createTasks()
@@ -396,7 +399,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           <Input
             type="text"
             label="Target Name"
-            value={name.split("_")[0]}
+            value={name}
             onChange={handleNameChange}
             required
             error={isError.name}
