@@ -113,3 +113,6 @@
     background-color: transparent !important;
     box-shadow: none !important;
 }
+.PassField {
+  margin-right: 0px !important;
+}

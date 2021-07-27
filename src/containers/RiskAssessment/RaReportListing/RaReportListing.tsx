@@ -481,7 +481,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleAddNewReport = () => {
     let data = {};
     data = { clientInfo: clientInfo };
-    history.push(routeConstant.ADVANCE_TARGET, data);
+    history.push(routeConstant.EXTERNAL_TARGET, data);
   };
 
   const handleAddNewAdvanceReport = () => {

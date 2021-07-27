@@ -492,7 +492,7 @@ export const Client: React.FC = (props: any) => {
     if (param === "AddExternal") {
       if (Cookies.getJSON('ob_session')) {
       let data = { clientInfo: rowData };
-      history.push(routeConstant.ADVANCE_TARGET, data);
+      history.push(routeConstant.EXTERNAL_TARGET, data);
       } else{
         logout();
       }
