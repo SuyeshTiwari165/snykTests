@@ -100,6 +100,15 @@ tfoot {
   border-top: 1px solid #eee;
   display: table-footer-group !important;
 }
+
+tfoot tr td > div {
+  justify-content: flex-end !important;
+}
+
+tfoot tr td > div {
+  justify-content: flex-end !important;
+}
+
 td button:hover {
   background-color: transparent !important;
 }

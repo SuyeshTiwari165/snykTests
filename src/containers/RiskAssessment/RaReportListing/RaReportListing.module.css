@@ -122,6 +122,10 @@ tfoot {
   display: table-footer-group !important;
 }
 
+tfoot tr td > div {
+  justify-content: flex-end !important;
+}
+
 .EditIcon {
   height: 18px !important;
   width: 18px !important;

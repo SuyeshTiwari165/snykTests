@@ -72,7 +72,7 @@ export const AuthRoutes = (
     />
     <LayoutRoute path={routeConstants.LOGOUT_URL} exact component={Logout} />
     <LayoutRoute path={routeConstants.TARGET} exact component={Target} />
-    <LayoutRoute path={routeConstants.ADVANCE_TARGET} exact component={AdvanceTarget} />
+    <LayoutRoute path={routeConstants.EXTERNAL_TARGET} exact component={AdvanceTarget} />
     <LayoutRoute path={routeConstants.WINDOWS_NETWORK} component={Windows_Network} />
     <LayoutRoute path={routeConstants.LINUX_NETWORK} exact component={Linux_Network} />
     <LayoutRoute
