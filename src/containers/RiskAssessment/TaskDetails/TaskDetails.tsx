@@ -245,7 +245,7 @@ try {
   useEffect(() => {
     if (getScanConfigList.length === 0 && dataScanConfig) {
       let arr : any = []
-      dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast')).map((filteredName: any) => {
+      dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast') && !name.node.scanConfigName.includes('External scan config')).map((filteredName: any) => {
         arr.push(filteredName)
       });
       setScanConfigList(arr);
