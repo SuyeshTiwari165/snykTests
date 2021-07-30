@@ -229,18 +229,18 @@ export const Client: React.FC = (props: any) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (
-      formState.isDelete === true ||
-      formState.isFailed === true ||
-      formState.isSuccess === true ||
-      formState.isUpdate === true
-    ) {
-      setTimeout(function() {
-        handleAlertClose();
-      }, ALERT_MESSAGE_TIMER);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (
+  //     formState.isDelete === true ||
+  //     formState.isFailed === true ||
+  //     formState.isSuccess === true ||
+  //     formState.isUpdate === true
+  //   ) {
+  //     setTimeout(function() {
+  //       handleAlertClose();
+  //     }, ALERT_MESSAGE_TIMER);
+  //   }
+  // }, [formState]);
 
   const createTableDataObjectAdmin = (data: any) => {
     let arr: any = [];
@@ -313,9 +313,11 @@ export const Client: React.FC = (props: any) => {
   };
 
   const handleClickEdit = (rowData: any) => {
+    handleAlertClose();
     history.push(routeConstant.CLIENT_FORM_EDIT + rowData.clientId, rowData);
   };
   const handleClickDelete = (rowData: any) => {
+    handleAlertClose();
     setClientDeleted(false);
     setShowBackdrop(true);
     deleteClient({
@@ -465,6 +467,7 @@ export const Client: React.FC = (props: any) => {
   // };
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
+    handleAlertClose();
     let data: any = { clientInfo: rowData, partnerId : partner };
     console.log("rowData",rowData)
     if (param === "RA") {
