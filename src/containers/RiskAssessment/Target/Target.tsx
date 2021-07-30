@@ -60,7 +60,10 @@ import {
 } from "../../../services/Data";
 import Cookies from 'js-cookie';
 import logout from "../../Auth/Logout/Logout";
-
+import {
+  createMuiTheme,
+  MuiThemeProvider,
+} from "@material-ui/core/styles";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -1653,6 +1656,82 @@ export const Target: React.FC = (props: any) => {
     return error;
   };
 
+  const theme = createMuiTheme({
+    overrides: {
+      // MuiTooltip: {
+      //   tooltip: {
+      //     backgroundColor:"rgb(240, 102, 1, 0.8)",
+      //     borderRadius : "12px",
+      //     position: "relative",
+      //   },
+      //   tooltipPlacementRight: {
+      //     "&:before" : {
+      //       content: "' '",
+      //       width: "0px",
+      //       height: "0px",
+      //       borderTop: "6px solid transparent",
+      //       borderBottom: "6px solid transparent",
+      //       borderRight:"6px solid rgba(240, 102, 1, 0.8)",
+      //       zIndex: "9999",
+      //     position:"absolute",
+      //     left:"-6px",
+      //     top:"45%",
+      //     }
+      //   }
+      // }
+      MuiTooltip: {
+        tooltip: {
+          backgroundColor:"rgb(240, 102, 1, 0.8)",
+          borderRadius : "12px",
+          position: "relative",
+          "&:before" : {
+          content: "' '",
+          width: "0px",
+          height: "0px",
+          zIndex: 9999,
+          position:"absolute",
+          }
+        },
+        tooltipPlacementRight: {
+          "&:before" : {
+          borderTop: "6px solid transparent",
+          borderBottom: "6px solid transparent",
+          borderRight:"6px solid rgba(240, 102, 1, 0.8)",
+          left:"-6px",
+          top:"45%",
+          }
+        },
+        tooltipPlacementLeft: {
+          "&:before" : { 
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderLeft: "6px solid rgba(240, 102, 1, 0.8)", 
+            right:"-6px",
+            top:"45%",
+          }
+        },
+        tooltipPlacementBottom: {
+          "&:before" : { 
+            borderLeft: "6px solid transparent",
+            borderRight: "6px solid transparent",
+            borderBottom: "6px solid rgba(240, 102, 1, 0.8)",
+            left :"45%",
+            top:"-6px",
+          }
+        },
+        tooltipPlacementTop: {
+          "&:before" : { 
+            borderLeft: "6px solid transparent",
+            borderRight: "6px solid transparent",
+            borderTop: "6px solid rgba(240, 102, 1, 0.8)",
+            left :"45%",
+            bottom:"-6px",
+          }
+        }
+      }
+    }
+  });
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -1738,6 +1817,7 @@ export const Target: React.FC = (props: any) => {
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
+        <MuiThemeProvider theme={theme}>
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
             <p><b>Enter IP Address only</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255)'}</p>{' '}
@@ -1756,6 +1836,8 @@ export const Target: React.FC = (props: any) => {
      
         {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
         </Tooltip>
+        </MuiThemeProvider>
+
         </span>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -1816,6 +1898,8 @@ export const Target: React.FC = (props: any) => {
           <form>
           <label className={styles.lawDocument}>VPN Config File </label>
           <span className={styles.UploadTooltip}>
+          <MuiThemeProvider theme={theme}>
+
           <Tooltip open={uploadToolOpen} onClose={handleUploadToolTipClose} onOpen={handleUploadToolTipOpen} title=
           { <React.Fragment>
             <p><b>Note:</b> 
@@ -1825,6 +1909,7 @@ export const Target: React.FC = (props: any) => {
             
         <ContactSupportIcon className={styles.CircleIcon} />
         </Tooltip>
+        </MuiThemeProvider>
         </span>
           <input
               id="fileUpload"
