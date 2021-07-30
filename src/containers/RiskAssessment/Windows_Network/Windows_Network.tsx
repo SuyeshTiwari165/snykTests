@@ -237,18 +237,18 @@ export const Windows_Network: React.FC = (props: any) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      formState.isDelete === true ||
-      formState.isFailed === true ||
-      formState.isSuccess === true ||
-      formState.isUpdate === true
-    ) {
-      setTimeout(function() {
-        handleAlertClose();
-      }, ALERT_MESSAGE_TIMER);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (
+  //     formState.isDelete === true ||
+  //     formState.isFailed === true ||
+  //     formState.isSuccess === true ||
+  //     formState.isUpdate === true
+  //   ) {
+  //     setTimeout(function() {
+  //       handleAlertClose();
+  //     }, ALERT_MESSAGE_TIMER);
+  //   }
+  // }, [formState]);
 
   // if (backdrop || targetLoading) return <SimpleBackdrop />;
 
@@ -259,6 +259,7 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleSubmitDialogBox = () => {
+    handleAlertClose();
     if(Cookies.getJSON('ob_session'))  {
     if (editDataId) {
       // setSubmitDisabled(true)
@@ -446,6 +447,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const onClickTestConnection = () => {
     if (Cookies.getJSON("ob_session")) {
       if (handleInputErrors()) {
+        handleAlertClose();
         if (
           (localStorage.getItem("runTargetName") != null &&
             targetData &&

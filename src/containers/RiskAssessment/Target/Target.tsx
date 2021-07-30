@@ -381,18 +381,18 @@ export const Target: React.FC = (props: any) => {
     }
   };
 
-  useEffect(() => {
-    if (
-      formState.isDelete === true ||
-      formState.isFailed === true ||
-      formState.isSuccess === true ||
-      formState.isUpdate === true
-    ) {
-      setTimeout(function () {
-        handleAlertClose();
-      }, ALERT_MESSAGE_TIMER);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (
+  //     formState.isDelete === true ||
+  //     formState.isFailed === true ||
+  //     formState.isSuccess === true ||
+  //     formState.isUpdate === true
+  //   ) {
+  //     setTimeout(function () {
+  //       handleAlertClose();
+  //     }, ALERT_MESSAGE_TIMER);
+  //   }
+  // }, [formState]);
 
   useEffect(() => {
     // setSubmitDisabled(checkValidation);
@@ -435,6 +435,7 @@ export const Target: React.FC = (props: any) => {
   }
 
   const handleSubmitDialogBox = () => {
+    handleAlertClose();
     if(!Cookies.getJSON('ob_session'))  {
       logout();
     }
@@ -892,9 +893,10 @@ export const Target: React.FC = (props: any) => {
   // };
 
   const onClickHandler2 = ( ) => {
-    if(Cookies.getJSON('ob_session'))  {
+    if(Cookies.getJSON('ob_session')) {
     // if (name && vpnUserName && ipRange) {
       if(handleInputErrors()) {
+        handleAlertClose();
       setBackdrop(true);
     if (selectedFile && selectedFile.name != null) {
       let idCardBase64 = "";
@@ -1873,7 +1875,6 @@ export const Target: React.FC = (props: any) => {
             onClick={handleBack}
             color="primary"
             data-testid="cancel-button"
-
           >
             back
           </Button>

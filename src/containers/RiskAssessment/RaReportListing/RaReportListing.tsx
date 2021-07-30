@@ -133,18 +133,18 @@ export const RaReportListing: React.FC = (props: any) => {
     }));
   };
 
-  useEffect(() => {
-    if (
-      formState.isDelete === true ||
-      formState.isFailed === true ||
-      formState.isSuccess === true ||
-      formState.isUpdate === true
-    ) {
-      setTimeout(function () {
-        handleAlertClose();
-      }, ALERT_MESSAGE_TIMER);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (
+  //     formState.isDelete === true ||
+  //     formState.isFailed === true ||
+  //     formState.isSuccess === true ||
+  //     formState.isUpdate === true
+  //   ) {
+  //     setTimeout(function () {
+  //       handleAlertClose();
+  //     }, ALERT_MESSAGE_TIMER);
+  //   }
+  // }, [formState]);
   
 
   useEffect(() => {
@@ -313,6 +313,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   const handleDownload = (rowData: any) => {
+    handleAlertClose();
     if (Cookies.getJSON("ob_session")) { 
     setBackdrop(true)
     let intTargetId = parseInt(rowData.targetId);
@@ -479,12 +480,14 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleAddNewReport = () => {
+    handleAlertClose();
     let data = {};
     data = { clientInfo: clientInfo };
     history.push(routeConstant.EXTERNAL_TARGET, data);
   };
 
   const handleAddNewAdvanceReport = () => {
+    handleAlertClose();
     let data = {};
     data = { clientInfo: clientInfo };
     history.push(routeConstant.TARGET, data);
@@ -509,6 +512,7 @@ export const RaReportListing: React.FC = (props: any) => {
   };
 
   const handleClickDelete = (event: any, rowData: any) => {
+    handleAlertClose();
     setShowBackdrop(true);
     setOpenDialogBox(true);
     // setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);

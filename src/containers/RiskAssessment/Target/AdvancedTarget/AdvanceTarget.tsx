@@ -56,18 +56,18 @@ export const AdvanceTarget: React.FC = (props: any) => {
   const tempScheduleDate = new Date().toISOString();
 
 
-  useEffect(() => {
-    if (
-      formState.isDelete === true ||
-      formState.isFailed === true ||
-      formState.isSuccess === true ||
-      formState.isUpdate === true
-    ) {
-      setTimeout(function () {
-        handleAlertClose();
-      }, ALERT_MESSAGE_TIMER);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (
+  //     formState.isDelete === true ||
+  //     formState.isFailed === true ||
+  //     formState.isSuccess === true ||
+  //     formState.isUpdate === true
+  //   ) {
+  //     setTimeout(function () {
+  //       handleAlertClose();
+  //     }, ALERT_MESSAGE_TIMER);
+  //   }
+  // }, [formState]);
 
   useEffect(() => {
     if(scanConfig.length != 0) {
@@ -188,6 +188,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
       if(handleInputErrors()) {
+      handleAlertClose();
     let input = {
         partner: partnerId.id,
         client: clientId,
@@ -253,6 +254,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           }));
         });
     } else {
+      setBackdrop(false);
         setFormState((formState) => ({
           ...formState,
           isSuccess: false,
@@ -268,7 +270,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     let input = {
         partner: parseInt(partner.partnerId.id),
         client: clientInfo.name,
-        taskName: name + "_" + moment(new Date()).format("DD"),
+        taskName: "Task"+ " " + name,
         vatTarget: name,
         vatScanConfig: scanConfig,
         // vatScanConfig : "599ff530-0dbf-4edb-a54a-0d49f0ca67d3",
