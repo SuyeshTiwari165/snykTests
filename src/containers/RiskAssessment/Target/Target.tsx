@@ -524,7 +524,13 @@ export const Target: React.FC = (props: any) => {
             error.includes("duplicate key value violates unique constraint")
           ) {
             error = " Name already present.";
-          } else {
+          } 
+          if (
+            error.includes("Response Error 400. Target exists already")
+          ) {
+            error = " Target Name already present.";
+          }
+          else {
             error = err.message;
           }
           setFormState((formState) => ({
@@ -645,7 +651,13 @@ export const Target: React.FC = (props: any) => {
                 error.includes("duplicate key value violates unique constraint")
               ) {
                 error = " Name already present.";
-              } else {
+              }
+              if (
+                error.includes("Response Error 400. Target exists already")
+              ) {
+                error = " Target Name already present.";
+              }
+               else {
                 error = err.message;
               }
               setFormState((formState) => ({
@@ -739,7 +751,13 @@ export const Target: React.FC = (props: any) => {
                 error.includes("duplicate key value violates unique constraint")
               ) {
                 error = " Name already present.";
-              } else {
+              }
+              if (
+                error.includes("Response Error 400. Target exists already")
+              ) {
+                error = " Target Name already present.";
+              }
+               else {
                 error = err.message;
               }
               setFormState((formState) => ({
@@ -896,6 +914,7 @@ export const Target: React.FC = (props: any) => {
   // };
 
   const onClickHandler2 = ( ) => {
+    
     if(Cookies.getJSON('ob_session')) {
     // if (name && vpnUserName && ipRange) {
       if(handleInputErrors()) {
@@ -908,7 +927,7 @@ export const Target: React.FC = (props: any) => {
         var res = result.slice(result.indexOf(",") + 1);
         if (targetData !== undefined) {
           if (props.location.state && props.location.state.reRun === true) {
-            if(selectedFile.name.split(".")[1] === "ovpn" || selectedFile.name.split(".")[1] === "tgz") {
+            if(selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length) === "ovpn" ||selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length)=== "tgz") {
             uploadFile({
               variables: {
                 input: {
@@ -917,7 +936,7 @@ export const Target: React.FC = (props: any) => {
                   file: res,
                   vpnUsername: vpnUserName,
                   vpnPassword: vpnPassword,
-                  type: selectedFile.name.split(".")[1],
+                  type: selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length),
                   targetId:
                     targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
                 },
@@ -981,7 +1000,7 @@ export const Target: React.FC = (props: any) => {
             }
           }
         } else {
-          if(selectedFile.name.split(".")[1] === "ovpn" || selectedFile.name.split(".")[1] === "tgz") {
+          if(selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length) === "ovpn" || selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length) === "tgz") {
           uploadFile({
             variables: {
               input: {
@@ -990,7 +1009,7 @@ export const Target: React.FC = (props: any) => {
                 file: res,
                 vpnUsername: vpnUserName,
                 vpnPassword: vpnPassword,
-                type: selectedFile.name.split(".")[1],
+                type: selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length),
               },
             },
           })
@@ -1167,7 +1186,7 @@ export const Target: React.FC = (props: any) => {
                   file: res,
                   vpnUsername: vpnUserName,
                   vpnPassword: vpnPassword,
-                  type: selectedFile.name.split(".")[1],
+                  type:selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length),
                   targetId:
                     targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
                 },
@@ -1226,7 +1245,7 @@ export const Target: React.FC = (props: any) => {
                 file: res,
                 vpnUsername: vpnUserName,
                 vpnPassword: vpnPassword,
-                type: selectedFile.name.split(".")[1],
+                type: selectedFile.name.substring(selectedFile.name.lastIndexOf('.')+1, selectedFile.name.length),
               },
             },
           })
@@ -1806,7 +1825,7 @@ export const Target: React.FC = (props: any) => {
           <Input
             type="text"
             label="Target Name"
-            value={name.split("_")[0]}
+            value={name}
             onChange={handleNameChange}
             required
             error={isError.name}
