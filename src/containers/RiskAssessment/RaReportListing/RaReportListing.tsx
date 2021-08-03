@@ -14,7 +14,7 @@ import SyncIcon from "@material-ui/icons/Sync";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import { GET_REPORT_LISTING } from "../../../graphql/queries/ReportListing";
+import { GET_REPORT_LISTING,GET_REPORT_LISTING_STATUS } from "../../../graphql/queries/ReportListing";
 import * as routeConstant from "../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import { RA_REPORT_DOWNLOAD } from "../../../config/index";
@@ -92,11 +92,12 @@ export const RaReportListing: React.FC = (props: any) => {
   const [getReportListingData, {
     data: dataReportListing,
     loading: loadingReportListing,
-  }] = useLazyQuery(GET_REPORT_LISTING,
+  }] = useLazyQuery(GET_REPORT_LISTING_STATUS,
     {
       fetchPolicy: "cache-and-network",
-      onCompleted:()=>{
+      onCompleted:(data)=>{
         setShowBackdrop(false);
+        createTableDataObject(data.getTargetStatus);
       },
       onError: error => {
         logout()
@@ -148,41 +149,41 @@ export const RaReportListing: React.FC = (props: any) => {
   
 
   useEffect(() => {
-    if (dataReportListing) {
-      let distinctTargetArray: any = [];
-      distinctTargetArray = convertTargetArray(
-        dataReportListing.getReportStatus.edges
-      );
-      let temp: any = {};
-      temp = convertTableData(
-        dataReportListing.getReportStatus.edges,
-        distinctTargetArray
-      );
+    // if (dataReportListing) {
+    //   let distinctTargetArray: any = [];
+    //   distinctTargetArray = convertTargetArray(
+    //     dataReportListing.getReportStatus.edges
+    //   );
+    //   let temp: any = {};
+    //   temp = convertTableData(
+    //     dataReportListing.getReportStatus.edges,
+    //     distinctTargetArray
+    //   );
 
-      setPublished(
-        getPublishDataList(
-          dataReportListing.getReportStatus.edges,
-          distinctTargetArray
-        )
-      );
-      setNewData(temp);
-    }
-    if (partner.partnerId && propsClientName!= undefined) {
+    //   setPublished(
+    //     getPublishDataList(
+    //       dataReportListing.getReportStatus.edges,
+    //       distinctTargetArray
+    //     )
+    //   );
+    //   setNewData(temp);
+    // }
+    // if (partner.partnerId && propsClientName!= undefined) {
       getReportListingData({
         variables: {
           clientname: propsClientName,
         }
       })
-    }
-    if (partner.partnerId == undefined) {
-      getReportListingData({
-        variables: {
-          clientname: propsClientName,
-          status: "Done",
-          reportCreationFlag : "Processed" 
-        }
-      })
-    }
+    // }
+    // if (partner.partnerId == undefined) {
+    //   getReportListingData({
+    //     variables: {
+    //       clientname: propsClientName,
+    //       // status: "Done",
+    //       // reportCreationFlag : "Processed" 
+    //     }
+    //   })
+    // }
   }, [dataReportListing || targetDeleted]);
 
 
@@ -193,100 +194,117 @@ export const RaReportListing: React.FC = (props: any) => {
   //   pathname: routeConstant.DASHBOARD,
   // });
   // }
-  function convertTargetArray(data: any) {
-    const targetObj = new Set(
-      data.map((x: any) => x.node.vatTargetId.targetName)
-    );
-    // let array = [...targetObj];
-    let array: any = [];
-    targetObj.forEach(v => array.push(v));
-    return array;
-  }
+  // function convertTargetArray(data: any) {
+  //   const targetObj = new Set(
+  //     data.map((x: any) => x.node.vatTargetId.targetName)
+  //   );
+  //   // let array = [...targetObj];
+  //   let array: any = [];
+  //   targetObj.forEach(v => array.push(v));
+  //   return array;
+  // }
 
-  function convertTableData(data: any, targetArr: any) {
-    let arr: any = [];
-    for (let i in targetArr) {
-      let tempArr: any = {};
-      tempArr["target"] = targetArr[i];
-      let statusVar = false;
-      let targetId = 0;
-      let targetHost;
-      let targetIpAddress;
-      let publishFlag = "";
-      for (let j in data) {
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          tempArr["scanType"] = data[j].node.vatTargetId.scanType
-          if (data[j].node.vatTargetId.publishedFlag == "Published") {
-            tempArr["report_status"] = "Published";
-            tempArr["status"] = "Done";
-          }
+  // function convertTableData(data: any, targetArr: any) {
+  //   let arr: any = [];
+  //   for (let i in targetArr) {
+  //     let tempArr: any = {};
+  //     tempArr["target"] = targetArr[i];
+  //     let statusVar = false;
+  //     let targetId = 0;
+  //     let targetHost;
+  //     let targetIpAddress;
+  //     let publishFlag = "";
+  //     for (let j in data) {
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         tempArr["scanType"] = data[j].node.vatTargetId.scanType
+  //         if (data[j].node.vatTargetId.publishedFlag == "Published") {
+  //           tempArr["report_status"] = "Published";
+  //           tempArr["status"] = "Done";
+  //         }
 
-          if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
-            tempArr["report_status"] = "Unpublished";
-            tempArr["status"] = "In Progress";
-          }
-          targetId = data[j].node.vatTargetId.id;
+  //         if (data[j].node.vatTargetId.publishedFlag == "Unpublished") {
+  //           tempArr["report_status"] = "Unpublished";
+  //           tempArr["status"] = "In Progress";
+  //         }
+  //         targetId = data[j].node.vatTargetId.id;
 
-          if (partner.partnerId == undefined) {
-            if (data[j].node.scanRunStatus == "Done") {
+  //         if (partner.partnerId == undefined) {
+  //           if (data[j].node.scanRunStatus == "Done") {
               
-              tempArr["status"] = "Done";
-            }
-            if (data[j].node.scanRunStatus == "In Progress") {
-              tempArr["status"] = "In Progress";
-            }
-          }
-        }
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          publishFlag = data[j].node.vatTargetId.publishedFlag;
-        }
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          targetHost = data[j].node.vatTargetId.host;
-        }
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          targetIpAddress = data[j].node.vatTargetId.ipAddress;
-        }
-      }
+  //             tempArr["status"] = "Done";
+  //           }
+  //           if (data[j].node.scanRunStatus == "In Progress") {
+  //             tempArr["status"] = "In Progress";
+  //           }
+  //         }
+  //       }
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         publishFlag = data[j].node.vatTargetId.publishedFlag;
+  //       }
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         targetHost = data[j].node.vatTargetId.host;
+  //       }
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         targetIpAddress = data[j].node.vatTargetId.ipAddress;
+  //       }
+  //     }
 
-      tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
-      tempArr["targetId"] = targetId !== 0 ? targetId : null;
-      tempArr["host"] = targetHost;
-      tempArr["linuxIpAddress"] = targetIpAddress;
-      arr.push(tempArr);
-    }
-    return arr;
-  }
+  //     tempArr["publish"] = publishFlag == "Unpublished" ? false : true;
+  //     tempArr["targetId"] = targetId !== 0 ? targetId : null;
+  //     tempArr["host"] = targetHost;
+  //     tempArr["linuxIpAddress"] = targetIpAddress;
+  //     arr.push(tempArr);
+  //   }
+  //   return arr;
+  // }
 
-  function getPublishDataList(data: any, targetArr: any) {
+  // function getPublishDataList(data: any, targetArr: any) {
+  //   let arr: any = [];
+  //   let tempArr: any = {};
+  //   for (let i in targetArr) {
+  //     let targetId = 0;
+  //     let statusVar = false;
+  //     // tempArr["target"] = targetArr[i];
+  //     let publishFlag = "";
+  //     for (let j in data) {
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         if (
+  //           data[j].node.scanRunStatus !== "Done" ||
+  //           data[j].node.scanRunStatus === "In Progress"
+  //         ) {
+  //           statusVar = true;
+  //         }
+  //         targetId = data[j].node.vatTargetId.id;
+  //       }
+  //       if (targetArr[i] === data[j].node.vatTargetId.targetName) {
+  //         publishFlag = data[j].node.vatTargetId.publishedFlag;
+  //       }
+  //     }
+
+  //     // tempArr["targetId"] = targetId !== 0 ? targetId : null;
+  //     tempArr[targetId] = publishFlag == "Unpublished" ? false : true;
+
+  //     arr.push(tempArr);
+  //   }
+  //   return tempArr;
+  // }
+
+  const createTableDataObject = (data: any) => {
     let arr: any = [];
-    let tempArr: any = {};
-    for (let i in targetArr) {
-      let targetId = 0;
-      let statusVar = false;
-      // tempArr["target"] = targetArr[i];
-      let publishFlag = "";
-      for (let j in data) {
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          if (
-            data[j].node.scanRunStatus !== "Done" ||
-            data[j].node.scanRunStatus === "In Progress"
-          ) {
-            statusVar = true;
-          }
-          targetId = data[j].node.vatTargetId.id;
-        }
-        if (targetArr[i] === data[j].node.vatTargetId.targetName) {
-          publishFlag = data[j].node.vatTargetId.publishedFlag;
-        }
-      }
-
-      // tempArr["targetId"] = targetId !== 0 ? targetId : null;
-      tempArr[targetId] = publishFlag == "Unpublished" ? false : true;
-
-      arr.push(tempArr);
-    }
-    return tempArr;
-  }
+    data.map((element: any) => {
+      let obj: any = {};
+      console.log("Element",element);
+      obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
+      obj["host"] = element.host;
+      obj["target"] = element.targetName;
+      obj["scanType"] = element.scanType;
+      obj["status"] = element.status;
+      obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
+      obj["report_status"] = element.publishedFlag;
+      arr.push(obj);
+    });
+    setNewData(arr);
+  };
 
   const handleClickView = (rowData: any) => {
     if (Cookies.getJSON("ob_session")) {
@@ -295,7 +313,7 @@ export const RaReportListing: React.FC = (props: any) => {
         state: {
           targetName: rowData.target,
           clientInfo: clientInfo,
-          target: rowData,
+          // target: rowData,
         },
       });
     } else {
@@ -747,7 +765,7 @@ export const RaReportListing: React.FC = (props: any) => {
                   }
                 : null,
                 (rowData: any) =>
-                rowData.report_status == "Unpublished" ?
+                rowData.status !== "Report Generated" ?
                 {
                   icon: () => <DeleteIcon />,
                   tooltip: "Delete",
@@ -757,7 +775,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 } : null,
               partner.partnerId
                 ? (rowData: any) =>
-                    rowData.status == "Done" && rowData.scanType != "External"
+                    rowData.status == "Report Generated" && rowData.scanType != "External"
                       ? {
                           // disabled: rowData.status !== "Done",
                           icon: () => <SyncIcon />,
@@ -769,7 +787,7 @@ export const RaReportListing: React.FC = (props: any) => {
                       : null
                 : null,
               (rowData: any) =>
-                rowData.status == "Done"
+                rowData.status == "Report Generated"
                   ? {
                       // disabled: rowData.status !== "Done",
                       icon: () => <GetAppIcon />,
