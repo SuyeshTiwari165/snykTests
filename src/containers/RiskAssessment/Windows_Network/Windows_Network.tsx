@@ -383,20 +383,12 @@ export const Windows_Network: React.FC = (props: any) => {
       history.push(routeConstant.LINUX_NETWORK, data);
     }
     else {
-    let data = { 
-      windowsNetwork: true, 
-      editData: true,
-      clientInfo: props.location.state.clientInfo,
-      targetInfo: props.location.state.targetInfo,
-      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-    }
+    let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
     setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
     history.push(routeConstant.TASK_DETAILS, data);
     }
   }catch {
-    let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo, editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false, }
+    let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
     setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
     history.push(routeConstant.TASK_DETAILS, data);
   }

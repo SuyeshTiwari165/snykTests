@@ -403,7 +403,7 @@ export const Target: React.FC = (props: any) => {
 
   useEffect(() => {
     try {
-      console.log("ReRunTargetName",ReRunTargetName);
+
       if(props.location.state.reRun && props.location.state.targetName.includes("_windows")) {
         setRaStepper(client, rerunstepper.Target.name, rerunstepper.Target.value, props.location.state);
       } 
@@ -1347,7 +1347,6 @@ export const Target: React.FC = (props: any) => {
     vpnPassword: vpnPassword,
   };
   const handleOkay = () => {
-    console.log("DATA",linuxUsername,linuxIpAddress,winName, winUsername)
     setShowDialogBox(false);
     setTimeout(() => {
       data = {
@@ -1483,6 +1482,7 @@ export const Target: React.FC = (props: any) => {
             "vpnPassword": vpnPassword,
             "host": ipRange,
             "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
           }
         }
       }).then((response: any) => {
@@ -1558,7 +1558,8 @@ export const Target: React.FC = (props: any) => {
             "vpnUsername": vpnUserName,
             "vpnPassword": vpnPassword,
             "host": ipRange,
-            "targetId":targetId ? targetId : null
+            "targetId":targetId ? targetId : null,
+            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
           }
         }
       }).then((response: any) => {
