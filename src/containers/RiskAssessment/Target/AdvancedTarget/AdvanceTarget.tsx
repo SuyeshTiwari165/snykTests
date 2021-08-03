@@ -245,7 +245,13 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             error.includes("duplicate key value violates unique constraint")
           ) {
             error = " Name already present.";
-          } else {
+          }
+          if (
+            error.includes("Response Error 400. Target exists already")
+          ) {
+            error = " Target Name already present.";
+          }
+           else {
             error = err.message;
           }
           setFormState((formState) => ({
@@ -317,7 +323,8 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             error.includes("duplicate key value violates unique constraint")
           ) {
             error = " Name already present.";
-          } else {
+          } 
+          else {
             error = err.message;
           }
           setFormState((formState) => ({
