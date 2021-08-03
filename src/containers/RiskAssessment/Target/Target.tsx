@@ -1350,7 +1350,7 @@ export const Target: React.FC = (props: any) => {
     setShowDialogBox(false);
     setTimeout(() => {
       data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state && props.location.state.clientInfo,

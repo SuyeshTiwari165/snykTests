@@ -698,7 +698,7 @@ export const Windows_Network: React.FC = (props: any) => {
           LinuxNetwork:
             props.location.state && props.location.state.LinuxNetwork
               ? props.location.state.LinuxNetwork
-              : false,
+              : true,
           windowsNetwork:
             props.location.state && props.location.state.windowsNetwork
               ? props.location.state.windowsNetwork
