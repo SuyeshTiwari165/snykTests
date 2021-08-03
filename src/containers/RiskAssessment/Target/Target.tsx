@@ -1839,11 +1839,14 @@ export const Target: React.FC = (props: any) => {
         <MuiThemeProvider theme={theme}>
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
             <p><b>Enter IP Address only</b> </p>
-            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255)'}</p>{' '}
+            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255)'}</p> <p>
+                    <b>For Domain/URL </b>{" "}
+                  <em>{"(e.g. webaccessnet.com)"}</em>{" "}
+                  </p>{' '}
           </React.Fragment>}>
           <Input
             type="text"
-            label="IP Range"
+            label="URL / IP Range"
             value={ipRange}
             onChange={handleIpRangeChange}
             required
