@@ -33,8 +33,8 @@ export const ReportStatus: React.FC = (props: any) => {
   const [orderBy, setOrderBy] = useState<String>();
 
   const staticClientName = clientInfo !== null ? clientInfo.name : undefined;
-  const targetName = props["location"].state.targetName;
-  const targetData = props["location"].state.target;
+  const targetName = props.location.state.targetName;
+  // const targetData = props["location"].state.target;
   const {
     data: dataReportListing,
     error: errorReportListing,
