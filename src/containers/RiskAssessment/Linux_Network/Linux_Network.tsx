@@ -260,7 +260,7 @@ export const Linux_Network: React.FC = (props: any) => {
       }
     }else {
       data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
         clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
@@ -349,7 +349,7 @@ export const Linux_Network: React.FC = (props: any) => {
         };
       } else {
       data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
         windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
         editData: props.location.state.editData ? props.location.state.editData : false,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
@@ -408,7 +408,7 @@ export const Linux_Network: React.FC = (props: any) => {
                 JSON.stringify(userRes.data.updateTarget.targetField.targetName)
               );
             }
-            // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+            // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
             setShowDialogBox(false);
             let data = {};
             try {
@@ -875,13 +875,13 @@ try {
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
         targetName : ReRunTargetName ? ReRunTargetName : targetName
       }
-      setRaStepper(client, rerunstepper.Task.name, rerunstepper.Task.value, data);
+      setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
       console.log("WINDOWS RERUN ")
       history.push(routeConstant.TASK_DETAILS,data); 
     }
 else {
     let data = {
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
       windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
       editData: props.location.state.editData ? props.location.state.editData : false,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
@@ -893,7 +893,7 @@ else {
   };
 }catch {
   let data = {
-    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : true,
+    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
     windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : false,
     editData: props.location.state.editData ? props.location.state.editData : false,
     editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,

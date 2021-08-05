@@ -112,7 +112,6 @@ export const RaReportListing: React.FC = (props: any) => {
 
   useEffect(() => {
     if (Cookies.getJSON("ob_session")) { 
-    console.log("propsClientName", propsClientName);
     getReportListingData({
       variables: {
         clientname: propsClientName,
@@ -293,7 +292,6 @@ export const RaReportListing: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any) => {
       let obj: any = {};
-      console.log("Element",element);
       obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
       obj["host"] = element.host;
       obj["target"] = element.targetName;
@@ -548,7 +546,6 @@ export const RaReportListing: React.FC = (props: any) => {
     }).then((res: any) => {
       setShowBackdrop(false);
       if(res.data.deleteTarget.status == "Target Deleted Successfully") {
-        console.log("propsClientName",propsClientName)
         if(propsClientName != undefined) {
         getReportListingData({
           variables: {

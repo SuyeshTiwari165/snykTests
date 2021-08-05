@@ -712,7 +712,7 @@ export const Target: React.FC = (props: any) => {
                 isFailed: false,
                 errMessage: "Target Created Successfully !",
               }));
-              // setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+              // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
                 "targetId",
@@ -1822,7 +1822,7 @@ export const Target: React.FC = (props: any) => {
             </Alert>
           ) : null}
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} className={props.location.state != undefined && props.location.state.editData ? styles.disfield : styles.inputs}>
           <Input
             type="text"
             label="Target Name"
@@ -1831,6 +1831,7 @@ export const Target: React.FC = (props: any) => {
             required
             error={isError.name}
             helperText={isError.name}
+            disabled = {props.location.state != undefined && props.location.state.editData}
           >
             Target Name
           </Input>

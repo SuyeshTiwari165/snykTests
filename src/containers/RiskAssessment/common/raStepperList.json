@@ -11,8 +11,8 @@
         "name": "Windows Network",
         "value": "2"
     },
-    "Task": {
-        "name": "Task",
+    "ScanConfiguration": {
+        "name": "Scan Configuration",
         "value": "3"
     }
 }
