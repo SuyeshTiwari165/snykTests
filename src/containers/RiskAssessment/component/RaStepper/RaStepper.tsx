@@ -86,7 +86,7 @@ export default function RaStepper(props: any) {
       path: routeConstants.WINDOWS_NETWORK,
     },
     {
-      title: "Task",
+      title: "Scan Configuration",
       path: routeConstants.TASK_DETAILS,
     },
 
@@ -105,7 +105,7 @@ export default function RaStepper(props: any) {
       path: routeConstants.LINUX_NETWORK,
     },
     {
-      title: "Task",
+      title: "Scan Configuration",
       path: routeConstants.TASK_DETAILS,
     },
 
@@ -205,7 +205,7 @@ export default function RaStepper(props: any) {
 
   const handleTab = (e: any, i: number, label: any) => {
     setActiveStep(i);
-    console.log("i---------", i)
+    // console.log("i---------", i)
     setStep(i);
     e.preventDefault();
     history.push(label.path, propsData);

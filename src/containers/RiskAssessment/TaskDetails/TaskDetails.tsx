@@ -174,9 +174,9 @@ export const TaskDetails: React.FC = (props: any) => {
 
   const checkValidation = () => {
     if (
-      isError.name !== "" ||
-      isError.scanConfig !== "" ||
-      !name ||
+      // isError.name !== "" ||
+      // isError.scanConfig !== "" ||
+      // !name ||
       scanConfig.length === 0
     ) {
       return true;
@@ -223,9 +223,9 @@ try {
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
       targetName : ReRunTargetName ? ReRunTargetName : targetName
     }
-    setRaStepper(client, rerunstepper.Task.name, rerunstepper.Task.value, data);
+    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
   } else {
-  setRaStepper(client, stepper.Task.name, stepper.Task.value, props.location.state);
+  setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
   }
 }catch {
   let data = {
@@ -238,7 +238,7 @@ try {
     editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
     targetName : ReRunTargetName ? ReRunTargetName : targetName
   }
-    setRaStepper(client, stepper.Task.name, stepper.Task.value, data);
+    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
 }
   }, []);
 
@@ -263,7 +263,7 @@ try {
       let input = {
         partner: partnerId,
         client: clientId,
-        taskName: name,
+        taskName: "Task"+ " " + target,
         vatTarget: target,
         vatScanConfig: scanConfig,
         scheduleDate: tempScheduleDate,
@@ -458,7 +458,7 @@ try {
         };
         if (WinTargetName) {
           history.push(routeConstant.WINDOWS_NETWORK, data);
-        } else if (props.location.state && props.location.state.LinuxNetwork) {
+        } else if (props.location.state && props.location.state.editLinuxData) {
           history.push(routeConstant.LINUX_NETWORK, data);
         } else {
           history.push(routeConstant.TARGET, data);
@@ -547,7 +547,7 @@ try {
             </Alert>
           ) : null}
         </Grid>
-        <Grid item md={6} xs={12}>
+        {/* <Grid item md={6} xs={12}>
           <Input
             type="text"
             label="Task Name"
@@ -572,7 +572,7 @@ try {
           >
             Target
           </Input>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <label className={styles.HeaderLabel}>Select Scan Configuration</label>
           <Grid container spacing={3}>
