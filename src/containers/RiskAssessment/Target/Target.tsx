@@ -470,7 +470,20 @@ export const Target: React.FC = (props: any) => {
           setUploadDisabled(true)
           setFileUploaded(false)
           setEditDataId(null);
-          localStorage.setItem("name", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
+          let substring = "_linux";
+          let substring2 = "_windows";
+          let NormalTargetName = userRes.data.updateTarget.targetField.targetName 
+          let TargetNames = ""
+          if(NormalTargetName.includes(substring)) {
+            TargetNames = NormalTargetName.replace(substring,'')
+          }
+          else if(NormalTargetName.includes(substring2)) {
+            TargetNames = NormalTargetName.replace(substring2,'')
+          }
+          else {
+            TargetNames = userRes.data.updateTarget.targetField.targetName 
+          }
+          localStorage.setItem("name", JSON.stringify(TargetNames));
           localStorage.setItem(
             "targetId",
             JSON.stringify(userRes.data.updateTarget.targetField.id)

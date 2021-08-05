@@ -187,9 +187,14 @@ export const TaskDetails: React.FC = (props: any) => {
   if (targetName !== {} && target === "") {
     let substring = "_linux";
     let substring2 = "_windows";
-    if (localName.includes(substring) || localName.includes(substring2)) {
-      setTarget(localName.split("_")[0]);
-    } else {
+    localName.substring(localName.lastIndexOf(substring2)+1, localName.length)
+    if(localName.includes(substring)) {
+      setTarget(localName.replace("_"+localName.substring(localName.lastIndexOf(substring)+1, localName.length),''))
+    }
+    else if(localName.includes(substring2)) {
+      setTarget(localName.replace("_"+localName.substring(localName.lastIndexOf(substring2)+1, localName.length),''))
+    }
+     else {
       setTarget(localName);
     }
   }
