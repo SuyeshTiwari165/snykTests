@@ -761,15 +761,6 @@ export const RaReportListing: React.FC = (props: any) => {
                     },
                   }
                 : null,
-                (rowData: any) =>
-                rowData.status !== "Report Generated" ?
-                {
-                  icon: () => <DeleteIcon />,
-                  tooltip: "Delete",
-                  onClick: (event: any, rowData: any) => {
-                    handleClickDelete(event, rowData);
-                  },
-                } : null,
               partner.partnerId
                 ? (rowData: any) =>
                     rowData.status == "Report Generated" && rowData.scanType != "External"
@@ -807,7 +798,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 ? null
                 : (rowData: any) => ({
                     // disabled: rowData.status !== "Done",
-                    icon: () => (
+                    icon: () => !rowData.publish ? ( 
                       <div>
                         <input
                           type="file"
@@ -825,10 +816,16 @@ export const RaReportListing: React.FC = (props: any) => {
                           <CloudUploadIcon />
                         </label>
                       </div>
+                    ): (
+                      // <CloudUploadIcon />
+                      <CloudUploadIcon style={{ fill: "grey",position: "relative", top: "10px"}} />
+                      // <CloudUploadIcon style={{ fill: "grey" }} />
+
                     ),
                     tooltip: "Browse",
                     name: "file",
                     type: "file",
+                    disabled: rowData.publish,
                     // onClick: (event: any, rowData: any) => {
                     //   getRowData(rowData);
                     // }
@@ -837,14 +834,30 @@ export const RaReportListing: React.FC = (props: any) => {
                 ? null
                 : (rowData: any) => ({
                     // disabled: selectedFile == {} ? false : true,
-                    icon: () => <PublishIcon />,
+                    icon: () =>
+                    rowData.publish ? (
+                      <PublishIcon style={{ fill: "grey", position: "relative", top: "10px" }} />
+                    ) : (
+                      <PublishIcon />
+                    ),
+                    // <PublishIcon />,
                     tooltip: "Upload",
                     name: "file",
+                    disabled: rowData.publish,
                     id: "file",
                     onClick: (event: any, rowData: any) => {
                       handleUpload(rowData);
                     },
                   }),
+                  (rowData: any) =>
+                  rowData.status !== "Report Generated" ?
+                  {
+                    icon: () => <DeleteIcon />,
+                    tooltip: "Delete",
+                    onClick: (event: any, rowData: any) => {
+                      handleClickDelete(event, rowData);
+                    },
+                  } : null,
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
