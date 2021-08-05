@@ -100,7 +100,7 @@ export const RaReportListing: React.FC = (props: any) => {
         createTableDataObject(data.getTargetStatus);
       },
       onError: error => {
-        logout()
+         logout()
         // history.push(routeConstant.DASHBOARD);
       }
     });
@@ -119,7 +119,7 @@ export const RaReportListing: React.FC = (props: any) => {
       },
     });
   } else{
-    logout();
+     logout();
   }
   }, []);
 
@@ -786,6 +786,8 @@ export const RaReportListing: React.FC = (props: any) => {
                         }
                       : null
                 : null,
+                partner.partnerId
+?
               (rowData: any) =>
                 rowData.status == "Report Generated"
                   ? {
@@ -796,7 +798,14 @@ export const RaReportListing: React.FC = (props: any) => {
                         handleDownload(rowData);
                       },
                     }
-                  : null,
+                  : null :  {
+                    // disabled: rowData.status !== "Done",
+                    icon: () => <GetAppIcon />,
+                    tooltip: "Download",
+                    onClick: (event: any, rowData: any) => {
+                      handleDownload(rowData);
+                    },
+                  },
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
