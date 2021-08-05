@@ -290,7 +290,9 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
+    if(partner.partnerId == undefined) {
     data.map((element: any) => {
+      if(element.status == "Generating Report" || element.status === "Report Generated") {
       let obj: any = {};
       obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
       obj["host"] = element.host;
@@ -300,7 +302,23 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
       arr.push(obj);
+      }
     });
+  }     
+    if(partner.partnerId != undefined) {
+      data.map((element: any) => {
+        let obj: any = {};
+      obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
+      obj["host"] = element.host;
+      obj["target"] = element.targetName;
+      obj["scanType"] = element.scanType;
+      obj["status"] = element.status;
+      obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
+      obj["report_status"] = element.publishedFlag;
+      arr.push(obj);
+    });
+    }
+
     setNewData(arr);
   };
 
@@ -817,10 +835,7 @@ export const RaReportListing: React.FC = (props: any) => {
                         </label>
                       </div>
                     ): (
-                      // <CloudUploadIcon />
                       <CloudUploadIcon style={{ fill: "grey",position: "relative", top: "10px"}} />
-                      // <CloudUploadIcon style={{ fill: "grey" }} />
-
                     ),
                     tooltip: "Browse",
                     name: "file",
