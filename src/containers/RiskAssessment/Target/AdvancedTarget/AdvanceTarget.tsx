@@ -216,7 +216,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               isUpdate: false,
               isDelete: false,
               isFailed: true,
-              errMessage: " Name already present.",
+              errMessage: " Target name exists. Add another name",
             }));
             // setSubmitDisabled(true)
           }
@@ -271,7 +271,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           isUpdate: false,
           isDelete: false,
           isFailed: true,
-          errMessage: " Please Fill Required Fields ",
+          errMessage: " Please fill in all the required fields ",
         }));
       }
   }
@@ -487,16 +487,16 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               title={
                 <React.Fragment>
                   <p>
-                    <b>For IP Address </b>{" "}
+                    <b>Please enter data in the below formats </b>{" "}
                   </p>
                   <b>{"Single IP Address"}</b>
                   <em>{"(e.g. 192.168.x.xx)"}</em>{" "}
                   <p>
-                    <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255)"}
+                    <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)"}
                   </p>
                   <p>
                     <b>For Domain/URL </b>{" "}
-                  <em>{"(e.g. webaccessnet.com)"}</em>{" "}
+                  <em>{"(e.g. domainname.com)"}</em>{" "}
                   </p>
                   {" "}
                 </React.Fragment>

@@ -229,7 +229,7 @@ export const Windows_Network: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: false,
-        errMessage: "Connection Already Tested"
+        errMessage: "Connection has been validated"
       }));
     }
   }, []);
@@ -263,6 +263,7 @@ export const Windows_Network: React.FC = (props: any) => {
   };
 
   const handleSubmitDialogBox = () => {
+    setBackdrop(true);
     handleAlertClose();
     if(Cookies.getJSON('ob_session'))  {
     if (editDataId) {
@@ -288,13 +289,14 @@ export const Windows_Network: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
+          setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
             isUpdate: true,
             isDelete: false,
             isFailed: false,
-            errMessage: "Windows Credentials Updated Successfully !.",
+            errMessage: "Windows Credentials Updated Successfully .",
           }));
           setSubmitDisabled(false)
           setEditDataId(null);
@@ -339,6 +341,7 @@ export const Windows_Network: React.FC = (props: any) => {
           // }, 1000);
         })
         .catch((err) => {
+          setBackdrop(false);
           setShowDialogBox(false)
           setSubmitDisabled(true)
           let error = err.message;
@@ -515,7 +518,7 @@ export const Windows_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: false,
-                  errMessage: "Test Connection Successful!",
+                  errMessage: "Test connection successful",
                 }));
               } else if (
                 response.data.windowsVpnTest.success ==
@@ -541,7 +544,7 @@ export const Windows_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: "Test Connection Failed ",
+                  errMessage: "Test connection failed ",
                 }));
               }
             })
@@ -588,7 +591,7 @@ export const Windows_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: false,
-                  errMessage: "Test Connection Successful!",
+                  errMessage: "Test connection successful",
                 }));
               } else if (
                 response.data.windowsVpnTest.success ==
@@ -614,7 +617,7 @@ export const Windows_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: "Test Connection Failed ",
+                  errMessage: "Test connection failed ",
                 }));
               }
             })
@@ -638,7 +641,7 @@ export const Windows_Network: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: true,
-          errMessage: " Please Fill Required Fields",
+          errMessage: " Please fill in all the required fields",
         }));
       }
     } else {
@@ -996,7 +999,7 @@ export const Windows_Network: React.FC = (props: any) => {
         <span className={styles.IPTooltip}>
         <MuiThemeProvider theme={theme}>
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
-            <p><b>Enter IP Address only</b> </p>
+            <p><b>Please enter data in the below formats</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
           </React.Fragment>}>
           <Input

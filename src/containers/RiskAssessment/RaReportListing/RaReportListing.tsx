@@ -588,7 +588,7 @@ export const RaReportListing: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: " Failed to Delete Partner  " + rowData2.target + " " ,
+        errMessage: " Unable to delete  " + rowData2.target + " " ,
       }));
     }
     })

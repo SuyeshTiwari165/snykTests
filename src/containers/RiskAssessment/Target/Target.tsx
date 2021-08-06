@@ -361,7 +361,7 @@ export const Target: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: false,
-          errMessage: "Connection Already Tested"
+          errMessage: "Connection has been validated"
         }));
 
         setVpnFilePath(localVpnFilePath || vpnFilePath ? localVpnFilePath.replace(/\"/g, "") : null);
@@ -444,6 +444,7 @@ export const Target: React.FC = (props: any) => {
     }
     if (editDataId) {
       setSubmitDisabled(true)
+      setBackdrop(true);
       let input = {
         targetName: name,
         host: ipRange,
@@ -466,6 +467,7 @@ export const Target: React.FC = (props: any) => {
             isFailed: false,
             errMessage: "Target Updated Successfully !",
           }));
+          setBackdrop(false);
           setSubmitDisabled(false)
           setUploadDisabled(true)
           setFileUploaded(false)
@@ -526,12 +528,15 @@ export const Target: React.FC = (props: any) => {
           setShowDialogBox(false)
           setLinuxDomain(true);
           setShowDialogBox(true)
+          setBackdrop(false);
           setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
         }
         })
         .catch((err) => {
           setShowDialogBox(false)
           setSubmitDisabled(true)
+          setBackdrop(false);
+
           let error = err.message;
           if (
             error.includes("duplicate key value violates unique constraint")
@@ -557,6 +562,7 @@ export const Target: React.FC = (props: any) => {
         });
     } else {
       setSubmitDisabled(true)
+      setBackdrop(true);
       if (partnerId && clientId && name && ipRange && vpnUserName && props.location.state && props.location.state.reRun == true) {
         if (linuxUsername != null || winIpAddress != null) {
           let input = {
@@ -588,6 +594,7 @@ export const Target: React.FC = (props: any) => {
           })
             .then((userRes) => {
               setSubmitDisabled(false);
+              setBackdrop(false);
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: true,
@@ -615,6 +622,7 @@ export const Target: React.FC = (props: any) => {
               localStorage.setItem("vpnUserName", JSON.stringify(vpnUserName));
               localStorage.setItem("vpnPassword", JSON.stringify(vpnPassword));
               setShowDialogBox(false);
+              setBackdrop(false);
               let data = {};
               let targetInfo = {
                 targetName: name,
@@ -659,6 +667,7 @@ export const Target: React.FC = (props: any) => {
             .catch((err) => {
               setShowDialogBox(false);
               setSubmitDisabled(true);
+              setBackdrop(false);
               let error = err.message;
               if (
                 error.includes("duplicate key value violates unique constraint")
@@ -711,7 +720,7 @@ export const Target: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: " Name already present.",
+                  errMessage: " Target name exists. Add another name",
                 }));
                 // setSubmitDisabled(true)
               }
@@ -1160,22 +1169,25 @@ export const Target: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: " Please Choose File to Upload",
+        errMessage: " Please select the file to upload",
       }));
       }
 
 
 
     }
-  } else {
+  }
+  else {
+    if(!handleInputErrors()) {
     setFormState((formState) => ({
       ...formState,
       isSuccess: false,
       isUpdate: false,
       isDelete: false,
       isFailed: true,
-      errMessage: " Please Fill Required Fields and Upload File ",
+      errMessage: " Please fill in the required fields",
     }));
+  }
   }
 } else {
   logout();
@@ -1314,7 +1326,7 @@ export const Target: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: "Please Choose File to Upload",
+        errMessage: "Please select the file to upload",
       }));
     }
   } else {
@@ -1324,7 +1336,7 @@ export const Target: React.FC = (props: any) => {
       isUpdate: false,
       isDelete: false,
       isFailed: true,
-      errMessage: "Please Fill Required Fields and Upload File ",
+      errMessage: "Please fill in the required fields and upload the file ",
     }));
   }
   };
@@ -1533,7 +1545,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target Name Already Present",
+            errMessage: " Target name exists. Add another name",
           }));
         }
          else {
@@ -1611,7 +1623,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target Name Already Present",
+            errMessage: " Target name exists. Add another name",
           }));
         }
          else {
@@ -1853,10 +1865,10 @@ export const Target: React.FC = (props: any) => {
         <span className={styles.IPTooltip}>
         <MuiThemeProvider theme={theme}>
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
-            <p><b>Enter IP Address only</b> </p>
-            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255)'}</p> <p>
+            <p><b>Please enter data in the below formats</b> </p>
+            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)'}</p> <p>
                     <b>For Domain/URL </b>{" "}
-                  <em>{"(e.g. webaccessnet.com)"}</em>{" "}
+                  <em>{"(e.g. domainname.com)"}</em>{" "}
                   </p>{' '}
           </React.Fragment>}>
           <Input
@@ -1940,7 +1952,7 @@ export const Target: React.FC = (props: any) => {
           <Tooltip open={uploadToolOpen} onClose={handleUploadToolTipClose} onOpen={handleUploadToolTipOpen} title=
           { <React.Fragment>
             <p><b>Note:</b> 
-            <b>{'This would accept only .ovpn  and .tgz file format'}</b> </p>
+            <b>{'The system accepts only .ovpn  and .tgz file formats'}</b> </p>
             {/* {"It's very engaging. Right?"} */}
           </React.Fragment>}>
             
