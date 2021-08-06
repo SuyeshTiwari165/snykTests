@@ -190,7 +190,7 @@ export const Linux_Network: React.FC = (props: any) => {
         isUpdate: false,
         isDelete: false,
         isFailed: false,
-        errMessage: "Connection Already Tested"
+        errMessage: "Connection has been validated"
       }));
     }
   }, []);
@@ -364,6 +364,7 @@ export const Linux_Network: React.FC = (props: any) => {
 
 
   const handleSubmitDialogBox = () => {
+    setBackdrop(true);
     handleAlertClose();
     if (Cookies.getJSON("ob_session")) {
       if (editDataId) {
@@ -388,6 +389,7 @@ export const Linux_Network: React.FC = (props: any) => {
           },
         })
           .then((userRes) => {
+            setBackdrop(false);
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
@@ -543,6 +545,7 @@ export const Linux_Network: React.FC = (props: any) => {
             }
           })
           .catch((err) => {
+            setBackdrop(false);
             setShowDialogBox(false);
             setSubmitDisabled(true);
             let error = err.message;
@@ -614,7 +617,7 @@ export const Linux_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: false,
-                  errMessage: "Test Connection Successful!",
+                  errMessage: "Test connection successful",
                 }));
               } else if (
                 response.data.vpnConnection.success ==
@@ -640,7 +643,7 @@ export const Linux_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: "Test Connection Failed ",
+                  errMessage: "Test connection failed ",
                 }));
               }
             })
@@ -686,7 +689,7 @@ export const Linux_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: false,
-                  errMessage: "Test Connection Successful!",
+                  errMessage: "Test connection successful",
                 }));
               } else if (
                 response.data.vpnConnection.success ==
@@ -712,7 +715,7 @@ export const Linux_Network: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: "Test Connection Failed ",
+                  errMessage: "Test connection failed ",
                 }));
               }
             })
@@ -725,7 +728,7 @@ export const Linux_Network: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: "Test Connection Failed ",
+                errMessage: "Test connection failed ",
               }));
             });
         }
@@ -736,7 +739,7 @@ export const Linux_Network: React.FC = (props: any) => {
           isUpdate: false,
           isDelete: false,
           isFailed: true,
-          errMessage: " Please Fill Required Fields",
+          errMessage: " Please fill in all the required fields",
         }));
       }
     } else {
