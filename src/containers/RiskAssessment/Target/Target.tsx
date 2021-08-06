@@ -601,7 +601,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully !",
+                errMessage: "Target Created Successfully ",
               }));
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
@@ -732,7 +732,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully !",
+                errMessage: "Target Created Successfully ",
               }));
               // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
@@ -1521,7 +1521,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful!",
+            errMessage: " Test Connection Successful ",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
@@ -1599,7 +1599,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful!",
+            errMessage: " Test Connection Successful ",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {

@@ -11,8 +11,12 @@ import Grid from "@material-ui/core/Grid";
 import { Button } from "../../Form/Button/Button";
 import Logout from "../../../../containers/Auth/Logout/Logout";
 import Cookies from "js-cookie";
+import { useHistory } from "react-router-dom";
+import * as routeConstant from "../../../../common/RouteConstants";
 
 export const Header: React.FC = () => {
+  const history = useHistory();
+
   // const user =  JSON.parse(localStorage.getItem("user") || "{}");
   const user = Cookies.getJSON("ob_user")
     ? Cookies.getJSON("ob_user") || ""
@@ -24,6 +28,11 @@ export const Header: React.FC = () => {
   const getHelpManual = () => {
     let ra_manual = process.env.PUBLIC_URL + "/user_manual/OB360_Manual.pdf"
     window.open(ra_manual, '_blank');
+  }
+  const getHome = () => {
+    if(user.getUserDetails){
+      history.push(routeConstant.ADMIN_DASHBOARD);
+    }
   }
 
   try {
@@ -47,6 +56,7 @@ export const Header: React.FC = () => {
               <img
                 src={process.env.PUBLIC_URL + "/OB360.png"}
                 alt="user icon"
+                onClick={getHome}
               />
             </div>
           </Grid>
