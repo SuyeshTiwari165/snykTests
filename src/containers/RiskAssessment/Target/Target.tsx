@@ -798,6 +798,7 @@ export const Target: React.FC = (props: any) => {
 
   const onChangeHandler = (event: any,removeCase:any) => {
     if(event && event.target !== undefined){
+      
       setSelectedFile(event.target.files[0])
       setFileEvent(event)
       if (event.target.files[0]) {
@@ -809,6 +810,7 @@ export const Target: React.FC = (props: any) => {
      if(event && removeCase === "remove"){
       event.target.value = null
       setSelectedFile(null)
+
     }
   };
 
@@ -1490,6 +1492,7 @@ export const Target: React.FC = (props: any) => {
     setSelectedFile(null);
     setVpnFilePath(null);
     setDisplayVpnFilePath(null);
+    setSubmitDisabled(true);
     onChangeHandler(fileEvent,"remove")
   };
   
