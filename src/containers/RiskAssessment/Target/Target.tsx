@@ -601,7 +601,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully !",
+                errMessage: "Target Created Successfully ",
               }));
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
@@ -732,7 +732,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully !",
+                errMessage: "Target Created Successfully ",
               }));
               // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
@@ -798,6 +798,7 @@ export const Target: React.FC = (props: any) => {
 
   const onChangeHandler = (event: any,removeCase:any) => {
     if(event && event.target !== undefined){
+      
       setSelectedFile(event.target.files[0])
       setFileEvent(event)
       if (event.target.files[0]) {
@@ -809,6 +810,7 @@ export const Target: React.FC = (props: any) => {
      if(event && removeCase === "remove"){
       event.target.value = null
       setSelectedFile(null)
+
     }
   };
 
@@ -1490,6 +1492,7 @@ export const Target: React.FC = (props: any) => {
     setSelectedFile(null);
     setVpnFilePath(null);
     setDisplayVpnFilePath(null);
+    setSubmitDisabled(true);
     onChangeHandler(fileEvent,"remove")
   };
   
@@ -1521,7 +1524,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful!",
+            errMessage: " Test Connection Successful ",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
@@ -1599,7 +1602,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Test Connection Successful!",
+            errMessage: " Test Connection Successful ",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
