@@ -32,6 +32,9 @@ export const Header: React.FC = () => {
   const getHome = () => {
     if(user.getUserDetails){
       history.push(routeConstant.ADMIN_DASHBOARD);
+    } else {
+      history.push(routeConstant.CLIENT);
+      localStorage.clear();
     }
   }
 

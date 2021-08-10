@@ -52,7 +52,6 @@ import {
   MuiThemeProvider,
   withStyles
 } from "@material-ui/core/styles";
-import { relative } from "node:path";
 
 export const Linux_Network: React.FC = (props: any) => {
   const history = useHistory();

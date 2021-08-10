@@ -89,7 +89,7 @@ export const GET_ADMIN_REPORT_LISTING = gql`
 `;
 
 export const GET_REPORT_LISTING_STATUS = gql`
-  query getTargetStatus($clientname: String!) {
+  query getTargetStatus($clientname: String) {
     getTargetStatus(clientName: $clientname) {
       clientName
       clientId

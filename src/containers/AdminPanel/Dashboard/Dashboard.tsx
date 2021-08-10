@@ -24,6 +24,7 @@ import moment from "moment";
 import { CompanyUser } from "../../../common/Roles";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import logout from "../../../containers/Auth/Logout/Logout";
+import { GET_REPORT_LISTING,GET_REPORT_LISTING_STATUS } from "../../../graphql/queries/ReportListing";
 
 export const Dashboard: React.FC = (props: any) => {
   const [partnerCount, setPartnerCount] = useState();
@@ -41,11 +42,22 @@ export const Dashboard: React.FC = (props: any) => {
         orderBy: "-created_date",
       },
       onCompleted: (data: any) => {
-        createTableDataObject(data.getPartner.edges);
+        // createTableDataObject(data.getPartner.edges);
         setPartnerCount(data.getPartner.edges.length);
       },
       fetchPolicy: "cache-and-network",
     });
+
+    const{   data: dataReportListing, loading: loadClient  } = useQuery(GET_REPORT_LISTING_STATUS, {
+        fetchPolicy: "cache-and-network",
+        onCompleted:(data)=>{
+          createTableDataObject(data.getTargetStatus);
+        },
+        onError: error => {
+           logout()
+          // history.push(routeConstant.DASHBOARD);
+        }
+      });
 
   const [getPartnerUsersdata ,{ loading: loadPartnerUsers }] = useLazyQuery(
     GET_PARTNER_USERS,
@@ -62,31 +74,39 @@ export const Dashboard: React.FC = (props: any) => {
       },
       fetchPolicy: "cache-and-network",
       onError:()=>{
-        // logout()
+        logout()
       }
     }
   );
 
   //table
   const column = [
-    { title: "Partner", field: "partner" },
-    { title: "Created On", field: "created_on" }
+    { title: "Client", field: "client" },
+    // { title: "Target", field: "target" },
+    // { title: "Start Date", field: "startDate" },
+    // { title: "Status", field: "status" },
+    // { title: "Published Status", field: "publishedFlag" }
   ];
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
       let obj: any = {};
-      obj["partner"] = element.node.partnerName;
-      obj["email"] = element.node.emailId;
-      obj["phone"] = element.node.mobileNumber;
-      obj["address"] = element.node.address;
-      obj["partnerId"] = element.node.id;
-      obj["created_on"] = element.node.createdDate ? moment(element.node.createdDate).format(
-        "MM/DD/YYYY hh:mm a") : "-";
+      if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished") {
+      obj["client"] = element.clientName;
+      obj["target"] = element.targetName;
+      obj["targetId"] = element.targetId;
+      obj["clientId"] = element.clientId;
+      obj["status"] = element.status;
+      obj["publishedFlag"] = element.publishedFlag;
+      obj["startDate"] = element.startDate;
       arr.push(obj);
+      }
     });
-    setNewData(arr.slice(0, 5));
+    // setNewData(arr.slice(0, 5));
+    let pp = arr.filter( (ele :any , ind:any) => ind === arr.findIndex( (elem : any) => elem.client === ele.client ))
+    setNewData(pp);
+
   };
 
   const partnerClickOpen = () => {
@@ -103,15 +123,23 @@ export const Dashboard: React.FC = (props: any) => {
     if (param === "Edit") {
       history.push(routeConstant.PARTNER_FORM_EDIT + rowData.partnerId, rowData);
     }
+    if (param === "View") {
+      let d = {
+        "clientId" : rowData.clientId,
+        "name": rowData.client
+      }
+      let data: any = { clientInfo: d, partnerId : "" };
+      history.push(routeConstant.RA_REPORT_LISTING, data);
+    }
   };
 
-  if (loadPartner || loadPartnerUsers ) return <SimpleBackdrop />;
+  // if (loadPartner || loadPartnerUsers || loadClient ) return <SimpleBackdrop />;
   if (partnerError) {
     let error = { message: "Error" };
     return (
       <div className="error">
         Error!
-        {/* {logout()} */}
+        {logout()}
       </div>
     )
   }
@@ -120,6 +148,8 @@ export const Dashboard: React.FC = (props: any) => {
     <div>
       <React.Fragment>
         <CssBaseline />
+        {loadPartner || loadPartnerUsers || loadClient   ? <SimpleBackdrop/>: null}
+
         <Grid container spacing={3} className={styles.GridBox}>
           <Grid item xs={12} sm={6} className={styles.FilterAddWrap}>
             <div className={styles.dash_block}>
@@ -147,8 +177,10 @@ export const Dashboard: React.FC = (props: any) => {
       </React.Fragment>
       <Grid className={styles.recentTypo} item xs={12}>
         <Typography component="h2" variant="h1" gutterBottom>
-          Recently added Partners
+            Pending Reports of Clients
         </Typography>
+        <br></br>
+
       </Grid>
       <Grid>
         <Paper className={styles.tableGrid}>
@@ -156,25 +188,25 @@ export const Dashboard: React.FC = (props: any) => {
             columns={column}
             data={newData}
             actions={[
-              // {
-              //   icon: () => <VisibilityIcon />,
-              //   tooltip: "View",
-              //   onClick: (event: any, rowData: any, oldData: any) => {
-              //     onRowClick(event, rowData, oldData, 'View');
-              //   },
-              // },
               {
-                icon: () => <img className={styles.EditIcon}
-                src={
-                  process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                }
-                alt="edit icon"
-              />,
-                tooltip: "Edit",
+                icon: () => <VisibilityIcon />,
+                tooltip: "View",
                 onClick: (event: any, rowData: any, oldData: any) => {
-                  onRowClick(event, rowData, oldData, "Edit");
-                }
-              }
+                  onRowClick(event, rowData, oldData, 'View');
+                },
+              },
+              // {
+              //   icon: () => <img className={styles.EditIcon}
+              //   src={
+              //     process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+              //   }
+              //   alt="edit icon"
+              // />,
+              //   tooltip: "Edit",
+              //   onClick: (event: any, rowData: any, oldData: any) => {
+              //     onRowClick(event, rowData, oldData, "Edit");
+              //   }
+              // }
               // {
               //   icon: () => <DeleteIcon />,
               //   tooltip: "Delete",
