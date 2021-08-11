@@ -4,7 +4,7 @@ export const GET_CLIENTS = gql`
 query getCients($partnerId_PartnerName:String
   $orderBy: String
   ){
-  getClient (orderBy: [$orderBy],partner_PartnerName:$partnerId_PartnerName){
+  getClient (orderBy: [$orderBy],partner_PartnerName:$partnerId_PartnerName,createdDate_Isnull:false){
     edges{
       node{
         emailId
