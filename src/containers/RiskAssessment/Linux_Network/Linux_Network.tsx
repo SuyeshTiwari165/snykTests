@@ -1201,6 +1201,7 @@ const handleCancel = () => {
           >
             back
           </Button>
+          {props.location.state != undefined && !props.location.state.editLinuxData ?
           <Button
             className={styles.borderLess}
             variant={"contained"}
@@ -1210,6 +1211,7 @@ const handleCancel = () => {
           >
             skip
           </Button>
+          : null}
           <AlertBox
             DialogTitle={""}
             open={showDialogBox}

@@ -1075,6 +1075,7 @@ export const Windows_Network: React.FC = (props: any) => {
           >
             back
           </Button>
+          {props.location.state != undefined && !props.location.state.editWindowsData ?
           <Button
             className={styles.borderLess}
             variant={"contained"}
@@ -1084,6 +1085,7 @@ export const Windows_Network: React.FC = (props: any) => {
           >
             skip
           </Button>
+          :null }
           <Button
             type="button"
             color="primary"
