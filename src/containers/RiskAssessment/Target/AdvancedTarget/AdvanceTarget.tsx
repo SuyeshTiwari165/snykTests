@@ -522,21 +522,21 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
         <Grid item xs={12} className={styles.ActionButtons}>
           <Button
-            className={styles.borderLess}
-            variant={"contained"}
-            onClick={handleBack}
-            color="primary"
-            data-testid="cancel-button"
-          >
-            back
-          </Button>
-          <Button
             onClick={handleSubmitDialogBox}
             color="primary"
             variant={"contained"}
             data-testid="ok-button"
           >
             Save
+          </Button>
+          <Button
+            className={styles.borderLess}
+            variant={"contained"}
+            onClick={handleBack}
+            color="primary"
+            data-testid="cancel-button"
+          >
+            Cancel
           </Button>
         </Grid>
       </Grid>

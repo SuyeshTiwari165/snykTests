@@ -155,6 +155,8 @@ export const Target: React.FC = (props: any) => {
   const [testLinuxConnection] = useMutation(TEST_LINUX_CONNECTION);
 
   const [updateTarget] = useMutation(UPDATE_TARGET);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
+
   const [
     getTargetData,
     { data: targetData, loading: targetLoading, error: targetError },
@@ -343,6 +345,7 @@ export const Target: React.FC = (props: any) => {
   };
 
   useEffect(() => {
+    console.log("Target props",props);
     if (Cookies.getJSON('ob_session')) {
       if (targetName !== null) {
         getTargetData({
@@ -1343,22 +1346,64 @@ export const Target: React.FC = (props: any) => {
   }
   };
   const handleBack = () => {
+    
     if(Cookies.getJSON('ob_session'))  {
-    let data = {};
-    data = { refetchData: true, clientInfo: clientInfo };
-    history.push(routeConstant.RA_REPORT_LISTING, data);
-    localStorage.removeItem("name");
-    localStorage.removeItem("targetId");
-    localStorage.removeItem("ipRange");
-    localStorage.removeItem("ipAddress");
-    localStorage.removeItem('re-runTargetName');
-    localStorage.removeItem("userName");
-    localStorage.removeItem("password");
-    localStorage.removeItem("vpnUserName");
-    localStorage.removeItem("vpnPassword");
-    localStorage.removeItem("vpnFilePath");
-    localStorage.removeItem("WinTargetName");
-    localStorage.removeItem("LinuxTargetName");
+      if (targetId && targetId.length > 0) {
+        deleteTarget({
+          variables: {
+            id: Number(targetId)
+          },
+        }).then((res: any) => { 
+        let data = {};
+        data = { refetchData: true, clientInfo: clientInfo };
+        history.push(routeConstant.RA_REPORT_LISTING, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      })
+      .catch((err) => {
+        let data = {};
+        data = { refetchData: true, clientInfo: clientInfo };
+        history.push(routeConstant.RA_REPORT_LISTING, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      });
+      } else {
+        let data = {};
+        data = { refetchData: true, clientInfo: clientInfo };
+        history.push(routeConstant.RA_REPORT_LISTING, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      }
     }
     else {
       logout();
@@ -2006,7 +2051,7 @@ export const Target: React.FC = (props: any) => {
           </form>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
-          <Button
+          {/* <Button
             className={styles.borderLess}
             variant={"contained"}
             onClick={handleBack}
@@ -2014,7 +2059,7 @@ export const Target: React.FC = (props: any) => {
             data-testid="cancel-button"
           >
             back
-          </Button>
+          </Button> */}
           <AlertBox
             DialogTitle={""}
             open={showDialogBox}
@@ -2048,6 +2093,15 @@ export const Target: React.FC = (props: any) => {
             disabled={submitDisabled}
           >
             next
+          </Button>
+          <Button
+            className={styles.borderLess}
+            variant={"contained"}
+            onClick={handleBack}
+            color="primary"
+            data-testid="cancel-button"
+          >
+            cancel
           </Button>
         </Grid>
       </Grid>
