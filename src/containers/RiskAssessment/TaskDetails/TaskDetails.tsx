@@ -50,7 +50,11 @@ import {
 import Cookies from 'js-cookie';
 import logout from "../../Auth/Logout/Logout";
 import { ContactSupportOutlined } from "@material-ui/icons";
-
+import {
+  CREATE_TARGET,
+  UPDATE_TARGET,
+  DELETE_TARGET,
+} from "../../../graphql/mutations/Target";
 
 export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
@@ -92,6 +96,7 @@ export const TaskDetails: React.FC = (props: any) => {
   const clientId = clientInfo ? clientInfo.name : undefined;
   const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
+  const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const [backdrop, setBackdrop] = useState(false);
   //table
   const columns = [
@@ -115,6 +120,7 @@ export const TaskDetails: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
+  const [deleteTarget] = useMutation(DELETE_TARGET);
 
   const { data: taskData, loading: taskLoading } = useQuery(
     GET_TASK_DETAILS, {
@@ -516,6 +522,53 @@ try {
     setSubmitDisabled(checkValidation);
   };
 
+  const handleCancel = () => {
+    if(Cookies.getJSON('ob_session'))  {
+      deleteTarget({
+        variables: {
+          id: Number(targetId)
+        },
+      }).then((res: any) => { 
+      let data = {};
+      data = { refetchData: true, clientInfo: clientInfo };
+      history.push(routeConstant.RA_REPORT_LISTING, data);
+      localStorage.removeItem("name");
+      localStorage.removeItem("targetId");
+      localStorage.removeItem("ipRange");
+      localStorage.removeItem("ipAddress");
+      localStorage.removeItem('re-runTargetName');
+      localStorage.removeItem("userName");
+      localStorage.removeItem("password");
+      localStorage.removeItem("vpnUserName");
+      localStorage.removeItem("vpnPassword");
+      localStorage.removeItem("vpnFilePath");
+      localStorage.removeItem("WinTargetName");
+      localStorage.removeItem("LinuxTargetName");
+      
+    })
+    .catch((err) => {
+      let data = {};
+      data = { refetchData: true, clientInfo: clientInfo };
+      history.push(routeConstant.RA_REPORT_LISTING, data);
+      localStorage.removeItem("name");
+      localStorage.removeItem("targetId");
+      localStorage.removeItem("ipRange");
+      localStorage.removeItem("ipAddress");
+      localStorage.removeItem('re-runTargetName');
+      localStorage.removeItem("userName");
+      localStorage.removeItem("password");
+      localStorage.removeItem("vpnUserName");
+      localStorage.removeItem("vpnPassword");
+      localStorage.removeItem("vpnFilePath");
+      localStorage.removeItem("WinTargetName");
+      localStorage.removeItem("LinuxTargetName");
+    });
+    }
+  
+    else {
+      logout();
+    }
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -621,6 +674,15 @@ try {
             disabled={submitDisabled}
           >
             save
+          </Button>
+          <Button
+            className={styles.borderLess}
+            variant={"contained"}
+            onClick={handleCancel}
+            color="primary"
+            data-testid="cancel-button"
+          >
+            cancel
           </Button>
         </Grid>
       </Grid>

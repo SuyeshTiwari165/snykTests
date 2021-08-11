@@ -110,6 +110,8 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
+
   const checkValidation = () => {
     if (
       isError.name !== "" ||
@@ -857,6 +859,52 @@ export const Windows_Network: React.FC = (props: any) => {
       }
     }
   });
+
+  const handleCancel = () => {
+    if(Cookies.getJSON('ob_session'))  {
+      deleteTarget({
+        variables: {
+          id: Number(targetId)
+        },
+      }).then((res: any) => { 
+      let data = {};
+      data = { refetchData: true, clientInfo: clientInfo };
+      history.push(routeConstant.RA_REPORT_LISTING, data);
+      localStorage.removeItem("name");
+      localStorage.removeItem("targetId");
+      localStorage.removeItem("ipRange");
+      localStorage.removeItem("ipAddress");
+      localStorage.removeItem('re-runTargetName');
+      localStorage.removeItem("userName");
+      localStorage.removeItem("password");
+      localStorage.removeItem("vpnUserName");
+      localStorage.removeItem("vpnPassword");
+      localStorage.removeItem("vpnFilePath");
+      localStorage.removeItem("WinTargetName");
+      localStorage.removeItem("LinuxTargetName");
+    })
+    .catch((err) => {
+      let data = {};
+      data = { refetchData: true, clientInfo: clientInfo };
+      history.push(routeConstant.RA_REPORT_LISTING, data);
+      localStorage.removeItem("name");
+      localStorage.removeItem("targetId");
+      localStorage.removeItem("ipRange");
+      localStorage.removeItem("ipAddress");
+      localStorage.removeItem('re-runTargetName');
+      localStorage.removeItem("userName");
+      localStorage.removeItem("password");
+      localStorage.removeItem("vpnUserName");
+      localStorage.removeItem("vpnPassword");
+      localStorage.removeItem("vpnFilePath");
+      localStorage.removeItem("WinTargetName");
+      localStorage.removeItem("LinuxTargetName");
+    });
+    }
+    else {
+      logout();
+    }
+  };
   return (
     <React.Fragment>
       <CssBaseLine />
@@ -1052,6 +1100,15 @@ export const Windows_Network: React.FC = (props: any) => {
             disabled={!connectionSuccess}
           >
             next
+          </Button>
+          <Button
+            className={styles.borderLess}
+            variant={"contained"}
+            onClick={handleCancel}
+            color="primary"
+            data-testid="cancel-button"
+          >
+            cancel
           </Button>
         </Grid>
       </Grid>

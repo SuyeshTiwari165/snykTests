@@ -49,7 +49,7 @@ import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
-  const [showBackdrop, setShowBackdrop] = useState<boolean>(false);
+  const [showBackdrop, setShowBackdrop] = useState<boolean>(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -104,6 +104,7 @@ export const Client: React.FC = (props: any) => {
     {
       fetchPolicy: "cache-and-network",
       onCompleted: (data : any) => {
+        setShowBackdrop(false);
         if(userRole === "CompanyUser") {
           let partnerdata =  JSON.parse(partner)
         createTableDataObject(data.getClient.edges);
@@ -508,10 +509,10 @@ export const Client: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      {ipLoading || showBackdrop  ? <SimpleBackdrop/>: null}
+      { showBackdrop ? <SimpleBackdrop/>: null}
       <Typography component="h5" variant="h1">Clients</Typography>
       <Grid>
-      {ipLoading || showBackdrop  ? <SimpleBackdrop/>: null}
+      { showBackdrop   ? <SimpleBackdrop/>: null}
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
@@ -627,6 +628,7 @@ export const Client: React.FC = (props: any) => {
             </Alert>
           ) : null}
           <div className={styles.ScrollTable}>
+          {newData.length !== 0 ?
 
             <MaterialTable
               columns={column}
@@ -710,6 +712,12 @@ export const Client: React.FC = (props: any) => {
                 pageSizeOptions: [25, 50, 75, 100] // rows selection options
               }}
             />
+            : (!showBackdrop ?
+                (<Typography component="h5" variant="h3">
+                  You don't have any client subscribed for OB360
+                </Typography>)
+                : null)
+            }
           </div>
         </Paper>
       </Grid>

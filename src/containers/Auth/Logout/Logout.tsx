@@ -1,6 +1,13 @@
 import React from "react";
 import Cookies from 'js-cookie';
 import moment from "moment";
+import LogoutPage from "../LogoutPage/LogoutPage";
+import {
+  Switch,
+  Redirect,
+  Route,
+  BrowserRouter,
+} from "react-router-dom";
 
 export interface LoginProps {}
 export const Logout: any = () => {
@@ -26,7 +33,10 @@ export const Logout: any = () => {
   Cookies.remove('ob_user', { path: '', domain: process.env.ADMIN_REACT_APP_DOMAIN });
   Cookies.remove('ob_session', { path: '', domain: process.env.ADMIN_REACT_APP_DOMAIN});
   Cookies.remove('ob_partnerData', { path: '',  domain: process.env.ADMIN_REACT_APP_DOMAIN});
-  return window.location.replace("/logout");
-  // return window.close();
+  return( 
+    <div>Logout Sucessfully!
+      {window.location.replace("/logout")}
+    </div>
+ )
 };
 export default Logout;
