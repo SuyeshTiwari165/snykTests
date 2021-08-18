@@ -28,6 +28,8 @@ import {
 } from '@material-ui/pickers';
 import MomentUtils from "@date-io/moment";
 import DateFnsUtils from '@date-io/date-fns';
+import { GET_TASK_DETAILS } from "../../../graphql/queries/TaskDetails";
+
 
 interface Partners {
   id: number;
@@ -50,13 +52,21 @@ export const ReportStatus: React.FC = (props: any) => {
       clientid: null,
     },
   ]);
+  const [filterTaskName, setFilterTaskName] = useState<any>([
+    {
+      taskName: "",
+      taskId: null,
+    },
+  ]);
   const [filterStatus, setFilterStatus] = useState<any | null>();
+  const [targetFilterStatus, setTargetFilterStatus] = useState<any | null>();
   const [reset, setReset] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<any>();
   const [endDate, setEndDate] = useState<any>();
   const [getPartnerNameList, setPartnerNameList] = useState([]);
   const [getClientNameList, setClientNameList] = useState([]);
   const [getTargetNameList, setTargetNameList] = useState([]);
+  const [getTaskNameList, setTaskNameList] = useState([]);
 
   const title = "Listing of Reports ";
   const [newData, setNewData] = useState();
@@ -80,9 +90,13 @@ export const ReportStatus: React.FC = (props: any) => {
       title: "Target",
       field: "target",
     },
+    {
+      title: "Target Status",
+      field: "targetStatus",
+    },
     { title: "Task Name", field: "taskName" },
     {
-      title: "Status",
+      title: "Task Status",
       field: "status",
     },
     {
@@ -179,6 +193,30 @@ export const ReportStatus: React.FC = (props: any) => {
       }
     });
 
+    const [getTasks, { data: taskData, loading: taskLoading }] = useLazyQuery(
+      GET_TASK_DETAILS, {
+        fetchPolicy: "cache-and-network",
+      onCompleted: (data: any) => {
+        if (data.getTask.edges[0]) {
+          console.log("data.getTask.edges[0]", data.getTask.edges)
+        }
+        if (
+          data.getTask.edges != null ||
+          taskData.getTask.edges != undefined
+        ) {
+          let arr: any = [];
+          taskData.getTask.edges.map((element: any, index: any) => {
+            let obj: any = {};
+            obj["name"] = element.node.taskName;
+            obj["id"] = element.node.id;
+            arr.push(obj);
+          });
+          setTaskNameList(arr);
+        }
+      },
+    }
+    );
+
   useEffect(() => {
     setStartSelectedDate(new Date())
     setEndSelectedDate(new Date())
@@ -196,6 +234,7 @@ export const ReportStatus: React.FC = (props: any) => {
 
   useEffect(() => {
     if(filters != null || filters != undefined) {
+      console.log("filterTaskName",filterTaskName)
     getReportList({
       variables: {
         orderBy : "-scan_start_date",
@@ -205,6 +244,8 @@ export const ReportStatus: React.FC = (props: any) => {
         clientname: filterClient ? filterClient.name : null,
         scanEndDate: endDate ? moment(endDate).format("YYYY-MM-DDT23:00:00") : null,
         scanStartDate :startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null,
+        targetstatus : targetFilterStatus ? targetFilterStatus.name : null,
+        taskname :filterTaskName ? filterTaskName.name : null,
       },
     });
   }
@@ -246,6 +287,7 @@ export const ReportStatus: React.FC = (props: any) => {
       obj["taskName"] = element.node.vatTaskId ? element.node.vatTaskId.taskName : null;
       obj["partnername"] = element.node.vatTargetId.partner ? element.node.vatTargetId.partner.partnerName : null;
       obj["clientname"] = element.node.vatTargetId.client ? element.node.vatTargetId.client.clientName : null;
+      obj["targetStatus"] = element.node.vatTargetId.targetStatus ? element.node.vatTargetId.targetStatus.name : null;
       arr.push(obj);
     });
     return arr
@@ -253,6 +295,15 @@ export const ReportStatus: React.FC = (props: any) => {
 
   const targetFilter = (event: any, newValue: any) => {
     setFilterTarget(newValue);
+
+    if(newValue != null && newValue.name) {
+    getTasks({
+      variables: {
+         targetName: newValue ? newValue.name : null,
+      },
+    })
+    console.log("call Tasks",newValue);
+  }
   };
   const clientFilter = (event: any, newValue: any) => {
     setReset(false);
@@ -266,12 +317,20 @@ export const ReportStatus: React.FC = (props: any) => {
     })
   }
 }
+
+const taskNameFilter = (event: any, newValue: any) => {
+  setReset(false);
+  setFilterTaskName(newValue);
+}
+
   const partnerFilter = (event: any, newValue: any) => {
     setReset(false);
     setFilterPartner(newValue);
     setFilterStatus("");
+    setTargetFilterStatus("")
     setFilterTarget("");
     setFilterClient("");
+    setFilterTaskName("")
     setStartDate(new Date());
     setStartSelectedDate(new Date())
     setEndDate(new Date());
@@ -286,16 +345,40 @@ export const ReportStatus: React.FC = (props: any) => {
   }
   };
 
-  const getStatusList = [{ name: "Done" }, { name: "In Progress" }];
+  const getStatusList = [
+    { name: "Done" },
+    { name: "In Progress" },
+    { name: "Scheduled" },
+  ];
+
+  const getTargetStatusList = [
+    { name: "Scheduled" },
+    { name: "In Progress" },
+    { name: "Scan Completed" },
+    { name: "Generating Report" },
+    { name: "Report Generated" },
+  ];
+
   const getStatus = {
     options: getStatusList,
     getOptionLabel: (option: { name: String }) => option.name,
   };
+  const getTargetStatus = {
+    options: getTargetStatusList,
+    getOptionLabel: (option: { name: String }) => option.name,
+  };
+  
 
   const statusFilter = (event: any, newValue: any) => {
     setReset(false);
     setFilterStatus(newValue);
   };
+
+  const statusTargetFilter = (event: any, newValue: any) => {
+    setReset(false);
+    setTargetFilterStatus(newValue);
+  };
+  
 
   function handleKeyDown(event: any) {
     if (event.key === "Enter") {
@@ -305,8 +388,10 @@ export const ReportStatus: React.FC = (props: any) => {
   const resetForm = () => {
     setReset(true);
     setFilterStatus("");
+    setTargetFilterStatus("")
     setFilterTarget("");
     setFilterClient("");
+    setFilterTaskName("")
     setFilterPartner("");
     setStartSelectedDate(new Date())
     setEndSelectedDate(new Date())
@@ -362,6 +447,7 @@ export const ReportStatus: React.FC = (props: any) => {
       }
       searchData["report_status_in"] = reportStatusArr;
     }
+    
     if (
       startDate !== undefined &&
       startDate !== null &&
@@ -393,7 +479,7 @@ export const ReportStatus: React.FC = (props: any) => {
     //   searchData["company_type_in"] = companyTypeArr;
     // }
 
-    // console.log("searchData", searchData);
+    console.log("searchData", searchData);
 
     setFilters(searchData);
     // console.log(filters)
@@ -406,6 +492,10 @@ export const ReportStatus: React.FC = (props: any) => {
   };
   const getClientName = {
     options: getClientNameList,
+    getOptionLabel: (option: { name: String }) => option.name,
+  };
+  const getTaskName = {
+    options: getTaskNameList,
     getOptionLabel: (option: { name: String }) => option.name,
   };
   const getTargetName = {
@@ -469,6 +559,42 @@ export const ReportStatus: React.FC = (props: any) => {
             )}
           />
         </div>
+
+        <div className={styles.FilterInput}>
+          <AutoCompleteDropDown
+            {...getTargetStatus}
+            id="TargetStatusFilter"
+            value={reset ? null : targetFilterStatus ? targetFilterStatus : null}
+            onChange={statusTargetFilter}
+            renderInput={(params: any) => (
+              <Input
+                {...params}
+                id="filterTargetStatus"
+                label="Target Status"
+                onKeyDown={handleKeyDown}
+              />
+            )}
+          />
+        </div>
+
+        <div className={styles.FilterInput}>
+          <AutoCompleteDropDown
+            {...getTaskName}
+            id="TaskName"
+            value={reset ? null : filterTaskName != null ? filterTaskName : null}
+            onChange={taskNameFilter}
+            renderInput={(params: any) => (
+              <Input
+                {...params}
+                id="TaskNameFilter"
+                label="Task Name"
+                onKeyDown={handleKeyDown}
+              />
+            )}
+          />
+        </div>
+
+
         <div className={styles.FilterInput}>
           <AutoCompleteDropDown
             {...getStatus}
@@ -479,7 +605,7 @@ export const ReportStatus: React.FC = (props: any) => {
               <Input
                 {...params}
                 id="filterStatus"
-                label="Status"
+                label="Task Status"
                 onKeyDown={handleKeyDown}
               />
             )}

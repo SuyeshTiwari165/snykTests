@@ -47,6 +47,8 @@ export const GET_ADMIN_REPORT_LISTING = gql`
     $status: String
     $scanStartDate: DateTime
     $scanEndDate: DateTime
+    $targetstatus : String
+    $taskname : String
   ) {
     getReportStatus(
       orderBy: [$orderBy]
@@ -56,6 +58,8 @@ export const GET_ADMIN_REPORT_LISTING = gql`
       scanRunStatus: $status
       scanStartDate_Gte: $scanStartDate
       scanEndDate_Lte: $scanEndDate
+      vatTargetId_TargetStatus_Name:$targetstatus
+      vatTaskId_TaskName :$taskname
     ) {
       edges {
         node {
@@ -72,6 +76,10 @@ export const GET_ADMIN_REPORT_LISTING = gql`
             partner {
               id
               partnerName
+            }
+            targetStatus{
+              id
+              name
             }
           }
           vatTaskId {
