@@ -114,6 +114,12 @@ export const Dashboard: React.FC = (props: any) => {
     history.push(routeConstant.ADD_PARTNER, data);
   };
 
+  const ReportClickOpen = () => {
+    // let data: any = { "AddPartner": true };
+    history.push(routeConstant.ADMIN_REPORT_STATUS);
+  };
+  
+
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     let data: any = { clientInfo: rowData };
     if (param === "RA") {
@@ -163,9 +169,10 @@ export const Dashboard: React.FC = (props: any) => {
               <div className={styles.dash_count}>{partnerUserCount}</div>
             </div>
           </Grid>
+          <Grid item xs={12} sm={6}>
           <div className={styles.partnerButton}>
             <Button
-              className={styles.partnerinsideButton}
+              // className={styles.partnerinsideButton}
               color="primary"
               variant="contained"
               onClick={partnerClickOpen}
@@ -173,6 +180,19 @@ export const Dashboard: React.FC = (props: any) => {
               &nbsp; Partner
             </Button>
           </div>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <div className={styles.partnerButton}>
+            <Button
+              // className={styles.partnerinsideButton}
+              color="primary"
+              variant="contained"
+            onClick={ReportClickOpen}
+            >
+              &nbsp; Report Status
+            </Button>
+          </div>
+          </Grid>
         </Grid>
       </React.Fragment>
       <Grid className={styles.recentTypo} item xs={12}>

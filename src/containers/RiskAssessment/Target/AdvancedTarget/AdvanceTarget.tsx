@@ -37,6 +37,7 @@ import {
 export const AdvanceTarget: React.FC = (props: any) => {
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
+  const [targetOpen, setTargetOpen] = React.useState(false);
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -145,6 +146,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   const handleToolTipOpen = () => {
     setOpen(true);
   };
+  const handleTargetToolTipClose = () => {
+    setTargetOpen(false);
+  };
+
+  const handleTargetToolTipOpen = () => {
+    setTargetOpen(true);
+  };
+  
 
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIpRange(event.target.value);
@@ -159,12 +168,20 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+    if(!/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
     let value = event.target.value;
     let isErrName = value.length <= 0 ? "Required" : "";
     setIsError((isError: any) => ({
       ...isError,
       name: isErrName,
     }));
+  }
+  if(/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
+    setIsError((isError: any) => ({
+      ...isError,
+      name: "Invalid Target Name",
+    }));
+  }
     // setSubmitDisabled(checkValidation);
   };
 
@@ -191,89 +208,93 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
-      if(handleInputErrors()) {
-      handleAlertClose();
-    let input = {
-        partner: partnerId.id,
-        client: clientId,
-        targetName: name,
-        host: ipRange,
-        startDate: startDate,
-        scanType : "External"
-      };
-      createTarget({
-        variables: {
-          input,
-        },
-      })
-        .then((userRes) => {
-        //   setBackdrop(false);
-          if(userRes.data.createTarget.targetField ==  null){
+    if (handleInputErrors()) {
+      if (/[^a-zA-Z0-9\-\/]/.test(name.toString())) {
+        setBackdrop(false);
+      } else {
+        handleAlertClose();
+        let input = {
+          partner: partnerId.id,
+          client: clientId,
+          targetName: name,
+          host: ipRange,
+          startDate: startDate,
+          scanType: "External"
+        };
+        createTarget({
+          variables: {
+            input,
+          },
+        })
+          .then((userRes) => {
+            //   setBackdrop(false);
+            if (userRes.data.createTarget.targetField == null) {
+              setBackdrop(false);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " Target name exists. Add another name",
+              }));
+              // setSubmitDisabled(true)
+            }
+            else {
+              //   setSubmitDisabled(false)        
+              getScanConfigData({
+                variables: {
+                  clientId: userRes.data.createTarget.targetField.client.clientName,
+                },
+              })
+              //   setFormState((formState) => ({
+              //     ...formState,
+              //     isSuccess: true,
+              //     isUpdate: false,
+              //     isDelete: false,
+              //     isFailed: false,
+              //     errMessage: "Target Created Successfully !",
+              //   }));
+            }
+          })
+          .catch((err) => {
+            //   setSubmitDisabled(false)
             setBackdrop(false);
+            let error = err.message;
+            if (
+              error.includes("duplicate key value violates unique constraint")
+            ) {
+              error = " Name already present.";
+            }
+            if (
+              error.includes("Response Error 400. Target exists already")
+            ) {
+              error = " Target Name already present.";
+            }
+            else {
+              error = err.message;
+            }
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
               isUpdate: false,
               isDelete: false,
               isFailed: true,
-              errMessage: " Target name exists. Add another name",
+              errMessage: error,
             }));
-            // setSubmitDisabled(true)
-          }
-          else {
-        //   setSubmitDisabled(false)        
-        getScanConfigData({
-            variables: {
-            clientId: userRes.data.createTarget.targetField.client.clientName,
-          },
-        })
-        //   setFormState((formState) => ({
-        //     ...formState,
-        //     isSuccess: true,
-        //     isUpdate: false,
-        //     isDelete: false,
-        //     isFailed: false,
-        //     errMessage: "Target Created Successfully !",
-        //   }));
-        }
-        })
-        .catch((err) => {
-        //   setSubmitDisabled(false)
-          setBackdrop(false);
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          }
-          if (
-            error.includes("Response Error 400. Target exists already")
-          ) {
-            error = " Target Name already present.";
-          }
-           else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
+          });
+      }
     } else {
       setBackdrop(false);
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: " Please fill in all the required fields ",
-        }));
-      }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Please fill in all the required fields ",
+      }));
+    }
   }
   const createTasks = () => {
       console.log("clientInfo",clientInfo);
@@ -462,6 +483,22 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           ) : null}
         </Grid>
         <Grid item xs={12} md={6}>
+        <span className={styles.IPTooltip}>
+          <MuiThemeProvider theme={theme}>
+            <Tooltip
+              open={targetOpen}
+              onClose={handleTargetToolTipClose}
+              onOpen={handleTargetToolTipOpen}
+              placement="bottom-end"
+              title={
+                <React.Fragment>
+                  <p>
+                    <b> Target Name can't contain any special characters. </b>{" "}
+                  </p>
+                  {" "}
+                </React.Fragment>
+              }
+            >
           <Input
             type="text"
             label="Target Name"
@@ -473,6 +510,9 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           >
             Target Name
           </Input>
+          </Tooltip>
+            </MuiThemeProvider>
+          </span>
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -483,7 +523,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               open={open}
               onClose={handleToolTipClose}
               onOpen={handleToolTipOpen}
-              placement="right"
+              placement="bottom-end"
               title={
                 <React.Fragment>
                   <p>

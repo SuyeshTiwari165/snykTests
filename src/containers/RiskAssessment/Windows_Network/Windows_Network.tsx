@@ -1046,7 +1046,7 @@ export const Windows_Network: React.FC = (props: any) => {
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
         <MuiThemeProvider theme={theme}>
-        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
+        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
           </React.Fragment>}>

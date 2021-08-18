@@ -129,6 +129,8 @@ export const Target: React.FC = (props: any) => {
   const startDate = new Date();
   const [uploadDisabled, setUploadDisabled] = useState(true);
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [targetOpen, setTargetOpen] = React.useState(false);
+
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
     name: "",
@@ -945,6 +947,9 @@ export const Target: React.FC = (props: any) => {
     if(Cookies.getJSON('ob_session')) {
     // if (name && vpnUserName && ipRange) {
       if(handleInputErrors()) {
+        if (/[^a-zA-Z0-9\-\/]/.test(name.toString())) {
+          setBackdrop(false);
+        } else {
         handleAlertClose();
       setBackdrop(true);
     if (selectedFile && selectedFile.name != null) {
@@ -1181,6 +1186,7 @@ export const Target: React.FC = (props: any) => {
 
 
     }
+  }
   }
   else {
     if(!handleInputErrors()) {
@@ -1458,6 +1464,7 @@ export const Target: React.FC = (props: any) => {
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+    if(!/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
     let value = event.target.value;
     let isErrName = value.length <= 0 ? "Required" : "";
     setIsError((isError: any) => ({
@@ -1467,6 +1474,13 @@ export const Target: React.FC = (props: any) => {
     setUploadDisabled(true)
     setFileUploaded(false)
     setSubmitDisabled(checkValidation);
+  }
+  if(/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
+    setIsError((isError: any) => ({
+      ...isError,
+      name: "Invalid Target Name",
+    }));
+  }
   };
 
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1825,6 +1839,13 @@ export const Target: React.FC = (props: any) => {
     }
   });
 
+  const handleTargetToolTipClose = () => {
+    setTargetOpen(false);
+  };
+
+  const handleTargetToolTipOpen = () => {
+    setTargetOpen(true);
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -1896,6 +1917,22 @@ export const Target: React.FC = (props: any) => {
           ) : null}
         </Grid>
         <Grid item xs={12} md={6} className={props.location.state != undefined && props.location.state.editData ? styles.disfield : styles.inputs}>
+          <span className={styles.IPTooltip}>
+          <MuiThemeProvider theme={theme}>
+            <Tooltip
+              open={targetOpen}
+              onClose={handleTargetToolTipClose}
+              onOpen={handleTargetToolTipOpen}
+              placement="bottom-end"
+              title={
+                <React.Fragment>
+                  <p>
+                    <b> Target Name can't contain any special characters. </b>{" "}
+                  </p>
+                  {" "}
+                </React.Fragment>
+              }
+            >
           <Input
             type="text"
             label="Target Name"
@@ -1908,11 +1945,14 @@ export const Target: React.FC = (props: any) => {
           >
             Target Name
           </Input>
+          </Tooltip>
+            </MuiThemeProvider>
+          </span>
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
         <MuiThemeProvider theme={theme}>
-        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="right" title= { <React.Fragment>
+        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)'}</p> <p>
                     <b>For Domain/URL </b>{" "}
