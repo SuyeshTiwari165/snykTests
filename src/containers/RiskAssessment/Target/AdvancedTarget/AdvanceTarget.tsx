@@ -168,7 +168,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-    if(!/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
+    if(!/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     let value = event.target.value;
     let isErrName = value.length <= 0 ? "Required" : "";
     setIsError((isError: any) => ({
@@ -176,7 +176,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       name: isErrName,
     }));
   }
-  if(/[^a-zA-Z0-9\-\/]/.test(event.target.value)) {
+  if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     setIsError((isError: any) => ({
       ...isError,
       name: "Invalid Target Name",
