@@ -209,7 +209,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
     if (handleInputErrors()) {
-      if (/[^a-zA-Z0-9\-\/]/.test(name.toString())) {
+      if (/[^a-zA-Z0-9\- \/]/.test(name.toString())) {
         setBackdrop(false);
       } else {
         handleAlertClose();
