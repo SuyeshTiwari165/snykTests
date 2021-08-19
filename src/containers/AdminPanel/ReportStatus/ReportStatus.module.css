@@ -159,9 +159,9 @@
     outline: 0px !important;
   }
 
- th:nth-child(6) {
+ /* th:nth-child(6) {
   width: 16% !important;
-}
+} */
 
 th:nth-child(7) {
   text-align: left !important;
@@ -173,4 +173,42 @@ tfoot td > div {
 }
 tfoot  {
   display: table-footer-group !important;
+}
+
+/*report status*/
+
+ .report_status_table table > tbody > tr > td:nth-child(1) {
+  width: 13% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(2) {
+  width: 12% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(3) {
+  width: 5% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(4) {
+  width: 14% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(5) {
+  width: 20% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(6) {
+  width: 12% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(7) {
+  width: 12% !important;
+}
+
+.report_status_table table > tbody > tr > td:nth-child(8) {
+  width: 12% !important;
+}
+
+.report_status_table table > thead > tr > th:nth-child(8) {
+  text-align: left !important;
 }

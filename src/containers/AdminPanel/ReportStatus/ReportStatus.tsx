@@ -663,6 +663,7 @@ const taskNameFilter = (event: any, newValue: any) => {
       </Grid>
       <div className={styles.status_report}>
         <Paper className={styles.paper}>
+        <div className={styles.report_status_table}>
           <MaterialTable
             title={title}
             columns={columns}
@@ -678,7 +679,7 @@ const taskNameFilter = (event: any, newValue: any) => {
               draggable: false,
               pageSizeOptions: [25, 50, 75, 100],
             }}
-          />
+          /></div>
         </Paper>
       </div>
     </React.Fragment>
