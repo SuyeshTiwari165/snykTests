@@ -370,11 +370,23 @@ const taskNameFilter = (event: any, newValue: any) => {
   
 
   const statusFilter = (event: any, newValue: any) => {
+    if(newValue && newValue.name ==="Scheduled") {
+      setStartSelectedDate(null)
+      setEndSelectedDate(null)
+      setStartDate(null)
+      setEndDate(null)
+    }  
     setReset(false);
     setFilterStatus(newValue);
   };
 
   const statusTargetFilter = (event: any, newValue: any) => {
+    if(newValue && newValue.name ==="Scheduled") {
+      setStartSelectedDate(null)
+      setEndSelectedDate(null)
+      setStartDate(null)
+      setEndDate(null)
+    }
     setReset(false);
     setTargetFilterStatus(newValue);
   };
