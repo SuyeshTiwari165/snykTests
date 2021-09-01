@@ -865,9 +865,19 @@ export const RaReportListing: React.FC = (props: any) => {
                     },
                   }),
                   (rowData: any) =>
-                  rowData.status !== "Report Generated" ?
+                  rowData ?
                   {
-                    icon: () => <DeleteIcon />,
+                    // icon: () => <DeleteIcon />,
+                    icon: () => (
+                      <img
+                        className={styles.EditIcon}
+                        src={
+                          process.env.PUBLIC_URL +
+                          "/icons/svg-icon/delete.svg"
+                        }
+                        alt="delete icon"
+                      />
+                    ),
                     tooltip: "Delete",
                     onClick: (event: any, rowData: any) => {
                       handleClickDelete(event, rowData);
