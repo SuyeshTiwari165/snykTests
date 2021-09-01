@@ -340,3 +340,7 @@ tfoot svg {
 .MainOfficeScrollPaper {
   align-items: center !important;
 }
+.EditIcon {
+  height: 18px !important;
+  width: 18px !important;
+}
