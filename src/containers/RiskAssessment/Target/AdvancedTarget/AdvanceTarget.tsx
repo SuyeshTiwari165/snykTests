@@ -16,6 +16,10 @@ import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
 import {
     CREATE_TARGET,
   } from "../../../../graphql/mutations/Target";
+  import {
+    DOMAIN_VERIFY,
+    IP_VERIFY
+  } from "../../../../graphql/mutations/DomainVerify";
   import { useMutation, useLazyQuery } from "@apollo/client";
   import {
     FAILED,
@@ -43,7 +47,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
     ipRange: "",
   });
   const [name, setName] = useState<String>("");
-  const [ipRange, setIpRange] = useState<String>("");
+  const [ipRange, setIpRange] = useState<any>("");
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const [backdrop, setBackdrop] = useState(false);
@@ -93,6 +97,8 @@ export const AdvanceTarget: React.FC = (props: any) => {
 
   const [createTarget] = useMutation(CREATE_TARGET);
   const [createTask] = useMutation(CREATE_TASK);
+  const [domainVerify] = useMutation(DOMAIN_VERIFY);
+  const [IPVerify] = useMutation(IP_VERIFY);
 
 const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQuery(
     GET_SCAN_CONFIG,
@@ -212,68 +218,34 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       if (/[^a-zA-Z0-9\- \/]/.test(name.toString())) {
         setBackdrop(false);
       } else {
-        handleAlertClose();
+        // Check Domain Connectipn
         let input = {
-          partner: partnerId.id,
-          client: clientId,
-          targetName: name,
-          host: ipRange,
-          startDate: startDate,
-          scanType: "External"
+          "host" : ipRange
         };
-        createTarget({
-          variables: {
-            input,
-          },
-        })
+        if(parseInt(ipRange)){
+            IPVerify({
+            variables: {
+              input
+            },
+          })
           .then((userRes) => {
-            //   setBackdrop(false);
-            if (userRes.data.createTarget.targetField == null) {
-              setBackdrop(false);
+            if(userRes.data.IPVerify.status === 'Valid IP address') {
+              submitAction()
+            } else {
+              setBackdrop(false)
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: " Target name exists. Add another name",
+                errMessage: " Please Enter Valid IP Address",
               }));
-              // setSubmitDisabled(true)
-            }
-            else {
-              //   setSubmitDisabled(false)        
-              getScanConfigData({
-                variables: {
-                  clientId: userRes.data.createTarget.targetField.client.clientName,
-                },
-              })
-              //   setFormState((formState) => ({
-              //     ...formState,
-              //     isSuccess: true,
-              //     isUpdate: false,
-              //     isDelete: false,
-              //     isFailed: false,
-              //     errMessage: "Target Created Successfully !",
-              //   }));
             }
           })
           .catch((err) => {
-            //   setSubmitDisabled(false)
             setBackdrop(false);
             let error = err.message;
-            if (
-              error.includes("duplicate key value violates unique constraint")
-            ) {
-              error = " Name already present.";
-            }
-            if (
-              error.includes("Response Error 400. Target exists already")
-            ) {
-              error = " Target Name already present.";
-            }
-            else {
-              error = err.message;
-            }
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
@@ -283,6 +255,40 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               errMessage: error,
             }));
           });
+        }else {
+        domainVerify({
+          variables: {
+            input
+          },
+        })
+        .then((userRes) => {
+          if(userRes.data.domainVerify.status === 'Domain name is registered') {
+            submitAction()
+          } else {
+            setBackdrop(false)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Please Enter Valid Domain Name",
+            }));
+          }
+        })
+        .catch((err) => {
+          setBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+      }
       }
     } else {
       setBackdrop(false);
@@ -295,6 +301,80 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         errMessage: " Please fill in all the required fields ",
       }));
     }
+  }
+
+  const submitAction = () => {
+    handleAlertClose();
+    let input = {
+      partner: partnerId.id,
+      client: clientId,
+      targetName: name,
+      host: ipRange,
+      startDate: startDate,
+      scanType: "External"
+    };
+    createTarget({
+      variables: {
+        input,
+      },
+    })
+      .then((userRes) => {
+        //   setBackdrop(false);
+        if (userRes.data.createTarget.targetField == null) {
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Target name exists. Add another name",
+          }));
+          // setSubmitDisabled(true)
+        }
+        else {
+          //   setSubmitDisabled(false)        
+          getScanConfigData({
+            variables: {
+              clientId: userRes.data.createTarget.targetField.client.clientName,
+            },
+          })
+          //   setFormState((formState) => ({
+          //     ...formState,
+          //     isSuccess: true,
+          //     isUpdate: false,
+          //     isDelete: false,
+          //     isFailed: false,
+          //     errMessage: "Target Created Successfully !",
+          //   }));
+        }
+      })
+      .catch((err) => {
+        //   setSubmitDisabled(false)
+        setBackdrop(false);
+        let error = err.message;
+        if (
+          error.includes("duplicate key value violates unique constraint")
+        ) {
+          error = " Name already present.";
+        }
+        if (
+          error.includes("Response Error 400. Target exists already")
+        ) {
+          error = " Target Name already present.";
+        }
+        else {
+          error = err.message;
+        }
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
   }
   const createTasks = () => {
       console.log("clientInfo",clientInfo);
