@@ -1,0 +1,45 @@
+.alphabox {
+	margin: 0 auto !important;
+	width: 100% !important;
+  height: 100% !important;
+  margin-top:50px !important;
+
+}
+
+.alphaboxinner {
+	margin: 0 auto !important;
+	width: 100% !important;
+	text-align: center;
+}
+
+  .aheading {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: 56px;
+    color:#000;
+  }
+
+  .acontent {
+	font-family: 'Raleway', sans-serif;
+	font-weight: 500;
+	font-size: 24px;
+	color: #999999;
+	margin-top: 15px;
+  line-height: 35px;
+  }
+ .apic img {
+  max-width: 100%;
+  width:18%;
+}
+
+.logos img {
+	width: 60%;
+}
+
+.logos {
+	display: flex;
+	margin-top: 30px;
+	width: 35%;
+	margin: 0 auto;
+	padding-top: 40px;
+}
