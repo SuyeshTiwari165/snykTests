@@ -49,7 +49,7 @@ import {
 } from "../../../services/Data";
 import Cookies from 'js-cookie';
 import logout from "../../Auth/Logout/Logout";
-import { ContactSupportOutlined } from "@material-ui/icons";
+import { ContactSupportOutlined, SelectAll } from "@material-ui/icons";
 import {
   CREATE_TARGET,
   UPDATE_TARGET,
@@ -82,6 +82,7 @@ export const TaskDetails: React.FC = (props: any) => {
 
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [selectAllTask, setSelectAllTask] = useState<boolean>(false);
 
   //add/edit data
 
@@ -98,6 +99,9 @@ export const TaskDetails: React.FC = (props: any) => {
   const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const [backdrop, setBackdrop] = useState(false);
+   const [emailUpdates, setEmailUpdates] = React.useState({
+    checkedB: false,
+  });
   //table
   const columns = [
     { title: "Task Name", field: "taskName" },
@@ -130,7 +134,7 @@ export const TaskDetails: React.FC = (props: any) => {
     },
     onCompleted: (data: any) => {
       if (data.getTask.edges[0]) {
-        console.log("data.getTask.edges[0]", data.getTask.edges[0].node.vatScanConfigList)
+        // console.log("data.getTask.edges[0]", data.getTask.edges[0].node.vatScanConfigList)
         setScanConfig(data.getTask.edges[0].node.vatScanConfigList);
       }
     },
@@ -513,6 +517,12 @@ try {
     } else {
       scanArr.push(val);
     }
+    if(scanArr.length === 11){
+      setEmailUpdates({...emailUpdates, ["checkedB"] : true})
+    }
+    if(scanArr.length !== 11){
+      setEmailUpdates({...emailUpdates, ["checkedB"] : false})
+    }
     setScanConfig(scanArr);
     let isErrScanArr = scanArr.length === 0 ? "Required" : "";
     setIsError((isError: any) => ({
@@ -520,6 +530,20 @@ try {
       scanConfig: isErrScanArr,
     }));
     setSubmitDisabled(checkValidation);
+  };
+  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.checked === true) {
+    let arr : any = []
+    dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast') && !name.node.scanConfigName.includes('External scan config')).map((filteredName: any) => {
+      arr.push(filteredName.node.vatScanConfigId)
+    });
+    setScanConfig(arr);
+  }
+  if(event.target.checked === false) {
+    let arr : any = []
+    setScanConfig(arr);
+  }    
+    setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
   };
 
   const handleCancel = () => {
@@ -631,9 +655,23 @@ try {
             Target
           </Input>
         </Grid> */}
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <label className={styles.HeaderLabel}>Select Scan Configuration</label>
-          <Grid container spacing={3}>
+          <Grid container spacing={1}>
+          <Grid item xs={6} md={6}>
+          <FormControlLabel
+            className={styles.CheckboxLabel}
+        control={
+          <Checkbox
+            checked={emailUpdates.checkedB}
+            onChange={handleCheckBoxChange}
+            name="checkedB"
+            // value={emailUpdates}
+          />
+        }
+        label="Select All"
+      />
+      </Grid>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {
                 // console.log("obj.node",getScanConfigList)
@@ -643,7 +681,7 @@ try {
                     key={obj.node ? obj.node.vatScanConfigId : null}
                     control={
                       <Checkbox
-                        checked={scanConfig.includes(obj.node ? obj.node.vatScanConfigId : null)}
+                        checked={scanConfig.includes(obj.node ? obj.node.vatScanConfigId : null) || emailUpdates.checkedB}
                         onChange={handleCheckElement}
                         name={obj.node ? obj.node.scanConfigName : null}
                         value={obj.node ? obj.node.vatScanConfigId : null}
