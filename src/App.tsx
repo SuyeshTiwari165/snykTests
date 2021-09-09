@@ -26,6 +26,7 @@ import ClientForm from "./containers/PG/ClientForm/ClientForm";
 import DeleteClient from "./containers/PG/DeleteClient/DeleteClient";
 import Cookies from 'js-cookie'
 import LogoutPage from "./containers/Auth/LogoutPage/LogoutPage";
+import ThankYou from "./containers/ThankYou/ThankYou";
 
 function App() {
   // const session = localStorage.getItem("session");
@@ -52,15 +53,20 @@ function App() {
 
   if (authenticated) {
     if (user.isSuperuser !== true) {
-      routes = <div>{AuthRoutes}</div>;
+      logout();
+      <Route path={"/ThankYou" }exact component={ThankYou} />
+      // routes = <div>{AuthRoutes}</div>;
     }
     if (user.isSuperuser === true) {
-      routes = <div>{AdminRoutes}</div>;
+      logout();
+      <Route path={"/ThankYou" }exact component={ThankYou} />
+
+      // routes = <div>{AdminRoutes}</div>;
     }
   } else if (!authenticated) {
     routes = (
       <Switch>
-        <Route path="/login" exact component={Login} />
+        {/* <Route path="/login" exact component={Login} />
         <Route path="/registration" exact component={Registration} />
         <Route path="/pg-action" exact component={PgAction} />
         <Route path="/pg-action" exact component={PgAction} />
@@ -73,10 +79,9 @@ function App() {
         <Route path={"/pg-client-form/add" }exact component={ClientForm} />
         <Route path={"/pg-client-form/edit" }exact component={ClientForm} />
         <Route path={"/pg-client-form/delete" }exact component={DeleteClient} />
-        <Route path={"/logout" }exact component={LogoutPage} />
-
-
-        <Route path="/" render={() => <Redirect to="/logout" />} />
+        <Route path={"/logout" }exact component={LogoutPage} /> */}
+        <Route path={"/ThankYou" }exact component={ThankYou} />
+        <Route path="/" render={() => <Redirect to="/ThankYou" />} />
       </Switch>
     );
   }

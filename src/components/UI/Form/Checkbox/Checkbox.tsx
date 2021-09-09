@@ -8,7 +8,7 @@ export interface CheckboxProps {
   checked?: boolean;
   onChange?: any;
   name: string;
-  value: string;
+  value?: string;
   label?: string;
   form?: any;
 }
