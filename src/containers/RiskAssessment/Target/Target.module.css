@@ -259,3 +259,35 @@ right: 3%;
 .disfield input {
   background-color: #e1e1e1;
 }
+.backToListButton button {
+  background-color: transparent !important;
+  border: 0px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: #f06601  !important;
+  outline: 0 !important;
+  text-transform: unset !important;
+  padding-right: 0px !important;
+  margin-bottom: 3px;
+}
+
+.backToListButton button:hover {
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: #f06601  !important;
+  text-transform: unset !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+}
+
+.backToListButton button span img {
+  width: 14px !important;
+  margin-right: 3px;
+}
+
+.backToListButtonPanel {
+  text-align: right;
+  padding-bottom: 15px;
+}

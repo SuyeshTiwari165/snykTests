@@ -59,7 +59,9 @@ export const RaReportListing: React.FC = (props: any) => {
   //table
 
   const CompnyUserColumns = [
+    { title: "Company Name", field: "clientName" },
     { title: "Target", field: "target" },
+    { title: "Scan Type", field: "scanType" },
     { title: "Status", field: "status" },
   ];
   const AdminColumns = [{ title: "Target", field: "target" },
@@ -301,6 +303,7 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["status"] = element.status;
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
+      obj["clientName"] = element.clientName;
       arr.push(obj);
       }
     });
@@ -315,6 +318,7 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["status"] = element.status;
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
+      obj["clientName"] = element.clientName;
       arr.push(obj);
     });
     }

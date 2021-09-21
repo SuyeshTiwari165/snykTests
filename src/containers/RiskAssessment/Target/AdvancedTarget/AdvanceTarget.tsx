@@ -505,6 +505,24 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           : null}
       </Typography>
       {backdrop ? <SimpleBackdrop/>: null}
+      <Grid container className={styles.backToListButtonPanel}>
+        <Grid item xs={12} md={12} className={styles.backToListButton}>
+          {/* {userRole === "SuperUser" ? ( */}
+          <Button
+            className={styles.BackToButton}
+            variant={"contained"}
+            onClick={handleBack}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            <img
+              src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
+              alt="user icon"
+            />
+            &nbsp; Back to List
+          </Button>
+        </Grid>
+      </Grid>
       <Grid container spacing={3} className={styles.AlertWrap}>
       <Grid item xs={12}>
           {formState.isSuccess ? (
