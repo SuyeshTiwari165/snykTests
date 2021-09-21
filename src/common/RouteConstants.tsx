@@ -5,7 +5,8 @@ export const CLIENT = "/client";
 export const CLIENT_FORM = "/client-form";
 export const CLIENT_FORM_ADD = "/client-form/add";
 export const CLIENT_FORM_EDIT = "/client-form/edit/";
-
+//------------PEN-TEST ROUTES---------------//
+export const PEN_TEST = "/pentest";
 //------------RA ROUTES---------------//
 export const TARGET = "/target";
 export const EXTERNAL_TARGET = "/external-target";
@@ -26,6 +27,4 @@ export const PARTNER_USER_FORM = "/partner-user-form";
 export const PARTNER_USER_FORM_ADD = "/partner-user-form/add";
 export const PARTNER_USER_FORM_EDIT = "/partner-user-form/edit/";
 export const ADMIN_REPORT_STATUS = "/admin-report-status";
-export const ADMIN_VPN_STATUS= "/vpn-status";
-
-
+export const ADMIN_VPN_STATUS = "/vpn-status";
