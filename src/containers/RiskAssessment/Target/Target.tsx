@@ -1932,6 +1932,27 @@ export const Target: React.FC = (props: any) => {
       <RaStepper />
       { taskLoading || backdrop ? <SimpleBackdrop /> : null }
       {targetLoading ? <SimpleBackdrop/>: null}
+      <Grid container className={styles.backToListButtonPanel}>
+        
+        <Grid item xs={12} md={12} className={styles.backToListButton}>
+          {/* {userRole === "SuperUser" ? ( */}
+          <Button
+            className={styles.BackToButton}
+            variant={"contained"}
+            onClick={handleBack}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            <img
+              src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
+              alt="user icon"
+            />
+            &nbsp; Back to List
+          </Button>
+        </Grid>
+      </Grid>
+      {/* <Paper className={styles.paper}> */}
+ 
       <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
@@ -2027,7 +2048,7 @@ export const Target: React.FC = (props: any) => {
         <MuiThemeProvider theme={theme}>
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
-            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)'}</p> <p>
+            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.X.1/24 | 192.168.X.1-255 | 192.168.X.1-27 | 192.168.X.1-192.168.X.3 | 192.168.X.1,192.168.X.3,192.168.X.4)'}</p> <p>
                     <b>For Domain/URL </b>{" "}
                   <em>{"(e.g. domainname.com)"}</em>{" "}
                   </p>{' '}
@@ -2104,7 +2125,7 @@ export const Target: React.FC = (props: any) => {
           </FormControl>
         </Grid>
         {/* <Grid item xs={12} md={6} className={styles.upBtn}> */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}>       
           <form>
           <label className={styles.lawDocument}>VPN Config File </label>
           <span className={styles.UploadTooltip}>
@@ -2163,6 +2184,7 @@ export const Target: React.FC = (props: any) => {
             </Button> */}
           </form>
         </Grid>
+     
         <Grid item xs={12} className={styles.ActionButtons}>
           {/* <Button
             className={styles.borderLess}
@@ -2218,6 +2240,7 @@ export const Target: React.FC = (props: any) => {
           </Button>
         </Grid>
       </Grid>
+    {/* </Paper> */}
     </React.Fragment>
   );
 };
