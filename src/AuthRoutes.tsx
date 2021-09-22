@@ -19,6 +19,7 @@ import TopStepperRoute from "./common/TopStepperRoute";
 import LayoutRoute from "./common/LayoutRoute";
 import AdvanceTarget from "./containers/RiskAssessment/Target/AdvancedTarget/AdvanceTarget";
 import PenTest from "./containers/PenTest/PenTest";
+import Prospects from "./containers/Prospects/Prospects";
 
 const defaultRedirect = () => <Redirect to={routeConstants.CLIENT} />;
 
@@ -102,6 +103,11 @@ export const AuthRoutes = (
       path={routeConstants.RA_REPORT_LISTING}
       exact
       component={RaReportListing}
+    />
+    <LayoutRoute
+      path={routeConstants.VIEW_PROSPECT}
+      exact
+      component={Prospects}
     />
     <Route path="/" render={defaultRedirect} />
   </Switch>
