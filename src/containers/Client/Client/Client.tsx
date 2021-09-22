@@ -49,9 +49,15 @@ import { DELETE_CLIENT } from "../../../graphql/mutations/Clients";
 import Cookies from "js-cookie";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 import ComputerIcon from "@material-ui/icons/Computer";
-import { GET_PROSPECT_CLIENTS, GET_TARGET } from "../../../graphql/queries/Target";
+import {
+  GET_PROSPECT_CLIENTS,
+  GET_TARGET,
+} from "../../../graphql/queries/Target";
 import { RA_REPORT_DOWNLOAD } from "../../../config";
 import { PUBLISH_REPORT } from "../../../graphql/mutations/PublishReport";
+import PublishIcon from "@material-ui/icons/Publish";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { ZIP_FILE } from "../../../graphql/mutations/Upload";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -63,6 +69,8 @@ export const Client: React.FC = (props: any) => {
   const [prospectData, setProspectData] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>({});
+
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partner = Cookies.get("ob_partnerData") || "";
   const user = Cookies.getJSON("ob_user") || "";
@@ -90,11 +98,7 @@ export const Client: React.FC = (props: any) => {
   ];
 
   const ProspectUsercolumns = [
-    { title: "Prospect Name", field: "prospectName" },
-    { title: "Status", field: "status" },
-    { title: "Scan Type", field: "scanType" },
-    // { title: "Phone", field: "phone" },
-    // { title: "Created on", field: "createdOn" }
+    { title: "Company Name", field: "prospectName" },
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -115,7 +119,7 @@ export const Client: React.FC = (props: any) => {
 
   const [deleteClient] = useMutation(DELETE_CLIENT);
   const [publishReport] = useMutation(PUBLISH_REPORT);
-
+  const [uploadFile] = useMutation(ZIP_FILE);
 
   let contactIdArray: any = [];
   const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
@@ -132,38 +136,38 @@ export const Client: React.FC = (props: any) => {
           createTableDataObjectAdmin(data.getClient.edges);
         }
       },
-      onError: error => {
+      onError: (error) => {
         logout()
-      }
+      },
     }
   );
 
-  const [getProsClients, { data: ProspectusClientData, loading: ProspectusClientLoading }] = useLazyQuery(
-    GET_PROSPECT_CLIENTS,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted: (data: any) => {
-        setShowBackdrop(false);
-        // if (userRole === "CompanyUser") {
-          // let partnerdata =  JSON.parse(partner)
-          createProspectTableDataObject(data.getTarget.edges);
-        // }
-        // if (userRole === "SuperUser") {
-          // createTableDataObjectAdmin(data.getClient.edges);
-        // }
-      },
-      onError: error => {
-        logout()
+  const [
+    getProsClients,
+    { data: ProspectusClientData, loading: ProspectusClientLoading },
+  ] = useLazyQuery(GET_PROSPECT_CLIENTS, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data: any) => {
+      setShowBackdrop(false);
+      if (userRole === "CompanyUser") {
+      let partnerdata =  JSON.parse(partner)
+      createProspectTableDataObject(data.getCompanyData[0].data);
       }
-    }
-  );
+      // if (userRole === "SuperUser") {
+      // createTableDataObjectAdmin(data.getClient.edges);
+      // }
+    },
+    onError: (error) => {
+      logout()
+    },
+  });
   const [
     getClientsAndReports,
     { data: ClientReportData, loading: ClientReportLoading },
   ] = useLazyQuery(GET_CLIENT_AND_LATEST_REPORTS, {
     fetchPolicy: "cache-and-network",
     onError: (error) => {
-      // logout();
+      logout();
       // history.push(routeConstant.DASHBOARD);
     },
   });
@@ -215,8 +219,7 @@ export const Client: React.FC = (props: any) => {
           ) {
             console.log(
               "props.location.state",
-              partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
-                .partnerName
+              partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
             );
             getClients({
               variables: {
@@ -224,16 +227,15 @@ export const Client: React.FC = (props: any) => {
                 partnerId_PartnerName:
                   partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
                     .partnerName,
-                client_type: "Client"
+                client_type: "Client",
               },
             });
             getProsClients({
               variables: {
-                // orderBy: "client_name",
-                partner_name:
+                pgPartnerId:
                   partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
-                    .partnerName,
-                client_type: "Prospect"
+                    .id,
+                // client_type: "Prospect"
               },
             });
             getClientsAndReports({
@@ -255,32 +257,26 @@ export const Client: React.FC = (props: any) => {
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.partner_id,
-            client_type: "Client"
+            client_type: "Client",
           },
         });
-        getProsClients({
-          variables: {
-            // orderBy: "client_name",
-            partner_name: props.location.state.partner_id,
-            client_type: "Prospect"
-          },
-        });
+        // getProsClients({
+        //   variables: {
+        //     // orderBy: "client_name",
+        //     pgPartnerId: props.location.state.partner_id,
+        //     // client_type: "Prospect",
+        //   },
+        // });
       }
       if (props.location.state && props.location.state.clientInfo) {
         getClients({
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.clientInfo.partnerId,
-            client_type: "Client"
+            client_type: "Client",
           },
         });
-        getProsClients({
-          variables: {
-            // orderBy: "client_name",
-            partner_name: props.location.state.clientInfo.partnerId,
-            client_type: "Prospect"
-          },
-        });
+
         if (partner != "") {
           let partnerdata = JSON.parse(partner);
           getClientsAndReports({
@@ -298,6 +294,16 @@ export const Client: React.FC = (props: any) => {
         props.location.state.formState
       ) {
         setFormState(props.location.state.formState);
+      }
+      if(userRole != "SuperUser") {
+        let partnerData = JSON.parse(partner)
+         getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            pgPartnerId: partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.id ,
+            // client_type: "Prospect",
+          },
+        });
       }
     } else {
       logout();
@@ -340,29 +346,52 @@ export const Client: React.FC = (props: any) => {
 
   const handlePublishchange = (event: any, rowData: any) => {
     // if (event.target.checked !== undefined) {
-      // setBackdrop(true)
-      publishReport({
-        variables: {
-          input: {
-            client: parseInt(rowData.clientId),
-            targetName: rowData.targetName,
-            flagStatus: true
-          }
-        }
-      }).then((response: any) => {
-        // setBackdrop(false)
+    setShowBackdrop(true);
+    publishReport({
+      variables: {
+        input: {
+          client: parseInt(rowData.clientId),
+          targetName: rowData.targetName,
+          flagStatus: true,
+        },
+      },
+    })
+      .then((response: any) => {
+        setShowBackdrop(false);
         if (
           response.data.publishedReport.success ==
           "Report Published Successfully "
         ) {
-          setFormState(formState => ({
+          setFormState((formState) => ({
             ...formState,
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: "Report Published Successfully !!"
+            errMessage: "Report Published Successfully !!",
           }));
+          // if (
+          //   props.location.state !== null &&
+          //   props.location.state !== undefined &&
+          //   props.location.state.partner_id
+          // ) {
+          //   getProsClients({
+          //     variables: {
+          //       // orderBy: "client_name",
+          //       partner_name: props.location.state.partner_id,
+          //       client_type: "Prospect"
+          //     },
+          //   });
+          // }
+          // if (props.location.state && props.location.state.clientInfo) {
+          //   getProsClients({
+          //     variables: {
+          //       // orderBy: "client_name",
+          //       partner_name: props.location.state.clientInfo.partnerId,
+          //       client_type: "Prospect"
+          //     },
+          //   });
+          // }
           // getReportListingData({
           //   variables: {
           //     clientname: propsClientName,
@@ -375,45 +404,48 @@ export const Client: React.FC = (props: any) => {
           //     clientname: propsClientName,
           //   },
           // });
-          setFormState(formState => ({
+          setFormState((formState) => ({
             ...formState,
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Report Un-Published Successfully !!"
+            errMessage: " Report Un-Published Successfully !!",
           }));
         }
-      }).catch((err: any) => {
-        // setBackdrop(false)
-          let error = err.message;
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
       })
+      .catch((err: any) => {
+        setShowBackdrop(false);
+        let error = err.message;
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
   };
   const createProspectTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
-      // if(element.node.subscription === "Yes") {
       let obj: any = {};
-      // obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
-      obj["prospectName"] = element.node.client.clientName;
-      obj["clientId"] = element.node.client.id;
-      obj["targetId"] = element.node.id !== 0 ? element.node.id : null;
+      obj["prospectName"] = element.clientName;
+      obj["clientId"] = element.clientId;
+      obj["external"] = element.external;
+      obj["pentest"] = element.pentest;
 
-      obj["scanType"] = element.node.scanType;
-      obj["status"] = element.node.targetStatus.name
-      obj["publish"] = element.node.publishedFlag == "Unpublished" ? false : true;
-      obj["targetName"] = element.node.targetName;
+      // obj["targetId"] = element.node.id !== 0 ? element.node.id : null;
+
+      // obj["scanType"] = element.node.scanType;
+      // obj["status"] = element.node.targetStatus.name;
+      // obj["publish"] =
+      //   element.node.publishedFlag == "Unpublished" ? false : true;
+      // obj["targetName"] = element.node.targetName;
       arr.push(obj);
     });
-    setProspectData(arr)
+    setProspectData(arr);
   };
 
   const createTableDataObject = (data: any) => {
@@ -520,115 +552,12 @@ export const Client: React.FC = (props: any) => {
       });
   };
 
-  // const handleClickOpen = (rowData: any) => {
-  //   history.push(routeConstant.CLIENT_FORM_ADD);
-  // };
-
-  // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
-  // if (iError) {
-  //   let error = { message: "Error" };
-  //   return (
-  //     <div className="error">
-  //       Error!
-  //       {logout()}
-  //     </div>
-  //   )
-  // }
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.name === "Name") {
-  //     setName(event.target.value);
-  //     let err = event.target.value === "" || null ? "Required" : "";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       name: err
-  //     }));
-  //   }
-  //   if (event.target.name === "email") {
-  //     setEmail(event.target.value);
-  //     // let err = event.target.value === "" || null ? "Required" : "";
-  //     // setIsError((error: any) => ({
-  //     //   ...error,
-  //     //   email: err,
-  //     // }));
-  //     //  if (!err) {
-  //     if (
-  //       event.target.value &&
-  //       !validations.EMAIL_REGEX.test(event.target.value)
-  //     ) {
-  //       let errors = "Please enter valid email address.";
-  //       setIsError((error: any) => ({
-  //         ...error,
-  //         email: errors
-  //       }));
-  //     } else {
-  //       setIsError({ error: null });
-  //     }
-  //     // }
-  //   }
-  //   if (event.target.name === "phoneNumber") {
-  //     setPhoneNumber(event.target.value);
-  //     // let err = event.target.value === "" || null ? "Required" : "";
-  //     // setIsError((error: any) => ({
-  //     //   ...error,
-  //     //   phoneNumber: err,
-  //     // }));
-  //     // if (!err) {
-  //     //   if (phoneNumber.length < 9 ) {
-  //     //     let errors = "Please enter valid Phone no.";
-  //     //     setIsError((error: any) => ({
-  //     //       ...error,
-  //     //       phoneNumber: errors,
-  //     //     }));
-  //     //   }
-  //     // }
-  //   }
-  //   setSubmitDisabled(checkValidation);
-  // };
-
-  const checkValidation = () => {
-    let validation = false;
-    // if (isError.name !== "") {
-    //   validation = true;
-    // }
-    return validation;
-  };
-  // const handleInputErrors = () => {
-  //   let foundErrors = false;
-  //   if (!name) {
-  //     let err = "Name is Required";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       name: err
-  //     }));
-  //     foundErrors = true;
-  //   }
-  //   // if(!email) {
-  //   //   let errors = "Required";
-  //   //   setIsError((error: any) => ({
-  //   //     ...error,
-  //   //     email: errors,
-  //   //   }));
-  //   //   foundErrors = true;
-  //   // }
-  //   if (email && !validations.EMAIL_REGEX.test(email)) {
-  //     let errors = "Please enter valid email address.";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       email: errors
-  //     }));
-  //     foundErrors = true;
-  //   }
-
-  //   return foundErrors;
-  // };
-
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     handleAlertClose();
     let data: any = { clientInfo: rowData, partnerId: partner };
     if (param === "RA") {
       // setShowBackdrop(true)
-      if (Cookies.getJSON('ob_session')) {
+      if (Cookies.getJSON("ob_session")) {
         history.push(routeConstant.RA_REPORT_LISTING, data);
       } else {
         logout();
@@ -653,7 +582,7 @@ export const Client: React.FC = (props: any) => {
         let data = { clientInfo: rowData };
         history.push(routeConstant.EXTERNAL_TARGET, data);
       } else {
-        // logout();
+        logout();
       }
     }
     if (param === "penTest") {
@@ -661,28 +590,46 @@ export const Client: React.FC = (props: any) => {
         let data = { clientInfo: rowData };
         history.push(routeConstant.PEN_TEST, data);
       } else {
-        // logout();
+        logout();
       }
     }
+    if (param === "ViewExternal") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData ,type: "External"};
+        history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "viewPenTest") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData ,type: "PenTest"};
+        history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
- const handleDownload = (rowData: any) => {
+  const handleDownload = (rowData: any) => {
     handleAlertClose();
     if (Cookies.getJSON("ob_session")) {
-      // setBackdrop(true)
+      setShowBackdrop(true);
       let intTargetId = parseInt(rowData.targetId);
       const DocUrl =
         RA_REPORT_DOWNLOAD + "?cid=" + rowData.clientId + "&tid=" + intTargetId;
       fetch(DocUrl, {
-        method: "GET"
-      }).then((response: any) => {
-        response.blob().then((blobData: any) => {
-          saveAs(blobData, rowData.target);
-          // setBackdrop(false)
-        });
+        method: "GET",
       })
+        .then((response: any) => {
+          response.blob().then((blobData: any) => {
+            saveAs(blobData, rowData.target);
+            setShowBackdrop(false);
+          });
+        })
         .catch((err) => {
-          // setBackdrop(false);
+          setShowBackdrop(false);
           let error = err.message;
           setFormState((formState) => ({
             ...formState,
@@ -697,7 +644,73 @@ export const Client: React.FC = (props: any) => {
       logout();
     }
   };
-
+  const handleUpload = (rowData: any) => {
+    if (selectedFile[rowData.targetId]) {
+      setShowBackdrop(true);
+      let idCardBase64 = "";
+      getBase64(selectedFile[rowData.targetId], (result: any) => {
+        idCardBase64 = result;
+        var res = result.slice(result.indexOf(",") + 1);
+        uploadFile({
+          variables: {
+            input: {
+              client: parseInt(props.location.state.clientInfo.clientId),
+              targetName: rowData.target,
+              file: res,
+            },
+          },
+        })
+          .then((response: any) => {
+            if (response.data.uploadZipFile.success == "File Uploaded Failed") {
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " File Upload Failed.",
+              }));
+              setSelectedFile({});
+              setShowBackdrop(false);
+            } else {
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "File Uploaded Successfully !!",
+              }));
+              setSelectedFile({});
+              setShowBackdrop(false);
+            }
+          })
+          .catch((error: Error) => {
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "",
+            }));
+            setShowBackdrop(false);
+          });
+      });
+    }
+  };
+  const getBase64 = (file: any, cb: any) => {
+    let reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        cb(reader.result);
+      };
+      reader.onerror = function (error) {
+        console.log("Error: ", error);
+      };
+    }
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -748,79 +761,79 @@ export const Client: React.FC = (props: any) => {
             </Grid>
           ) : null} */}
         </Grid>
+        {formState.isSuccess ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            Client<strong>{formState.errMessage}</strong>
+            {SUCCESS}
+          </Alert>
+        ) : null}
+        {formState.isUpdate ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            Client<strong>{formState.errMessage}</strong>
+            {UPDATE}
+          </Alert>
+        ) : null}
+        {formState.isFailed ? (
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {FAILED}
+            <strong>{formState.errMessage}</strong>
+          </Alert>
+        ) : null}
+        {formState.isDelete ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            <strong>{formState.errMessage}</strong>
+            {DELETE}
+          </Alert>
+        ) : null}
         <Paper className={styles.paper}>
-          {formState.isSuccess ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              Client<strong>{formState.errMessage}</strong>
-              {SUCCESS}
-            </Alert>
-          ) : null}
-          {formState.isUpdate ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              Client<strong>{formState.errMessage}</strong>
-              {UPDATE}
-            </Alert>
-          ) : null}
-          {formState.isFailed ? (
-            <Alert
-              severity="error"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              {FAILED}
-              <strong>{formState.errMessage}</strong>
-            </Alert>
-          ) : null}
-          {formState.isDelete ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              <strong>{formState.errMessage}</strong>
-              {DELETE}
-            </Alert>
-          ) : null}
           <div className={styles.ScrollTable}>
             {newData.length !== 0 ? (
               <MaterialTable
@@ -918,53 +931,47 @@ export const Client: React.FC = (props: any) => {
             ) : null}
           </div>
         </Paper>
-        <Typography component="h5" variant="h1">Prospects</Typography>
+        <Typography component="h5" variant="h1">
+          Prospects
+        </Typography>
         <Paper className={styles.paper}>
           <div className={styles.ScrollTable}>
-            {prospectData.length !== 0 ?
+            {prospectData.length !== 0 ? (
               <MaterialTable
                 columns={ProspectUsercolumns}
                 data={prospectData}
                 actions={[
                   (rowData: any) =>
-                    rowData.status == "Report Generated"
+                      rowData.pentest && userRole != "SuperUser"
                       ? {
-                        // disabled: rowData.status !== "Done",
-                        icon: () => <GetAppIcon />,
-                        tooltip: "Download",
-                        onClick: (event: any, rowData: any) => {
-                          handleDownload(rowData);
+                          icon: () => <ComputerIcon />,
+                          tooltip: "Pen Test",
+                          onClick: (event: any, rowData: any, oldData: any) => {
+                            onRowClick(event, rowData, oldData, "viewPenTest");
+                          },
+                        }
+                      : null,
+                      (rowData: any) =>
+                      rowData.external && userRole != "SuperUser"
+                      ?  {
+                        icon: () => (
+                          <AddCircleIcon className={styles.CircleIcon} />
+                        ),
+                        // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
+                        tooltip: "View External Vulnerability Test",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "ViewExternal");
                         },
                       }
                       : null,
-                      userRole === "SuperUser" ? 
-                      (rowData: any) => ({
-                        icon: () => (
-                          <div>
-                            <div className={styles.raswitch}>
-                              <Button
-                                color="primary"
-                                variant={"contained"}
-                                data-testid="ok-button"
-                                className={styles.PublishButton}
-                                disabled={rowData.publish || rowData.status != 'Generating Report'}
-                              >
-                                Publish
-                              </Button>
-                            </div>
-                          </div>
-                        ),
-                        name: "Publish",
-                        disabled: rowData.publish || rowData.status != 'Generating Report',
-                        onClick: (event: any, rowData: any) => {
-                          handlePublishchange(event, rowData);
-                        },
-                      }) : null
+
+
+
                 ]}
                 options={{
                   headerStyle: {
-                    background: 'linear-gradient(#fef9f5,#fef9f5)',
-                    whiteSpace: 'nowrap'
+                    background: "linear-gradient(#fef9f5,#fef9f5)",
+                    whiteSpace: "nowrap",
                   },
 
                   thirdSortClick: false,
@@ -975,15 +982,14 @@ export const Client: React.FC = (props: any) => {
                   filter: true,
                   draggable: false,
                   pageSize: 25,
-                  pageSizeOptions: [25, 50, 75, 100] // rows selection options
+                  pageSizeOptions: [25, 50, 75, 100], // rows selection options
                 }}
               />
-              : (!showBackdrop ?
-                (<Typography component="h5" variant="h3">
-                  You don't have any Prospectus for OB360
-                </Typography>)
-                : null)
-            }
+            ) : !showBackdrop ? (
+              <Typography component="h5" variant="h3">
+                You don't have any Prospects for OB360
+              </Typography>
+            ) : null}
           </div>
         </Paper>
       </Grid>

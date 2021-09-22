@@ -112,3 +112,29 @@ export const GET_REPORT_LISTING_STATUS = gql`
     }
   }
 `;
+export const GET_TARGET_STATUS_BY_TYPE = gql`
+query getTarget($client_name:String,$client_type:String,$scan_type:String){
+  getTarget(client_ClientName:$client_name,
+    client_ClientType:$client_type,scanType:$scan_type)
+  {
+    edges{
+      node{
+        vatTargetId
+        id
+        targetName
+        host
+        targetStatus{
+          id
+          name
+        }
+        scanType
+        client{
+          id
+          clientName
+
+        }
+      }
+    }
+  }
+}
+`;

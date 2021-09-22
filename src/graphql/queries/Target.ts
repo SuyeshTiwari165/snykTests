@@ -67,27 +67,13 @@ query ($vpnConnectFlag : String){
 `
 
 export const GET_PROSPECT_CLIENTS = gql `
-query getTarget($partner_name:String,$client_type:String){
-  getTarget(partner_PartnerName:$partner_name,
-    client_ClientType:$client_type)
-  {
-    edges{
-      node{
-        id
-        targetName
-        publishedFlag
-        targetStatus{
-          id
-          name
-        }
-        scanType
-        client{
-          id
-          clientName
-          clientType
-        }
-      }
-    }
-  }
+query getCompanyData($pgPartnerId:Int!){
+  getCompanyData(partnerId:$pgPartnerId){
+data{
+ clientName
+ external
+ pentest
+ clientId
 }
+ }}
 `
