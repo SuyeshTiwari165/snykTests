@@ -49,6 +49,9 @@ import { DELETE_CLIENT } from "../../../graphql/mutations/Clients";
 import Cookies from "js-cookie";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
 import ComputerIcon from "@material-ui/icons/Computer";
+import { GET_PROSPECT_CLIENTS, GET_TARGET } from "../../../graphql/queries/Target";
+import { RA_REPORT_DOWNLOAD } from "../../../config";
+import { PUBLISH_REPORT } from "../../../graphql/mutations/PublishReport";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -57,6 +60,7 @@ export const Client: React.FC = (props: any) => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [newData, setNewData] = useState([]);
+  const [prospectData, setProspectData] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
@@ -85,6 +89,14 @@ export const Client: React.FC = (props: any) => {
     // { title: "Created on", field: "createdOn" }
   ];
 
+  const ProspectUsercolumns = [
+    { title: "Prospect Name", field: "prospectName" },
+    { title: "Status", field: "status" },
+    { title: "Scan Type", field: "scanType" },
+    // { title: "Phone", field: "phone" },
+    // { title: "Created on", field: "createdOn" }
+  ];
+
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
 
   const [isError, setIsError] = useState<any>({
@@ -102,6 +114,8 @@ export const Client: React.FC = (props: any) => {
   });
 
   const [deleteClient] = useMutation(DELETE_CLIENT);
+  const [publishReport] = useMutation(PUBLISH_REPORT);
+
 
   let contactIdArray: any = [];
   const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
@@ -118,10 +132,29 @@ export const Client: React.FC = (props: any) => {
           createTableDataObjectAdmin(data.getClient.edges);
         }
       },
-      onError: (error) => {
-        // logout();
-        // history.push(routeConstant.DASHBOARD);
+      onError: error => {
+        logout()
+      }
+    }
+  );
+
+  const [getProsClients, { data: ProspectusClientData, loading: ProspectusClientLoading }] = useLazyQuery(
+    GET_PROSPECT_CLIENTS,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data: any) => {
+        setShowBackdrop(false);
+        // if (userRole === "CompanyUser") {
+          // let partnerdata =  JSON.parse(partner)
+          createProspectTableDataObject(data.getTarget.edges);
+        // }
+        // if (userRole === "SuperUser") {
+          // createTableDataObjectAdmin(data.getClient.edges);
+        // }
       },
+      onError: error => {
+        logout()
+      }
     }
   );
   const [
@@ -171,9 +204,7 @@ export const Client: React.FC = (props: any) => {
     if (Cookies.getJSON("ob_session")) {
       if (
         props.location.state == null ||
-        (props.location.state?.clientInfo == undefined &&
-          partner !== null &&
-          user !== null)
+        (props.location.state == undefined && partner !== null && user !== null)
       ) {
         let partnerdata = JSON.parse(partner);
         if (partnerdata.data != null) {
@@ -193,6 +224,16 @@ export const Client: React.FC = (props: any) => {
                 partnerId_PartnerName:
                   partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
                     .partnerName,
+                client_type: "Client"
+              },
+            });
+            getProsClients({
+              variables: {
+                // orderBy: "client_name",
+                partner_name:
+                  partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
+                    .partnerName,
+                client_type: "Prospect"
               },
             });
             getClientsAndReports({
@@ -214,6 +255,14 @@ export const Client: React.FC = (props: any) => {
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.partner_id,
+            client_type: "Client"
+          },
+        });
+        getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            partner_name: props.location.state.partner_id,
+            client_type: "Prospect"
           },
         });
       }
@@ -222,6 +271,14 @@ export const Client: React.FC = (props: any) => {
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.clientInfo.partnerId,
+            client_type: "Client"
+          },
+        });
+        getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            partner_name: props.location.state.clientInfo.partnerId,
+            client_type: "Prospect"
           },
         });
         if (partner != "") {
@@ -243,7 +300,7 @@ export const Client: React.FC = (props: any) => {
         setFormState(props.location.state.formState);
       }
     } else {
-      // logout();
+      logout();
     }
   }, []);
 
@@ -279,6 +336,84 @@ export const Client: React.FC = (props: any) => {
     });
 
     setNewData(arr);
+  };
+
+  const handlePublishchange = (event: any, rowData: any) => {
+    // if (event.target.checked !== undefined) {
+      // setBackdrop(true)
+      publishReport({
+        variables: {
+          input: {
+            client: parseInt(rowData.clientId),
+            targetName: rowData.targetName,
+            flagStatus: true
+          }
+        }
+      }).then((response: any) => {
+        // setBackdrop(false)
+        if (
+          response.data.publishedReport.success ==
+          "Report Published Successfully "
+        ) {
+          setFormState(formState => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "Report Published Successfully !!"
+          }));
+          // getReportListingData({
+          //   variables: {
+          //     clientname: propsClientName,
+          //   },
+          // });
+          // setSelectedFile({});
+        } else {
+          // getReportListingData({
+          //   variables: {
+          //     clientname: propsClientName,
+          //   },
+          // });
+          setFormState(formState => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: " Report Un-Published Successfully !!"
+          }));
+        }
+      }).catch((err: any) => {
+        // setBackdrop(false)
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+      })
+  };
+  const createProspectTableDataObject = (data: any) => {
+    let arr: any = [];
+    data.map((element: any) => {
+      // if(element.node.subscription === "Yes") {
+      let obj: any = {};
+      // obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
+      obj["prospectName"] = element.node.client.clientName;
+      obj["clientId"] = element.node.client.id;
+      obj["targetId"] = element.node.id !== 0 ? element.node.id : null;
+
+      obj["scanType"] = element.node.scanType;
+      obj["status"] = element.node.targetStatus.name
+      obj["publish"] = element.node.publishedFlag == "Unpublished" ? false : true;
+      obj["targetName"] = element.node.targetName;
+      arr.push(obj);
+    });
+    setProspectData(arr)
   };
 
   const createTableDataObject = (data: any) => {
@@ -493,10 +628,10 @@ export const Client: React.FC = (props: any) => {
     let data: any = { clientInfo: rowData, partnerId: partner };
     if (param === "RA") {
       // setShowBackdrop(true)
-      if (Cookies.getJSON("ob_session")) {
+      if (Cookies.getJSON('ob_session')) {
         history.push(routeConstant.RA_REPORT_LISTING, data);
       } else {
-        // logout();
+        logout();
       }
     }
     if (param === "Edit") {
@@ -510,7 +645,7 @@ export const Client: React.FC = (props: any) => {
         let data = { clientInfo: rowData };
         history.push(routeConstant.TARGET, data);
       } else {
-        // logout();
+        logout();
       }
     }
     if (param === "AddExternal") {
@@ -531,6 +666,37 @@ export const Client: React.FC = (props: any) => {
     }
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
+ const handleDownload = (rowData: any) => {
+    handleAlertClose();
+    if (Cookies.getJSON("ob_session")) {
+      // setBackdrop(true)
+      let intTargetId = parseInt(rowData.targetId);
+      const DocUrl =
+        RA_REPORT_DOWNLOAD + "?cid=" + rowData.clientId + "&tid=" + intTargetId;
+      fetch(DocUrl, {
+        method: "GET"
+      }).then((response: any) => {
+        response.blob().then((blobData: any) => {
+          saveAs(blobData, rowData.target);
+          // setBackdrop(false)
+        });
+      })
+        .catch((err) => {
+          // setBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    } else {
+      logout();
+    }
+  };
 
   return (
     <React.Fragment>
@@ -750,6 +916,74 @@ export const Client: React.FC = (props: any) => {
                 You don't have any client subscribed for OB360
               </Typography>
             ) : null}
+          </div>
+        </Paper>
+        <Typography component="h5" variant="h1">Prospects</Typography>
+        <Paper className={styles.paper}>
+          <div className={styles.ScrollTable}>
+            {prospectData.length !== 0 ?
+              <MaterialTable
+                columns={ProspectUsercolumns}
+                data={prospectData}
+                actions={[
+                  (rowData: any) =>
+                    rowData.status == "Report Generated"
+                      ? {
+                        // disabled: rowData.status !== "Done",
+                        icon: () => <GetAppIcon />,
+                        tooltip: "Download",
+                        onClick: (event: any, rowData: any) => {
+                          handleDownload(rowData);
+                        },
+                      }
+                      : null,
+                      userRole === "SuperUser" ? 
+                      (rowData: any) => ({
+                        icon: () => (
+                          <div>
+                            <div className={styles.raswitch}>
+                              <Button
+                                color="primary"
+                                variant={"contained"}
+                                data-testid="ok-button"
+                                className={styles.PublishButton}
+                                disabled={rowData.publish || rowData.status != 'Generating Report'}
+                              >
+                                Publish
+                              </Button>
+                            </div>
+                          </div>
+                        ),
+                        name: "Publish",
+                        disabled: rowData.publish || rowData.status != 'Generating Report',
+                        onClick: (event: any, rowData: any) => {
+                          handlePublishchange(event, rowData);
+                        },
+                      }) : null
+                ]}
+                options={{
+                  headerStyle: {
+                    background: 'linear-gradient(#fef9f5,#fef9f5)',
+                    whiteSpace: 'nowrap'
+                  },
+
+                  thirdSortClick: false,
+                  actionsColumnIndex: -1,
+                  paging: true,
+                  sorting: true,
+                  search: false,
+                  filter: true,
+                  draggable: false,
+                  pageSize: 25,
+                  pageSizeOptions: [25, 50, 75, 100] // rows selection options
+                }}
+              />
+              : (!showBackdrop ?
+                (<Typography component="h5" variant="h3">
+                  You don't have any Prospectus for OB360
+                </Typography>)
+                : null)
+            }
           </div>
         </Paper>
       </Grid>
