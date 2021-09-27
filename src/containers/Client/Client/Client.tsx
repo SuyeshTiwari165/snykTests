@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Client.module.css";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-import { Button } from "../../../components/UI/Form/Button/Button";
+  import { Button } from "../../../components/UI/Form/Button/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { AddEditForm } from "../../../components/UI/AddEditForm/AddEditForm";
 import Input from "../../../components/UI/Form/Input/Input";
@@ -58,6 +58,7 @@ import { PUBLISH_REPORT } from "../../../graphql/mutations/PublishReport";
 import PublishIcon from "@material-ui/icons/Publish";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { ZIP_FILE } from "../../../graphql/mutations/Upload";
+import PenTest from "../../PenTest/PenTest";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -98,7 +99,7 @@ export const Client: React.FC = (props: any) => {
   ];
 
   const ProspectUsercolumns = [
-    { title: "Company Name", field: "prospectName" },
+    { title: "Company Name", field: "client" },
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -149,16 +150,16 @@ export const Client: React.FC = (props: any) => {
     fetchPolicy: "cache-and-network",
     onCompleted: (data: any) => {
       setShowBackdrop(false);
-      if (userRole === "CompanyUser") {
-      let partnerdata =  JSON.parse(partner)
+      // if (userRole === "CompanyUser") {
+      // let partnerdata =  JSON.parse(partner)
       createProspectTableDataObject(data.getCompanyData[0].data);
-      }
+      // }
       // if (userRole === "SuperUser") {
       // createTableDataObjectAdmin(data.getClient.edges);
       // }
     },
     onError: (error) => {
-      logout()
+      // logout()
     },
   });
   const [
@@ -217,10 +218,6 @@ export const Client: React.FC = (props: any) => {
               "partnerId"
             )
           ) {
-            console.log(
-              "props.location.state",
-              partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
-            );
             getClients({
               variables: {
                 orderBy: "client_name",
@@ -301,6 +298,16 @@ export const Client: React.FC = (props: any) => {
           variables: {
             // orderBy: "client_name",
             pgPartnerId: partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.id ,
+            // client_type: "Prospect",
+          },
+        });
+      }
+      if(userRole === "SuperUser") {
+        let partnerData =props.location.state.id;
+        getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            pgPartnerId: props.location.state.id ,
             // client_type: "Prospect",
           },
         });
@@ -431,7 +438,7 @@ export const Client: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any) => {
       let obj: any = {};
-      obj["prospectName"] = element.clientName;
+      obj["client"] = element.clientName;
       obj["clientId"] = element.clientId;
       obj["external"] = element.external;
       obj["pentest"] = element.pentest;
@@ -585,7 +592,7 @@ export const Client: React.FC = (props: any) => {
         logout();
       }
     }
-    if (param === "penTest") {
+    if (param === "pentest") {
       if (Cookies.getJSON("ob_session")) {
         let data = { clientInfo: rowData };
         history.push(routeConstant.PEN_TEST, data);
@@ -603,7 +610,7 @@ export const Client: React.FC = (props: any) => {
     }
     if (param === "viewPenTest") {
       if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData ,type: "PenTest"};
+        let data = { clientInfo: rowData ,type: "Pentest"};
         history.push(routeConstant.VIEW_PROSPECT, data);
       } else {
         logout();
@@ -719,7 +726,7 @@ export const Client: React.FC = (props: any) => {
         Clients
       </Typography>
       <Grid>
-        {showBackdrop ? <SimpleBackdrop /> : null}
+        {/* {showBackdrop ? <SimpleBackdrop /> : null} */}
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
@@ -834,6 +841,7 @@ export const Client: React.FC = (props: any) => {
           </Alert>
         ) : null}
         <Paper className={styles.paper}>
+        {ipLoading ? <SimpleBackdrop /> : null}
           <div className={styles.ScrollTable}>
             {newData.length !== 0 ? (
               <MaterialTable
@@ -863,7 +871,7 @@ export const Client: React.FC = (props: any) => {
                         icon: () => <ComputerIcon />,
                         tooltip: "Pen Test",
                         onClick: (event: any, rowData: any, oldData: any) => {
-                          onRowClick(event, rowData, oldData, "penTest");
+                          onRowClick(event, rowData, oldData, "pentest");
                         },
                       }
                     : null,
@@ -924,7 +932,7 @@ export const Client: React.FC = (props: any) => {
                   pageSizeOptions: [25, 50, 75, 100], // rows selection options
                 }}
               />
-            ) : !showBackdrop ? (
+            ) : !showBackdrop || !ipLoading  ? (
               <Typography component="h5" variant="h3">
                 You don't have any client subscribed for OB360
               </Typography>
@@ -935,6 +943,7 @@ export const Client: React.FC = (props: any) => {
           Prospects
         </Typography>
         <Paper className={styles.paper}>
+        {ProspectusClientLoading ? <SimpleBackdrop /> : null}
           <div className={styles.ScrollTable}>
             {prospectData.length !== 0 ? (
               <MaterialTable
@@ -942,31 +951,34 @@ export const Client: React.FC = (props: any) => {
                 data={prospectData}
                 actions={[
                   (rowData: any) =>
-                      rowData.pentest && userRole != "SuperUser"
+                      rowData.pentest 
                       ? {
-                          icon: () => <ComputerIcon />,
-                          tooltip: "Pen Test",
+                          icon: () => 
+                          // "OB360 Pen",
+                          <Typography component="h6" variant="h4">
+                          OB360 PENTEST {rowData.external ? "|" : null}
+                      </Typography>,
+                          // tooltip: "Pen Test",
                           onClick: (event: any, rowData: any, oldData: any) => {
                             onRowClick(event, rowData, oldData, "viewPenTest");
                           },
                         }
                       : null,
                       (rowData: any) =>
-                      rowData.external && userRole != "SuperUser"
+                      rowData.external
                       ?  {
-                        icon: () => (
-                          <AddCircleIcon className={styles.CircleIcon} />
-                        ),
+                        icon: () => 
+                        // <div className={styles.Pen}>OB360 Vulnerability</div>,
+                      <Typography component="h6" variant="h4">
+                       OB360 VULNERABILITY TEST
+                      </Typography>,
                         // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
-                        tooltip: "View External Vulnerability Test",
+                        // tooltip: "View External Vulnerability Test",
                         onClick: (event: any, rowData: any, oldData: any) => {
                           onRowClick(event, rowData, oldData, "ViewExternal");
                         },
                       }
                       : null,
-
-
-
                 ]}
                 options={{
                   headerStyle: {
@@ -985,7 +997,7 @@ export const Client: React.FC = (props: any) => {
                   pageSizeOptions: [25, 50, 75, 100], // rows selection options
                 }}
               />
-            ) : !showBackdrop ? (
+            ) : !showBackdrop  || !ProspectusClientLoading ? (
               <Typography component="h5" variant="h3">
                 You don't have any Prospects for OB360
               </Typography>

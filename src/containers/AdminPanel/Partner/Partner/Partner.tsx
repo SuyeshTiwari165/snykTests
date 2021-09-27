@@ -111,6 +111,7 @@ export const Partner: React.FC = (props: any) => {
     let arr: any = [];
     data.map((element: any, index: any) => {
       let obj: any = {};
+      obj["id"] = element.node.id;
       obj["partner_id"] = element.node.partnerName;
       obj["name"] = element.node.partnerName;
       obj["email"] = element.node.emailId;
@@ -144,7 +145,6 @@ export const Partner: React.FC = (props: any) => {
   };
 
   const handleClickClient = (rowData: any) => {
-    console.log("REDIRECTING !!!!!!")
     history.push(routeConstant.CLIENT, rowData);
   };
 
@@ -160,7 +160,6 @@ export const Partner: React.FC = (props: any) => {
     }
   };
   const handleClickDelete = (event: any, rowData: any) => {
-    console.log("RowData",rowData);
     setShowBackdrop(true);
     deletePartner({
       variables: {
@@ -169,7 +168,6 @@ export const Partner: React.FC = (props: any) => {
     }).then((res: any) => {
       setShowBackdrop(false);
       refetch()
-      console.log("RES",res.data.deletePartner.status);
       if(res.data.deletePartner.status === "Partner is deleted") {
       setFormState((formState) => ({
         ...formState,

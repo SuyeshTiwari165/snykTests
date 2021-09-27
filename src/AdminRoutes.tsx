@@ -14,6 +14,7 @@ import Target from "./containers/RiskAssessment/Target/Target";
 import TaskDetails from "./containers/RiskAssessment/TaskDetails/TaskDetails";
 import RaReportListing from "./containers/RiskAssessment/RaReportListing/RaReportListing";
 import VpnStatus from "./containers/AdminPanel/VpnStatus/VpnStatus";
+import { Prospects } from "./containers/Prospects/Prospects";
 
 const defaultRedirect = () => <Redirect to="/admin-dashboard" />;
 export const AdminRoutes = (
@@ -54,6 +55,11 @@ export const AdminRoutes = (
       path={routeConstants.PARTNER_USER}
       exact
       component={PartnerUser}
+    />
+    <LayoutRoute
+      path={routeConstants.VIEW_PROSPECT}
+      exact
+      component={Prospects}
     />
     <LayoutRoute path={routeConstants.LOGOUT_URL} exact component={Logout} />
     <Route path="/" render={defaultRedirect} />
