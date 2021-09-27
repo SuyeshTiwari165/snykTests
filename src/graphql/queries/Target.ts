@@ -77,3 +77,14 @@ data{
 }
  }}
 `
+export const GET_ALL_PROSPECT_CLIENTS = gql `
+query getCompanyData($pgPartnerId:Int){
+  getCompanyData(partnerId:$pgPartnerId){
+data{
+ clientName
+ external
+ pentest
+ clientId
+}
+ }}
+`
