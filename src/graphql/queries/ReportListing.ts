@@ -109,6 +109,9 @@ export const GET_REPORT_LISTING_STATUS = gql`
       scanType
       status
       publishedFlag
+      clientType
+      external
+      pentest
     }
   }
 `;
@@ -121,6 +124,7 @@ query getTarget($client_name:String,$client_type:String,$scan_type:String){
       node{
         vatTargetId
         id
+        publishedFlag
         targetName
         host
         targetStatus{

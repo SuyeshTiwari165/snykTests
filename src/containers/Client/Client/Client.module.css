@@ -187,3 +187,7 @@ table > tbody > tr > td > div {
   color: #fff !important;
   background-color: rgb(0, 56, 117) !important;
 }
+.pen {
+  font-size: 16px;
+  font-weight: bolder;
+}
