@@ -26,6 +26,7 @@ import Loading from "../../../components/UI/Layout/Loading/Loading";
 import logout from "../../../containers/Auth/Logout/Logout";
 import { GET_REPORT_LISTING,GET_REPORT_LISTING_STATUS } from "../../../graphql/queries/ReportListing";
 import Cookies from "js-cookie";
+import { GET_ALL_PROSPECT_CLIENTS } from "../../../graphql/queries/Target";
 
 export const Dashboard: React.FC = (props: any) => {
   const [partnerCount, setPartnerCount] = useState();
@@ -56,7 +57,18 @@ export const Dashboard: React.FC = (props: any) => {
           createTableDataObject(data.getTargetStatus);
         },
         onError: error => {
-           logout()
+          //  logout()
+          // history.push(routeConstant.DASHBOARD);
+        }
+      });
+
+      const{ data: ProspectusClientData, loading: ProspectusClientLoading  } = useQuery(GET_ALL_PROSPECT_CLIENTS, {
+        fetchPolicy: "cache-and-network",
+        onCompleted:(data)=>{
+          createProspectTableDataObject(data.getCompanyData[0].data);
+        },
+        onError: error => {
+          //  logout()
           // history.push(routeConstant.DASHBOARD);
         }
       });
@@ -76,7 +88,7 @@ export const Dashboard: React.FC = (props: any) => {
       },
       fetchPolicy: "cache-and-network",
       onError:()=>{
-        logout()
+        // logout()
       }
     }
   );
@@ -95,10 +107,10 @@ export const Dashboard: React.FC = (props: any) => {
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
-    let prosarr : any = [];
+    // let prosarr : any = [];
     data.map((element: any, index: any) => {
       let obj: any = {};
-      let obj2 :any = {}
+      // let obj2 :any = {}
       if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished" && element.clientType === "Client") {
       obj["client"] = element.clientName;
       obj["target"] = element.targetName;
@@ -109,24 +121,62 @@ export const Dashboard: React.FC = (props: any) => {
       obj["startDate"] = element.startDate;
       arr.push(obj);
       }
-      if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished" && element.clientType === "Prospect") {
-        obj2["client"] = element.clientName;
-        obj2["target"] = element.targetName;
-        obj2["targetId"] = element.targetId;
-        obj2["clientId"] = element.clientId;
-        obj2["status"] = element.status;
-        obj2["publishedFlag"] = element.publishedFlag;
-        obj2["startDate"] = element.startDate;
-        obj2["external"] = element.external;
-        obj2["pentest"] = element.pentest;
-        prosarr.push(obj2);
-        }
+      // if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished" && element.clientType === "Prospect") {
+      //   obj2["client"] = element.clientName;
+      //   obj2["target"] = element.targetName;
+      //   obj2["targetId"] = element.targetId;
+      //   obj2["clientId"] = element.clientId;
+      //   obj2["status"] = element.status;
+      //   obj2["publishedFlag"] = element.publishedFlag;
+      //   obj2["startDate"] = element.startDate;
+      //   obj2["external"] = element.external;
+      //   obj2["pentest"] = element.pentest;
+      //   prosarr.push(obj2);
+      //   }
     });
     // setNewData(arr.slice(0, 5));
     let pp = arr.filter( (ele :any , ind:any) => ind === arr.findIndex( (elem : any) => elem.client === ele.client ))
-    let pp2 = prosarr.filter( (ele :any , ind:any) => ind === prosarr.findIndex( (elem : any) => elem.client === ele.client ))
+    // let pp2 = prosarr.filter( (ele :any , ind:any) => ind === prosarr.findIndex( (elem : any) => elem.client === ele.client && elem.external === ele.external ))
     setNewData(pp);
-    setProsData(pp2)
+    // setProsData(pp2)
+
+  };
+  const createProspectTableDataObject = (data: any) => {
+    let arr: any = [];
+    // let prosarr : any = [];
+    data.map((element: any, index: any) => {
+      let obj: any = {};
+      // let obj2 :any = {}
+      // if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished" && element.clientType === "Client") {
+      obj["client"] = element.clientName;
+      obj["target"] = element.targetName;
+      obj["targetId"] = element.targetId;
+      obj["clientId"] = element.clientId;
+      obj["status"] = element.status;
+      obj["publishedFlag"] = element.publishedFlag;
+      obj["startDate"] = element.startDate;
+      obj["external"] = element.external;
+      obj["pentest"] = element.pentest;
+      arr.push(obj);
+      // }
+      // if(element.status=== "Generating Report" && element.publishedFlag === "Unpublished" && element.clientType === "Prospect") {
+      //   obj2["client"] = element.clientName;
+      //   obj2["target"] = element.targetName;
+      //   obj2["targetId"] = element.targetId;
+      //   obj2["clientId"] = element.clientId;
+      //   obj2["status"] = element.status;
+      //   obj2["publishedFlag"] = element.publishedFlag;
+      //   obj2["startDate"] = element.startDate;
+      //   obj2["external"] = element.external;
+      //   obj2["pentest"] = element.pentest;
+      //   prosarr.push(obj2);
+      //   }
+    });
+    // setNewData(arr.slice(0, 5));
+    // let pp = arr.filter( (ele :any , ind:any) => ind === arr.findIndex( (elem : any) => elem.client === ele.client ))
+    // let pp2 = prosarr.filter( (ele :any , ind:any) => ind === prosarr.findIndex( (elem : any) => elem.client === ele.client && elem.external === ele.external ))
+    // setNewData(pp);
+    setProsData(arr)
 
   };
 
