@@ -2012,7 +2012,7 @@ export const Target: React.FC = (props: any) => {
         </Grid>
         <Grid item xs={12} md={6} className={props.location.state != undefined && props.location.state.editData ? styles.disfield : styles.inputs}>
           <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
             <Tooltip
               open={targetOpen}
               onClose={handleTargetToolTipClose}
@@ -2040,12 +2040,12 @@ export const Target: React.FC = (props: any) => {
             Target Name
           </Input>
           </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-        <MuiThemeProvider theme={theme}>
+        {/* <MuiThemeProvider theme={theme}> */}
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.X.1/24 | 192.168.X.1-255 | 192.168.X.1-27 | 192.168.X.1-192.168.X.3 | 192.168.X.1,192.168.X.3,192.168.X.4)'}</p> <p>
@@ -2067,7 +2067,7 @@ export const Target: React.FC = (props: any) => {
      
         {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
         </Tooltip>
-        </MuiThemeProvider>
+        {/* </MuiThemeProvider> */}
 
         </span>
         </Grid>
@@ -2129,7 +2129,7 @@ export const Target: React.FC = (props: any) => {
           <form>
           <label className={styles.lawDocument}>VPN Config File </label>
           <span className={styles.UploadTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
 
           <Tooltip open={uploadToolOpen} onClose={handleUploadToolTipClose} onOpen={handleUploadToolTipOpen} title=
           { <React.Fragment>
@@ -2140,7 +2140,7 @@ export const Target: React.FC = (props: any) => {
             
         <ContactSupportIcon className={styles.CircleIcon} />
         </Tooltip>
-        </MuiThemeProvider>
+        {/* </MuiThemeProvider> */}
         </span>
           <input
               id="fileUpload"
