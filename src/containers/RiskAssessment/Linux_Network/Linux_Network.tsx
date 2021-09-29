@@ -1171,7 +1171,7 @@ const handleCancel = () => {
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-        <MuiThemeProvider theme={theme}>
+        {/* <MuiThemeProvider theme={theme}> */}
         <Tooltip className= {styles.tooltip} open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Enter IP Address only</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
@@ -1188,7 +1188,7 @@ const handleCancel = () => {
             IP List
           </Input>
           </Tooltip>
-          </MuiThemeProvider>
+          {/* </MuiThemeProvider> */}
         </span>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
