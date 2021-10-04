@@ -610,7 +610,32 @@ export const Windows_Network: React.FC = (props: any) => {
                   errMessage:
                     "You are already connected with another VPN. Please disconnect then try again",
                 }));
-              } else {
+              }
+              else if(response.data.windowsVpnTest.success == "Authentication Failed") {
+                SetConnectionSuccess(false)
+                setSubmitDisabled(true)
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Authentication Failed",
+                }));
+              }
+              else if(response.data.windowsVpnTest.success == "Openvpn File is invalid") {
+                SetConnectionSuccess(false)
+                setSubmitDisabled(true)
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Invalid File",
+                }));
+              }              
+              else {
                 SetConnectionSuccess(false);
                 setSubmitDisabled(true);
                 setFormState((formState) => ({

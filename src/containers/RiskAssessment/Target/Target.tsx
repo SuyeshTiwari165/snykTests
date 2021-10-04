@@ -1671,6 +1671,30 @@ export const Target: React.FC = (props: any) => {
             errMessage: " You are already connected with another VPN. Please disconnect then try again",
           }));
         }
+        else if(response.data.vpnConnection.success == "Authentication Failed") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Authentication Failed",
+          }));
+        }
+        else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Invalid File",
+          }));
+        }
         else if(response.data.vpnConnection.success == "Target name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
@@ -1735,6 +1759,30 @@ export const Target: React.FC = (props: any) => {
             isDelete: false,
             isFailed: false,
             errMessage: " Test Connection Successful ",
+          }));
+        }
+        else if(response.data.vpnConnection.success == "Authentication Failed") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Authentication Failed",
+          }));
+        }
+        else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Invalid File",
           }));
         }
         else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
