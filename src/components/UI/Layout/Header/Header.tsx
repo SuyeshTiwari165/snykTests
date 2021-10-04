@@ -21,6 +21,9 @@ export const Header: React.FC = () => {
   const user = Cookies.getJSON("ob_user")
     ? Cookies.getJSON("ob_user") || ""
     : Logout();
+    const ob_partnerData = Cookies.getJSON("ob_partnerData")
+    ? Cookies.getJSON("ob_partnerData") || ""
+    : null;
   let userRole: any;
   let userdata: any;
   let username: any;
@@ -28,6 +31,11 @@ export const Header: React.FC = () => {
   const getHelpManual = () => {
     let ra_manual = process.env.PUBLIC_URL + "/user_manual/OB360_Manual.pdf"
     window.open(ra_manual, '_blank');
+  }
+  const getSettings = () => {
+    history.push(routeConstant.SETTINGS)
+    // let ra_manual = process.env.PUBLIC_URL + "/user_manual/OB360_Manual.pdf"
+    // window.open(ra_manual, '_blank');
   }
   const getHome = () => {
     if(user.getUserDetails){
@@ -69,6 +77,12 @@ export const Header: React.FC = () => {
                 {username}
                 &nbsp;&nbsp;|&nbsp;&nbsp;
               </span>
+              { ob_partnerData ? 
+              <span className={styles.userNameLabel}>
+                <a className={styles.logout}  onClick={getSettings} >Settings</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+              </span>
+              : null }
               <span className={styles.userNameLabel}>
                 <a className={styles.logout}  onClick={getHelpManual} >Help</a>
                 &nbsp;&nbsp;|&nbsp;&nbsp;

@@ -20,6 +20,8 @@ import LayoutRoute from "./common/LayoutRoute";
 import AdvanceTarget from "./containers/RiskAssessment/Target/AdvancedTarget/AdvanceTarget";
 import PenTest from "./containers/PenTest/PenTest";
 import Prospects from "./containers/Prospects/Prospects";
+import ProfileSettings from "./containers/ProfileSettings/ProfileSettings";
+
 
 const defaultRedirect = () => <Redirect to={routeConstants.CLIENT} />;
 
@@ -108,6 +110,11 @@ export const AuthRoutes = (
       path={routeConstants.VIEW_PROSPECT}
       exact
       component={Prospects}
+    />
+    <LayoutRoute
+      path={routeConstants.SETTINGS}
+      exact
+      component={ProfileSettings}
     />
     <Route path="/" render={defaultRedirect} />
   </Switch>

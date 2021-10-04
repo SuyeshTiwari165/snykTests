@@ -582,7 +582,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
             <Tooltip
               open={targetOpen}
               onClose={handleTargetToolTipClose}
@@ -609,13 +609,13 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             Target Name
           </Input>
           </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
 
             <Tooltip
               open={open}
@@ -654,7 +654,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
               {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
             </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
 
