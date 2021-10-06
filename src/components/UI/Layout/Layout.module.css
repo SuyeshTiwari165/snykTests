@@ -1,5 +1,6 @@
 .Main {
-  width: calc(100% - 246px);
+  /* width: calc(100% - 246px); */
+  width: calc(100% - 10px);
   padding: 35px;
 }
 

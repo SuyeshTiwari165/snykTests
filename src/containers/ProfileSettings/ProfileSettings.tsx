@@ -357,7 +357,8 @@ export const ProfileSettings: React.FC = (props: any) => {
               </Alert>
             ) : null}
             <Paper className={styles.paper}>
-              <Grid item xs={12} md={6} className={styles.disfield}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4} className={styles.disfield}>
                 <Input
                   type="text"
                   label="Time Zone"
@@ -368,14 +369,14 @@ export const ProfileSettings: React.FC = (props: any) => {
                   Time Zone
                 </Input>
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              
+              <Grid item xs={12} md={4}>
                 <div className={styles.FilterInput}>
                   <AutoCompleteDropDown
                     id="combo-box-demo"
                     options={days}
                     getOptionLabel={(option: any) => option.title}
-                    style={{ width: 300 }}
+                    // style={{ width: 300 }}
                     onChange={startDayChange}
                     value={startDay}
                     renderInput={(params: any) => (
@@ -391,13 +392,13 @@ export const ProfileSettings: React.FC = (props: any) => {
                 </div>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <div className={styles.FilterInput}>
                   <AutoCompleteDropDown
                     id="combo-box-demo"
                     options={days}
                     getOptionLabel={(option: any) => option.title}
-                    style={{ width: 300 }}
+                    // style={{ width: 300 }}
                     onChange={endDayChange}
                     value={endDay}
                     renderInput={(params: any) => (
@@ -413,7 +414,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                 </div>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardTimePicker
                     margin="normal"
@@ -428,7 +429,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                 </MuiPickersUtilsProvider>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardTimePicker
                     margin="normal"
@@ -441,6 +442,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                     }}
                   />
                 </MuiPickersUtilsProvider>
+              </Grid>
               </Grid>
             </Paper>
           </Grid>

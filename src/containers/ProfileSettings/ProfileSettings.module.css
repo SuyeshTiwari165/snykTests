@@ -82,14 +82,16 @@
 
   .paper {
     margin-bottom: 20px;
-    padding: 15px;
-    background-color: #fff;
-    -webkit-box-shadow: none !important;
-    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%);
+    padding: 28px 25px 17px 25px;
+    background-color: #FFF;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
     border-radius: 20px !important;
     border: 1px solid #f06601;
-    position: relative;
+    position:relative;
   }
+
+
   .ScrollTable>div {
     max-height: calc(100vh - 351px) !important;
     overflow-x: auto !important;
