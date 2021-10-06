@@ -68,6 +68,7 @@ import {
   DOMAIN_VERIFY,
   IP_VERIFY
 } from "../../../graphql/mutations/DomainVerify";
+import { OB_URI } from "../../../config/index";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -1628,24 +1629,41 @@ export const Target: React.FC = (props: any) => {
     onChangeHandler(fileEvent,"remove")
   };
   
-  const onClickTestConnection = () => {
+  const onClickTestConnection =  async () => {
     // onClickHandler2();
     if (props.location.state.clientInfo) {
       if (props.location.state && props.location.state.reRun === true) {
       setBackdrop(true)
-      testVpnConnection({
-        variables: {
-          "input": {
-            "client": props.location.state.clientInfo.clientId,
-            "targetName": name,
-            "vpnUsername": vpnUserName,
-            "vpnPassword": vpnPassword,
-            "host": ipRange,
-            "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
-            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
-          }
-        }
-      }).then((response: any) => {
+      // testVpnConnection({
+      //   variables: {
+      //     "input": {
+      //       "client": props.location.state.clientInfo.clientId,
+      //       "targetName": name,
+      //       "vpnUsername": vpnUserName,
+      //       "vpnPassword": vpnPassword,
+      //       "host": ipRange,
+      //       "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+      //       "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
+      //     }
+      //   }
+      // })
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+      let url;
+      if(props.location.state != undefined && props.location.state.editData) {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "Retry" + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+      }else {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "New"  + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+      }
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
+      .then((data) => data.json())
+        .then((response) => {
         setBackdrop(false)
         if (response.data.vpnConnection.success == "VPN connected Successfully") {
           SetConnectionSuccess(true)
@@ -1734,22 +1752,39 @@ export const Target: React.FC = (props: any) => {
       })
     } else {
       setBackdrop(true)
-      testVpnConnection({
-        variables: {
-          "input": {
-            "client": props.location.state.clientInfo.clientId,
-            "targetName": name,
-            "vpnUsername": vpnUserName,
-            "vpnPassword": vpnPassword,
-            "host": ipRange,
-            "targetId":targetId ? targetId : null,
-            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
-          }
-        }
-      }).then((response: any) => {
+      // testVpnConnection({
+      //   variables: {
+      //     "input": {
+      //       "client": props.location.state.clientInfo.clientId,
+      //       "targetName": name,
+      //       "vpnUsername": vpnUserName,
+      //       "vpnPassword": vpnPassword,
+      //       "host": ipRange,
+      //       "targetId":targetId ? targetId : null,
+      //       "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
+      //     }
+      //   }
+      // })
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+      let url;
+      if(props.location.state != undefined && props.location.state.editData) {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "Retry" 
+      }else {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "New" 
+      }
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
+      .then((data) => data.json())
+        .then((response) => {
         setBackdrop(false)
         console.log("RESPONSE",response);
-        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+        if (response == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
           setFormState((formState) => ({
@@ -1761,7 +1796,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Test Connection Successful ",
           }));
         }
-        else if(response.data.vpnConnection.success == "Authentication Failed") {
+        else if(response == "Authentication Failed") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1773,7 +1808,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Authentication Failed",
           }));
         }
-        else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+        else if(response == "Openvpn File is invalid") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1785,7 +1820,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Invalid File",
           }));
         }
-        else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+        else if(response == "VPN is Connected,Please Disconnect") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1797,7 +1832,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: "You are already connected with another VPN. Please disconnect then try again",
           }));
         }
-        else if(response.data.vpnConnection.success == "Target name is already present") {
+        else if(response == "Target name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({

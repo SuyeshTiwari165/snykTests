@@ -956,7 +956,7 @@ export const Client: React.FC = (props: any) => {
                           icon: () => 
                           // "OB360 Pen",
                           <Typography component="h6" variant="h4">
-                          OB360 PENTEST {rowData.external ? "|" : null}
+                           PENTEST {rowData.external ? "|" : null}
                       </Typography>,
                           // tooltip: "Pen Test",
                           onClick: (event: any, rowData: any, oldData: any) => {
@@ -970,7 +970,7 @@ export const Client: React.FC = (props: any) => {
                         icon: () => 
                         // <div className={styles.Pen}>OB360 Vulnerability</div>,
                       <Typography component="h6" variant="h4">
-                       OB360 VULNERABILITY TEST
+                      VULNERABILITY TEST
                       </Typography>,
                         // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
                         // tooltip: "View External Vulnerability Test",

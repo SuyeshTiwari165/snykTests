@@ -52,12 +52,17 @@ import {
   MuiThemeProvider,
   withStyles
 } from "@material-ui/core/styles";
+import {
+  DOMAIN_VERIFY,
+  IP_VERIFY
+} from "../../../graphql/mutations/DomainVerify";
+import { OB_URI } from "../../../config/index";
 
 export const Linux_Network: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
   const [scanConfigList, setScanConfigList] = useState<any>([]);
-  const [ipAddress, setIpAddress] = useState<String>("");
+  const [ipAddress, setIpAddress] = useState<any>("");
   const [ipRange, setIpRange] = useState<String>("");
   const [userName, setUserName] = useState<String>("");
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
@@ -75,6 +80,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const session = Cookies.getJSON('ob_session');
 
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
@@ -85,6 +91,8 @@ export const Linux_Network: React.FC = (props: any) => {
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [deleteTarget] = useMutation(DELETE_TARGET);
+  const [domainVerify] = useMutation(DOMAIN_VERIFY);
+  const [IPVerify] = useMutation(IP_VERIFY);
 
   const [backdrop, setBackdrop] = useState(false);
   const [isError, setIsError] = useState<any>({
@@ -572,191 +580,318 @@ export const Linux_Network: React.FC = (props: any) => {
     }
   };
 
+  const submitAction =  async () => {
+    if (
+      (localStorage.getItem("runTargetName") != null &&
+        targetData &&
+        targetData != null) ||
+      (targetData != undefined &&
+        targetData.getCredentialsDetails &&
+        targetData.getCredentialsDetails.edges &&
+        targetData.getCredentialsDetails.edges.length > 0)
+    ) {
+      console.log("targetData.getCredentialsDetails", targetData);
+      setBackdrop(true);
+      // testVpnConnection({
+      //   variables: {
+      //     input: {
+      //       client: clientID,
+      //       targetName: targetName,
+      //       vpnUsername: VPNUsername,
+      //       vpnPassword: VPNPassword,
+      //       host: ipRange,
+      //       username: userName,
+      //       password: password,
+      //       ipAddress: ipAddress,
+      //       targetId: targetData.getCredentialsDetails.edges
+      //         ? targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+      //         : null,
+      //     },
+      //   },
+      // })
+        // .then((response: any) => {
+          const headerObj = {
+            "Content-Type": "application/json",
+            "Authorization": "jwt" + " " + session,
+          };
+          let url;
+          if(targetData.getCredentialsDetails.edges) {
+            url = OB_URI + "target/testlinuxcredentails/?cid=" +clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id + "dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+          }else {
+            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword  + "&tid=" + null + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+          }
+          await fetch(url, {
+            method: "GET",
+            headers: headerObj,
+            // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+          })
+          .then((data) => data.json())
+            .then((response) => {
+          setBackdrop(false);
+          if (
+            response.data.domainConnection.success ==
+            "Authentication succeeded, connection successful"
+          ) {
+            SetConnectionSuccess(true);
+            setSubmitDisabled(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "Test connection successful",
+            }));
+          } else if (
+            response.data.vpnConnection.success ==
+            "VPN is Connected,Please Disconnect"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage:
+                "You are already connected with another VPN. Please disconnect then try again",
+            }));
+          }
+          else if(response.data.vpnConnection.success == "Authentication failed, please verify your credentials") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Authentication Failed",
+            }));
+          }
+          else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Invalid File",
+            }));
+          }               
+          else {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "Test connection failed ",
+            }));
+          }
+        })
+        .catch(() => {
+          setSubmitDisabled(true);
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "",
+          }));
+        });
+    } else {
+      setBackdrop(true);
+      // testVpnConnection({
+      //   variables: {
+      //     input: {
+      //       client: clientID,
+      //       targetName: targetName,
+      //       vpnUsername: VPNUsername,
+      //       vpnPassword: VPNPassword,
+      //       host: ipRange,
+      //       username: userName,
+      //       password: password,
+      //       ipAddress: ipAddress,
+      //     },
+      //   },
+      // })
+      //   .then((response: any) => {
+        const headerObj = {
+          "Content-Type": "application/json",
+          "Authorization": "jwt" + " " + session,
+        };
+        let url;
+          url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+        await fetch(url, {
+          method: "GET",
+          headers: headerObj,
+          // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+        })
+        .then((data) => data.json())
+          .then((response) => {
+          setBackdrop(false);
+          if (
+            response ==
+            "Authentication succeeded, connection successful"
+          ) {
+            SetConnectionSuccess(true);
+            setSubmitDisabled(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "Test connection successful",
+            }));
+          }
+          else if(response == "Authentication failed, please verify your credentials") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Authentication Failed",
+            }));
+          }
+          else if(response == "Openvpn File is invalid") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Invalid File",
+            }));
+          }         
+          else if (
+            response ==
+            "VPN is Connected,Please Disconnect"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage:
+                "You are already connected with another VPN. Please disconnect then try again",
+            }));
+          } else {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "Test connection failed ",
+            }));
+          }
+        })
+        .catch(() => {
+          setSubmitDisabled(true);
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Test connection failed ",
+          }));
+        });
+    }
+  }
   const onClickTestConnection = () => {
     if (Cookies.getJSON("ob_session")) {
       if (handleInputErrors()) {
         handleAlertClose();
-        if (
-          (localStorage.getItem("runTargetName") != null &&
-            targetData &&
-            targetData != null) ||
-          (targetData != undefined &&
-            targetData.getCredentialsDetails &&
-            targetData.getCredentialsDetails.edges &&
-            targetData.getCredentialsDetails.edges.length > 0)
-        ) {
-          console.log("targetData.getCredentialsDetails", targetData);
-          setBackdrop(true);
-          testVpnConnection({
-            variables: {
-              input: {
-                client: clientID,
-                targetName: targetName,
-                vpnUsername: VPNUsername,
-                vpnPassword: VPNPassword,
-                host: ipRange,
-                username: userName,
-                password: password,
-                ipAddress: ipAddress,
-                targetId: targetData.getCredentialsDetails.edges
-                  ? targetData.getCredentialsDetails.edges[0].node.vatTarget.id
-                  : null,
-              },
-            },
-          })
-            .then((response: any) => {
-              setBackdrop(false);
-              if (
-                response.data.domainConnection.success ==
-                "Authentication succeeded, connection successful"
-              ) {
-                SetConnectionSuccess(true);
-                setSubmitDisabled(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "Test connection successful",
-                }));
-              } else if (
-                response.data.vpnConnection.success ==
-                "VPN is Connected,Please Disconnect"
-              ) {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    "You are already connected with another VPN. Please disconnect then try again",
-                }));
-              }
-              else if(response.data.vpnConnection.success == "Authentication Failed") {
-                SetConnectionSuccess(false)
-                setSubmitDisabled(true)
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " Authentication Failed",
-                }));
-              }
-              else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
-                SetConnectionSuccess(false)
-                setSubmitDisabled(true)
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " Invalid File",
-                }));
-              }               
-              else {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: "Test connection failed ",
-                }));
-              }
-            })
-            .catch(() => {
-              setSubmitDisabled(true);
-              setBackdrop(false);
+        let input = {
+          "host": ipAddress
+        };
+        if(parseInt(ipAddress)){
+          IPVerify({
+          variables: {
+            input
+          },
+        })
+        .then((userRes) => {
+          if(userRes.data.IPVerify.status === 'Valid IP address') {
+            submitAction()
+          } else {
+            setBackdrop(false)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Please Enter Valid IP Address",
+            }));
+          }
+        })
+        .catch((err) => {
+          setBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+      }else {
+        domainVerify({
+          variables: {
+            input
+          },
+        })
+          .then((userRes : any) => {
+            if (userRes.data.domainVerify.status === 'Domain name is registered') {
+              submitAction();
+            } else {
+              setBackdrop(false)
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: "",
+                errMessage: " Please Enter Valid Domain Name",
               }));
-            });
-        } else {
-          setBackdrop(true);
-          testVpnConnection({
-            variables: {
-              input: {
-                client: clientID,
-                targetName: targetName,
-                vpnUsername: VPNUsername,
-                vpnPassword: VPNPassword,
-                host: ipRange,
-                username: userName,
-                password: password,
-                ipAddress: ipAddress,
-              },
-            },
+            }
           })
-            .then((response: any) => {
-              setBackdrop(false);
-              if (
-                response.data.domainConnection.success ==
-                "Authentication succeeded, connection successful"
-              ) {
-                SetConnectionSuccess(true);
-                setSubmitDisabled(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "Test connection successful",
-                }));
-              } else if (
-                response.data.vpnConnection.success ==
-                "VPN is Connected,Please Disconnect"
-              ) {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    "You are already connected with another VPN. Please disconnect then try again",
-                }));
-              } else {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: "Test connection failed ",
-                }));
-              }
-            })
-            .catch(() => {
-              setSubmitDisabled(true);
-              setBackdrop(false);
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: "Test connection failed ",
-              }));
-            });
+          .catch((err : any) => {
+            console.log("doMAIN api FAILED");
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " ",
+            }));
+          });
         }
       } else {
         setFormState((formState) => ({
