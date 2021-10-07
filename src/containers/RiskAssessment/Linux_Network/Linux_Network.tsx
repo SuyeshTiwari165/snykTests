@@ -616,9 +616,9 @@ export const Linux_Network: React.FC = (props: any) => {
           };
           let url;
           if(targetData.getCredentialsDetails.edges) {
-            url = OB_URI + "target/testlinuxcredentails/?cid=" +clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id + "dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id + "dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
           }else {
-            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword  + "&tid=" + null + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword  + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
           }
           await fetch(url, {
             method: "GET",

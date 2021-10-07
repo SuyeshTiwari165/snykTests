@@ -31,6 +31,7 @@ import MaterialTable from "../../components/UI/Table/MaterialTable";
 import Input from "../../components/UI/Form/Input/Input";
 import AlertBox from "../../components/UI/AlertBox/AlertBox";
 import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
+import AlarmIcon from "@material-ui/icons/AddAlarm";
 
 export const ProfileSettings: React.FC = (props: any) => {
   // const [days, setDays] = useState([]);
@@ -425,6 +426,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                     KeyboardButtonProps={{
                       "aria-label": "change time",
                     }}
+                    keyboardIcon={<AlarmIcon />}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
@@ -440,6 +442,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                     KeyboardButtonProps={{
                       "aria-label": "change time",
                     }}
+                    keyboardIcon={<AlarmIcon />}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
