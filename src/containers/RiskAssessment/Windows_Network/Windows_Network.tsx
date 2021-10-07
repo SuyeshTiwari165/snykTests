@@ -527,7 +527,7 @@ export const Windows_Network: React.FC = (props: any) => {
           .then((response) => {
           setBackdrop(false);
           if (
-            response.data.windowsVpnTest.success ==
+            response ==
             "Authentication succeeded, connection successful"
           ) {
             SetConnectionSuccess(true);
@@ -541,7 +541,7 @@ export const Windows_Network: React.FC = (props: any) => {
               errMessage: "Test connection successful",
             }));
           } else if (
-            response.data.windowsVpnTest.success ==
+            response ==
             "VPN is Connected,Please Disconnect"
           ) {
             SetConnectionSuccess(false);
@@ -555,7 +555,20 @@ export const Windows_Network: React.FC = (props: any) => {
               errMessage:
                 "You are already connected with another VPN. Please disconnect then try again",
             }));
-          } else {
+          }       
+          else if(response == "Authentication failed, please verify your credentials") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Authentication Failed",
+            }));
+          }
+          else {
             SetConnectionSuccess(false);
             setSubmitDisabled(true);
             setFormState((formState) => ({

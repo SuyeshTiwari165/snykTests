@@ -1665,7 +1665,7 @@ export const Target: React.FC = (props: any) => {
       .then((data) => data.json())
         .then((response) => {
         setBackdrop(false)
-        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+        if (response == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
           setFormState((formState) => ({
@@ -1677,7 +1677,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Test Connection Successful ",
           }));
         }
-        else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+        else if(response == "VPN is Connected,Please Disconnect") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1689,7 +1689,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " You are already connected with another VPN. Please disconnect then try again",
           }));
         }
-        else if(response.data.vpnConnection.success == "Authentication Failed") {
+        else if(response == "Authentication Failed") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1701,7 +1701,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Authentication Failed",
           }));
         }
-        else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+        else if(response == "Openvpn File is invalid") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1713,7 +1713,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Invalid File",
           }));
         }
-        else if(response.data.vpnConnection.success == "Target name is already present") {
+        else if(response == "Target name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({

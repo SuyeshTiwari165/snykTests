@@ -616,7 +616,7 @@ export const Linux_Network: React.FC = (props: any) => {
           };
           let url;
           if(targetData.getCredentialsDetails.edges) {
-            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id + "dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
+            url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
           }else {
             url = OB_URI + "target/testlinuxcredentails/?cid=" + clientID +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword  + "&dhost=" + ipAddress + "&dusername=" +  userName + "&dpassword=" + password
           }
@@ -629,7 +629,7 @@ export const Linux_Network: React.FC = (props: any) => {
             .then((response) => {
           setBackdrop(false);
           if (
-            response.data.domainConnection.success ==
+            response ==
             "Authentication succeeded, connection successful"
           ) {
             SetConnectionSuccess(true);
@@ -643,7 +643,7 @@ export const Linux_Network: React.FC = (props: any) => {
               errMessage: "Test connection successful",
             }));
           } else if (
-            response.data.vpnConnection.success ==
+            response ==
             "VPN is Connected,Please Disconnect"
           ) {
             SetConnectionSuccess(false);
@@ -658,7 +658,7 @@ export const Linux_Network: React.FC = (props: any) => {
                 "You are already connected with another VPN. Please disconnect then try again",
             }));
           }
-          else if(response.data.vpnConnection.success == "Authentication failed, please verify your credentials") {
+          else if(response == "Authentication failed, please verify your credentials") {
             SetConnectionSuccess(false)
             setSubmitDisabled(true)
             setFormState((formState) => ({
@@ -670,7 +670,7 @@ export const Linux_Network: React.FC = (props: any) => {
               errMessage: " Authentication Failed",
             }));
           }
-          else if(response.data.vpnConnection.success == "Openvpn File is invalid") {
+          else if(response== "Openvpn File is invalid") {
             SetConnectionSuccess(false)
             setSubmitDisabled(true)
             setFormState((formState) => ({
