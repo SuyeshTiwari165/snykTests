@@ -494,24 +494,37 @@ export const Windows_Network: React.FC = (props: any) => {
         targetData.getCredentialsDetails.edges.length > 0)
     ) {
       setBackdrop(true);
-      testWindowsConnection({
-        variables: {
-          input: {
-            client: clientId,
-            targetName: targetName,
-            vpnUsername: VPNUsername,
-            vpnPassword: VPNPassword,
-            host: ipRange,
-            winUsername: userName,
-            winPassword: password,
-            winIpAddress: ipAddress,
-            winName: domainName,
-            targetId:
-              targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
-          },
-        },
-      })
-        .then((response: any) => {
+      // testWindowsConnection({
+      //   variables: {
+      //     input: {
+      //       client: clientId,
+      //       targetName: targetName,
+      //       vpnUsername: VPNUsername,
+      //       vpnPassword: VPNPassword,
+      //       host: ipRange,
+      //       winUsername: userName,
+      //       winPassword: password,
+      //       winIpAddress: ipAddress,
+      //       winName: domainName,
+      //       targetId:
+      //         targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+      //     },
+      //   },
+      // })
+      //   .then((response: any) => {
+        const headerObj = {
+          "Content-Type": "application/json",
+          "Authorization": "jwt" + " " + session,
+        };
+        let url;
+          url = OB_URI + "target/testwincredentails/?cid=" + clientId +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&whost=" + ipAddress + "&wusername=" +  userName + "&wpassword=" + password + "&wname=" +  domainName + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+        await fetch(url, {
+          method: "GET",
+          headers: headerObj,
+          // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+        })
+        .then((data) => data.json())
+          .then((response) => {
           setBackdrop(false);
           if (
             response.data.windowsVpnTest.success ==
