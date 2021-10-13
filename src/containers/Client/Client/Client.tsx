@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Client.module.css";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-  import { Button } from "../../../components/UI/Form/Button/Button";
+import { Button } from "../../../components/UI/Form/Button/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { AddEditForm } from "../../../components/UI/AddEditForm/AddEditForm";
 import Input from "../../../components/UI/Form/Input/Input";
@@ -100,6 +100,8 @@ export const Client: React.FC = (props: any) => {
 
   const ProspectUsercolumns = [
     { title: "Company Name", field: "client" },
+    { title: "VT Report Status", field: "externalStatus" },
+    { title: "PT Report Status", field: "pentestStatus" },
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -138,7 +140,7 @@ export const Client: React.FC = (props: any) => {
         }
       },
       onError: (error) => {
-        logout()
+        logout();
       },
     }
   );
@@ -292,22 +294,23 @@ export const Client: React.FC = (props: any) => {
       ) {
         setFormState(props.location.state.formState);
       }
-      if(userRole != "SuperUser") {
-        let partnerData = JSON.parse(partner)
-         getProsClients({
+      if (userRole != "SuperUser") {
+        let partnerData = JSON.parse(partner);
+        getProsClients({
           variables: {
             // orderBy: "client_name",
-            pgPartnerId: partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.id ,
+            pgPartnerId:
+              partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.id,
             // client_type: "Prospect",
           },
         });
       }
-      if(userRole === "SuperUser") {
-        let partnerData =props.location.state.id;
+      if (userRole === "SuperUser") {
+        let partnerData = props.location.state.id;
         getProsClients({
           variables: {
             // orderBy: "client_name",
-            pgPartnerId: props.location.state.id ,
+            pgPartnerId: props.location.state.id,
             // client_type: "Prospect",
           },
         });
@@ -441,7 +444,13 @@ export const Client: React.FC = (props: any) => {
       obj["client"] = element.clientName;
       obj["clientId"] = element.clientId;
       obj["external"] = element.external;
+      obj["externalStatus"] =
+        element.externalStatus != "" ? element.externalStatus : "-";
+      obj["pentestStatus"] =
+        element.pentestStatus != "" ? element.pentestStatus : "-";
       obj["pentest"] = element.pentest;
+      obj["externalId"] = element.externalId;
+      obj["pentestId"] = element.pentestId;
 
       // obj["targetId"] = element.node.id !== 0 ? element.node.id : null;
 
@@ -600,23 +609,96 @@ export const Client: React.FC = (props: any) => {
         logout();
       }
     }
+    if (param === "downloadExternal") {
+      if (Cookies.getJSON("ob_session")) {
+        setShowBackdrop(true);
+        let intTargetId = parseInt(rowData.externalId);
+        const DocUrl =
+          RA_REPORT_DOWNLOAD +
+          "?cid=" +
+          rowData.clientId +
+          "&tid=" +
+          intTargetId;
+        fetch(DocUrl, {
+          method: "GET",
+        })
+          .then((response: any) => {
+            response.blob().then((blobData: any) => {
+              saveAs(blobData, rowData.name);
+              setShowBackdrop(false);
+            });
+          })
+          .catch((err) => {
+            setShowBackdrop(false);
+            let error = err.message;
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+        // let data = { clientInfo: rowData ,type: "External"};
+        // history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "downloadPenTest") {
+      if (Cookies.getJSON("ob_session")) {
+        setShowBackdrop(true);
+        let intTargetId = parseInt(rowData.pentestId);
+        const DocUrl =
+          RA_REPORT_DOWNLOAD +
+          "?cid=" +
+          rowData.clientId +
+          "&tid=" +
+          intTargetId;
+        fetch(DocUrl, {
+          method: "GET",
+        })
+          .then((response: any) => {
+            response.blob().then((blobData: any) => {
+              saveAs(blobData, rowData.name);
+              setShowBackdrop(false);
+            });
+          })
+          .catch((err) => {
+            setShowBackdrop(false);
+            let error = err.message;
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+        // let data = { clientInfo: rowData ,type: "Pentest"};
+        // history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "ViewPenTest") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, type: "Pentest" };
+        history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
     if (param === "ViewExternal") {
       if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData ,type: "External"};
+        let data = { clientInfo: rowData, type: "External" };
         history.push(routeConstant.VIEW_PROSPECT, data);
       } else {
         logout();
       }
     }
-    if (param === "viewPenTest") {
-      if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData ,type: "Pentest"};
-        history.push(routeConstant.VIEW_PROSPECT, data);
-      } else {
-        logout();
-      }
-    }
-    
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
   const handleDownload = (rowData: any) => {
@@ -841,7 +923,7 @@ export const Client: React.FC = (props: any) => {
           </Alert>
         ) : null}
         <Paper className={styles.paper}>
-        {ipLoading ? <SimpleBackdrop /> : null}
+          {ipLoading ? <SimpleBackdrop /> : null}
           <div className={styles.ScrollTable}>
             {newData.length !== 0 ? (
               <MaterialTable
@@ -932,7 +1014,7 @@ export const Client: React.FC = (props: any) => {
                   pageSizeOptions: [25, 50, 75, 100], // rows selection options
                 }}
               />
-            ) : !showBackdrop || !ipLoading  ? (
+            ) : !showBackdrop || !ipLoading ? (
               <Typography component="h5" variant="h3">
                 You don't have any client subscribed for OB360
               </Typography>
@@ -943,7 +1025,7 @@ export const Client: React.FC = (props: any) => {
           Prospects
         </Typography>
         <Paper className={styles.paper}>
-        {ProspectusClientLoading ? <SimpleBackdrop /> : null}
+          {ProspectusClientLoading ? <SimpleBackdrop /> : null}
           <div className={styles.ScrollTable}>
             {prospectData.length !== 0 ? (
               <MaterialTable
@@ -951,34 +1033,65 @@ export const Client: React.FC = (props: any) => {
                 data={prospectData}
                 actions={[
                   (rowData: any) =>
-                      rowData.pentest 
+                    rowData.pentestStatus === "Report Generated"
                       ? {
-                          icon: () => 
-                          // "OB360 Pen",
-                          <Typography component="h6" variant="h4">
-                           PENTEST {rowData.external ? "|" : null}
-                      </Typography>,
-                          // tooltip: "Pen Test",
+                          icon: () => <GetAppIcon />,
+                          tooltip: "PT Download",
                           onClick: (event: any, rowData: any, oldData: any) => {
-                            onRowClick(event, rowData, oldData, "viewPenTest");
+                            onRowClick(
+                              event,
+                              rowData,
+                              oldData,
+                              "downloadPenTest"
+                            );
                           },
                         }
                       : null,
-                      (rowData: any) =>
-                      rowData.external
-                      ?  {
-                        icon: () => 
-                        // <div className={styles.Pen}>OB360 Vulnerability</div>,
-                      <Typography component="h6" variant="h4">
-                      VULNERABILITY TEST
-                      </Typography>,
-                        // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
-                        // tooltip: "View External Vulnerability Test",
+                  (rowData: any) =>
+                    rowData.externalStatus === "Report Generated"
+                      ? {
+                          icon: () => <GetAppIcon />,
+                          tooltip: "VT Download",
+                          onClick: (event: any, rowData: any, oldData: any) => {
+                            onRowClick(
+                              event,
+                              rowData,
+                              oldData,
+                              "downloadExternal"
+                            );
+                          },
+                        }
+                      : null,
+
+                  userRole == "SuperUser"
+                    ? {
+                        icon: () => (
+                          <Typography component="h6" variant="h4">
+                            VT
+                          </Typography>
+                        ),
+                        // icon: () => <VisibilityIcon />,
+                        tooltip: "View Vulnerability Tests",
                         onClick: (event: any, rowData: any, oldData: any) => {
                           onRowClick(event, rowData, oldData, "ViewExternal");
                         },
                       }
-                      : null,
+                    : null,
+
+                  userRole == "SuperUser"
+                    ? {
+                        icon: () => (
+                          <Typography component="h6" variant="h4">
+                            PT
+                          </Typography>
+                        ),
+                        // icon: () => <VisibilityIcon />,
+                        tooltip: "View Pentests",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "ViewPenTest");
+                        },
+                      }
+                    : null,
                 ]}
                 options={{
                   headerStyle: {
@@ -997,7 +1110,7 @@ export const Client: React.FC = (props: any) => {
                   pageSizeOptions: [25, 50, 75, 100], // rows selection options
                 }}
               />
-            ) : !showBackdrop  || !ProspectusClientLoading ? (
+            ) : !showBackdrop || !ProspectusClientLoading ? (
               <Typography component="h5" variant="h3">
                 You don't have any Prospects for OB360
               </Typography>

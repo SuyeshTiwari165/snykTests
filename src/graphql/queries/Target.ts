@@ -73,7 +73,12 @@ data{
  clientName
  external
  pentest
+ externalId
+ externalStatus
+ pentestStatus
+ pentestId
  clientId
+ publishedFlag
 }
  }}
 `
