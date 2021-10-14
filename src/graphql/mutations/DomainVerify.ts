@@ -12,4 +12,13 @@ mutation IPVerify($input: TargetInput!) {
     status
   }
 }
-`;
+`
+export const URL_VERIFY = gql`
+mutation pturlVerify($input: TargetInput!) {
+  pturlVerify(input:$input){
+    status
+  }
+}
+`
+
+;
