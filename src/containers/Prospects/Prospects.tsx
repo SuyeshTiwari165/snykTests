@@ -388,7 +388,7 @@ export const Prospects: React.FC = (props: any) => {
               </IconButton>
             }
           >
-            Client<strong>{formState.errMessage}</strong>
+            <strong>{formState.errMessage}</strong>
             {SUCCESS}
           </Alert>
         ) : null}
@@ -406,7 +406,7 @@ export const Prospects: React.FC = (props: any) => {
               </IconButton>
             }
           >
-            Client<strong>{formState.errMessage}</strong>
+            <strong>{formState.errMessage}</strong>
             {UPDATE}
           </Alert>
         ) : null}

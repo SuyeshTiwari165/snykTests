@@ -42,6 +42,10 @@ import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
 import Cookies from 'js-cookie';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import ComputerIcon from "@material-ui/icons/Computer";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import DehazeSharpIcon from "@material-ui/icons/DehazeSharp";
 
 export const RaReportListing: React.FC = (props: any) => {
   const [published, setPublished] = useState<any>({});
@@ -90,6 +94,8 @@ export const RaReportListing: React.FC = (props: any) => {
   const [rowData2, setRowData] = useState<any>({});
   const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   //filter query condition declaration
   const [getReportListingData, {
     data: dataReportListing,
@@ -530,7 +536,13 @@ export const RaReportListing: React.FC = (props: any) => {
     data = { clientInfo: clientInfo };
     history.push(routeConstant.TARGET, data);
   };
-
+  const handleAddNewPentest = () => {
+    handleAlertClose();
+    let data = {};
+    data = { clientInfo: clientInfo };
+    history.push(routeConstant.PEN_TEST, data);
+  };
+  
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {
     let orderByColumn;
     let orderBy = "";
@@ -614,6 +626,13 @@ export const RaReportListing: React.FC = (props: any) => {
     setShowBackdrop(false);
     setOpenDialogBox(false);
   };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event :any) => {
+    setAnchorEl(event.currentTarget);
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -669,29 +688,34 @@ export const RaReportListing: React.FC = (props: any) => {
               &nbsp; Back to List
             </Button>
             {/* ) : null} */}
-            {partner.partnerId ? (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleAddNewReport}
-                className={styles.ActionButton}
-              >
-                <AddCircleIcon className={styles.EditIcon} />
-                &nbsp; External Vulnerability Test
-              </Button>
-            ) : null}
-              {partner.partnerId ? (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleAddNewAdvanceReport}
-                className={styles.ActionButton}
-              >
-                {/* <AddCircleIcon className={styles.EditIcon} /> */}
-                <AddToPhotosIcon className={styles.EditIcon} />
-                &nbsp; Advanced Vulnerability Test
-              </Button>
-            ) : null}
+            {partner.partnerId ? 
+             <> 
+            <Button
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                  className={styles.ActionButton}
+
+                >
+                  <AddCircleIcon className={styles.CircleIcon} />
+                  &nbsp; CREATE TEST
+                </Button>
+            <Menu
+               id="simple-menu"
+               anchorEl={anchorEl}
+               keepMounted
+               open={Boolean(anchorEl)}
+               onClose={handleClose}
+               className={styles.MenuButton}
+
+             >
+               <MenuItem onClick={handleAddNewReport}> &nbsp; External Vulnerability Test</MenuItem>
+               <MenuItem onClick={handleAddNewAdvanceReport}> &nbsp; Advanced Vulnerability Test</MenuItem>
+               <MenuItem onClick={handleAddNewPentest}> &nbsp; Pentest</MenuItem>
+             </Menu>
+             </>
+              : null}
+      
           </Grid>
         </Grid>
         <Paper className={styles.paper}>
@@ -775,13 +799,14 @@ export const RaReportListing: React.FC = (props: any) => {
             }}
             actions={[
               partner.partnerId
-                ? {
+                ? (rowData: any) =>
+                 rowData.scanType != "Pentest" ? {
                     icon: () => <VisibilityIcon />,
                     tooltip: "View Data",
                     onClick: (event: any, rowData: any) => {
                       handleClickView(rowData);
                     },
-                  }
+                  } : null
                 : null,
               partner.partnerId
                 ? (rowData: any) =>
