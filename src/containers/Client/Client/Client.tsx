@@ -101,7 +101,7 @@ export const Client: React.FC = (props: any) => {
   const ProspectUsercolumns = [
     { title: "Company Name", field: "client" },
     { title: "VT Report Status", field: "externalStatus" },
-    { title: "PT Report Status", field: "pentestStatus" },
+    // { title: "PT Report Status", field: "pentestStatus" },
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -1032,21 +1032,21 @@ export const Client: React.FC = (props: any) => {
                 columns={ProspectUsercolumns}
                 data={prospectData}
                 actions={[
-                  (rowData: any) =>
-                    rowData.pentestStatus === "Report Generated"
-                      ? {
-                          icon: () => <GetAppIcon />,
-                          tooltip: "PT Download",
-                          onClick: (event: any, rowData: any, oldData: any) => {
-                            onRowClick(
-                              event,
-                              rowData,
-                              oldData,
-                              "downloadPenTest"
-                            );
-                          },
-                        }
-                      : null,
+                  // (rowData: any) =>
+                  //   rowData.pentestStatus === "Report Generated"
+                  //     ? {
+                  //         icon: () => <GetAppIcon />,
+                  //         tooltip: "PT Download",
+                  //         onClick: (event: any, rowData: any, oldData: any) => {
+                  //           onRowClick(
+                  //             event,
+                  //             rowData,
+                  //             oldData,
+                  //             "downloadPenTest"
+                  //           );
+                  //         },
+                  //       }
+                  //     : null,
                   (rowData: any) =>
                     rowData.externalStatus === "Report Generated"
                       ? {
