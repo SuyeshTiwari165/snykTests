@@ -389,7 +389,7 @@ export const Prospects: React.FC = (props: any) => {
             }
           >
             <strong>{formState.errMessage}</strong>
-            {SUCCESS}
+            {/* {SUCCESS} */}
           </Alert>
         ) : null}
         {formState.isUpdate ? (
