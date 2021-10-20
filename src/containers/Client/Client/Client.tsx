@@ -624,7 +624,7 @@ export const Client: React.FC = (props: any) => {
         })
           .then((response: any) => {
             response.blob().then((blobData: any) => {
-              saveAs(blobData, rowData.name);
+              saveAs(blobData, rowData.client);
               setShowBackdrop(false);
             });
           })
@@ -661,7 +661,7 @@ export const Client: React.FC = (props: any) => {
         })
           .then((response: any) => {
             response.blob().then((blobData: any) => {
-              saveAs(blobData, rowData.name);
+              saveAs(blobData, rowData.client);
               setShowBackdrop(false);
             });
           })

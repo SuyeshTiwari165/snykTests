@@ -735,7 +735,7 @@ export const RaReportListing: React.FC = (props: any) => {
               }
             >
               <strong>{formState.errMessage}</strong>
-              {SUCCESS}
+              {/* {SUCCESS} */}
             </Alert>
           ) : null}
           {formState.isFailed ? (
