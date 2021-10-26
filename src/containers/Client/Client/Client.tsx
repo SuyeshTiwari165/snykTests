@@ -1021,7 +1021,7 @@ export const Client: React.FC = (props: any) => {
             ) : null}
           </div>
         </Paper>
-        <Typography component="h5" variant="h1">
+        {/* <Typography component="h5" variant="h1">
           Prospects
         </Typography>
         <Paper className={styles.paper}>
@@ -1116,7 +1116,7 @@ export const Client: React.FC = (props: any) => {
               </Typography>
             ) : null}
           </div>
-        </Paper>
+        </Paper> */}
       </Grid>
     </React.Fragment>
   );

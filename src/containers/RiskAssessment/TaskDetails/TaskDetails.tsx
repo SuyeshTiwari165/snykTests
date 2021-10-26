@@ -655,10 +655,10 @@ try {
             Target
           </Input>
         </Grid> */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12} className={styles.mainCheck}>
           <label className={styles.HeaderLabel}>Select Scan Configuration</label>
           <Grid container spacing={1}>
-          <Grid item xs={6} md={6}>
+          <Grid item xs={6} md={12}><div className={styles.cbox}>
           <FormControlLabel
             className={styles.CheckboxLabel}
         control={
@@ -670,7 +670,7 @@ try {
           />
         }
         label="Select All"
-      />
+      /></div>
       </Grid>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {

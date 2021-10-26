@@ -355,3 +355,12 @@ tfoot svg {
   /* border-radius: 0px; */
   box-shadow: none !important;
 }
+.para {
+  position: relative;
+  left: 58%;
+}
+.CircleIcon2 {
+  color: #f06601 ;
+  position: relative;
+    right: 65%;
+}

@@ -46,6 +46,8 @@ import ComputerIcon from "@material-ui/icons/Computer";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import DehazeSharpIcon from "@material-ui/icons/DehazeSharp";
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export const RaReportListing: React.FC = (props: any) => {
   const [published, setPublished] = useState<any>({});
@@ -61,12 +63,44 @@ export const RaReportListing: React.FC = (props: any) => {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
   //table
+  const [targetOpen, setTargetOpen] = React.useState(false);
+  const handleTargetToolTipClose = () => {
+    setTargetOpen(false);
+  };
+
+  const handleTargetToolTipOpen = () => {
+    setTargetOpen(true);
+  };
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const CompnyUserColumns = [
     { title: "Company Name", field: "clientName" },
     { title: "Target", field: "target" },
     { title: "Scan Type", field: "scanType" },
     { title: "Status", field: "status" },
+    { title: '', field: 'img', render: (item:any) => 
+    // item.status === "Scan Completed" ? (
+      <div>
+    <Tooltip
+    // open={targetOpen}
+    // onClose={handleTargetToolTipClose}
+    // onOpen={handleTargetToolTipOpen}
+    placement="right"
+    title={
+      <React.Fragment>
+        <p>
+          <b> {item.details} </b>{" "}
+        </p>
+        {" "}
+      </React.Fragment>
+    }
+  > 
+  <ContactSupportIcon className={styles.CircleIcon2} /> 
+  </Tooltip>
+  </div>
+    // ): null,
+  },
+
   ];
   const AdminColumns = [{ title: "Target", field: "target" },
   { title: "Status", field: "status" },
@@ -325,6 +359,24 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
       obj["clientName"] = element.clientName;
+      if(element.status === "Scheduled") {
+        obj["details"] = "Test is set to be scanned for detecting vulnerabilities/cyberattack"
+      }
+      if(element.status === "Scan Completed") {
+        obj["details"] = "It performed thorough network scan, detecting any vulnerabilities, and will begin generating reports shortly."
+      }
+      if(element.status === "Generating Report") {
+        obj["details"] = "Scan reports are being generated and on the basic of detected vulnerabilities."
+      }
+      if(element.status === "Result Generated") {
+        obj["details"] = "Pentest reports have been generated and are available for download. They include security measures to prevent similar flaws in the future, as well as remediation steps to address each vulnerability."
+      }
+      if(element.status === "Report Generated") {
+        obj["details"] = "Vulnerability reports with the Severity Rating and potential solutions have been generated and will be available for download."
+      }
+      if(element.status === "Failed") {
+        obj["details"] = "The scan was unsuccessful due to unforeseen circumstances."
+      }
       arr.push(obj);
     });
     }
@@ -785,6 +837,7 @@ export const RaReportListing: React.FC = (props: any) => {
               
                
               },
+              rowHover: true,
               actionsColumnIndex: -1,
               paging: true,
               sorting: true,

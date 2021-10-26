@@ -14,7 +14,7 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { PARTNER_SCHEDULE } from "../../graphql/mutations/PartnerSchedule";
+import { PARTNER_SCHEDULE ,PARTNER_SCHEDULE_DELETE,PARTNER_SCHEDULE_EDIT} from "../../graphql/mutations/PartnerSchedule";
 import Cookies from "js-cookie";
 import logout from "../Auth/Logout/Logout";
 import {
@@ -32,6 +32,8 @@ import Input from "../../components/UI/Form/Input/Input";
 import AlertBox from "../../components/UI/AlertBox/AlertBox";
 import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import AlarmIcon from "@material-ui/icons/AddAlarm";
+import { DialogBox } from "../../components/UI/DialogBox/DialogBox";
+import moment from "moment";
 
 export const ProfileSettings: React.FC = (props: any) => {
   // const [days, setDays] = useState([]);
@@ -66,8 +68,9 @@ export const ProfileSettings: React.FC = (props: any) => {
       value: "",
     },
   ]);
+
   const [startTime, setStartTime] = React.useState<Date | null>(null);
-  const [startTimeValue, setStartTimeValue] = React.useState<any>();
+  const [startTimeValue, setStartTimeValue] = React.useState<any>("");
   const [timezone, setTimezone] = React.useState<any>();
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [endTimeValue, setEndTimeValue] = React.useState<any>();
@@ -88,8 +91,17 @@ export const ProfileSettings: React.FC = (props: any) => {
   const [newData, setNewData] = useState([]);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
+  const [rowData2, setRowData] = useState<any>({});
+  const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [editValue, setEditValue] = useState<any>("");
+  const [endTimeChanged, setEndTimeChanged] = useState<boolean>(false);
+  const [startTimeChanged, setStartTimeChanged] = useState<boolean>(false);
 
   const [createPartnerSchedule] = useMutation(PARTNER_SCHEDULE);
+  const [deletePartnerSchedule] = useMutation(PARTNER_SCHEDULE_DELETE);
+  const [editPartnerSchedule] = useMutation(PARTNER_SCHEDULE_EDIT);
+
 
   const [getPartnerSchedule, { data: ipData, loading: ipLoading }] =
     useLazyQuery(GET_PARTNER_SCHEDULE, {
@@ -126,10 +138,12 @@ export const ProfileSettings: React.FC = (props: any) => {
   };
 
   const handleStartTimeChange = (date: Date | null | any, value: any) => {
+    setStartTimeChanged(true);
     setStartTimeValue(convertTime12to24(value));
     setStartTime(date);
   };
   const handleEndTimeChange = (date: Date | null | any, value: any) => {
+    setEndTimeChanged(true);
     setEndTimeValue(convertTime12to24(value));
     setEndTime(date);
   };
@@ -176,6 +190,8 @@ export const ProfileSettings: React.FC = (props: any) => {
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
     if (Cookies.getJSON("ob_session")) {
+      if(startDay && endDay && startTime && endTimeValue ) {
+      if(!edit) {
       let partnerData = JSON.parse(partner);
       let input = {
         partnerid:
@@ -187,13 +203,14 @@ export const ProfileSettings: React.FC = (props: any) => {
         tZone:
           partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.tZone,
       };
-      console.log("input", input);
       createPartnerSchedule({
         variables: {
           input,
         },
       })
         .then((userRes) => {
+          setShowDialogBox(false);
+          setEndTimeChanged(false)
           setShowDialogBox(false);
           setBackdrop(false);
           setFormState((formState) => ({
@@ -226,6 +243,68 @@ export const ProfileSettings: React.FC = (props: any) => {
             errMessage: "Scheduling Failed",
           }));
         });
+      }
+      if(edit) {
+        let input = {
+          partnerScheduleId: parseInt(editValue.id),
+          startDay: startDay.value,
+          endDay: endDay.value,
+          startTime: !startTimeChanged || endTimeChanged || startTimeValue?.includes("+") || startTimeValue?.includes("-") ? moment(startTimeValue).format('HH:mm:ss') : startTimeValue + ":00",
+          endTime: !endTimeChanged ? moment(endTimeValue).format('HH:mm:ss') : endTimeValue + ":00",
+        };
+        editPartnerSchedule({
+          variables: {
+            input,
+          },
+        })
+        .then((userRes) => {
+        setShowDialogBox(false);
+        setEndTimeChanged(false)
+        setShowDialogBox(false);
+        setBackdrop(false);
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: true,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: false,
+          errMessage: " Scheduled Successfully",
+        }));
+        let partnerData = JSON.parse(partner);
+        getPartnerSchedule({
+          variables: {
+            // orderBy: "client_name",
+            partnerId_PartnerName:
+              partnerData.data.getPartnerUserDetails.edges[0].node.partnerId
+                .partnerName,
+            // client_type: "Prospect",
+          },
+        });
+        })
+        .catch((err) => {
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Edit Failed",
+          }));
+        });
+
+      }
+    }else {
+      setBackdrop(false)
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Please fill in the required fields",
+      }));
+    }
     } else {
       logout();
     }
@@ -267,12 +346,14 @@ export const ProfileSettings: React.FC = (props: any) => {
 
     data.map((element: any) => {
       let obj: any = {};
-
+      obj["id"] = element.node.id
       obj["partnerName"] = element.node.partner.partnerName;
       obj["endDay"] = element.node.endDay;
       obj["StartDay"] = element.node.startDay;
       obj["startTime"] = tConvert(element.node.startTime);
+      obj["rawStartTime"] = element.node.startTime;
       obj["endTime"] = tConvert(element.node.endTime);
+      obj["rawEndTime"] = element.node.endTime;
       obj["tZone"] = element.node.tZone;
       arr.push(obj);
     });
@@ -285,12 +366,38 @@ export const ProfileSettings: React.FC = (props: any) => {
   };
 
   const handleAddNewSchedule = () => {
+    setEdit(false);
+    setStartTime(null)
+    setStartTimeValue("")
+    setEndTime(null)
+    setEndTimeValue("")
+    setStartDay(null)
+    setEndDay(null)
+    handleAlertClose();
+    setShowDialogBox(true);
+    setDialogBoxMsg("");
+  };
+  const handleEditNewSchedule = (rowData : any) => {
+    setEditValue(rowData)
+    let splitPartsrawStartTime = rowData.rawStartTime.split(':');
+    let splitPartsrawEndTime = rowData.rawEndTime.split(':');
+    setEdit(true);
+    // new Date(1970, 1, 1, splitParts[0], splitParts[1]);
+    setStartTime(new Date(1970, 1, 1,splitPartsrawStartTime[0], splitPartsrawStartTime[1]))
+    setStartTimeValue(new Date(1970, 1, 1,splitPartsrawStartTime[0], splitPartsrawStartTime[1]))
+    setEndTime(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
+    setEndTimeValue(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
+    setStartDay({"title": rowData.StartDay ,"value" : rowData.StartDay})
+    setEndDay({"title": rowData.endDay ,"value" : rowData.endDay})
+    setTimezone(rowData.tZone)
     handleAlertClose();
     setShowDialogBox(true);
     setDialogBoxMsg("");
   };
 
   const handleCancel = () => {
+    setStartTimeChanged(false)
+    setEndTimeChanged(false)
     setShowDialogBox(false);
   };
 
@@ -298,6 +405,85 @@ export const ProfileSettings: React.FC = (props: any) => {
     setShowDialogBox(false);
   };
 
+  const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
+    if (param === "Delete") {
+      // deletePartnerSchedule{
+        handleAlertClose();
+        // setShowBackdrop(true);
+        setOpenDialogBox(true);
+        // setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
+        setDialogBoxMsg("Are you sure you want to remove ?");
+        setRowData(rowData);
+      }
+      if (param === "Edit") {
+        handleEditNewSchedule(rowData)
+      }
+  }
+  const closeDialogBox = () => {
+    // setShowBackdrop(false);
+    setOpenDialogBox(false);
+  };
+
+  const confirmDelete = async () => {
+    closeDialogBox();
+      // SetTargetDeleted(false);
+      deletePartnerSchedule({
+      variables: {
+        id: rowData2.id
+      },
+    }).then((res: any) => {
+      // setShowBackdrop(false);
+      if(res.data.deletePartnerShedule.status == "Partner Schedule Deleted Successfully") {
+        // if(propsClientName != undefined) {
+          let partnerData = JSON.parse(partner);
+          getPartnerSchedule({
+            variables: {
+              // orderBy: "client_name",
+              partnerId_PartnerName:
+                partnerData.data.getPartnerUserDetails.edges[0].node.partnerId
+                  .partnerName,
+              // client_type: "Prospect",
+            },
+          });
+          // setTimezone(
+          //   partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.tZone
+          // );
+      // }
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: true,
+        isFailed: false,
+        errMessage: "    " ,
+      }));
+    }
+    // if(res.data.deleteTarget.status === "Target Not Deleted") {
+    //   setShowBackdrop(false);
+    //   setFormState((formState) => ({
+    //     ...formState,
+    //     isSuccess: false,
+    //     isUpdate: false,
+    //     isDelete: false,
+    //     isFailed: true,
+    //     errMessage: " Unable to delete  " + rowData2.target + " " ,
+    //   }));
+    // }
+    })
+    .catch((err) => {
+      // setShowBackdrop(false);
+      let error = err.message;
+         setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+    });
+
+  }
   return (
     <React.Fragment>
       <CssBaseline />
@@ -529,6 +715,30 @@ export const ProfileSettings: React.FC = (props: any) => {
               </Alert>
             ) : null}
           </Grid>
+          <DialogBox
+        open={openDialogBox}
+        handleOk={confirmDelete}
+        handleCancel={closeDialogBox}
+        buttonOk={"Yes"}
+        buttonCancel={"No"}
+        classes={{
+          root: styles.MainOfficeDialogRoot,
+          container: styles.MainOfficeDialogboxContainer,
+          paper: styles.MainOfficeDialogboxPaper,
+          scrollPaper: styles.MainOfficeScrollPaper,
+        }}
+      >
+        <div className={styles.DialogBoxTitle}>
+          <Typography component="h1" variant="h1">
+            Please Confirm
+          </Typography>
+        </div>
+        <div className={styles.DialogBoxContext}>
+          <p>
+            {dialogBoxMsg}
+          </p>
+        </div>
+      </DialogBox>
           <Paper className={styles.paper}>
             {ipLoading ? <SimpleBackdrop /> : null}
             <div className={styles.ScrollTable}>
@@ -536,7 +746,39 @@ export const ProfileSettings: React.FC = (props: any) => {
                 <MaterialTable
                   columns={column}
                   data={newData}
-                  actions={[]}
+                  actions={[
+                    {
+                      icon: () => (
+                        <img
+                          className={styles.EditIcon}
+                          src={
+                            process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                          }
+                          alt="edit icon"
+                        />
+                      ),
+                      tooltip: "Edit",
+                      onClick: (event: any, rowData: any, oldData: any) => {
+                        onRowClick(event, rowData, oldData, "Edit");
+                      }
+                    },
+                    {
+                      icon: () => (
+                        <img
+                          className={styles.EditIcon}
+                          src={
+                            process.env.PUBLIC_URL +
+                            "/icons/svg-icon/delete.svg"
+                          }
+                          alt="delete icon"
+                        />
+                      ),                        tooltip: "Delete",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, 'Delete');
+                        },
+                      },
+                     
+                  ]}
                   options={{
                     headerStyle: {
                       background: "linear-gradient(#fef9f5,#fef9f5)",
