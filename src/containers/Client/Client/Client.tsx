@@ -982,7 +982,7 @@ export const Client: React.FC = (props: any) => {
                     : null,
                   {
                     icon: () => <VisibilityIcon />,
-                    tooltip: "View Vulnerability Tests",
+                    tooltip: "View Test Details",
                     onClick: (event: any, rowData: any, oldData: any) => {
                       onRowClick(event, rowData, oldData, "RA");
                     },
