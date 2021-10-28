@@ -249,8 +249,9 @@ export const ProfileSettings: React.FC = (props: any) => {
           partnerScheduleId: parseInt(editValue.id),
           startDay: startDay.value,
           endDay: endDay.value,
-          startTime: !startTimeChanged || endTimeChanged || startTimeValue?.includes("+") || startTimeValue?.includes("-") ? moment(startTimeValue).format('HH:mm:ss') : startTimeValue + ":00",
+          // startTime:  !startTimeChanged || endTimeChanged || startTimeValue?.includes("+") || startTimeValue?.includes("-") ? moment(startTimeValue).format('HH:mm:ss') : startTimeValue + ":00",
           endTime: !endTimeChanged ? moment(endTimeValue).format('HH:mm:ss') : endTimeValue + ":00",
+          startTime: !startTimeChanged ? moment(startTimeValue).format('HH:mm:ss') : startTimeValue + ":00",
         };
         editPartnerSchedule({
           variables: {
@@ -378,6 +379,8 @@ export const ProfileSettings: React.FC = (props: any) => {
     setDialogBoxMsg("");
   };
   const handleEditNewSchedule = (rowData : any) => {
+    setStartTimeChanged(false)
+    setEndTimeChanged(false)
     setEditValue(rowData)
     let splitPartsrawStartTime = rowData.rawStartTime.split(':');
     let splitPartsrawEndTime = rowData.rawEndTime.split(':');
