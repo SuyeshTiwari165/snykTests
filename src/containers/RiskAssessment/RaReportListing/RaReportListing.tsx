@@ -377,6 +377,9 @@ export const RaReportListing: React.FC = (props: any) => {
       if(element.status === "Failed") {
         obj["details"] = msgConstant.TestFailed
       }
+      if(element.status === "In Progress") {
+        obj["details"] = msgConstant.InProgress
+      }
       arr.push(obj);
     });
     }
