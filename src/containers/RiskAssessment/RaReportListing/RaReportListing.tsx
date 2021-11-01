@@ -626,11 +626,15 @@ export const RaReportListing: React.FC = (props: any) => {
   }
 
   const confirmDelete = async () => {
+    if (Cookies.getJSON("ob_session")) {
+      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
     closeDialogBox();
-      // SetTargetDeleted(false);
+      SetTargetDeleted(false);
     deleteTarget({
       variables: {
-        id: rowData2.targetId
+        id: rowData2.targetId,
+        firstName: userData.data.getUserDetails.edges[0].node.firstName,
+        lastName:userData.data.getUserDetails.edges[0].node.lastName,
       },
     }).then((res: any) => {
       setShowBackdrop(false);
@@ -675,7 +679,9 @@ export const RaReportListing: React.FC = (props: any) => {
         errMessage: error,
       }));
     });
-
+  } else {
+    logout();
+  }
   }
   const closeDialogBox = () => {
     setShowBackdrop(false);
