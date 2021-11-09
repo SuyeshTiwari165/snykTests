@@ -960,7 +960,8 @@ export const Target: React.FC = (props: any) => {
         } else {
           // Check Domain Connectipn
           let input = {
-            "host": ipRange
+            "host": ipRange,
+            "scanType": "Advanced"
           };
           if(parseInt(ipRange)){
             IPVerify({
