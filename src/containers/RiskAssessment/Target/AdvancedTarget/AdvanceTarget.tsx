@@ -220,12 +220,13 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       } else {
         // Check Domain Connectipn
         let input = {
-          "host" : ipRange
+          "host" : ipRange,
+          "scanType": "External"
         };
         if(parseInt(ipRange)){
             IPVerify({
             variables: {
-              input
+              input,
             },
           })
           .then((userRes) => {
@@ -629,9 +630,9 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                   </p>
                   <b>{"Single IP Address"}</b>
                   <em>{"(e.g. 192.168.x.xx)"}</em>{" "}
-                  <p>
+                  {/* <p>
                     <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)"}
-                  </p>
+                  </p> */}
                   <p>
                     <b>For Domain/URL </b>{" "}
                   <em>{"(e.g. domainname.com)"}</em>{" "}
@@ -649,7 +650,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                 error={isError.ipRange}
                 helperText={isError.ipRange}
               >
-                URL/IP Range
+                URL/IP
               </Input>
 
               {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
