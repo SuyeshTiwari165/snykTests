@@ -643,7 +643,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             >
               <Input
                 type="text"
-                label="URL / IP Range"
+                label="URL / IP"
                 value={ipRange}
                 onChange={handleIpRangeChange}
                 required
