@@ -232,7 +232,19 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           .then((userRes) => {
             if(userRes.data.IPVerify.status === 'Valid IP address') {
               submitAction()
-            } else {
+            } 
+            else if (userRes.data.IPVerify.status === 'Provide single ip address'){
+              setBackdrop(false)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " Please Enter Single IP Address",
+              }));
+            } 
+            else {
               setBackdrop(false)
               setFormState((formState) => ({
                 ...formState,
@@ -666,7 +678,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             variant={"contained"}
             data-testid="ok-button"
           >
-            Save
+            Queue Scan
           </Button>
           <Button
             className={styles.borderLess}

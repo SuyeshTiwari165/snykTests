@@ -18,3 +18,8 @@ export const ResultGenerated = "Penetration Test has successfully run and genera
 export const ReportGenerated = "Vulnerability Assessment reports have been generated and are now available for download.";
 export const TestFailed = "The task was unsuccessful due to an error. Please contact partner support.";
 export const InProgress = "The task is currently being scanned and assessed for recommendations";
+
+// Pentest Messages
+export const LOW = "Perform attack on your url with Low threshold and Low strength."
+export const MEDIUM = "Perform attack on your url with Medium threshold and Medium strength."
+export const HIGH = "Perform attack on your url with High threshold and Insane strength."

@@ -711,7 +711,7 @@ try {
             data-testid="ok-button"
             disabled={submitDisabled}
           >
-            save
+            Queue Scan
           </Button>
           <Button
             className={styles.borderLess}
