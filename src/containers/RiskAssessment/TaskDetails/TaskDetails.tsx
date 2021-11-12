@@ -55,6 +55,7 @@ import {
   UPDATE_TARGET,
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
+import * as msgConstant from "../../../common/MessageConstants";
 
 export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
@@ -300,8 +301,15 @@ try {
             errMessage: "",
           }));
           setShowForm(false);
+          let formState2 = {
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: msgConstant.SCAN_SUCCESS_MSG,
+          }     
           let data = {};
-          data = { refetchData: true, clientInfo: clientInfo };
+          data = { refetchData: true, clientInfo: clientInfo , formState : formState2 };
           history.push(routeConstant.RA_REPORT_LISTING, data);
           localStorage.removeItem("name");
           localStorage.removeItem("targetId");

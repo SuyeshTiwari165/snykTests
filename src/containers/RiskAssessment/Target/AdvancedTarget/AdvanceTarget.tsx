@@ -37,6 +37,7 @@ import {
   createMuiTheme,
   MuiThemeProvider,
 } from "@material-ui/core/styles";
+import * as msgConstant from "../../../../common/MessageConstants";
 
 export const AdvanceTarget: React.FC = (props: any) => {
   const history = useHistory();
@@ -185,7 +186,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     setIsError((isError: any) => ({
       ...isError,
-      name: "Invalid Target Name",
+      name: "Invalid Scan Name",
     }));
   }
     // setSubmitDisabled(checkValidation);
@@ -341,7 +342,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Scan name exists. Add another name",
           }));
           // setSubmitDisabled(true)
         }
@@ -374,7 +375,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         if (
           error.includes("Response Error 400. Target exists already")
         ) {
-          error = " Target Name already present.";
+          error = " Scan Name already present.";
         }
         else {
           error = err.message;
@@ -406,6 +407,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         },
       })
         .then((userRes) => {
+
+          let formState2 = {
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: msgConstant.SCAN_SUCCESS_MSG,
+          }
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -416,7 +425,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             errMessage: "",
           }));
           let data = {};
-          data = { refetchData: true, clientInfo: clientInfo };
+          data = { refetchData: true, clientInfo: clientInfo ,formState : formState2 };
           history.push(routeConstant.RA_REPORT_LISTING, data);
           localStorage.removeItem("name");
           localStorage.removeItem("targetId");
@@ -604,7 +613,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               title={
                 <React.Fragment>
                   <p>
-                    <b> Target Name can't contain any special characters. </b>{" "}
+                    <b> Scan Name can't contain any special characters. </b>{" "}
                   </p>
                   {" "}
                 </React.Fragment>
@@ -612,14 +621,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             >
           <Input
             type="text"
-            label="Target Name"
+            label="Scan Name"
             value={name}
             onChange={handleNameChange}
             required
             error={isError.name}
             helperText={isError.name}
           >
-            Target Name
+            Scan Name
           </Input>
           </Tooltip>
             {/* </MuiThemeProvider> */}

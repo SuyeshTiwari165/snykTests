@@ -560,7 +560,7 @@ export const Target: React.FC = (props: any) => {
           if (
             error.includes("Response Error 400. Target exists already")
           ) {
-            error = " Target Name already present.";
+            error = " Scan Name already present.";
           }
           else {
             error = err.message;
@@ -615,7 +615,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully ",
+                errMessage: "Scan Created Successfully ",
               }));
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
@@ -691,7 +691,7 @@ export const Target: React.FC = (props: any) => {
               if (
                 error.includes("Response Error 400. Target exists already")
               ) {
-                error = " Target Name already present.";
+                error = " Scan Name already present.";
               }
                else {
                 error = err.message;
@@ -734,7 +734,7 @@ export const Target: React.FC = (props: any) => {
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: " Target name exists. Add another name",
+                  errMessage: " Scan name exists. Add another name",
                 }));
                 // setSubmitDisabled(true)
               }
@@ -746,7 +746,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully ",
+                errMessage: "Scan Created Successfully ",
               }));
               // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
@@ -791,7 +791,7 @@ export const Target: React.FC = (props: any) => {
               if (
                 error.includes("Response Error 400. Target exists already")
               ) {
-                error = " Target Name already present.";
+                error = " Scan Name already present.";
               }
                else {
                 error = err.message;
@@ -1553,7 +1553,7 @@ export const Target: React.FC = (props: any) => {
   if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     setIsError((isError: any) => ({
       ...isError,
-      name: "Invalid Target Name",
+      name: "Invalid Scan Name",
     }));
   }
   };
@@ -1714,7 +1714,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Invalid File",
           }));
         }
-        else if(response == "Target name is already present") {
+        else if(response == "Scan name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1723,7 +1723,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Scan name exists. Add another name",
           }));
         }
          else {
@@ -1833,7 +1833,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: "You are already connected with another VPN. Please disconnect then try again",
           }));
         }
-        else if(response == "Target name is already present") {
+        else if(response == "Scan name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1842,7 +1842,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Scan name exists. Add another name",
           }));
         }
          else {
@@ -2105,7 +2105,7 @@ export const Target: React.FC = (props: any) => {
               title={
                 <React.Fragment>
                   <p>
-                    <b> Target Name can't contain any special characters. </b>{" "}
+                    <b> Scan Name can't contain any special characters. </b>{" "}
                   </p>
                   {" "}
                 </React.Fragment>
@@ -2113,7 +2113,7 @@ export const Target: React.FC = (props: any) => {
             >
           <Input
             type="text"
-            label="Target Name"
+            label="Scan Name"
             value={name}
             onChange={handleNameChange}
             required
@@ -2121,7 +2121,7 @@ export const Target: React.FC = (props: any) => {
             helperText={isError.name}
             disabled = {props.location.state != undefined && props.location.state.editData}
           >
-            Target Name
+            Scan Name
           </Input>
           </Tooltip>
             {/* </MuiThemeProvider> */}

@@ -23,3 +23,6 @@ export const InProgress = "The task is currently being scanned and assessed for 
 export const LOW = "Perform attack on your url with Low threshold and Low strength."
 export const MEDIUM = "Perform attack on your url with Medium threshold and Medium strength."
 export const HIGH = "Perform attack on your url with High threshold and Insane strength."
+
+// Scan
+export const SCAN_SUCCESS_MSG = "The scan has been queued and will be ready for download in 2 to 3 business days"

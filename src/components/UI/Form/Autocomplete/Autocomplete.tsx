@@ -7,8 +7,6 @@ import { Info } from "@material-ui/icons";
 import * as msgConstant from "../../../../common/MessageConstants";
 
 const AutoCompleteDropDown = (props: any) => {
-  console.log("props",props)
-
   return (
     props.id === 'policyValue' ? (
     <Autocomplete
