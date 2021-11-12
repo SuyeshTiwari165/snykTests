@@ -75,7 +75,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const CompnyUserColumns = [
     { title: "Company Name", field: "clientName" },
-    { title: "Target", field: "target" },
+    { title: "Scan Name", field: "target" },
     { title: "Scan Type", field: "scanType" },
     { title: "Status", field: "status"  },
     { title: '', field: 'img', render: (item:any) => 
@@ -102,7 +102,7 @@ export const RaReportListing: React.FC = (props: any) => {
   },
 
   ];
-  const AdminColumns = [{ title: "Target", field: "target" },
+  const AdminColumns = [{ title: "Scan Name", field: "target" },
   { title: "Status", field: "status" },
   { title: "Report Status", field: "report_status" }
   ];
@@ -153,12 +153,23 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   useEffect(() => {
-    if (Cookies.getJSON("ob_session")) { 
+    if (Cookies.getJSON("ob_session")) {
     getReportListingData({
       variables: {
         clientname: propsClientName,
       },
     });
+    if(props.location.state && props.location.state.formState) {
+      // setFormState(props.location.state.formState)
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: props.location.state.formState.isSuccess,
+        isUpdate: props.location.state.formState.isUpdate,
+        isDelete: props.location.state.formState.isDelete,
+        isFailed: props.location.state.formState.isFailed,
+        errMessage: props.location.state.formState.errMessage
+      }));
+    }
   } else{
      logout();
   }
