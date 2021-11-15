@@ -84,7 +84,7 @@ export const TaskDetails: React.FC = (props: any) => {
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
   const [selectAllTask, setSelectAllTask] = useState<boolean>(false);
-
+  const [params, setParams] = useState<any>({});
   //add/edit data
 
   const [name, setName] = useState<String>("");
@@ -125,6 +125,12 @@ export const TaskDetails: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
+
+  useEffect(() => {
+    if (props.location.state) {
+      setParams(props.location.state)
+    }
+  }, [])
   const [deleteTarget] = useMutation(DELETE_TARGET);
 
   const { data: taskData, loading: taskLoading } = useQuery(
@@ -379,6 +385,7 @@ try {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
+            previousPage: props.location.state?.previousPage
           };
           // if (WinTargetName) {
           //   setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
@@ -440,6 +447,7 @@ try {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
+            previousPage: props.location.state?.previousPage
           };
           if (WinTargetName) {
             history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -478,6 +486,7 @@ try {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
+          previousPage: props.location.state?.previousPage
         };
         if (WinTargetName) {
           history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -561,39 +570,72 @@ try {
           id: Number(targetId)
         },
       }).then((res: any) => { 
-      let data = {};
+        let data = {};
+        
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
       
     })
     .catch((err) => {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
     });
     }
   

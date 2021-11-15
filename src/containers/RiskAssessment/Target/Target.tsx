@@ -103,7 +103,7 @@ export const Target: React.FC = (props: any) => {
   const [open, setOpen] = React.useState(false);
   const [uploadToolOpen, setUploadToolOpen] = React.useState(false);
   const session = Cookies.getJSON('ob_session');
-
+  const [param, setParam] = useState<any>({});
 //     [
 //     // {
 //     // name : "",
@@ -167,6 +167,13 @@ export const Target: React.FC = (props: any) => {
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
 
+
+  // Set props data as Param
+  useEffect(() => {
+    if (props?.location.state) {
+      setParam(props.location.state)
+    }
+  }, [])
 
   const [
     getTargetData,
@@ -1436,25 +1443,42 @@ export const Target: React.FC = (props: any) => {
           },
         }).then((res: any) => { 
         let data = {};
-        data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
-        localStorage.removeItem("name");
-        localStorage.removeItem("targetId");
-        localStorage.removeItem("ipRange");
-        localStorage.removeItem("ipAddress");
-        localStorage.removeItem('re-runTargetName');
-        localStorage.removeItem("userName");
-        localStorage.removeItem("password");
-        localStorage.removeItem("vpnUserName");
-        localStorage.removeItem("vpnPassword");
-        localStorage.removeItem("vpnFilePath");
-        localStorage.removeItem("WinTargetName");
-        localStorage.removeItem("LinuxTargetName");
+          data = { refetchData: true, clientInfo: clientInfo };
+          console.log("param-------------------------------", param)
+          if (param?.previousPage === "client") {
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
       })
       .catch((err) => {
         let data = {};
         data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
+        history.push(routeConstant.CLIENT, data);
         localStorage.removeItem("name");
         localStorage.removeItem("targetId");
         localStorage.removeItem("ipRange");
@@ -1471,19 +1495,35 @@ export const Target: React.FC = (props: any) => {
       } else {
         let data = {};
         data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
-        localStorage.removeItem("name");
-        localStorage.removeItem("targetId");
-        localStorage.removeItem("ipRange");
-        localStorage.removeItem("ipAddress");
-        localStorage.removeItem('re-runTargetName');
-        localStorage.removeItem("userName");
-        localStorage.removeItem("password");
-        localStorage.removeItem("vpnUserName");
-        localStorage.removeItem("vpnPassword");
-        localStorage.removeItem("vpnFilePath");
-        localStorage.removeItem("WinTargetName");
-        localStorage.removeItem("LinuxTargetName");
+        if (param?.previousPage === "client") {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
       }
     }
     else {
@@ -1499,6 +1539,7 @@ export const Target: React.FC = (props: any) => {
     vpnUserName: vpnUserName,
     vpnPassword: vpnPassword,
   };
+  console.log("props.location.state?.previousPage",props.location.state?.previousPage)
   const handleOkay = () => {
     setShowDialogBox(false);
     setTimeout(() => {
@@ -1510,6 +1551,7 @@ export const Target: React.FC = (props: any) => {
         targetInfo: targetInfo,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        previousPage: props.location.state?.previousPage
       };
       history.push(routeConstant.LINUX_NETWORK, data);
     }, 500);
@@ -1531,6 +1573,7 @@ export const Target: React.FC = (props: any) => {
           targetInfo: targetInfo,
           editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
           editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+          previousPage: props.location.state?.previousPage
         }
       }
       history.push(routeConstant.WINDOWS_NETWORK, data);

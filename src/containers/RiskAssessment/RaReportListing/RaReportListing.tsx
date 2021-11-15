@@ -236,7 +236,7 @@ export const RaReportListing: React.FC = (props: any) => {
     //     }
     //   })
     // }
-  }, [dataReportListing || targetDeleted]);
+  }, [targetDeleted]);
 
 
   //for task data
@@ -645,7 +645,8 @@ export const RaReportListing: React.FC = (props: any) => {
       variables: {
         id: rowData2.targetId,
         firstName: userData.data.getUserDetails.edges[0].node.firstName,
-        lastName:userData.data.getUserDetails.edges[0].node.lastName,
+        lastName: userData.data.getUserDetails.edges[0].node.lastName,
+        type:'Cancel'
       },
     }).then((res: any) => {
       setShowBackdrop(false);
