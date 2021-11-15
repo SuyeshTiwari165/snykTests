@@ -587,7 +587,7 @@ export const Client: React.FC = (props: any) => {
     }
     if (param === "Add") {
       if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData };
+        let data = { clientInfo: rowData, previousPage:'client' };
         history.push(routeConstant.TARGET, data);
       } else {
         logout();
@@ -595,7 +595,7 @@ export const Client: React.FC = (props: any) => {
     }
     if (param === "AddExternal") {
       if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData };
+        let data = { clientInfo: rowData, previousPage:'client' };
         history.push(routeConstant.EXTERNAL_TARGET, data);
       } else {
         logout();
@@ -603,7 +603,7 @@ export const Client: React.FC = (props: any) => {
     }
     if (param === "pentest") {
       if (Cookies.getJSON("ob_session")) {
-        let data = { clientInfo: rowData };
+        let data = { clientInfo: rowData, previousPage:'client' };
         history.push(routeConstant.PEN_TEST, data);
       } else {
         logout();

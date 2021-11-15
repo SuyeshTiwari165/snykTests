@@ -47,6 +47,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
     name: "",
     ipRange: "",
   });
+  const [param, setParams] = useState<any>({});
   const [name, setName] = useState<String>("");
   const [ipRange, setIpRange] = useState<any>("");
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
@@ -66,18 +67,11 @@ export const AdvanceTarget: React.FC = (props: any) => {
   const tempScheduleDate = new Date().toISOString();
 
 
-  // useEffect(() => {
-  //   if (
-  //     formState.isDelete === true ||
-  //     formState.isFailed === true ||
-  //     formState.isSuccess === true ||
-  //     formState.isUpdate === true
-  //   ) {
-  //     setTimeout(function () {
-  //       handleAlertClose();
-  //     }, ALERT_MESSAGE_TIMER);
-  //   }
-  // }, [formState]);
+  useEffect(() => {
+    if (props?.location.state) {
+     setParams(props.location.state)
+    }
+  }, []);
 
   useEffect(() => {
     if(scanConfig.length != 0) {
@@ -129,19 +123,35 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     if (Cookies.getJSON("ob_session")) {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem("re-runTargetName");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (param.previousPage === 'client') {
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem("re-runTargetName");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem("re-runTargetName");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
     } else {
       logout();
     }

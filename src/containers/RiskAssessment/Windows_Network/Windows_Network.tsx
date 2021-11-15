@@ -90,6 +90,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = React.useState(false);
   const session = Cookies.getJSON('ob_session');
+  const [params, setParams] = useState<any>({});
 
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
@@ -119,6 +120,12 @@ export const Windows_Network: React.FC = (props: any) => {
   const [deleteTarget] = useMutation(DELETE_TARGET);
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
+
+  useEffect(() => {
+    if (props.location.state) {
+      setParams(props?.location.state);
+    };
+  }, [])
 
   const checkValidation = () => {
     if (
@@ -325,6 +332,7 @@ export const Windows_Network: React.FC = (props: any) => {
               targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
               editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : true,
+              previousPage: props.location.state?.previousPage
             }
           }else {
             data = {
@@ -335,6 +343,7 @@ export const Windows_Network: React.FC = (props: any) => {
               targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
               editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+              previousPage: props.location.state?.previousPage
             }
           }
           setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -390,7 +399,8 @@ export const Windows_Network: React.FC = (props: any) => {
         targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        previousPage: props.location.state?.previousPage
       }
       setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
       history.push(routeConstant.LINUX_NETWORK, data);
@@ -405,7 +415,8 @@ export const Windows_Network: React.FC = (props: any) => {
     targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
     editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
     editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    targetName : ReRunTargetName ? ReRunTargetName : targetName
+    targetName: ReRunTargetName ? ReRunTargetName : targetName,
+    previousPage: props.location.state?.previousPage
     }
 
     setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -421,7 +432,8 @@ export const Windows_Network: React.FC = (props: any) => {
       targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName : ReRunTargetName ? ReRunTargetName : targetName
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      previousPage: props.location.state?.previousPage
       }
   
     setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -830,6 +842,7 @@ export const Windows_Network: React.FC = (props: any) => {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
+            previousPage: props.location.state?.previousPage
           };
           setRaStepper(
             client,
@@ -857,6 +870,7 @@ export const Windows_Network: React.FC = (props: any) => {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
+            previousPage: props.location.state?.previousPage
           };
           if (LinuxTargetName) {
             history.push(routeConstant.LINUX_NETWORK, data);
@@ -883,6 +897,7 @@ export const Windows_Network: React.FC = (props: any) => {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
+          previousPage: props.location.state?.previousPage
         };
         if (LinuxTargetName) {
           history.push(routeConstant.LINUX_NETWORK, data);
@@ -1007,43 +1022,80 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const handleCancel = () => {
     if(Cookies.getJSON('ob_session'))  {
+      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
       deleteTarget({
         variables: {
-          id: Number(targetId)
+          id: Number(targetId),
+          firstName: userData.data.getUserDetails.edges[0].node.firstName,
+          lastName: userData.data.getUserDetails.edges[0].node.lastName
         },
       }).then((res: any) => { 
       let data = {};
-      data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+        data = { refetchData: true, clientInfo: clientInfo };
+        if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
     })
     .catch((err) => {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+       if (params.previousPage == 'client') {
+        console.log("CLIENT",params)
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+        console.log("RA_REPORT_LISTING",params)
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
     });
     }
     else {

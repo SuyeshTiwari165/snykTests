@@ -81,6 +81,7 @@ export const Linux_Network: React.FC = (props: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = React.useState(false);
   const session = Cookies.getJSON('ob_session');
+  const [params, setParams] = useState<any>({});
 
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
@@ -203,8 +204,9 @@ export const Linux_Network: React.FC = (props: any) => {
       }));
     }
   }, []);
-
+  console.log("props.location.state",props.location.state)
   useEffect(() => {
+    setParams(props.location.state);
     if (targetId && editDataId !== undefined) {
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
       // setTargetName(JSON.parse(localStorage.getItem("name") || "{}"));
@@ -266,6 +268,7 @@ export const Linux_Network: React.FC = (props: any) => {
         clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        previousPage: props.location.state?.previousPage
       }
     }else {
       data = {
@@ -275,6 +278,7 @@ export const Linux_Network: React.FC = (props: any) => {
         clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        previousPage: props.location.state?.previousPage
       }
     }
       history.push(routeConstant.TASK_DETAILS, data);
@@ -354,7 +358,8 @@ export const Linux_Network: React.FC = (props: any) => {
           editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : true,
           editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
           clientInfo: props.location.state.clientInfo,
-          targetInfo: props.location.state.targetInfo
+          targetInfo: props.location.state.targetInfo,
+          previousPage: props.location.state?.previousPage
         };
       } else {
       data = {
@@ -364,7 +369,8 @@ export const Linux_Network: React.FC = (props: any) => {
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
         clientInfo: props.location.state.clientInfo,
-        targetInfo: props.location.state.targetInfo
+        targetInfo: props.location.state.targetInfo,
+        previousPage: props.location.state?.previousPage
       };
     }
       history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -450,6 +456,7 @@ export const Linux_Network: React.FC = (props: any) => {
                       : false,
                     clientInfo: props.location.state.clientInfo,
                     targetInfo: props.location.state.targetInfo,
+                    previousPage: props.location.state?.previousPage
                   };
                 } else {
                   data = {
@@ -473,6 +480,7 @@ export const Linux_Network: React.FC = (props: any) => {
                       : false,
                     clientInfo: props.location.state.clientInfo,
                     targetInfo: props.location.state.targetInfo,
+                    previousPage: props.location.state?.previousPage
                   };
                 }
                 // data = {
@@ -516,6 +524,7 @@ export const Linux_Network: React.FC = (props: any) => {
                         : false,
                       clientInfo: props.location.state.clientInfo,
                       targetInfo: props.location.state.targetInfo,
+                      previousPage: props.location.state?.previousPage
                     };
                   } else {
                     data = {
@@ -540,6 +549,7 @@ export const Linux_Network: React.FC = (props: any) => {
                         : false,
                       clientInfo: props.location.state.clientInfo,
                       targetInfo: props.location.state.targetInfo,
+                      previousPage: props.location.state?.previousPage
                     };
                   }
                   history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -943,6 +953,7 @@ export const Linux_Network: React.FC = (props: any) => {
                 ? props.location.state.editWindowsData
                 : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
+            previousPage: props.location.state?.previousPage
           };
           setRaStepper(
             client,
@@ -978,6 +989,7 @@ export const Linux_Network: React.FC = (props: any) => {
               props.location.state && props.location.state.editWindowsData
                 ? props.location.state.editWindowsData
                 : false,
+            previousPage: props.location.state?.previousPage
           };
           history.push(routeConstant.TARGET, data);
         }
@@ -1007,6 +1019,7 @@ export const Linux_Network: React.FC = (props: any) => {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
+          previousPage: props.location.state?.previousPage
         };
         history.push(routeConstant.TARGET, data);
       }
@@ -1037,7 +1050,8 @@ try {
         targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
+        targetName : ReRunTargetName ? ReRunTargetName : targetName,
+        previousPage: props.location.state?.previousPage
       }
       setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
       console.log("WINDOWS RERUN ")
@@ -1051,7 +1065,8 @@ else {
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
       clientInfo: props.location.state.clientInfo,
-      targetInfo: props.location.state.targetInfo
+      targetInfo: props.location.state.targetInfo,
+      previousPage: props.location.state?.previousPage
     };
     history.push(routeConstant.WINDOWS_NETWORK, data);
   };
@@ -1063,7 +1078,8 @@ else {
     editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
     editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
     clientInfo: props.location.state.clientInfo,
-    targetInfo: props.location.state.targetInfo
+    targetInfo: props.location.state.targetInfo,
+    previousPage: props.location.state?.previousPage
   };
   history.push(routeConstant.WINDOWS_NETWORK, data);
 }
@@ -1159,45 +1175,86 @@ const theme = createMuiTheme({
     }
   }
 });
+  
 const handleCancel = () => {
-  if(Cookies.getJSON('ob_session'))  {
+  if (Cookies.getJSON('ob_session')) {
+    let userData = JSON.parse(Cookies.getJSON("ob_user")) 
     deleteTarget({
       variables: {
-        id: Number(targetId)
+        id: Number(targetId),
+        firstName: userData.data.getUserDetails.edges[0].node.firstName,
+        lastName: userData.data.getUserDetails.edges[0].node.lastName
       },
     }).then((res: any) => { 
     let data = {};
-    data = { refetchData: true, clientInfo: clientInfo };
-    history.push(routeConstant.RA_REPORT_LISTING, data);
-    localStorage.removeItem("name");
-    localStorage.removeItem("targetId");
-    localStorage.removeItem("ipRange");
-    localStorage.removeItem("ipAddress");
-    localStorage.removeItem('re-runTargetName');
-    localStorage.removeItem("userName");
-    localStorage.removeItem("password");
-    localStorage.removeItem("vpnUserName");
-    localStorage.removeItem("vpnPassword");
-    localStorage.removeItem("vpnFilePath");
-    localStorage.removeItem("WinTargetName");
-    localStorage.removeItem("LinuxTargetName");
+      data = { refetchData: true, clientInfo: clientInfo };
+      if (params.previousPage == 'client') {
+        console.log("CLIENT",params)
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+        console.log("RA_REPORT_LISTING",params)
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
+   
   })
   .catch((err) => {
     let data = {};
     data = { refetchData: true, clientInfo: clientInfo };
-    history.push(routeConstant.RA_REPORT_LISTING, data);
-    localStorage.removeItem("name");
-    localStorage.removeItem("targetId");
-    localStorage.removeItem("ipRange");
-    localStorage.removeItem("ipAddress");
-    localStorage.removeItem('re-runTargetName');
-    localStorage.removeItem("userName");
-    localStorage.removeItem("password");
-    localStorage.removeItem("vpnUserName");
-    localStorage.removeItem("vpnPassword");
-    localStorage.removeItem("vpnFilePath");
-    localStorage.removeItem("WinTargetName");
-    localStorage.removeItem("LinuxTargetName");
+    if (params.previousPage == 'client') {
+        console.log("CLIENT",params)
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+        console.log("RA_REPORT_LISTING",params)
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
   });
   }
   else {
