@@ -22,7 +22,7 @@ export const ReportStatus: React.FC = (props: any) => {
   // console.log("props.location.stat", props.location.state)
   //table
   const columns = [
-    { title: "Target", field: "target" },
+    { title: "Scan Name", field: "target" },
     { title: "Task", field: "task" },
     { title: "Scan start date", field: "scanStartDate" },
     { title: "Scan end date", field: "scanEndDate" },
