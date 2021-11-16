@@ -137,7 +137,7 @@ export const ProfileSettings: React.FC = (props: any) => {
   };
 
   const endDayChange = (event: any, newValue: any) => {    
-    if(startDay && startDay.id  > newValue.id) {
+    if(startDay &&  newValue && startDay.id  > newValue.id) {
       setIsError((error: any) => ({
         ...error,
         endDay: "End day should be of same week",
@@ -236,10 +236,9 @@ export const ProfileSettings: React.FC = (props: any) => {
 
   const handleDayValidation = () => {
     let rflag = true
-    console.log("startDay",startDay)
-    console.log("endDay",endDay)
-     if(startDay.id  > endDay.id) {
-     
+    //  if(startDay.id  > endDay.id) {
+      if(startDay &&  endDay && startDay.id  > endDay.id) {
+
       setIsError((error: any) => ({
         ...error,
         endDay: "End day should be of same week",
@@ -249,7 +248,6 @@ export const ProfileSettings: React.FC = (props: any) => {
     return rflag
   }
   const handleTimeValidation = () => {
-    console.log("startTimeValue",startTimeValue)
     let rflag =  true
     var st = !edit ?  startTimeValue.split(":") : moment(startTimeValue).format('HH:mm').split(":") ;
     var et = !edit ? endTimeValue.split(":"): moment(endTimeValue).format('HH:mm').split(":");
@@ -502,8 +500,46 @@ export const ProfileSettings: React.FC = (props: any) => {
     setStartTimeValue(new Date(1970, 1, 1,splitPartsrawStartTime[0], splitPartsrawStartTime[1]))
     setEndTime(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
     setEndTimeValue(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
-    setStartDay({"id":rowData.id ,"title": rowData.StartDay ,"value" : rowData.StartDay})
-    setEndDay({"id":rowData.id,"title": rowData.endDay ,"value" : rowData.endDay})
+    let startDayId = 1
+    let endDayId = 1
+    if(rowData.StartDay === 'Sunday') {
+      startDayId = 7
+    }
+    if(rowData.StartDay === 'Monday') {
+      startDayId = 1
+    }
+    if(rowData.StartDay === 'Tuesday') {
+      startDayId = 2
+    }
+    if(rowData.StartDay === 'Wednesday') {
+      startDayId = 3
+    }
+    if(rowData.StartDay === 'Thursday') {
+      startDayId = 4
+    }
+    if(rowData.StartDay === 'Friday') {
+      startDayId = 5
+    }
+    if(rowData.StartDay === 'Satuday') {
+      startDayId = 6
+    }
+    if(rowData.endDay === 'Sunday') {
+      endDayId = 7
+    }if(rowData.endDay === 'Monday') {
+      endDayId = 1
+    }if(rowData.endDay === 'Tuesday') {
+      endDayId = 2
+    }if(rowData.endDay === 'Wednesday') {
+      endDayId = 3
+    }if(rowData.endDay === 'Thursday') {
+      endDayId = 4
+    }if(rowData.endDay === 'Friday') {
+      endDayId = 5
+    }if(rowData.endDay === 'Satuday') {
+      endDayId = 6
+    }
+    setStartDay({"id":startDayId ,"title": rowData.StartDay ,"value" : rowData.StartDay})
+    setEndDay({"id":endDayId,"title": rowData.endDay ,"value" : rowData.endDay})
     setTimezone(rowData.tZone)
     handleAlertClose();
     setShowDialogBox(true);
@@ -517,6 +553,10 @@ export const ProfileSettings: React.FC = (props: any) => {
     setIsError((error: any) => ({
       ...error,
       endTimeValue: "",
+    }));
+    setIsError((error: any) => ({
+      ...error,
+      endDay: "",
     }));
   };
 
