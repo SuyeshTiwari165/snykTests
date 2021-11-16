@@ -40,13 +40,14 @@ export const ProfileSettings: React.FC = (props: any) => {
   const partner = Cookies.get("ob_partnerData") || logout();
 
   const days = [
-    { title: "Monday", value: "Monday" },
-    { title: "Tuesday", value: "Tuesday" },
-    { title: "Wednesday", value: "Wednesday" },
-    { title: "Thursday", value: "Thursday" },
-    { title: "Friday", value: "Friday" },
-    { title: "Saturday", value: "Saturday" },
-    { title: "Sunday", value: "Sunday" },
+   
+    { id: 1,title: "Monday", value: "Monday" },
+    { id: 2,title: "Tuesday", value: "Tuesday" },
+    { id: 3,title: "Wednesday", value: "Wednesday" },
+    { id: 4,title: "Thursday", value: "Thursday" },
+    { id: 5,title: "Friday", value: "Friday" },
+    { id: 6,title: "Saturday", value: "Saturday" },
+    { id: 7,title: "Sunday", value: "Sunday" },
   ];
   const column = [
     { title: "Partner Name", field: "partnerName" },
@@ -58,12 +59,14 @@ export const ProfileSettings: React.FC = (props: any) => {
   ];
   const [startDay, setStartDay] = useState<any>([
     {
+      id:null,
       Name: "",
       value: "",
     },
   ]);
   const [endDay, setEndDay] = useState<any>([
     {
+      id:null,
       Name: "",
       value: "",
     },
@@ -97,7 +100,7 @@ export const ProfileSettings: React.FC = (props: any) => {
   const [editValue, setEditValue] = useState<any>("");
   const [endTimeChanged, setEndTimeChanged] = useState<boolean>(false);
   const [startTimeChanged, setStartTimeChanged] = useState<boolean>(false);
-
+  const [errorEndDate, setErrorEndDate] = useState<any>("");
   const [createPartnerSchedule] = useMutation(PARTNER_SCHEDULE);
   const [deletePartnerSchedule] = useMutation(PARTNER_SCHEDULE_DELETE);
   const [editPartnerSchedule] = useMutation(PARTNER_SCHEDULE_EDIT);
@@ -133,7 +136,18 @@ export const ProfileSettings: React.FC = (props: any) => {
     setStartDay(newValue);
   };
 
-  const endDayChange = (event: any, newValue: any) => {
+  const endDayChange = (event: any, newValue: any) => {    
+    if(startDay && startDay.id  > newValue.id) {
+      setIsError((error: any) => ({
+        ...error,
+        endDay: "End day should be of same week",
+      }));
+    } else {
+      setIsError((error: any) => ({
+        ...error,
+        endDay: "",
+      }));
+    }
     setEndDay(newValue);
   };
 
@@ -141,8 +155,41 @@ export const ProfileSettings: React.FC = (props: any) => {
     setStartTimeChanged(true);
     setStartTimeValue(convertTime12to24(value));
     setStartTime(date);
+    handleTimeValidation();
+
   };
   const handleEndTimeChange = (date: Date | null | any, value: any) => {
+
+    let endTimesValues  = parseInt(convertTime12to24(value))
+    var ms = moment(startTime,"DD/MM/YYYY HH:mm:ss").diff(moment(date,"DD/MM/YYYY HH:mm:ss"));
+    var d = moment.duration(ms);
+    var st = !edit ?  startTimeValue.split(":") : moment(startTimeValue).format('HH:mm').split(":") ;
+    var et = !edit ? endTimeValue.split(":"): moment(endTimeValue).format('HH:mm').split(":");
+    if (st[0] > et[0]) {
+      setIsError((error: any) => ({
+            ...error,
+            endTimeValue: "End time should not be less than start time",
+          }));
+    }
+    else if (startTimeValue == convertTime12to24(value)) {
+      setIsError((error: any) => ({
+        ...error,
+        endTimeValue: "Start time and End time should not be the same",
+      }));
+    }
+    else if(!(Math.floor(d.asHours()) < -4 ) ) {
+      setIsError((error: any) => ({
+        ...error,
+        endTimeValue: "The time difference between start and end time should be at least 4 hours.",
+      }));
+    }
+    else {
+      setIsError((error: any) => ({
+        ...error,
+        endTimeValue: "",
+      }));
+    }
+
     setEndTimeChanged(true);
     setEndTimeValue(convertTime12to24(value));
     setEndTime(date);
@@ -187,10 +234,60 @@ export const ProfileSettings: React.FC = (props: any) => {
     return error;
   };
 
+  const handleDayValidation = () => {
+    let rflag = true
+    console.log("startDay",startDay)
+    console.log("endDay",endDay)
+     if(startDay.id  > endDay.id) {
+     
+      setIsError((error: any) => ({
+        ...error,
+        endDay: "End day should be of same week",
+      }));
+      rflag= false
+    }
+    return rflag
+  }
+  const handleTimeValidation = () => {
+    console.log("startTimeValue",startTimeValue)
+    let rflag =  true
+    var st = !edit ?  startTimeValue.split(":") : moment(startTimeValue).format('HH:mm').split(":") ;
+    var et = !edit ? endTimeValue.split(":"): moment(endTimeValue).format('HH:mm').split(":");
+    var ms = moment(startTime,"DD/MM/YYYY HH:mm:ss").diff(moment(endTime,"DD/MM/YYYY HH:mm:ss"));
+    var d = moment.duration(ms);
+    if (st[0] > et[0]) {
+      rflag= false
+      setIsError((error: any) => ({
+            ...error,
+            endTimeValue: "End time should not be less than start time",
+          }));
+    }
+    else if(!(Math.floor(d.asHours()) < -4 ) ) {
+      rflag= false
+      setIsError((error: any) => ({
+        ...error,
+        endTimeValue: "The time difference between start and end time should be at least 4 hours",
+      }));
+    }
+    // var s = d.format("hh:mm:ss");
+    else if (startTimeValue == endTimeValue) {
+      rflag= false
+      // console.log("ERROR")
+      setIsError((error: any) => ({
+        ...error,
+        endTimeValue: "Start time and End time should not be the same",
+      }));
+    }
+  
+    return rflag
+  }
+
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
     if (Cookies.getJSON("ob_session")) {
-      if(startDay && endDay && startTime && endTimeValue ) {
+      if(startDay && endDay && startTime && endTimeValue) {
+       if(handleTimeValidation() &&  handleDayValidation() ) {
+        
       if(!edit) {
       let partnerData = JSON.parse(partner);
       let input = {
@@ -209,6 +306,10 @@ export const ProfileSettings: React.FC = (props: any) => {
         },
       })
         .then((userRes) => {
+          setIsError((error: any) => ({
+            ...error,
+            endTimeValue: "",
+          }));
           setShowDialogBox(false);
           setEndTimeChanged(false)
           setShowDialogBox(false);
@@ -295,7 +396,18 @@ export const ProfileSettings: React.FC = (props: any) => {
         });
 
       }
-    }else {
+    } else {
+      setBackdrop(false)
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: " Validation Error",
+      }));
+    }
+    }else { 
       setBackdrop(false)
       setFormState((formState) => ({
         ...formState,
@@ -390,8 +502,8 @@ export const ProfileSettings: React.FC = (props: any) => {
     setStartTimeValue(new Date(1970, 1, 1,splitPartsrawStartTime[0], splitPartsrawStartTime[1]))
     setEndTime(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
     setEndTimeValue(new Date(1970, 1, 1,splitPartsrawEndTime[0], splitPartsrawEndTime[1]))
-    setStartDay({"title": rowData.StartDay ,"value" : rowData.StartDay})
-    setEndDay({"title": rowData.endDay ,"value" : rowData.endDay})
+    setStartDay({"id":rowData.id ,"title": rowData.StartDay ,"value" : rowData.StartDay})
+    setEndDay({"id":rowData.id,"title": rowData.endDay ,"value" : rowData.endDay})
     setTimezone(rowData.tZone)
     handleAlertClose();
     setShowDialogBox(true);
@@ -402,6 +514,10 @@ export const ProfileSettings: React.FC = (props: any) => {
     setStartTimeChanged(false)
     setEndTimeChanged(false)
     setShowDialogBox(false);
+    setIsError((error: any) => ({
+      ...error,
+      endTimeValue: "",
+    }));
   };
 
   const handleClose = () => {
@@ -591,6 +707,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                     // style={{ width: 300 }}
                     onChange={endDayChange}
                     value={endDay}
+                   
                     renderInput={(params: any) => (
                       <TextField
                         {...params}
@@ -598,6 +715,8 @@ export const ProfileSettings: React.FC = (props: any) => {
                         variant="outlined"
                         fullWidth
                         className={styles.ReactInput}
+                        error={isError.endDay}
+                        helperText={isError.endDay}
                       />
                     )}
                   />
@@ -623,14 +742,18 @@ export const ProfileSettings: React.FC = (props: any) => {
               <Grid item xs={12} md={4}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardTimePicker
+                    invalidDateMessage= {errorEndDate}
                     margin="normal"
                     id="time-picker"
                     label="End Time"
                     value={endTime}
                     onChange={handleEndTimeChange}
+                    autoOk ={true}
                     KeyboardButtonProps={{
                       "aria-label": "change time",
                     }}
+                    error={isError.endTimeValue}
+                    helperText={isError.endTimeValue}
                     keyboardIcon={<AlarmIcon />}
                   />
                 </MuiPickersUtilsProvider>
@@ -801,7 +924,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                 />
               ) : !ipLoading ? (
                 <Typography component="h5" variant="h3">
-                  You don't have any Schedular
+                  There are no schedules defined
                 </Typography>
               ) : null}
             </div>
