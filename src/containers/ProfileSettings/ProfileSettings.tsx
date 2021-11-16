@@ -159,12 +159,14 @@ export const ProfileSettings: React.FC = (props: any) => {
 
   };
   const handleEndTimeChange = (date: Date | null | any, value: any) => {
-
-    let endTimesValues  = parseInt(convertTime12to24(value))
+    console.log("value",value)
+    let endTimesValues  = convertTime12to24(value)
     var ms = moment(startTime,"DD/MM/YYYY HH:mm:ss").diff(moment(date,"DD/MM/YYYY HH:mm:ss"));
     var d = moment.duration(ms);
     var st = !edit ?  startTimeValue.split(":") : moment(startTimeValue).format('HH:mm').split(":") ;
-    var et = !edit ? endTimeValue.split(":"): moment(endTimeValue).format('HH:mm').split(":");
+    var et = !edit ? endTimesValues.split(":"): moment(endTimesValues).format('HH:mm').split(":");
+    console.log("st[0]",st[0])
+    console.log("et[0]",et[0])
     if (st[0] > et[0]) {
       setIsError((error: any) => ({
             ...error,
@@ -253,6 +255,7 @@ export const ProfileSettings: React.FC = (props: any) => {
     var et = !edit ? endTimeValue.split(":"): moment(endTimeValue).format('HH:mm').split(":");
     var ms = moment(startTime,"DD/MM/YYYY HH:mm:ss").diff(moment(endTime,"DD/MM/YYYY HH:mm:ss"));
     var d = moment.duration(ms);
+ 
     if (st[0] > et[0]) {
       rflag= false
       setIsError((error: any) => ({
