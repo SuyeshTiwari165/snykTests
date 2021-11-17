@@ -344,7 +344,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     })
       .then((userRes) => {
         //   setBackdrop(false);
-        if (userRes.data.createTarget.targetField == null) {
+        if(userRes.data.createTarget.status === "Duplicate") {
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -356,7 +356,8 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           }));
           // setSubmitDisabled(true)
         }
-        else {
+        else if(userRes.data.createTarget.status === "Success") {
+        // else {
           //   setSubmitDisabled(false)        
           getScanConfigData({
             variables: {
@@ -371,6 +372,16 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           //     isFailed: false,
           //     errMessage: "Target Created Successfully !",
           //   }));
+        }
+        else {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Failed to create Scan Please Try Again",
+          }));
         }
       })
       .catch((err) => {
@@ -417,7 +428,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         },
       })
         .then((userRes) => {
-
+          if(userRes.data.createTask.status === "Success") {
           let formState2 = {
             isSuccess: true,
             isUpdate: false,
@@ -448,6 +459,16 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           localStorage.removeItem("vpnPassword");
           localStorage.removeItem("WinTargetName");
           localStorage.removeItem("LinuxTargetName");
+        } else {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Failed to create Task",
+          }));
+        }
         })
         .catch((err) => {
           setBackdrop(false);

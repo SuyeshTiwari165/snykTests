@@ -29,6 +29,7 @@ mutation createTask($input: TaskInput!) {
         name
       }
     }
+    status
   }
 }
 `;

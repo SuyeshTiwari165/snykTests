@@ -296,6 +296,8 @@ try {
         },
       })
         .then((userRes) => {
+          if(userRes.data.createTask.status === "Success") {
+
           setBackdrop(false);
           setSubmitDisabled(false);
           setFormState((formState) => ({
@@ -328,6 +330,16 @@ try {
           localStorage.removeItem("vpnPassword");
           localStorage.removeItem("WinTargetName");
           localStorage.removeItem("LinuxTargetName");
+        } else {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Failed to create Task",
+          }));
+        }
         })
         .catch((err) => {
           setBackdrop(false);

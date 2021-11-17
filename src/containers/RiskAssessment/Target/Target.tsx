@@ -734,7 +734,7 @@ export const Target: React.FC = (props: any) => {
           })
             .then((userRes) => {
               setBackdrop(false);
-              if(userRes.data.createTarget.targetField ==  null){
+              if(userRes.data.createTarget.status === "Duplicate") {
                 setFormState((formState) => ({
                   ...formState,
                   isSuccess: false,
@@ -745,8 +745,8 @@ export const Target: React.FC = (props: any) => {
                 }));
                 // setSubmitDisabled(true)
               }
-              else {
-              setSubmitDisabled(false)
+              else if(userRes.data.createTarget.status === "Success") {
+                setSubmitDisabled(false)
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: true,
@@ -784,6 +784,16 @@ export const Target: React.FC = (props: any) => {
                 setShowDialogBox(true)
                 setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
               }, 1000);
+            }
+            else {
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " Failed to create Scan Please Try Again",
+              }));
             }
             })
             .catch((err) => {
