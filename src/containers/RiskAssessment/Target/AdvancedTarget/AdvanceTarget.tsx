@@ -374,6 +374,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           //   }));
         }
         else {
+          setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
@@ -460,13 +461,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           localStorage.removeItem("WinTargetName");
           localStorage.removeItem("LinuxTargetName");
         } else {
+          setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
             isSuccess: false,
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: "Failed to create Task",
+            errMessage: "Failed to create Scan Please Try Again",
           }));
         }
         })

@@ -735,6 +735,7 @@ export const Target: React.FC = (props: any) => {
             .then((userRes) => {
               setBackdrop(false);
               if(userRes.data.createTarget.status === "Duplicate") {
+                setBackdrop(false);
                 setFormState((formState) => ({
                   ...formState,
                   isSuccess: false,
@@ -786,6 +787,7 @@ export const Target: React.FC = (props: any) => {
               }, 1000);
             }
             else {
+              setBackdrop(false);
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
