@@ -13,16 +13,19 @@ mutation createTarget($input: TargetInput!)
       partner{
         id
         partnerName
-
-      }
-      client{
-        id
-        clientName
-      }
-    }
+  }
+  targetStatus{
+    id
+    name
+  }
+  client{
+    id
+    clientName
+  }
+},
+status
   }
   }
-
 
 `;
 

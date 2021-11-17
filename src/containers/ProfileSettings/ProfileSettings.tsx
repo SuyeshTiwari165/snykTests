@@ -34,6 +34,9 @@ import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import AlarmIcon from "@material-ui/icons/AddAlarm";
 import { DialogBox } from "../../components/UI/DialogBox/DialogBox";
 import moment from "moment";
+import { Info } from "@material-ui/icons";
+// import { Tooltip } from "@material-ui/core";
+import Tooltip from '@material-ui/core/Tooltip';
 
 export const ProfileSettings: React.FC = (props: any) => {
   // const [days, setDays] = useState([]);
@@ -134,6 +137,7 @@ export const ProfileSettings: React.FC = (props: any) => {
 
   const startDayChange = (event: any, newValue: any) => {
     setStartDay(newValue);
+    handleDayValidation()
   };
 
   const endDayChange = (event: any, newValue: any) => {    
@@ -322,6 +326,14 @@ export const ProfileSettings: React.FC = (props: any) => {
             isDelete: false,
             isFailed: false,
             errMessage: " Scheduled Successfully",
+          }));
+          setIsError((error: any) => ({
+            ...error,
+            endTimeValue: "",
+          }));
+          setIsError((error: any) => ({
+            ...error,
+            endDay: "",
           }));
           let partnerData = JSON.parse(partner);
           getPartnerSchedule({
@@ -649,9 +661,32 @@ export const ProfileSettings: React.FC = (props: any) => {
   return (
     <React.Fragment>
       <CssBaseline />
+      {/* <Grid container justifyContent="center"> */}
+      <Grid item xs={6}>
       <Typography component="h5" variant="h1">
-        Scheduling Configuration
-      </Typography>
+          Scheduling Configuration 
+        </Typography>
+        {/* {showDialogBox ?  */}
+
+      <Tooltip
+        placement="right"
+        title={
+          <React.Fragment>
+            
+            <b> A week is defined as Monday to Sunday. </b>
+            <b> <p>You can add two or more schedules.</p> </b> e.g: (If you want to schedule the task from Monday to
+              Friday at 10:00 to 19:00, you can use start day as Monday and end
+              day as Friday with start time 10:00 to end time 19:00).
+            
+          </React.Fragment>
+        }
+      >
+        <Info className={styles.CircleIcon2} />
+      </Tooltip>
+      {/* :null } */}
+      </Grid>
+      {/* </Grid> */}
+
       {!showDialogBox ? (
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
@@ -706,101 +741,100 @@ export const ProfileSettings: React.FC = (props: any) => {
               </Alert>
             ) : null}
             <Paper className={styles.paper}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4} className={styles.disfield}>
-                <Input
-                  type="text"
-                  label="Time Zone"
-                  value={timezone}
-                  required
-                  disabled={true}
-                >
-                  Time Zone
-                </Input>
-              </Grid>
-              
-              <Grid item xs={12} md={4}>
-                <div className={styles.FilterInput}>
-                  <AutoCompleteDropDown
-                    id="combo-box-demo"
-                    options={days}
-                    getOptionLabel={(option: any) => option.title}
-                    // style={{ width: 300 }}
-                    onChange={startDayChange}
-                    value={startDay}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="Start Day"
-                        variant="outlined"
-                        fullWidth
-                        className={styles.ReactInput}
-                      />
-                    )}
-                  />
-                </div>
-              </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4} className={styles.disfield}>
+                  <Input
+                    type="text"
+                    label="Time Zone"
+                    value={timezone}
+                    required
+                    disabled={true}
+                  >
+                    Time Zone
+                  </Input>
+                </Grid>
 
-              <Grid item xs={12} md={4}>
-                <div className={styles.FilterInput}>
-                  <AutoCompleteDropDown
-                    id="combo-box-demo"
-                    options={days}
-                    getOptionLabel={(option: any) => option.title}
-                    // style={{ width: 300 }}
-                    onChange={endDayChange}
-                    value={endDay}
-                   
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="End Day"
-                        variant="outlined"
-                        fullWidth
-                        className={styles.ReactInput}
-                        error={isError.endDay}
-                        helperText={isError.endDay}
-                      />
-                    )}
-                  />
-                </div>
-              </Grid>
+                <Grid item xs={12} md={4}>
+                  <div className={styles.FilterInput}>
+                    <AutoCompleteDropDown
+                      id="combo-box-demo"
+                      options={days}
+                      getOptionLabel={(option: any) => option.title}
+                      // style={{ width: 300 }}
+                      onChange={startDayChange}
+                      value={startDay}
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          label="Start Day"
+                          variant="outlined"
+                          fullWidth
+                          className={styles.ReactInput}
+                        />
+                      )}
+                    />
+                  </div>
+                </Grid>
 
-              <Grid item xs={12} md={4}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardTimePicker
-                    margin="normal"
-                    id="time-picker"
-                    label="Start Time"
-                    value={startTime}
-                    onChange={handleStartTimeChange}
-                    KeyboardButtonProps={{
-                      "aria-label": "change time",
-                    }}
-                    keyboardIcon={<AlarmIcon />}
-                  />
-                </MuiPickersUtilsProvider>
-              </Grid>
+                <Grid item xs={12} md={4}>
+                  <div className={styles.FilterInput}>
+                    <AutoCompleteDropDown
+                      id="combo-box-demo"
+                      options={days}
+                      getOptionLabel={(option: any) => option.title}
+                      // style={{ width: 300 }}
+                      onChange={endDayChange}
+                      value={endDay}
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          label="End Day"
+                          variant="outlined"
+                          fullWidth
+                          className={styles.ReactInput}
+                          error={isError.endDay}
+                          helperText={isError.endDay}
+                        />
+                      )}
+                    />
+                  </div>
+                </Grid>
 
-              <Grid item xs={12} md={4}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardTimePicker
-                    invalidDateMessage= {errorEndDate}
-                    margin="normal"
-                    id="time-picker"
-                    label="End Time"
-                    value={endTime}
-                    onChange={handleEndTimeChange}
-                    autoOk ={true}
-                    KeyboardButtonProps={{
-                      "aria-label": "change time",
-                    }}
-                    error={isError.endTimeValue}
-                    helperText={isError.endTimeValue}
-                    keyboardIcon={<AlarmIcon />}
-                  />
-                </MuiPickersUtilsProvider>
-              </Grid>
+                <Grid item xs={12} md={4}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardTimePicker
+                      margin="normal"
+                      id="time-picker"
+                      label="Start Time"
+                      value={startTime}
+                      onChange={handleStartTimeChange}
+                      KeyboardButtonProps={{
+                        "aria-label": "change time",
+                      }}
+                      keyboardIcon={<AlarmIcon />}
+                    />
+                  </MuiPickersUtilsProvider>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardTimePicker
+                      invalidDateMessage={errorEndDate}
+                      margin="normal"
+                      id="time-picker"
+                      label="End Time"
+                      value={endTime}
+                      onChange={handleEndTimeChange}
+                      autoOk={true}
+                      KeyboardButtonProps={{
+                        "aria-label": "change time",
+                      }}
+                      error={isError.endTimeValue}
+                      helperText={isError.endTimeValue}
+                      keyboardIcon={<AlarmIcon />}
+                    />
+                  </MuiPickersUtilsProvider>
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
@@ -885,29 +919,27 @@ export const ProfileSettings: React.FC = (props: any) => {
             ) : null}
           </Grid>
           <DialogBox
-        open={openDialogBox}
-        handleOk={confirmDelete}
-        handleCancel={closeDialogBox}
-        buttonOk={"Yes"}
-        buttonCancel={"No"}
-        classes={{
-          root: styles.MainOfficeDialogRoot,
-          container: styles.MainOfficeDialogboxContainer,
-          paper: styles.MainOfficeDialogboxPaper,
-          scrollPaper: styles.MainOfficeScrollPaper,
-        }}
-      >
-        <div className={styles.DialogBoxTitle}>
-          <Typography component="h1" variant="h1">
-            Please Confirm
-          </Typography>
-        </div>
-        <div className={styles.DialogBoxContext}>
-          <p>
-            {dialogBoxMsg}
-          </p>
-        </div>
-      </DialogBox>
+            open={openDialogBox}
+            handleOk={confirmDelete}
+            handleCancel={closeDialogBox}
+            buttonOk={"Yes"}
+            buttonCancel={"No"}
+            classes={{
+              root: styles.MainOfficeDialogRoot,
+              container: styles.MainOfficeDialogboxContainer,
+              paper: styles.MainOfficeDialogboxPaper,
+              scrollPaper: styles.MainOfficeScrollPaper,
+            }}
+          >
+            <div className={styles.DialogBoxTitle}>
+              <Typography component="h1" variant="h1">
+                Please Confirm
+              </Typography>
+            </div>
+            <div className={styles.DialogBoxContext}>
+              <p>{dialogBoxMsg}</p>
+            </div>
+          </DialogBox>
           <Paper className={styles.paper}>
             {ipLoading ? <SimpleBackdrop /> : null}
             <div className={styles.ScrollTable}>
@@ -929,7 +961,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                       tooltip: "Edit",
                       onClick: (event: any, rowData: any, oldData: any) => {
                         onRowClick(event, rowData, oldData, "Edit");
-                      }
+                      },
                     },
                     {
                       icon: () => (
@@ -941,12 +973,12 @@ export const ProfileSettings: React.FC = (props: any) => {
                           }
                           alt="delete icon"
                         />
-                      ),                        tooltip: "Delete",
-                        onClick: (event: any, rowData: any, oldData: any) => {
-                          onRowClick(event, rowData, oldData, 'Delete');
-                        },
+                      ),
+                      tooltip: "Delete",
+                      onClick: (event: any, rowData: any, oldData: any) => {
+                        onRowClick(event, rowData, oldData, "Delete");
                       },
-                     
+                    },
                   ]}
                   options={{
                     headerStyle: {
@@ -967,7 +999,7 @@ export const ProfileSettings: React.FC = (props: any) => {
                 />
               ) : !ipLoading ? (
                 <Typography component="h5" variant="h3">
-                  There are no schedules defined
+                  There are no schedules defined.
                 </Typography>
               ) : null}
             </div>
