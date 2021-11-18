@@ -13,16 +13,19 @@ mutation createTarget($input: TargetInput!)
       partner{
         id
         partnerName
-
-      }
-      client{
-        id
-        clientName
-      }
-    }
+  }
+  targetStatus{
+    id
+    name
+  }
+  client{
+    id
+    clientName
+  }
+},
+status
   }
   }
-
 
 `;
 
@@ -50,8 +53,8 @@ mutation updateTarget($input: TargetInput!,$id:Int!){
 `;
 
 export const DELETE_TARGET = gql`
-mutation deleteTarget($id:Int!){
-  deleteTarget(id:$id){
+mutation deleteTarget($id:Int!,$firstName:String,$lastName:String){
+  deleteTarget(id:$id,firstName: $firstName,lastName:$lastName){
     status 
    }
  }

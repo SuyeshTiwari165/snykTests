@@ -18,11 +18,16 @@ import ClientForm from "./containers/Client/ClientForm/ClientForm";
 import TopStepperRoute from "./common/TopStepperRoute";
 import LayoutRoute from "./common/LayoutRoute";
 import AdvanceTarget from "./containers/RiskAssessment/Target/AdvancedTarget/AdvanceTarget";
+import PenTest from "./containers/PenTest/PenTest";
+import Prospects from "./containers/Prospects/Prospects";
+import ProfileSettings from "./containers/ProfileSettings/ProfileSettings";
+
 
 const defaultRedirect = () => <Redirect to={routeConstants.CLIENT} />;
 
 export const AuthRoutes = (
   <Switch>
+    <LayoutRoute path={routeConstants.PEN_TEST} exact component={PenTest} />
     <LayoutRoute
       path={routeConstants.PARTNER_USER_FORM}
       exact
@@ -43,7 +48,7 @@ export const AuthRoutes = (
       exact
       component={PartnerUserForm}
     />
-     <LayoutRoute
+    <LayoutRoute
       path={routeConstants.CLIENT_FORM}
       exact
       component={ClientForm}
@@ -72,9 +77,20 @@ export const AuthRoutes = (
     />
     <LayoutRoute path={routeConstants.LOGOUT_URL} exact component={Logout} />
     <LayoutRoute path={routeConstants.TARGET} exact component={Target} />
-    <LayoutRoute path={routeConstants.EXTERNAL_TARGET} exact component={AdvanceTarget} />
-    <LayoutRoute path={routeConstants.WINDOWS_NETWORK} component={Windows_Network} />
-    <LayoutRoute path={routeConstants.LINUX_NETWORK} exact component={Linux_Network} />
+    <LayoutRoute
+      path={routeConstants.EXTERNAL_TARGET}
+      exact
+      component={AdvanceTarget}
+    />
+    <LayoutRoute
+      path={routeConstants.WINDOWS_NETWORK}
+      component={Windows_Network}
+    />
+    <LayoutRoute
+      path={routeConstants.LINUX_NETWORK}
+      exact
+      component={Linux_Network}
+    />
     <LayoutRoute
       path={routeConstants.TASK_DETAILS}
       exact
@@ -90,6 +106,16 @@ export const AuthRoutes = (
       exact
       component={RaReportListing}
     />
-  <Route path="/" render={defaultRedirect} />                         
+    <LayoutRoute
+      path={routeConstants.VIEW_PROSPECT}
+      exact
+      component={Prospects}
+    />
+    <LayoutRoute
+      path={routeConstants.SETTINGS}
+      exact
+      component={ProfileSettings}
+    />
+    <Route path="/" render={defaultRedirect} />
   </Switch>
 );

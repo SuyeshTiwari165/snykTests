@@ -42,6 +42,12 @@ import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
 import Cookies from 'js-cookie';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import ComputerIcon from "@material-ui/icons/Computer";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import DehazeSharpIcon from "@material-ui/icons/DehazeSharp";
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export const RaReportListing: React.FC = (props: any) => {
   const [published, setPublished] = useState<any>({});
@@ -57,12 +63,46 @@ export const RaReportListing: React.FC = (props: any) => {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
   //table
+  const [targetOpen, setTargetOpen] = React.useState(false);
+  const handleTargetToolTipClose = () => {
+    setTargetOpen(false);
+  };
+
+  const handleTargetToolTipOpen = () => {
+    setTargetOpen(true);
+  };
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const CompnyUserColumns = [
-    { title: "Target", field: "target" },
-    { title: "Status", field: "status" },
+    { title: "Company Name", field: "clientName" },
+    { title: "Scan Name", field: "target" },
+    { title: "Scan Type", field: "scanType" },
+    { title: "Status", field: "status"  },
+    { title: '', field: 'img', render: (item:any) => 
+    // item.status === "Scan Completed" ? (
+      <div>
+    <Tooltip
+    // open={targetOpen}
+    // onClose={handleTargetToolTipClose}
+    // onOpen={handleTargetToolTipOpen}
+    placement="right"
+    title={
+      <React.Fragment>
+        <p>
+          <b className = {styles.tooltiptext}> {item.details} </b>{" "}
+        </p>
+        {" "}
+      </React.Fragment>
+    }
+  > 
+  <ContactSupportIcon className={styles.CircleIcon2} /> 
+  </Tooltip>
+  </div>
+    // ): null,
+  },
+
   ];
-  const AdminColumns = [{ title: "Target", field: "target" },
+  const AdminColumns = [{ title: "Scan Name", field: "target" },
   { title: "Status", field: "status" },
   { title: "Report Status", field: "report_status" }
   ];
@@ -88,6 +128,8 @@ export const RaReportListing: React.FC = (props: any) => {
   const [rowData2, setRowData] = useState<any>({});
   const [openDialogBox, setOpenDialogBox] = useState<boolean>(false);
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   //filter query condition declaration
   const [getReportListingData, {
     data: dataReportListing,
@@ -111,12 +153,23 @@ export const RaReportListing: React.FC = (props: any) => {
 
 
   useEffect(() => {
-    if (Cookies.getJSON("ob_session")) { 
+    if (Cookies.getJSON("ob_session")) {
     getReportListingData({
       variables: {
         clientname: propsClientName,
       },
     });
+    if(props.location.state && props.location.state.formState) {
+      // setFormState(props.location.state.formState)
+      setFormState(formState => ({
+        ...formState,
+        isSuccess: props.location.state.formState.isSuccess,
+        isUpdate: props.location.state.formState.isUpdate,
+        isDelete: props.location.state.formState.isDelete,
+        isFailed: props.location.state.formState.isFailed,
+        errMessage: props.location.state.formState.errMessage
+      }));
+    }
   } else{
      logout();
   }
@@ -183,7 +236,7 @@ export const RaReportListing: React.FC = (props: any) => {
     //     }
     //   })
     // }
-  }, [dataReportListing || targetDeleted]);
+  }, [targetDeleted]);
 
 
   //for task data
@@ -301,6 +354,7 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["status"] = element.status;
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
+      obj["clientName"] = element.clientName;
       arr.push(obj);
       }
     });
@@ -315,6 +369,28 @@ export const RaReportListing: React.FC = (props: any) => {
       obj["status"] = element.status;
       obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
       obj["report_status"] = element.publishedFlag;
+      obj["clientName"] = element.clientName;
+      if(element.status === "Scheduled") {
+        obj["details"] = msgConstant.Scheduled
+      }
+      if(element.status === "Scan Completed") {
+        obj["details"] = msgConstant.ScanCompleted
+      }
+      if(element.status === "Generating Report") {
+        obj["details"] = msgConstant.GeneratingReport
+      }
+      if(element.status === "Result Generated") {
+        obj["details"] = msgConstant.ResultGenerated
+      }
+      if(element.status === "Report Generated") {
+        obj["details"] = msgConstant.ReportGenerated
+      }
+      if(element.status === "Failed") {
+        obj["details"] = msgConstant.TestFailed
+      }
+      if(element.status === "In Progress") {
+        obj["details"] = msgConstant.InProgress
+      }
       arr.push(obj);
     });
     }
@@ -526,7 +602,13 @@ export const RaReportListing: React.FC = (props: any) => {
     data = { clientInfo: clientInfo };
     history.push(routeConstant.TARGET, data);
   };
-
+  const handleAddNewPentest = () => {
+    handleAlertClose();
+    let data = {};
+    data = { clientInfo: clientInfo };
+    history.push(routeConstant.PEN_TEST, data);
+  };
+  
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {
     let orderByColumn;
     let orderBy = "";
@@ -555,11 +637,16 @@ export const RaReportListing: React.FC = (props: any) => {
   }
 
   const confirmDelete = async () => {
+    if (Cookies.getJSON("ob_session")) {
+      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
     closeDialogBox();
-      // SetTargetDeleted(false);
+      SetTargetDeleted(false);
     deleteTarget({
       variables: {
-        id: rowData2.targetId
+        id: rowData2.targetId,
+        firstName: userData.data.getUserDetails.edges[0].node.firstName,
+        lastName: userData.data.getUserDetails.edges[0].node.lastName,
+        type:'Cancel'
       },
     }).then((res: any) => {
       setShowBackdrop(false);
@@ -604,11 +691,20 @@ export const RaReportListing: React.FC = (props: any) => {
         errMessage: error,
       }));
     });
-
+  } else {
+    logout();
+  }
   }
   const closeDialogBox = () => {
     setShowBackdrop(false);
     setOpenDialogBox(false);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event :any) => {
+    setAnchorEl(event.currentTarget);
   };
   return (
     <React.Fragment>
@@ -665,29 +761,34 @@ export const RaReportListing: React.FC = (props: any) => {
               &nbsp; Back to List
             </Button>
             {/* ) : null} */}
-            {partner.partnerId ? (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleAddNewReport}
-                className={styles.ActionButton}
-              >
-                <AddCircleIcon className={styles.EditIcon} />
-                &nbsp; External Vulnerability Test
-              </Button>
-            ) : null}
-              {partner.partnerId ? (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleAddNewAdvanceReport}
-                className={styles.ActionButton}
-              >
-                {/* <AddCircleIcon className={styles.EditIcon} /> */}
-                <AddToPhotosIcon className={styles.EditIcon} />
-                &nbsp; Advanced Vulnerability Test
-              </Button>
-            ) : null}
+            {partner.partnerId ? 
+             <> 
+            <Button
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                  className={styles.ActionButton}
+
+                >
+                  <AddCircleIcon className={styles.CircleIcon} />
+                  &nbsp; CREATE TEST
+                </Button>
+            <Menu
+               id="simple-menu"
+               anchorEl={anchorEl}
+               keepMounted
+               open={Boolean(anchorEl)}
+               onClose={handleClose}
+               className={styles.MenuButton}
+
+             >
+               <MenuItem onClick={handleAddNewReport}> &nbsp; External Vulnerability Test</MenuItem>
+               <MenuItem onClick={handleAddNewAdvanceReport}> &nbsp; Advanced Vulnerability Test</MenuItem>
+               <MenuItem onClick={handleAddNewPentest}> &nbsp; Pentest</MenuItem>
+             </Menu>
+             </>
+              : null}
+      
           </Grid>
         </Grid>
         <Paper className={styles.paper}>
@@ -707,7 +808,7 @@ export const RaReportListing: React.FC = (props: any) => {
               }
             >
               <strong>{formState.errMessage}</strong>
-              {SUCCESS}
+              {/* {SUCCESS} */}
             </Alert>
           ) : null}
           {formState.isFailed ? (
@@ -757,6 +858,7 @@ export const RaReportListing: React.FC = (props: any) => {
               
                
               },
+              rowHover: true,
               actionsColumnIndex: -1,
               paging: true,
               sorting: true,
@@ -771,13 +873,14 @@ export const RaReportListing: React.FC = (props: any) => {
             }}
             actions={[
               partner.partnerId
-                ? {
+                ? (rowData: any) =>
+                 rowData.scanType != "Pentest" ? {
                     icon: () => <VisibilityIcon />,
                     tooltip: "View Data",
                     onClick: (event: any, rowData: any) => {
                       handleClickView(rowData);
                     },
-                  }
+                  } : null
                 : null,
               partner.partnerId
                 ? (rowData: any) =>

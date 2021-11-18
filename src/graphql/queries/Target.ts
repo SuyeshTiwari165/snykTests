@@ -65,3 +65,31 @@ query ($vpnConnectFlag : String){
   }
 }
 `
+
+export const GET_PROSPECT_CLIENTS = gql `
+query getCompanyData($pgPartnerId:Int!){
+  getCompanyData(partnerId:$pgPartnerId){
+data{
+ clientName
+ external
+ pentest
+ externalId
+ externalStatus
+ pentestStatus
+ pentestId
+ clientId
+ publishedFlag
+}
+ }}
+`
+export const GET_ALL_PROSPECT_CLIENTS = gql `
+query getCompanyData($pgPartnerId:Int){
+  getCompanyData(partnerId:$pgPartnerId){
+data{
+ clientName
+ external
+ pentest
+ clientId
+}
+ }}
+`

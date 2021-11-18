@@ -55,6 +55,7 @@ import {
   UPDATE_TARGET,
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
+import * as msgConstant from "../../../common/MessageConstants";
 
 export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
@@ -83,7 +84,7 @@ export const TaskDetails: React.FC = (props: any) => {
   // Show form
   const [showForm, setShowForm] = useState<boolean>(false);
   const [selectAllTask, setSelectAllTask] = useState<boolean>(false);
-
+  const [params, setParams] = useState<any>({});
   //add/edit data
 
   const [name, setName] = useState<String>("");
@@ -124,6 +125,12 @@ export const TaskDetails: React.FC = (props: any) => {
     isDelete: false,
     errMessage: "",
   });
+
+  useEffect(() => {
+    if (props.location.state) {
+      setParams(props.location.state)
+    }
+  }, [])
   const [deleteTarget] = useMutation(DELETE_TARGET);
 
   const { data: taskData, loading: taskLoading } = useQuery(
@@ -289,6 +296,8 @@ try {
         },
       })
         .then((userRes) => {
+          if(userRes.data.createTask.status === "Success") {
+
           setBackdrop(false);
           setSubmitDisabled(false);
           setFormState((formState) => ({
@@ -300,8 +309,15 @@ try {
             errMessage: "",
           }));
           setShowForm(false);
+          let formState2 = {
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: msgConstant.SCAN_SUCCESS_MSG,
+          }     
           let data = {};
-          data = { refetchData: true, clientInfo: clientInfo };
+          data = { refetchData: true, clientInfo: clientInfo , formState : formState2 };
           history.push(routeConstant.RA_REPORT_LISTING, data);
           localStorage.removeItem("name");
           localStorage.removeItem("targetId");
@@ -314,6 +330,17 @@ try {
           localStorage.removeItem("vpnPassword");
           localStorage.removeItem("WinTargetName");
           localStorage.removeItem("LinuxTargetName");
+        } else {
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Failed to create Scan Please Try Again",
+          }));
+        }
         })
         .catch((err) => {
           setBackdrop(false);
@@ -371,6 +398,7 @@ try {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
+            previousPage: props.location.state?.previousPage
           };
           // if (WinTargetName) {
           //   setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
@@ -432,6 +460,7 @@ try {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
+            previousPage: props.location.state?.previousPage
           };
           if (WinTargetName) {
             history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -470,6 +499,7 @@ try {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
+          previousPage: props.location.state?.previousPage
         };
         if (WinTargetName) {
           history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -553,39 +583,72 @@ try {
           id: Number(targetId)
         },
       }).then((res: any) => { 
-      let data = {};
+        let data = {};
+        
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
       
     })
     .catch((err) => {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
     });
     }
   
@@ -655,10 +718,10 @@ try {
             Target
           </Input>
         </Grid> */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12} className={styles.mainCheck}>
           <label className={styles.HeaderLabel}>Select Scan Configuration</label>
           <Grid container spacing={1}>
-          <Grid item xs={6} md={6}>
+          <Grid item xs={6} md={12}><div className={styles.cbox}>
           <FormControlLabel
             className={styles.CheckboxLabel}
         control={
@@ -670,7 +733,7 @@ try {
           />
         }
         label="Select All"
-      />
+      /></div>
       </Grid>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {
@@ -711,7 +774,7 @@ try {
             data-testid="ok-button"
             disabled={submitDisabled}
           >
-            save
+            Queue Scan
           </Button>
           <Button
             className={styles.borderLess}

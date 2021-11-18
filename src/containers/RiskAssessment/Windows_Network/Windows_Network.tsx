@@ -50,11 +50,16 @@ import {
   createMuiTheme,
   MuiThemeProvider,
 } from "@material-ui/core/styles";
+import {
+  DOMAIN_VERIFY,
+  IP_VERIFY
+} from "../../../graphql/mutations/DomainVerify";
+import { OB_URI } from "../../../config";
 
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
   const client = useApolloClient();
-  const [ipRange, setIpRange] = useState<String>("");
+  const [ipRange, setIpRange] = useState<any>("");
   const [userName, setUserName] = useState<String>("");
   const [domainName, setDomainName] = useState<String>("");
   const [vpnUserName, setVpnUserName] = useState<String>("");
@@ -65,7 +70,7 @@ export const Windows_Network: React.FC = (props: any) => {
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
   const [editDataId, setEditDataId] = useState<Number | null>();
-  const [ipAddress, setIpAddress] = useState<String>("");
+  const [ipAddress, setIpAddress] = useState<any>("");
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
@@ -84,6 +89,8 @@ export const Windows_Network: React.FC = (props: any) => {
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const session = Cookies.getJSON('ob_session');
+  const [params, setParams] = useState<any>({});
 
   if (props.location.state) {
     if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
@@ -111,6 +118,14 @@ export const Windows_Network: React.FC = (props: any) => {
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [deleteTarget] = useMutation(DELETE_TARGET);
+  const [domainVerify] = useMutation(DOMAIN_VERIFY);
+  const [IPVerify] = useMutation(IP_VERIFY);
+
+  useEffect(() => {
+    if (props.location.state) {
+      setParams(props?.location.state);
+    };
+  }, [])
 
   const checkValidation = () => {
     if (
@@ -317,6 +332,7 @@ export const Windows_Network: React.FC = (props: any) => {
               targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
               editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : true,
+              previousPage: props.location.state?.previousPage
             }
           }else {
             data = {
@@ -327,6 +343,7 @@ export const Windows_Network: React.FC = (props: any) => {
               targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
               editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
               editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+              previousPage: props.location.state?.previousPage
             }
           }
           setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -382,7 +399,8 @@ export const Windows_Network: React.FC = (props: any) => {
         targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        previousPage: props.location.state?.previousPage
       }
       setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
       history.push(routeConstant.LINUX_NETWORK, data);
@@ -397,7 +415,8 @@ export const Windows_Network: React.FC = (props: any) => {
     targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
     editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
     editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    targetName : ReRunTargetName ? ReRunTargetName : targetName
+    targetName: ReRunTargetName ? ReRunTargetName : targetName,
+    previousPage: props.location.state?.previousPage
     }
 
     setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -413,7 +432,8 @@ export const Windows_Network: React.FC = (props: any) => {
       targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
       editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
       editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName : ReRunTargetName ? ReRunTargetName : targetName
+      targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      previousPage: props.location.state?.previousPage
       }
   
     setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
@@ -475,166 +495,303 @@ export const Windows_Network: React.FC = (props: any) => {
     // setSubmitDisabled(checkValidation);
   };
 
+  const submitAction = async () => {
+    if (
+      (localStorage.getItem("runTargetName") != null &&
+        targetData &&
+        targetData != null) ||
+      (targetData != undefined &&
+        targetData.getCredentialsDetails &&
+        targetData.getCredentialsDetails.edges &&
+        targetData.getCredentialsDetails.edges.length > 0)
+    ) {
+      setBackdrop(true);
+      // testWindowsConnection({
+      //   variables: {
+      //     input: {
+      //       client: clientId,
+      //       targetName: targetName,
+      //       vpnUsername: VPNUsername,
+      //       vpnPassword: VPNPassword,
+      //       host: ipRange,
+      //       winUsername: userName,
+      //       winPassword: password,
+      //       winIpAddress: ipAddress,
+      //       winName: domainName,
+      //       targetId:
+      //         targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+      //     },
+      //   },
+      // })
+      //   .then((response: any) => {
+        const headerObj = {
+          "Content-Type": "application/json",
+          "Authorization": "jwt" + " " + session,
+        };
+        let url;
+          url = OB_URI + "target/testwincredentails/?cid=" + clientId +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&whost=" + ipAddress + "&wusername=" +  userName + "&wpassword=" + password + "&wname=" +  domainName + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+        await fetch(url, {
+          method: "GET",
+          headers: headerObj,
+          // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+        })
+        .then((data) => data.json())
+          .then((response) => {
+          setBackdrop(false);
+          if (
+            response ==
+            "Authentication succeeded, connection successful"
+          ) {
+            SetConnectionSuccess(true);
+            setSubmitDisabled(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "Test connection successful",
+            }));
+          } else if (
+            response ==
+            "VPN is Connected,Please Disconnect"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage:
+                "You are already connected with another VPN. Please disconnect then try again",
+            }));
+          }       
+          else if(response == "Authentication failed, please verify your credentials") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Authentication Failed",
+            }));
+          }
+          else {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "Test connection failed ",
+            }));
+          }
+        })
+        .catch(() => {
+          setSubmitDisabled(true);
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "",
+          }));
+        });
+    } else {
+      setBackdrop(true);
+      // testWindowsConnection({
+      //   variables: {
+      //     input: {
+      //       client: clientId,
+      //       targetName: targetName,
+      //       vpnUsername: VPNUsername,
+      //       vpnPassword: VPNPassword,
+      //       host: ipRange,
+      //       winUsername: userName,
+      //       winPassword: password,
+      //       winIpAddress: ipAddress,
+      //       winName: domainName,
+      //     },
+      //   },
+      // })
+        // .then((response: any) => {
+          const headerObj = {
+            "Content-Type": "application/json",
+            "Authorization": "jwt" + " " + session,
+          };
+          let url;
+            url = OB_URI + "target/testwincredentails/?cid=" + clientId +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&whost=" + ipAddress + "&wusername=" +  userName + "&wpassword=" + password + "&wname=" +  domainName
+          await fetch(url, {
+            method: "GET",
+            headers: headerObj,
+            // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+          })
+          .then((data) => data.json())
+            .then((response) => {
+          setBackdrop(false);
+          if (
+            response ==
+            "Authentication succeeded, connection successful"
+          ) {
+            SetConnectionSuccess(true);
+            setSubmitDisabled(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "Test connection successful",
+            }));
+          } else if (
+            response ==
+            "VPN is Connected,Please Disconnect"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage:
+                "You are already connected with another VPN. Please disconnect then try again",
+            }));
+          }
+          else if(response == "Authentication failed, please verify your credentials") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Authentication Failed",
+            }));
+          }
+          else if(response == "Openvpn File is invalid") {
+            SetConnectionSuccess(false)
+            setSubmitDisabled(true)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Invalid File",
+            }));
+          }              
+          else {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "Test connection failed ",
+            }));
+          }
+        })
+        .catch(() => {
+          setSubmitDisabled(true);
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "",
+          }));
+        });
+    }
+  }
+
   const onClickTestConnection = () => {
     if (Cookies.getJSON("ob_session")) {
       if (handleInputErrors()) {
         handleAlertClose();
-        if (
-          (localStorage.getItem("runTargetName") != null &&
-            targetData &&
-            targetData != null) ||
-          (targetData != undefined &&
-            targetData.getCredentialsDetails &&
-            targetData.getCredentialsDetails.edges &&
-            targetData.getCredentialsDetails.edges.length > 0)
-        ) {
-          setBackdrop(true);
-          testWindowsConnection({
-            variables: {
-              input: {
-                client: clientId,
-                targetName: targetName,
-                vpnUsername: VPNUsername,
-                vpnPassword: VPNPassword,
-                host: ipRange,
-                winUsername: userName,
-                winPassword: password,
-                winIpAddress: ipAddress,
-                winName: domainName,
-                targetId:
-                  targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
-              },
-            },
-          })
-            .then((response: any) => {
-              setBackdrop(false);
-              if (
-                response.data.windowsVpnTest.success ==
-                "Authentication succeeded, connection successful"
-              ) {
-                SetConnectionSuccess(true);
-                setSubmitDisabled(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "Test connection successful",
-                }));
-              } else if (
-                response.data.windowsVpnTest.success ==
-                "VPN is Connected,Please Disconnect"
-              ) {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    "You are already connected with another VPN. Please disconnect then try again",
-                }));
-              } else {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: "Test connection failed ",
-                }));
-              }
-            })
-            .catch(() => {
-              setSubmitDisabled(true);
-              setBackdrop(false);
+        let input = {
+          "host": ipAddress
+        };
+        if(parseInt(ipAddress)){
+          IPVerify({
+          variables: {
+            input
+          },
+        })
+        .then((userRes) => {
+          if(userRes.data.IPVerify.status === 'Valid IP address') {
+            submitAction()
+          } else {
+            setBackdrop(false)
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Please Enter Valid IP Address",
+            }));
+          }
+        })
+        .catch((err) => {
+          setBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+      }else {
+        domainVerify({
+          variables: {
+            input
+          },
+        })
+          .then((userRes : any) => {
+            if (userRes.data.domainVerify.status === 'Domain name is registered') {
+              submitAction();
+            } else {
+              setBackdrop(false)
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: "",
+                errMessage: " Please Enter Valid Domain Name",
               }));
-            });
-        } else {
-          setBackdrop(true);
-          testWindowsConnection({
-            variables: {
-              input: {
-                client: clientId,
-                targetName: targetName,
-                vpnUsername: VPNUsername,
-                vpnPassword: VPNPassword,
-                host: ipRange,
-                winUsername: userName,
-                winPassword: password,
-                winIpAddress: ipAddress,
-                winName: domainName,
-              },
-            },
+            }
           })
-            .then((response: any) => {
-              setBackdrop(false);
-              if (
-                response.data.windowsVpnTest.success ==
-                "Authentication succeeded, connection successful"
-              ) {
-                SetConnectionSuccess(true);
-                setSubmitDisabled(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: true,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: false,
-                  errMessage: "Test connection successful",
-                }));
-              } else if (
-                response.data.windowsVpnTest.success ==
-                "VPN is Connected,Please Disconnect"
-              ) {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    "You are already connected with another VPN. Please disconnect then try again",
-                }));
-              } else {
-                SetConnectionSuccess(false);
-                setSubmitDisabled(true);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: "Test connection failed ",
-                }));
-              }
-            })
-            .catch(() => {
-              setSubmitDisabled(true);
-              setBackdrop(false);
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: "",
-              }));
-            });
+          .catch((err : any) => {
+            console.log("doMAIN api FAILED");
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " ",
+            }));
+          });
         }
       } else {
         setFormState((formState) => ({
@@ -685,6 +842,7 @@ export const Windows_Network: React.FC = (props: any) => {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
+            previousPage: props.location.state?.previousPage
           };
           setRaStepper(
             client,
@@ -712,6 +870,7 @@ export const Windows_Network: React.FC = (props: any) => {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
+            previousPage: props.location.state?.previousPage
           };
           if (LinuxTargetName) {
             history.push(routeConstant.LINUX_NETWORK, data);
@@ -738,6 +897,7 @@ export const Windows_Network: React.FC = (props: any) => {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
+          previousPage: props.location.state?.previousPage
         };
         if (LinuxTargetName) {
           history.push(routeConstant.LINUX_NETWORK, data);
@@ -862,43 +1022,80 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const handleCancel = () => {
     if(Cookies.getJSON('ob_session'))  {
+      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
       deleteTarget({
         variables: {
-          id: Number(targetId)
+          id: Number(targetId),
+          firstName: userData.data.getUserDetails.edges[0].node.firstName,
+          lastName: userData.data.getUserDetails.edges[0].node.lastName
         },
       }).then((res: any) => { 
       let data = {};
-      data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+        data = { refetchData: true, clientInfo: clientInfo };
+        if (params.previousPage === 'client') {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        }
     })
     .catch((err) => {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem('re-runTargetName');
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+       if (params.previousPage == 'client') {
+        console.log("CLIENT",params)
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem('re-runTargetName');
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+        console.log("RA_REPORT_LISTING",params)
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
     });
     }
     else {
@@ -1045,7 +1242,7 @@ export const Windows_Network: React.FC = (props: any) => {
     
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-        <MuiThemeProvider theme={theme}>
+        {/* <MuiThemeProvider theme={theme}> */}
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
             <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
@@ -1062,7 +1259,7 @@ export const Windows_Network: React.FC = (props: any) => {
             IP Range
           </Input>
           </Tooltip>
-          </MuiThemeProvider>
+          {/* </MuiThemeProvider> */}
           </span>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>

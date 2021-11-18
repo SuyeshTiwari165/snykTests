@@ -5,6 +5,7 @@
   padding: 0px !important;
   background-color: transparent !important;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .ReactStep {
   padding: 0px !important;

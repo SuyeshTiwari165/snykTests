@@ -37,6 +37,7 @@ import {
   createMuiTheme,
   MuiThemeProvider,
 } from "@material-ui/core/styles";
+import * as msgConstant from "../../../../common/MessageConstants";
 
 export const AdvanceTarget: React.FC = (props: any) => {
   const history = useHistory();
@@ -46,6 +47,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
     name: "",
     ipRange: "",
   });
+  const [param, setParams] = useState<any>({});
   const [name, setName] = useState<String>("");
   const [ipRange, setIpRange] = useState<any>("");
   const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
@@ -65,18 +67,11 @@ export const AdvanceTarget: React.FC = (props: any) => {
   const tempScheduleDate = new Date().toISOString();
 
 
-  // useEffect(() => {
-  //   if (
-  //     formState.isDelete === true ||
-  //     formState.isFailed === true ||
-  //     formState.isSuccess === true ||
-  //     formState.isUpdate === true
-  //   ) {
-  //     setTimeout(function () {
-  //       handleAlertClose();
-  //     }, ALERT_MESSAGE_TIMER);
-  //   }
-  // }, [formState]);
+  useEffect(() => {
+    if (props?.location.state) {
+     setParams(props.location.state)
+    }
+  }, []);
 
   useEffect(() => {
     if(scanConfig.length != 0) {
@@ -128,19 +123,35 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     if (Cookies.getJSON("ob_session")) {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      history.push(routeConstant.RA_REPORT_LISTING, data);
-      localStorage.removeItem("name");
-      localStorage.removeItem("targetId");
-      localStorage.removeItem("ipRange");
-      localStorage.removeItem("ipAddress");
-      localStorage.removeItem("re-runTargetName");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("password");
-      localStorage.removeItem("vpnUserName");
-      localStorage.removeItem("vpnPassword");
-      localStorage.removeItem("vpnFilePath");
-      localStorage.removeItem("WinTargetName");
-      localStorage.removeItem("LinuxTargetName");
+      if (param.previousPage === 'client') {
+        history.push(routeConstant.CLIENT, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem("re-runTargetName");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
+      } else {
+          history.push(routeConstant.RA_REPORT_LISTING, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem("re-runTargetName");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+      }
     } else {
       logout();
     }
@@ -185,7 +196,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     setIsError((isError: any) => ({
       ...isError,
-      name: "Invalid Target Name",
+      name: "Invalid Scan Name",
     }));
   }
     // setSubmitDisabled(checkValidation);
@@ -220,18 +231,31 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       } else {
         // Check Domain Connectipn
         let input = {
-          "host" : ipRange
+          "host" : ipRange,
+          "scanType": "External"
         };
         if(parseInt(ipRange)){
             IPVerify({
             variables: {
-              input
+              input,
             },
           })
           .then((userRes) => {
             if(userRes.data.IPVerify.status === 'Valid IP address') {
               submitAction()
-            } else {
+            } 
+            else if (userRes.data.IPVerify.status === 'Provide single ip address'){
+              setBackdrop(false)
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " Please Enter Single IP Address",
+              }));
+            } 
+            else {
               setBackdrop(false)
               setFormState((formState) => ({
                 ...formState,
@@ -320,7 +344,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     })
       .then((userRes) => {
         //   setBackdrop(false);
-        if (userRes.data.createTarget.targetField == null) {
+        if(userRes.data.createTarget.status === "Duplicate") {
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -328,11 +352,12 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Scan name exists. Add another name",
           }));
           // setSubmitDisabled(true)
         }
-        else {
+        else if(userRes.data.createTarget.status === "Success") {
+        // else {
           //   setSubmitDisabled(false)        
           getScanConfigData({
             variables: {
@@ -348,6 +373,17 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           //     errMessage: "Target Created Successfully !",
           //   }));
         }
+        else {
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Failed to create Scan Please Try Again",
+          }));
+        }
       })
       .catch((err) => {
         //   setSubmitDisabled(false)
@@ -361,7 +397,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         if (
           error.includes("Response Error 400. Target exists already")
         ) {
-          error = " Target Name already present.";
+          error = " Scan Name already present.";
         }
         else {
           error = err.message;
@@ -393,6 +429,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         },
       })
         .then((userRes) => {
+          if(userRes.data.createTask.status === "Success") {
+          let formState2 = {
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: msgConstant.SCAN_SUCCESS_MSG,
+          }
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -403,7 +447,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             errMessage: "",
           }));
           let data = {};
-          data = { refetchData: true, clientInfo: clientInfo };
+          data = { refetchData: true, clientInfo: clientInfo ,formState : formState2 };
           history.push(routeConstant.RA_REPORT_LISTING, data);
           localStorage.removeItem("name");
           localStorage.removeItem("targetId");
@@ -416,6 +460,17 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           localStorage.removeItem("vpnPassword");
           localStorage.removeItem("WinTargetName");
           localStorage.removeItem("LinuxTargetName");
+        } else {
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Failed to create Scan Please Try Again",
+          }));
+        }
         })
         .catch((err) => {
           setBackdrop(false);
@@ -505,6 +560,24 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           : null}
       </Typography>
       {backdrop ? <SimpleBackdrop/>: null}
+      <Grid container className={styles.backToListButtonPanel}>
+        <Grid item xs={12} md={12} className={styles.backToListButton}>
+          {/* {userRole === "SuperUser" ? ( */}
+          <Button
+            className={styles.BackToButton}
+            variant={"contained"}
+            onClick={handleBack}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            <img
+              src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
+              alt="user icon"
+            />
+            &nbsp; Back to List
+          </Button>
+        </Grid>
+      </Grid>
       <Grid container spacing={3} className={styles.AlertWrap}>
       <Grid item xs={12}>
           {formState.isSuccess ? (
@@ -564,7 +637,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
             <Tooltip
               open={targetOpen}
               onClose={handleTargetToolTipClose}
@@ -573,7 +646,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
               title={
                 <React.Fragment>
                   <p>
-                    <b> Target Name can't contain any special characters. </b>{" "}
+                    <b> Scan Name can't contain any special characters. </b>{" "}
                   </p>
                   {" "}
                 </React.Fragment>
@@ -581,23 +654,23 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             >
           <Input
             type="text"
-            label="Target Name"
+            label="Scan Name"
             value={name}
             onChange={handleNameChange}
             required
             error={isError.name}
             helperText={isError.name}
           >
-            Target Name
+            Scan Name
           </Input>
           </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
 
             <Tooltip
               open={open}
@@ -611,9 +684,9 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                   </p>
                   <b>{"Single IP Address"}</b>
                   <em>{"(e.g. 192.168.x.xx)"}</em>{" "}
-                  <p>
+                  {/* <p>
                     <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)"}
-                  </p>
+                  </p> */}
                   <p>
                     <b>For Domain/URL </b>{" "}
                   <em>{"(e.g. domainname.com)"}</em>{" "}
@@ -624,19 +697,19 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             >
               <Input
                 type="text"
-                label="URL / IP Range"
+                label="URL / IP"
                 value={ipRange}
                 onChange={handleIpRangeChange}
                 required
                 error={isError.ipRange}
                 helperText={isError.ipRange}
               >
-                URL/IP Range
+                URL/IP
               </Input>
 
               {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
             </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
 
@@ -647,7 +720,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             variant={"contained"}
             data-testid="ok-button"
           >
-            Save
+            Queue Scan
           </Button>
           <Button
             className={styles.borderLess}

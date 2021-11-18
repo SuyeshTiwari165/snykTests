@@ -68,6 +68,7 @@ import {
   DOMAIN_VERIFY,
   IP_VERIFY
 } from "../../../graphql/mutations/DomainVerify";
+import { OB_URI } from "../../../config/index";
 
 export const Target: React.FC = (props: any) => {
   const history = useHistory();
@@ -102,7 +103,7 @@ export const Target: React.FC = (props: any) => {
   const [open, setOpen] = React.useState(false);
   const [uploadToolOpen, setUploadToolOpen] = React.useState(false);
   const session = Cookies.getJSON('ob_session');
-
+  const [param, setParam] = useState<any>({});
 //     [
 //     // {
 //     // name : "",
@@ -166,6 +167,13 @@ export const Target: React.FC = (props: any) => {
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
 
+
+  // Set props data as Param
+  useEffect(() => {
+    if (props?.location.state) {
+      setParam(props.location.state)
+    }
+  }, [])
 
   const [
     getTargetData,
@@ -559,7 +567,7 @@ export const Target: React.FC = (props: any) => {
           if (
             error.includes("Response Error 400. Target exists already")
           ) {
-            error = " Target Name already present.";
+            error = " Scan Name already present.";
           }
           else {
             error = err.message;
@@ -614,7 +622,7 @@ export const Target: React.FC = (props: any) => {
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully ",
+                errMessage: "Scan Created Successfully ",
               }));
               localStorage.setItem("name", JSON.stringify(name));
               localStorage.setItem(
@@ -690,7 +698,7 @@ export const Target: React.FC = (props: any) => {
               if (
                 error.includes("Response Error 400. Target exists already")
               ) {
-                error = " Target Name already present.";
+                error = " Scan Name already present.";
               }
                else {
                 error = err.message;
@@ -726,26 +734,27 @@ export const Target: React.FC = (props: any) => {
           })
             .then((userRes) => {
               setBackdrop(false);
-              if(userRes.data.createTarget.targetField ==  null){
+              if(userRes.data.createTarget.status === "Duplicate") {
+                setBackdrop(false);
                 setFormState((formState) => ({
                   ...formState,
                   isSuccess: false,
                   isUpdate: false,
                   isDelete: false,
                   isFailed: true,
-                  errMessage: " Target name exists. Add another name",
+                  errMessage: " Scan name exists. Add another name",
                 }));
                 // setSubmitDisabled(true)
               }
-              else {
-              setSubmitDisabled(false)
+              else if(userRes.data.createTarget.status === "Success") {
+                setSubmitDisabled(false)
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: true,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "Target Created Successfully ",
+                errMessage: "Scan Created Successfully ",
               }));
               // setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
               localStorage.setItem("name", JSON.stringify(name));
@@ -777,6 +786,17 @@ export const Target: React.FC = (props: any) => {
                 setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
               }, 1000);
             }
+            else {
+              setBackdrop(false);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " Failed to create Scan Please Try Again",
+              }));
+            }
             })
             .catch((err) => {
               setSubmitDisabled(false)
@@ -790,7 +810,7 @@ export const Target: React.FC = (props: any) => {
               if (
                 error.includes("Response Error 400. Target exists already")
               ) {
-                error = " Target Name already present.";
+                error = " Scan Name already present.";
               }
                else {
                 error = err.message;
@@ -959,7 +979,8 @@ export const Target: React.FC = (props: any) => {
         } else {
           // Check Domain Connectipn
           let input = {
-            "host": ipRange
+            "host": ipRange,
+            "scanType": "Advanced"
           };
           if(parseInt(ipRange)){
             IPVerify({
@@ -1434,25 +1455,42 @@ export const Target: React.FC = (props: any) => {
           },
         }).then((res: any) => { 
         let data = {};
-        data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
-        localStorage.removeItem("name");
-        localStorage.removeItem("targetId");
-        localStorage.removeItem("ipRange");
-        localStorage.removeItem("ipAddress");
-        localStorage.removeItem('re-runTargetName');
-        localStorage.removeItem("userName");
-        localStorage.removeItem("password");
-        localStorage.removeItem("vpnUserName");
-        localStorage.removeItem("vpnPassword");
-        localStorage.removeItem("vpnFilePath");
-        localStorage.removeItem("WinTargetName");
-        localStorage.removeItem("LinuxTargetName");
+          data = { refetchData: true, clientInfo: clientInfo };
+          console.log("param-------------------------------", param)
+          if (param?.previousPage === "client") {
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
       })
       .catch((err) => {
         let data = {};
         data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
+        history.push(routeConstant.CLIENT, data);
         localStorage.removeItem("name");
         localStorage.removeItem("targetId");
         localStorage.removeItem("ipRange");
@@ -1469,19 +1507,35 @@ export const Target: React.FC = (props: any) => {
       } else {
         let data = {};
         data = { refetchData: true, clientInfo: clientInfo };
-        history.push(routeConstant.RA_REPORT_LISTING, data);
-        localStorage.removeItem("name");
-        localStorage.removeItem("targetId");
-        localStorage.removeItem("ipRange");
-        localStorage.removeItem("ipAddress");
-        localStorage.removeItem('re-runTargetName');
-        localStorage.removeItem("userName");
-        localStorage.removeItem("password");
-        localStorage.removeItem("vpnUserName");
-        localStorage.removeItem("vpnPassword");
-        localStorage.removeItem("vpnFilePath");
-        localStorage.removeItem("WinTargetName");
-        localStorage.removeItem("LinuxTargetName");
+        if (param?.previousPage === "client") {
+          history.push(routeConstant.CLIENT, data);
+          localStorage.removeItem("name");
+          localStorage.removeItem("targetId");
+          localStorage.removeItem("ipRange");
+          localStorage.removeItem("ipAddress");
+          localStorage.removeItem('re-runTargetName');
+          localStorage.removeItem("userName");
+          localStorage.removeItem("password");
+          localStorage.removeItem("vpnUserName");
+          localStorage.removeItem("vpnPassword");
+          localStorage.removeItem("vpnFilePath");
+          localStorage.removeItem("WinTargetName");
+          localStorage.removeItem("LinuxTargetName");
+        } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem('re-runTargetName');
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
       }
     }
     else {
@@ -1497,6 +1551,7 @@ export const Target: React.FC = (props: any) => {
     vpnUserName: vpnUserName,
     vpnPassword: vpnPassword,
   };
+  console.log("props.location.state?.previousPage",props.location.state?.previousPage)
   const handleOkay = () => {
     setShowDialogBox(false);
     setTimeout(() => {
@@ -1508,6 +1563,7 @@ export const Target: React.FC = (props: any) => {
         targetInfo: targetInfo,
         editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
         editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+        previousPage: props.location.state?.previousPage
       };
       history.push(routeConstant.LINUX_NETWORK, data);
     }, 500);
@@ -1529,6 +1585,7 @@ export const Target: React.FC = (props: any) => {
           targetInfo: targetInfo,
           editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
           editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
+          previousPage: props.location.state?.previousPage
         }
       }
       history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -1551,7 +1608,7 @@ export const Target: React.FC = (props: any) => {
   if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
     setIsError((isError: any) => ({
       ...isError,
-      name: "Invalid Target Name",
+      name: "Invalid Scan Name",
     }));
   }
   };
@@ -1628,26 +1685,43 @@ export const Target: React.FC = (props: any) => {
     onChangeHandler(fileEvent,"remove")
   };
   
-  const onClickTestConnection = () => {
+  const onClickTestConnection =  async () => {
     // onClickHandler2();
     if (props.location.state.clientInfo) {
       if (props.location.state && props.location.state.reRun === true) {
       setBackdrop(true)
-      testVpnConnection({
-        variables: {
-          "input": {
-            "client": props.location.state.clientInfo.clientId,
-            "targetName": name,
-            "vpnUsername": vpnUserName,
-            "vpnPassword": vpnPassword,
-            "host": ipRange,
-            "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
-            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
-          }
-        }
-      }).then((response: any) => {
+      // testVpnConnection({
+      //   variables: {
+      //     "input": {
+      //       "client": props.location.state.clientInfo.clientId,
+      //       "targetName": name,
+      //       "vpnUsername": vpnUserName,
+      //       "vpnPassword": vpnPassword,
+      //       "host": ipRange,
+      //       "targetId":targetData.getCredentialsDetails.edges[0].node.vatTarget.id,
+      //       "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
+      //     }
+      //   }
+      // })
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+      let url;
+      if(props.location.state != undefined && props.location.state.editData) {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "Retry" + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+      }else {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "New"  + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
+      }
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
+      .then((data) => data.json())
+        .then((response) => {
         setBackdrop(false)
-        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+        if (response == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
           setFormState((formState) => ({
@@ -1659,7 +1733,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Test Connection Successful ",
           }));
         }
-        else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+        else if(response == "VPN is Connected,Please Disconnect") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1671,7 +1745,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: " You are already connected with another VPN. Please disconnect then try again",
           }));
         }
-        else if(response.data.vpnConnection.success == "Target name is already present") {
+        else if(response == "Authentication Failed") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1680,7 +1754,31 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Authentication Failed",
+          }));
+        }
+        else if(response == "Openvpn File is invalid") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Invalid File",
+          }));
+        }
+        else if(response == "Scan name is already present") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Scan name exists. Add another name",
           }));
         }
          else {
@@ -1710,22 +1808,39 @@ export const Target: React.FC = (props: any) => {
       })
     } else {
       setBackdrop(true)
-      testVpnConnection({
-        variables: {
-          "input": {
-            "client": props.location.state.clientInfo.clientId,
-            "targetName": name,
-            "vpnUsername": vpnUserName,
-            "vpnPassword": vpnPassword,
-            "host": ipRange,
-            "targetId":targetId ? targetId : null,
-            "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
-          }
-        }
-      }).then((response: any) => {
+      // testVpnConnection({
+      //   variables: {
+      //     "input": {
+      //       "client": props.location.state.clientInfo.clientId,
+      //       "targetName": name,
+      //       "vpnUsername": vpnUserName,
+      //       "vpnPassword": vpnPassword,
+      //       "host": ipRange,
+      //       "targetId":targetId ? targetId : null,
+      //       "testConnectType":props.location.state != undefined && props.location.state.editData ?  "Retry" : "New"
+      //     }
+      //   }
+      // })
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+      let url;
+      if(props.location.state != undefined && props.location.state.editData) {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "Retry" 
+      }else {
+        url = OB_URI + "target/testcredentails/?cid=" + props.location.state.clientInfo.clientId +  "&tname= " + name  + "&vusername=" + vpnUserName + "&vpasswords=" + vpnPassword + "&testConnectType=" + "New" 
+      }
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
+      .then((data) => data.json())
+        .then((response) => {
         setBackdrop(false)
         console.log("RESPONSE",response);
-        if (response.data.vpnConnection.success == "VPN connected Successfully") {
+        if (response == "VPN connected Successfully") {
           SetConnectionSuccess(true)
           setSubmitDisabled(false)
           setFormState((formState) => ({
@@ -1737,7 +1852,31 @@ export const Target: React.FC = (props: any) => {
             errMessage: " Test Connection Successful ",
           }));
         }
-        else if(response.data.vpnConnection.success == "VPN is Connected,Please Disconnect") {
+        else if(response == "Authentication Failed") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Authentication Failed",
+          }));
+        }
+        else if(response == "Openvpn File is invalid") {
+          SetConnectionSuccess(false)
+          setSubmitDisabled(true)
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Invalid File",
+          }));
+        }
+        else if(response == "VPN is Connected,Please Disconnect") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1749,7 +1888,7 @@ export const Target: React.FC = (props: any) => {
             errMessage: "You are already connected with another VPN. Please disconnect then try again",
           }));
         }
-        else if(response.data.vpnConnection.success == "Target name is already present") {
+        else if(response == "Scan name is already present") {
           SetConnectionSuccess(false)
           setSubmitDisabled(true)
           setFormState((formState) => ({
@@ -1758,7 +1897,7 @@ export const Target: React.FC = (props: any) => {
             isUpdate: false,
             isDelete: false,
             isFailed: true,
-            errMessage: " Target name exists. Add another name",
+            errMessage: " Scan name exists. Add another name",
           }));
         }
          else {
@@ -1932,6 +2071,27 @@ export const Target: React.FC = (props: any) => {
       <RaStepper />
       { taskLoading || backdrop ? <SimpleBackdrop /> : null }
       {targetLoading ? <SimpleBackdrop/>: null}
+      <Grid container className={styles.backToListButtonPanel}>
+        
+        <Grid item xs={12} md={12} className={styles.backToListButton}>
+          {/* {userRole === "SuperUser" ? ( */}
+          <Button
+            className={styles.BackToButton}
+            variant={"contained"}
+            onClick={handleBack}
+            color="secondary"
+            data-testid="cancel-button"
+          >
+            <img
+              src={process.env.PUBLIC_URL + "/icons/svg-icon/back-list.svg"}
+              alt="user icon"
+            />
+            &nbsp; Back to List
+          </Button>
+        </Grid>
+      </Grid>
+      {/* <Paper className={styles.paper}> */}
+ 
       <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
@@ -1991,7 +2151,7 @@ export const Target: React.FC = (props: any) => {
         </Grid>
         <Grid item xs={12} md={6} className={props.location.state != undefined && props.location.state.editData ? styles.disfield : styles.inputs}>
           <span className={styles.IPTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
             <Tooltip
               open={targetOpen}
               onClose={handleTargetToolTipClose}
@@ -2000,7 +2160,7 @@ export const Target: React.FC = (props: any) => {
               title={
                 <React.Fragment>
                   <p>
-                    <b> Target Name can't contain any special characters. </b>{" "}
+                    <b> Scan Name can't contain any special characters. </b>{" "}
                   </p>
                   {" "}
                 </React.Fragment>
@@ -2008,7 +2168,7 @@ export const Target: React.FC = (props: any) => {
             >
           <Input
             type="text"
-            label="Target Name"
+            label="Scan Name"
             value={name}
             onChange={handleNameChange}
             required
@@ -2016,18 +2176,18 @@ export const Target: React.FC = (props: any) => {
             helperText={isError.name}
             disabled = {props.location.state != undefined && props.location.state.editData}
           >
-            Target Name
+            Scan Name
           </Input>
           </Tooltip>
-            </MuiThemeProvider>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
         <Grid item xs={12} md={6}>
         <span className={styles.IPTooltip}>
-        <MuiThemeProvider theme={theme}>
+        {/* <MuiThemeProvider theme={theme}> */}
         <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
             <p><b>Please enter data in the below formats</b> </p>
-            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)'}</p> <p>
+            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.X.1/24 | 192.168.X.1-255 | 192.168.X.1-27 | 192.168.X.1-192.168.X.3 | 192.168.X.1,192.168.X.3,192.168.X.4)'}</p> <p>
                     <b>For Domain/URL </b>{" "}
                   <em>{"(e.g. domainname.com)"}</em>{" "}
                   </p>{' '}
@@ -2046,7 +2206,7 @@ export const Target: React.FC = (props: any) => {
      
         {/* <ContactSupportIcon className={styles.CircleIcon} /> */}
         </Tooltip>
-        </MuiThemeProvider>
+        {/* </MuiThemeProvider> */}
 
         </span>
         </Grid>
@@ -2104,11 +2264,11 @@ export const Target: React.FC = (props: any) => {
           </FormControl>
         </Grid>
         {/* <Grid item xs={12} md={6} className={styles.upBtn}> */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}>       
           <form>
           <label className={styles.lawDocument}>VPN Config File </label>
           <span className={styles.UploadTooltip}>
-          <MuiThemeProvider theme={theme}>
+          {/* <MuiThemeProvider theme={theme}> */}
 
           <Tooltip open={uploadToolOpen} onClose={handleUploadToolTipClose} onOpen={handleUploadToolTipOpen} title=
           { <React.Fragment>
@@ -2119,7 +2279,7 @@ export const Target: React.FC = (props: any) => {
             
         <ContactSupportIcon className={styles.CircleIcon} />
         </Tooltip>
-        </MuiThemeProvider>
+        {/* </MuiThemeProvider> */}
         </span>
           <input
               id="fileUpload"
@@ -2163,6 +2323,7 @@ export const Target: React.FC = (props: any) => {
             </Button> */}
           </form>
         </Grid>
+     
         <Grid item xs={12} className={styles.ActionButtons}>
           {/* <Button
             className={styles.borderLess}
@@ -2218,6 +2379,7 @@ export const Target: React.FC = (props: any) => {
           </Button>
         </Grid>
       </Grid>
+    {/* </Paper> */}
     </React.Fragment>
   );
 };

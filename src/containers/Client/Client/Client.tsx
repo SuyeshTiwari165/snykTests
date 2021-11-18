@@ -16,10 +16,10 @@ import Paper from "@material-ui/core/Paper";
 import MaterialTable from "../../../components/UI/Table/MaterialTable";
 import Loading from "../../../components/UI/Layout/Loading/Loading";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import {
   CREATE_CLIENT,
-  UPDATE_CLIENT
+  UPDATE_CLIENT,
 } from "../../../graphql/mutations/Clients";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import VisibilityIcon from "@material-ui/icons/Visibility";
@@ -31,21 +31,34 @@ import * as routeConstant from "../../../common/RouteConstants";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import { useHistory } from "react-router-dom";
 import logout from "../../Auth/Logout/Logout";
-import { GET_CLIENTS, GET_CLIENT_AND_LATEST_REPORTS  } from "../../../graphql/queries/Client";
+import {
+  GET_CLIENTS,
+  GET_CLIENT_AND_LATEST_REPORTS,
+} from "../../../graphql/queries/Client";
 // import { GET_PARTNER_SUBSCRIPTION } from "../../graphql/queries/PartnerSubscription";
 import {
   SUCCESS,
   UPDATE,
   DELETE,
   FAILED,
-  ALERT_MESSAGE_TIMER
+  ALERT_MESSAGE_TIMER,
 } from "../../../common/MessageConstants";
 import * as validations from "../../../common/validateRegex";
 import moment from "moment";
-import {DELETE_CLIENT } from "../../../graphql/mutations/Clients";
-import Cookies from 'js-cookie';
+import { DELETE_CLIENT } from "../../../graphql/mutations/Clients";
+import Cookies from "js-cookie";
 import { GET_ADMIN_USER } from "../../../graphql/queries/User";
-
+import ComputerIcon from "@material-ui/icons/Computer";
+import {
+  GET_PROSPECT_CLIENTS,
+  GET_TARGET,
+} from "../../../graphql/queries/Target";
+import { RA_REPORT_DOWNLOAD } from "../../../config";
+import { PUBLISH_REPORT } from "../../../graphql/mutations/PublishReport";
+import PublishIcon from "@material-ui/icons/Publish";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { ZIP_FILE } from "../../../graphql/mutations/Upload";
+import PenTest from "../../PenTest/PenTest";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
@@ -54,18 +67,24 @@ export const Client: React.FC = (props: any) => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [newData, setNewData] = useState([]);
+  const [prospectData, setProspectData] = useState([]);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [createFlag, setCreateFlag] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>({});
+
   // const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const partner = Cookies.get('ob_partnerData') || ""
-  const user = Cookies.getJSON('ob_user') || "" 
+  const partner = Cookies.get("ob_partnerData") || "";
+  const user = Cookies.getJSON("ob_user") || "";
   // const user = JSON.parse(localStorage.getItem("user") || "{}");
   let userRole: any;
   if (user) {
     userRole = user.isSuperuser == true ? "SuperUser" : "CompanyUser";
   }
-  if(user.getUserDetails) {
-    userRole = user.getUserDetails.edges[0].node.isSuperuser == true ? "SuperUser" : "CompanyUser"
+  if (user.getUserDetails) {
+    userRole =
+      user.getUserDetails.edges[0].node.isSuperuser == true
+        ? "SuperUser"
+        : "CompanyUser";
   }
   const [clientDeleted, setClientDeleted] = useState(false);
 
@@ -73,10 +92,16 @@ export const Client: React.FC = (props: any) => {
   const CompanyUsercolumns = [
     { title: "Company Name", field: "name" },
     // { title: "Email", field: "email" },
-    { title: "Target Name", field: "targetName" },
+    { title: "Scan Name", field: "targetName" },
     { title: "Last Target Generated on", field: "lastReportGenerated" },
     // { title: "Phone", field: "phone" },
     // { title: "Created on", field: "createdOn" }
+  ];
+
+  const ProspectUsercolumns = [
+    { title: "Company Name", field: "client" },
+    { title: "VT Report Status", field: "externalStatus" },
+    // { title: "PT Report Status", field: "pentestStatus" },
   ];
 
   const SuperUsercolumns = [{ title: "Company Name", field: "name" }];
@@ -84,7 +109,7 @@ export const Client: React.FC = (props: any) => {
   const [isError, setIsError] = useState<any>({
     address: "",
     email: "",
-    phoneNumber: ""
+    phoneNumber: "",
   });
 
   const [formState, setFormState] = useState({
@@ -92,69 +117,94 @@ export const Client: React.FC = (props: any) => {
     isUpdate: false,
     isFailed: false,
     isDelete: false,
-    errMessage: ""
+    errMessage: "",
   });
 
   const [deleteClient] = useMutation(DELETE_CLIENT);
-
+  const [publishReport] = useMutation(PUBLISH_REPORT);
+  const [uploadFile] = useMutation(ZIP_FILE);
 
   let contactIdArray: any = [];
   const [getClients, { data: ipData, loading: ipLoading }] = useLazyQuery(
     GET_CLIENTS,
     {
       fetchPolicy: "cache-and-network",
-      onCompleted: (data : any) => {
+      onCompleted: (data: any) => {
         setShowBackdrop(false);
-        if(userRole === "CompanyUser") {
-          let partnerdata =  JSON.parse(partner)
-        createTableDataObject(data.getClient.edges);
-      }
-      if(userRole === "SuperUser") {
-        createTableDataObjectAdmin(data.getClient.edges);
-      }
+        if (userRole === "CompanyUser") {
+          let partnerdata = JSON.parse(partner);
+          createTableDataObject(data.getClient.edges);
+        }
+        if (userRole === "SuperUser") {
+          createTableDataObjectAdmin(data.getClient.edges);
+        }
       },
-      onError: error => {
-        logout()
-        // history.push(routeConstant.DASHBOARD);
-      }
-    }
-  );
-  const [getClientsAndReports, { data: ClientReportData, loading: ClientReportLoading }] = useLazyQuery(
-    GET_CLIENT_AND_LATEST_REPORTS,
-    {
-      fetchPolicy: "cache-and-network",
-      onError: error => {
-        logout()
-        // history.push(routeConstant.DASHBOARD);
-      }
+      onError: (error) => {
+        logout();
+      },
     }
   );
 
-  
+  const [
+    getProsClients,
+    { data: ProspectusClientData, loading: ProspectusClientLoading },
+  ] = useLazyQuery(GET_PROSPECT_CLIENTS, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data: any) => {
+      setShowBackdrop(false);
+      // if (userRole === "CompanyUser") {
+      // let partnerdata =  JSON.parse(partner)
+      createProspectTableDataObject(data.getCompanyData[0].data);
+      // }
+      // if (userRole === "SuperUser") {
+      // createTableDataObjectAdmin(data.getClient.edges);
+      // }
+    },
+    onError: (error) => {
+      // logout()
+    },
+  });
+  const [
+    getClientsAndReports,
+    { data: ClientReportData, loading: ClientReportLoading },
+  ] = useLazyQuery(GET_CLIENT_AND_LATEST_REPORTS, {
+    fetchPolicy: "cache-and-network",
+    onError: (error) => {
+      logout();
+      // history.push(routeConstant.DASHBOARD);
+    },
+  });
 
   let column: any;
-  if(userRole === "CompanyUser") {
+  if (userRole === "CompanyUser") {
     column = CompanyUsercolumns;
   } else {
     column = SuperUsercolumns;
   }
 
   useEffect(() => {
-    if( props.location.state == null ||
-      props.location.state == undefined && partner !== null && user !== null) {
-    let partnerdata =  JSON.parse(partner)
-    let userdata = JSON.parse(user)
-    localStorage.setItem("user", JSON.stringify(userdata.data.getUserDetails.edges[0].node));
-    localStorage.setItem("partnerData", JSON.stringify(partnerdata.data.getPartnerUserDetails.edges[0].node));
-      }
+    if (
+      props.location.state == null ||
+      (props.location.state == undefined && partner !== null && user !== null)
+    ) {
+      let partnerdata = JSON.parse(partner);
+      let userdata = JSON.parse(user);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(userdata.data.getUserDetails.edges[0].node)
+      );
+      localStorage.setItem(
+        "partnerData",
+        JSON.stringify(partnerdata.data.getPartnerUserDetails.edges[0].node)
+      );
+    }
   }, [partner]);
-  
+
   useEffect(() => {
     if (ipData != undefined) {
       createTableDataObject(ipData.getClient.edges);
     }
   }, [ClientReportData]);
-
 
   useEffect(() => {
     // On Login from tool
@@ -176,6 +226,15 @@ export const Client: React.FC = (props: any) => {
                 partnerId_PartnerName:
                   partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
                     .partnerName,
+                client_type: "Client",
+              },
+            });
+            getProsClients({
+              variables: {
+                pgPartnerId:
+                  partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId
+                    .id,
+                // client_type: "Prospect"
               },
             });
             getClientsAndReports({
@@ -197,16 +256,26 @@ export const Client: React.FC = (props: any) => {
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.partner_id,
+            client_type: "Client",
           },
         });
+        // getProsClients({
+        //   variables: {
+        //     // orderBy: "client_name",
+        //     pgPartnerId: props.location.state.partner_id,
+        //     // client_type: "Prospect",
+        //   },
+        // });
       }
       if (props.location.state && props.location.state.clientInfo) {
         getClients({
           variables: {
             orderBy: "client_name",
             partnerId_PartnerName: props.location.state.clientInfo.partnerId,
+            client_type: "Client",
           },
         });
+
         if (partner != "") {
           let partnerdata = JSON.parse(partner);
           getClientsAndReports({
@@ -224,6 +293,27 @@ export const Client: React.FC = (props: any) => {
         props.location.state.formState
       ) {
         setFormState(props.location.state.formState);
+      }
+      if (userRole != "SuperUser") {
+        let partnerData = JSON.parse(partner);
+        getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            pgPartnerId:
+              partnerData.data.getPartnerUserDetails.edges[0].node.partnerId.id,
+            // client_type: "Prospect",
+          },
+        });
+      }
+      if (userRole === "SuperUser") {
+        let partnerData = props.location.state.id;
+        getProsClients({
+          variables: {
+            // orderBy: "client_name",
+            pgPartnerId: props.location.state.id,
+            // client_type: "Prospect",
+          },
+        });
       }
     } else {
       logout();
@@ -257,59 +347,173 @@ export const Client: React.FC = (props: any) => {
       obj["createdOn"] = moment(element.node.createdDate).format(
         "MM/DD/YYYY hh:mm a"
       );
-      obj["subscription"] = element.node.subscription
+      obj["subscription"] = element.node.subscription;
       arr.push(obj);
     });
-  
+
     setNewData(arr);
+  };
+
+  const handlePublishchange = (event: any, rowData: any) => {
+    // if (event.target.checked !== undefined) {
+    setShowBackdrop(true);
+    publishReport({
+      variables: {
+        input: {
+          client: parseInt(rowData.clientId),
+          targetName: rowData.targetName,
+          flagStatus: true,
+        },
+      },
+    })
+      .then((response: any) => {
+        setShowBackdrop(false);
+        if (
+          response.data.publishedReport.success ==
+          "Report Published Successfully "
+        ) {
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: "Report Published Successfully !!",
+          }));
+          // if (
+          //   props.location.state !== null &&
+          //   props.location.state !== undefined &&
+          //   props.location.state.partner_id
+          // ) {
+          //   getProsClients({
+          //     variables: {
+          //       // orderBy: "client_name",
+          //       partner_name: props.location.state.partner_id,
+          //       client_type: "Prospect"
+          //     },
+          //   });
+          // }
+          // if (props.location.state && props.location.state.clientInfo) {
+          //   getProsClients({
+          //     variables: {
+          //       // orderBy: "client_name",
+          //       partner_name: props.location.state.clientInfo.partnerId,
+          //       client_type: "Prospect"
+          //     },
+          //   });
+          // }
+          // getReportListingData({
+          //   variables: {
+          //     clientname: propsClientName,
+          //   },
+          // });
+          // setSelectedFile({});
+        } else {
+          // getReportListingData({
+          //   variables: {
+          //     clientname: propsClientName,
+          //   },
+          // });
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: true,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: false,
+            errMessage: " Report Un-Published Successfully !!",
+          }));
+        }
+      })
+      .catch((err: any) => {
+        setShowBackdrop(false);
+        let error = err.message;
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
+  };
+  const createProspectTableDataObject = (data: any) => {
+    let arr: any = [];
+    data.map((element: any) => {
+      let obj: any = {};
+      obj["client"] = element.clientName;
+      obj["clientId"] = element.clientId;
+      obj["external"] = element.external;
+      obj["externalStatus"] =
+        element.externalStatus != "" ? element.externalStatus : "-";
+      obj["pentestStatus"] =
+        element.pentestStatus != "" ? element.pentestStatus : "-";
+      obj["pentest"] = element.pentest;
+      obj["externalId"] = element.externalId;
+      obj["pentestId"] = element.pentestId;
+
+      // obj["targetId"] = element.node.id !== 0 ? element.node.id : null;
+
+      // obj["scanType"] = element.node.scanType;
+      // obj["status"] = element.node.targetStatus.name;
+      // obj["publish"] =
+      //   element.node.publishedFlag == "Unpublished" ? false : true;
+      // obj["targetName"] = element.node.targetName;
+      arr.push(obj);
+    });
+    setProspectData(arr);
   };
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     data.map((element: any) => {
-      if(element.node.subscription === "Yes") {
-      let obj: any = {};
-      obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
-      obj["name"] = element.node.clientName;
-      obj["phone"] = !element.node.mobileNumber
-        ? "-"
-        : element.node.mobileNumber;
-      obj["clientId"] = element.node.id;
-      obj["partnerId"] = element.node.partner.partnerName;
-      obj["createdOn"] = moment(element.node.createdDate).format(
-        "MM/DD/YYYY hh:mm a"
-      );
-      obj["subscription"] = element.node.subscription
+      if (element.node.subscription === "Yes") {
+        let obj: any = {};
+        obj["email"] = !element.node.emailId ? "-" : element.node.emailId;
+        obj["name"] = element.node.clientName;
+        obj["phone"] = !element.node.mobileNumber
+          ? "-"
+          : element.node.mobileNumber;
+        obj["clientId"] = element.node.id;
+        // obj["partnerId"] = partnerdata.data.getPartnerUserDetails.edges[0].node.partnerId.id
+        // obj["partnerName"] = element.node.partner.partnerName;
+        obj["partnerId"] = element.node.partner.partnerName;
+        obj["createdOn"] = moment(element.node.createdDate).format(
+          "MM/DD/YYYY hh:mm a"
+        );
+        obj["subscription"] = element.node.subscription;
         if (ClientReportData) {
           for (let i in ClientReportData.reportForPg) {
             ClientReportData.reportForPg[i].data.map((data: any) => {
               if (element.node.id === data.clientId.toString()) {
-                obj["lastReportGenerated"] = moment(data.targetCreationDate).format("MM/DD/YYYY hh:mm a");
-                obj["targetName"] = data.targetName
+                obj["lastReportGenerated"] = moment(
+                  data.targetCreationDate
+                ).format("MM/DD/YYYY hh:mm a");
+                obj["targetName"] = data.targetName;
               }
-            })
+            });
           }
         }
-      arr.push(obj);
-      } 
+        arr.push(obj);
+      }
       // if(element.node.subscription === "No") {
       //   let obj: any = {};
       //   obj["name"] = "You don't have any client subscribed for CyberCompliance360"
       //   arr.push(obj);
       // }
     });
-  
+
     setNewData(arr);
   };
 
   const handleAlertClose = () => {
-    setFormState(formState => ({
+    setFormState((formState) => ({
       ...formState,
       isSuccess: false,
       isUpdate: false,
       isDelete: false,
       isFailed: false,
-      errMessage: ""
+      errMessage: "",
     }));
   };
 
@@ -323,158 +527,54 @@ export const Client: React.FC = (props: any) => {
     setShowBackdrop(true);
     deleteClient({
       variables: {
-        id: rowData.clientId
+        id: rowData.clientId,
       },
-    }).then((res: any) => {
-      setShowBackdrop(false);
-      console.log("RES",res.data.deleteClient.status);
-      if(res.data.deleteClient.status === "Client is deleted") {
-        setClientDeleted(true);
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: true,
-        isFailed: false,
-        errMessage: "  " + rowData.name + "  " ,
-      }));
-    }
-    if(res.data.deleteClient.status === "Client is not deleted") {
-      setShowBackdrop(false);
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: " Failed to Delete Client " + rowData.name + " " ,
-      }));
-    }
     })
-    .catch((err) => {
-      setShowBackdrop(false);
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: err,
-      }));
-    });
-  }
-
-  // const handleClickOpen = (rowData: any) => {
-  //   history.push(routeConstant.CLIENT_FORM_ADD);
-  // };
-
-  // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
-  // if (iError) {
-  //   let error = { message: "Error" };
-  //   return (
-  //     <div className="error">
-  //       Error!
-  //       {logout()}
-  //     </div>
-  //   )
-  // }
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.name === "Name") {
-  //     setName(event.target.value);
-  //     let err = event.target.value === "" || null ? "Required" : "";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       name: err
-  //     }));
-  //   }
-  //   if (event.target.name === "email") {
-  //     setEmail(event.target.value);
-  //     // let err = event.target.value === "" || null ? "Required" : "";
-  //     // setIsError((error: any) => ({
-  //     //   ...error,
-  //     //   email: err,
-  //     // }));
-  //     //  if (!err) {
-  //     if (
-  //       event.target.value &&
-  //       !validations.EMAIL_REGEX.test(event.target.value)
-  //     ) {
-  //       let errors = "Please enter valid email address.";
-  //       setIsError((error: any) => ({
-  //         ...error,
-  //         email: errors
-  //       }));
-  //     } else {
-  //       setIsError({ error: null });
-  //     }
-  //     // }
-  //   }
-  //   if (event.target.name === "phoneNumber") {
-  //     setPhoneNumber(event.target.value);
-  //     // let err = event.target.value === "" || null ? "Required" : "";
-  //     // setIsError((error: any) => ({
-  //     //   ...error,
-  //     //   phoneNumber: err,
-  //     // }));
-  //     // if (!err) {
-  //     //   if (phoneNumber.length < 9 ) {
-  //     //     let errors = "Please enter valid Phone no.";
-  //     //     setIsError((error: any) => ({
-  //     //       ...error,
-  //     //       phoneNumber: errors,
-  //     //     }));
-  //     //   }
-  //     // }
-  //   }
-  //   setSubmitDisabled(checkValidation);
-  // };
-
-  const checkValidation = () => {
-    let validation = false;
-    // if (isError.name !== "") {
-    //   validation = true;
-    // }
-    return validation;
+      .then((res: any) => {
+        setShowBackdrop(false);
+        if (res.data.deleteClient.status === "Client is deleted") {
+          setClientDeleted(true);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: true,
+            isFailed: false,
+            errMessage: "  " + rowData.name + "  ",
+          }));
+        }
+        if (res.data.deleteClient.status === "Client is not deleted") {
+          setShowBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: " Failed to Delete Client " + rowData.name + " ",
+          }));
+        }
+      })
+      .catch((err) => {
+        setShowBackdrop(false);
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: err,
+        }));
+      });
   };
-  // const handleInputErrors = () => {
-  //   let foundErrors = false;
-  //   if (!name) {
-  //     let err = "Name is Required";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       name: err
-  //     }));
-  //     foundErrors = true;
-  //   }
-  //   // if(!email) {
-  //   //   let errors = "Required";
-  //   //   setIsError((error: any) => ({
-  //   //     ...error,
-  //   //     email: errors,
-  //   //   }));
-  //   //   foundErrors = true;
-  //   // }
-  //   if (email && !validations.EMAIL_REGEX.test(email)) {
-  //     let errors = "Please enter valid email address.";
-  //     setIsError((error: any) => ({
-  //       ...error,
-  //       email: errors
-  //     }));
-  //     foundErrors = true;
-  //   }
-
-  //   return foundErrors;
-  // };
 
   const onRowClick = (event: any, rowData: any, oldData: any, param: any) => {
     handleAlertClose();
-    let data: any = { clientInfo: rowData, partnerId : partner };
-    console.log("rowData",rowData)
+    let data: any = { clientInfo: rowData, partnerId: partner };
     if (param === "RA") {
       // setShowBackdrop(true)
-      if (Cookies.getJSON('ob_session')) {
-      history.push(routeConstant.RA_REPORT_LISTING, data);
+      if (Cookies.getJSON("ob_session")) {
+        history.push(routeConstant.RA_REPORT_LISTING, data);
       } else {
         logout();
       }
@@ -483,36 +583,232 @@ export const Client: React.FC = (props: any) => {
       handleClickEdit(rowData);
     }
     if (param === "Delete") {
-      handleClickDelete(rowData)
+      handleClickDelete(rowData);
     }
     if (param === "Add") {
-      if (Cookies.getJSON('ob_session')) {
-      let data = { clientInfo: rowData };
-      history.push(routeConstant.TARGET, data);
-      } else{
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, previousPage:'client' };
+        history.push(routeConstant.TARGET, data);
+      } else {
         logout();
       }
     }
     if (param === "AddExternal") {
-      if (Cookies.getJSON('ob_session')) {
-      let data = { clientInfo: rowData };
-      history.push(routeConstant.EXTERNAL_TARGET, data);
-      } else{
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, previousPage:'client' };
+        history.push(routeConstant.EXTERNAL_TARGET, data);
+      } else {
         logout();
       }
     }
-    
+    if (param === "pentest") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, previousPage:'client' };
+        history.push(routeConstant.PEN_TEST, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "downloadExternal") {
+      if (Cookies.getJSON("ob_session")) {
+        setShowBackdrop(true);
+        let intTargetId = parseInt(rowData.externalId);
+        const DocUrl =
+          RA_REPORT_DOWNLOAD +
+          "?cid=" +
+          rowData.clientId +
+          "&tid=" +
+          intTargetId;
+        fetch(DocUrl, {
+          method: "GET",
+        })
+          .then((response: any) => {
+            response.blob().then((blobData: any) => {
+              saveAs(blobData, rowData.client);
+              setShowBackdrop(false);
+            });
+          })
+          .catch((err) => {
+            setShowBackdrop(false);
+            let error = err.message;
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+        // let data = { clientInfo: rowData ,type: "External"};
+        // history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "downloadPenTest") {
+      if (Cookies.getJSON("ob_session")) {
+        setShowBackdrop(true);
+        let intTargetId = parseInt(rowData.pentestId);
+        const DocUrl =
+          RA_REPORT_DOWNLOAD +
+          "?cid=" +
+          rowData.clientId +
+          "&tid=" +
+          intTargetId;
+        fetch(DocUrl, {
+          method: "GET",
+        })
+          .then((response: any) => {
+            response.blob().then((blobData: any) => {
+              saveAs(blobData, rowData.client);
+              setShowBackdrop(false);
+            });
+          })
+          .catch((err) => {
+            setShowBackdrop(false);
+            let error = err.message;
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+        // let data = { clientInfo: rowData ,type: "Pentest"};
+        // history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "ViewPenTest") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, type: "Pentest" };
+        history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
+    if (param === "ViewExternal") {
+      if (Cookies.getJSON("ob_session")) {
+        let data = { clientInfo: rowData, type: "External" };
+        history.push(routeConstant.VIEW_PROSPECT, data);
+      } else {
+        logout();
+      }
+    }
   };
   // if (ipLoading || showBackdrop) return <SimpleBackdrop />;
-
-
+  const handleDownload = (rowData: any) => {
+    handleAlertClose();
+    if (Cookies.getJSON("ob_session")) {
+      setShowBackdrop(true);
+      let intTargetId = parseInt(rowData.targetId);
+      const DocUrl =
+        RA_REPORT_DOWNLOAD + "?cid=" + rowData.clientId + "&tid=" + intTargetId;
+      fetch(DocUrl, {
+        method: "GET",
+      })
+        .then((response: any) => {
+          response.blob().then((blobData: any) => {
+            saveAs(blobData, rowData.target);
+            setShowBackdrop(false);
+          });
+        })
+        .catch((err) => {
+          setShowBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    } else {
+      logout();
+    }
+  };
+  const handleUpload = (rowData: any) => {
+    if (selectedFile[rowData.targetId]) {
+      setShowBackdrop(true);
+      let idCardBase64 = "";
+      getBase64(selectedFile[rowData.targetId], (result: any) => {
+        idCardBase64 = result;
+        var res = result.slice(result.indexOf(",") + 1);
+        uploadFile({
+          variables: {
+            input: {
+              client: parseInt(props.location.state.clientInfo.clientId),
+              targetName: rowData.target,
+              file: res,
+            },
+          },
+        })
+          .then((response: any) => {
+            if (response.data.uploadZipFile.success == "File Uploaded Failed") {
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " File Upload Failed.",
+              }));
+              setSelectedFile({});
+              setShowBackdrop(false);
+            } else {
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: true,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: false,
+                errMessage: "File Uploaded Successfully !!",
+              }));
+              setSelectedFile({});
+              setShowBackdrop(false);
+            }
+          })
+          .catch((error: Error) => {
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "",
+            }));
+            setShowBackdrop(false);
+          });
+      });
+    }
+  };
+  const getBase64 = (file: any, cb: any) => {
+    let reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        cb(reader.result);
+      };
+      reader.onerror = function (error) {
+        console.log("Error: ", error);
+      };
+    }
+  };
   return (
     <React.Fragment>
       <CssBaseline />
-      { showBackdrop ? <SimpleBackdrop/>: null}
-      <Typography component="h5" variant="h1">Clients</Typography>
+      {showBackdrop ? <SimpleBackdrop /> : null}
+      <Typography component="h5" variant="h1">
+        Clients
+      </Typography>
       <Grid>
-      { showBackdrop   ? <SimpleBackdrop/>: null}
+        {/* {showBackdrop ? <SimpleBackdrop /> : null} */}
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
             <div className={styles.ButtonGroup1}>
@@ -554,172 +850,273 @@ export const Client: React.FC = (props: any) => {
             </Grid>
           ) : null} */}
         </Grid>
-        <Paper className={styles.paper}>
-          {formState.isSuccess ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              Client<strong>{formState.errMessage}</strong>
-              {SUCCESS}
-            </Alert>
-          ) : null}
-          {formState.isUpdate ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              Client<strong>{formState.errMessage}</strong>
-              {UPDATE}
-            </Alert>
-          ) : null}
-           {formState.isFailed ? (
-            <Alert
-              severity="error"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              {FAILED}
-              <strong>{formState.errMessage}</strong>
-            </Alert>
-          ) : null}
-           {formState.isDelete ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              <strong>{formState.errMessage}</strong>
-              {DELETE}
-            </Alert>
-          ) : null}
-          <div className={styles.ScrollTable}>
-          {newData.length !== 0 ?
-
-            <MaterialTable
-              columns={column}
-              data={newData}
-              actions={[
-                // Pg merge
-                // partner.partnerId
-                //   ? {
-                //       icon: () => (
-                //         <img
-                //           className={styles.EditIcon}
-                //           src={
-                //             process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
-                //           }
-                //           alt="edit icon"
-                //         />
-                //       ),
-                //       tooltip: "Edit",
-                //       onClick: (event: any, rowData: any, oldData: any) => {
-                //         onRowClick(event, rowData, oldData, "Edit");
-                //       }
-                //     }
-                //   : null,
-                userRole != "SuperUser" ? 
-                {
-                  icon: () => <AddCircleIcon className={styles.CircleIcon} />,
-                  // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
-                  tooltip: "Create External Vulnerability Test",
-                  onClick: (event: any, rowData: any, oldData :any) => {
-                    onRowClick(event, rowData, oldData, "AddExternal");
-                  },
-                }
-                : null,
-                userRole != "SuperUser" ? 
-                {
-                  icon: () => <AddToPhotosIcon className={styles.CircleIcon} />,
-                  tooltip: "Create Advanced Vulnerability Test",
-                  onClick: (event: any, rowData: any, oldData :any) => {
-                    onRowClick(event, rowData, oldData, "Add");
-                  },
-                }
-                : null,
-                {
-                  icon: () => <VisibilityIcon />,
-                  tooltip: "View Vulnerability Tests",
-                  onClick: (event: any, rowData: any, oldData: any) => {
-                    onRowClick(event, rowData, oldData, "RA");
-                  }
-                }
-                
-                // {
-                //   icon: () => <VisibilityIcon />,
-                //   tooltip: "View",
-                //   onClick: (event: any, rowData: any, oldData: any) => {
-                //     onRowClick(event, rowData, oldData, 'View');
-                //   },
-                // },
-                // Pg merge
-                // {
-                //   icon: () => <DeleteIcon />,
-                //   tooltip: "Delete",
-                //   onClick: (event: any, rowData: any, oldData: any) => {
-                //     onRowClick(event, rowData, oldData, 'Delete');
-                //   },
-                // },
-              ]}
-              options={{
-                 headerStyle: {
-                  background: 'linear-gradient(#fef9f5,#fef9f5)',
-                  whiteSpace: 'nowrap'
-              },
-
-                thirdSortClick: false,
-                actionsColumnIndex: -1,
-                paging: true,
-                sorting: true,
-                search: false,
-                filter: true,
-                draggable: false,
-                pageSize: 25,
-                pageSizeOptions: [25, 50, 75, 100] // rows selection options
-              }}
-            />
-            : (!showBackdrop ?
-                (<Typography component="h5" variant="h3">
-                  You don't have any client subscribed for OB360
-                </Typography>)
-                : null)
+        {formState.isSuccess ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
             }
+          >
+            Client<strong>{formState.errMessage}</strong>
+            {SUCCESS}
+          </Alert>
+        ) : null}
+        {formState.isUpdate ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            Client<strong>{formState.errMessage}</strong>
+            {UPDATE}
+          </Alert>
+        ) : null}
+        {formState.isFailed ? (
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {FAILED}
+            <strong>{formState.errMessage}</strong>
+          </Alert>
+        ) : null}
+        {formState.isDelete ? (
+          <Alert
+            severity="success"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleAlertClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            <strong>{formState.errMessage}</strong>
+            {DELETE}
+          </Alert>
+        ) : null}
+        <Paper className={styles.paper}>
+          {ipLoading ? <SimpleBackdrop /> : null}
+          <div className={styles.ScrollTable}>
+            {newData.length !== 0 ? (
+              <MaterialTable
+                columns={column}
+                data={newData}
+                actions={[
+                  // Pg merge
+                  // partner.partnerId
+                  //   ? {
+                  //       icon: () => (
+                  //         <img
+                  //           className={styles.EditIcon}
+                  //           src={
+                  //             process.env.PUBLIC_URL + "/icons/svg-icon/edit.svg"
+                  //           }
+                  //           alt="edit icon"
+                  //         />
+                  //       ),
+                  //       tooltip: "Edit",
+                  //       onClick: (event: any, rowData: any, oldData: any) => {
+                  //         onRowClick(event, rowData, oldData, "Edit");
+                  //       }
+                  //     }
+                  //   : null,
+                  userRole != "SuperUser"
+                    ? {
+                        icon: () => <ComputerIcon />,
+                        tooltip: "Pen Test",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "pentest");
+                        },
+                      }
+                    : null,
+                  userRole != "SuperUser"
+                    ? {
+                        icon: () => (
+                          <AddCircleIcon className={styles.CircleIcon} />
+                        ),
+                        // icon: () => <AddCircleIcon className={styles.CircleIcon} />,
+                        tooltip: "Create External Vulnerability Test",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "AddExternal");
+                        },
+                      }
+                    : null,
+                  userRole != "SuperUser"
+                    ? {
+                        icon: () => (
+                          <AddToPhotosIcon className={styles.CircleIcon} />
+                        ),
+                        tooltip: "Create Advanced Vulnerability Test",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "Add");
+                        },
+                      }
+                    : null,
+                  {
+                    icon: () => <VisibilityIcon />,
+                    tooltip: "View Test Details",
+                    onClick: (event: any, rowData: any, oldData: any) => {
+                      onRowClick(event, rowData, oldData, "RA");
+                    },
+                  },
+
+                  // Pg merge
+                  // {
+                  //   icon: () => <DeleteIcon />,
+                  //   tooltip: "Delete",
+                  //   onClick: (event: any, rowData: any, oldData: any) => {
+                  //     onRowClick(event, rowData, oldData, 'Delete');
+                  //   },
+                  // },
+                ]}
+                options={{
+                  headerStyle: {
+                    background: "linear-gradient(#fef9f5,#fef9f5)",
+                    whiteSpace: "nowrap",
+                  },
+
+                  thirdSortClick: false,
+                  actionsColumnIndex: -1,
+                  paging: true,
+                  sorting: true,
+                  search: false,
+                  filter: true,
+                  draggable: false,
+                  pageSize: 25,
+                  pageSizeOptions: [25, 50, 75, 100], // rows selection options
+                }}
+              />
+            ) : !showBackdrop || !ipLoading ? (
+              <Typography component="h5" variant="h3">
+                You don't have any client subscribed for OB360
+              </Typography>
+            ) : null}
           </div>
         </Paper>
+        {/* <Typography component="h5" variant="h1">
+          Prospects
+        </Typography>
+        <Paper className={styles.paper}>
+          {ProspectusClientLoading ? <SimpleBackdrop /> : null}
+          <div className={styles.ScrollTable}>
+            {prospectData.length !== 0 ? (
+              <MaterialTable
+                columns={ProspectUsercolumns}
+                data={prospectData}
+                actions={[
+                  // (rowData: any) =>
+                  //   rowData.pentestStatus === "Report Generated"
+                  //     ? {
+                  //         icon: () => <GetAppIcon />,
+                  //         tooltip: "PT Download",
+                  //         onClick: (event: any, rowData: any, oldData: any) => {
+                  //           onRowClick(
+                  //             event,
+                  //             rowData,
+                  //             oldData,
+                  //             "downloadPenTest"
+                  //           );
+                  //         },
+                  //       }
+                  //     : null,
+                  (rowData: any) =>
+                    rowData.externalStatus === "Report Generated"
+                      ? {
+                          icon: () => <GetAppIcon />,
+                          tooltip: "VT Download",
+                          onClick: (event: any, rowData: any, oldData: any) => {
+                            onRowClick(
+                              event,
+                              rowData,
+                              oldData,
+                              "downloadExternal"
+                            );
+                          },
+                        }
+                      : null,
+
+                  userRole == "SuperUser"
+                    ? {
+                        icon: () => (
+                          <Typography component="h6" variant="h4">
+                            VT
+                          </Typography>
+                        ),
+                        // icon: () => <VisibilityIcon />,
+                        tooltip: "View Vulnerability Tests",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "ViewExternal");
+                        },
+                      }
+                    : null,
+
+                  userRole == "SuperUser"
+                    ? {
+                        icon: () => (
+                          <Typography component="h6" variant="h4">
+                            PT
+                          </Typography>
+                        ),
+                        // icon: () => <VisibilityIcon />,
+                        tooltip: "View Pentests",
+                        onClick: (event: any, rowData: any, oldData: any) => {
+                          onRowClick(event, rowData, oldData, "ViewPenTest");
+                        },
+                      }
+                    : null,
+                ]}
+                options={{
+                  headerStyle: {
+                    background: "linear-gradient(#fef9f5,#fef9f5)",
+                    whiteSpace: "nowrap",
+                  },
+
+                  thirdSortClick: false,
+                  actionsColumnIndex: -1,
+                  paging: true,
+                  sorting: true,
+                  search: false,
+                  filter: true,
+                  draggable: false,
+                  pageSize: 25,
+                  pageSizeOptions: [25, 50, 75, 100], // rows selection options
+                }}
+              />
+            ) : !showBackdrop || !ProspectusClientLoading ? (
+              <Typography component="h5" variant="h3">
+                You don't have any Prospects for OB360
+              </Typography>
+            ) : null}
+          </div>
+        </Paper> */}
       </Grid>
     </React.Fragment>
   );
