@@ -884,7 +884,7 @@ export const RaReportListing: React.FC = (props: any) => {
                 : null,
               partner.partnerId
                 ? (rowData: any) =>
-                    rowData.status == "Report Generated" && rowData.scanType != "External"
+                    rowData.status == "Report Generated" && rowData.scanType != "External" && rowData.scanType != "Pentest"
                       ? {
                           // disabled: rowData.status !== "Done",
                           icon: () => <SyncIcon />,
