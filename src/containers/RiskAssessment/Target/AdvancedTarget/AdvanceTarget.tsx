@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AdvanceTarget.module.css";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import {
-  Typography,
-  Grid,
-  Tooltip,
-} from "@material-ui/core";
+import { Typography, Grid, Tooltip } from "@material-ui/core";
 import { Button } from "../../../../components/UI/Form/Button/Button";
 import Cookies from "js-cookie";
 import logout from "../../../Auth/Logout/Logout";
@@ -13,31 +9,26 @@ import * as routeConstant from "../../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import Input from "../../../../components/UI/Form/Input/Input";
 import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
+import { CREATE_TARGET } from "../../../../graphql/mutations/Target";
 import {
-    CREATE_TARGET,
-  } from "../../../../graphql/mutations/Target";
-  import {
-    DOMAIN_VERIFY,
-    IP_VERIFY
-  } from "../../../../graphql/mutations/DomainVerify";
-  import { useMutation, useLazyQuery } from "@apollo/client";
-  import {
-    FAILED,
-    ALERT_MESSAGE_TIMER,
-  } from "../../../../common/MessageConstants";
+  DOMAIN_VERIFY,
+  IP_VERIFY,
+  URL_VERIFY,
+} from "../../../../graphql/mutations/DomainVerify";
+import { useMutation, useLazyQuery } from "@apollo/client";
+import {
+  FAILED,
+  ALERT_MESSAGE_TIMER,
+} from "../../../../common/MessageConstants";
 import Alert from "../../../../components/UI/Alert/Alert";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { GET_SCAN_CONFIG } from "../../../../graphql/queries/ScanConfig";
-import {
-    CREATE_TASK,
-  } from "../../../../graphql/mutations/Task";
+import { CREATE_TASK } from "../../../../graphql/mutations/Task";
 import moment from "moment";
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-} from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import * as msgConstant from "../../../../common/MessageConstants";
+import { customClient } from "../../../../config/customClient";
 
 export const AdvanceTarget: React.FC = (props: any) => {
   const history = useHistory();
@@ -50,7 +41,9 @@ export const AdvanceTarget: React.FC = (props: any) => {
   const [param, setParams] = useState<any>({});
   const [name, setName] = useState<String>("");
   const [ipRange, setIpRange] = useState<any>("");
-  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const clientInfo = props.location.state
+    ? props.location.state.clientInfo
+    : undefined;
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const [backdrop, setBackdrop] = useState(false);
   const partnerId = partner.partnerId;
@@ -65,19 +58,19 @@ export const AdvanceTarget: React.FC = (props: any) => {
   });
   const [scanConfig, setScanConfig] = useState<any>([]);
   const tempScheduleDate = new Date().toISOString();
-
-
+  const [createTargetFlag, setcreateTargetFlag] = useState(false);
+  const [flagtrue, setflagtrue] = useState(false);
   useEffect(() => {
     if (props?.location.state) {
-     setParams(props.location.state)
+      setParams(props.location.state);
     }
   }, []);
 
   useEffect(() => {
-    if(scanConfig.length != 0) {
-    createTasks()
+    if (scanConfig.length != 0) {
+      createTasks();
     }
-}, [scanConfig]);
+  }, [scanConfig]);
 
   const handleAlertClose = () => {
     setFormState((formState) => ({
@@ -90,40 +83,37 @@ export const AdvanceTarget: React.FC = (props: any) => {
     }));
   };
 
-  const [createTarget] = useMutation(CREATE_TARGET);
+  // const [createTarget] = useMutation(CREATE_TARGET);
   const [createTask] = useMutation(CREATE_TASK);
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
+  const [urlVerify] = useMutation(URL_VERIFY);
 
-const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQuery(
-    GET_SCAN_CONFIG,
-  {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data: any) => {
-      if (data.getScanConfigurationdata.edges[0]) {
-        let arr: any = [];
-        data.getScanConfigurationdata.edges.map((element: any) => {
-          if(element.node.scanConfigName === 'Full and fast') {
-            arr.push(element.node.vatScanConfigId)
-          }
-
-        });
-        setScanConfig(arr);
-        // createTasks()
-        
-      }
-    },
-    onError: error => {
+  const [getScanConfigData, { data: taskData, loading: taskLoading }] =
+    useLazyQuery(GET_SCAN_CONFIG, {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data: any) => {
+        if (data.getScanConfigurationdata.edges[0]) {
+          let arr: any = [];
+          data.getScanConfigurationdata.edges.map((element: any) => {
+            if (element.node.scanConfigName === "Full and fast") {
+              arr.push(element.node.vatScanConfigId);
+            }
+          });
+          setScanConfig(arr);
+          // createTasks()
+        }
+      },
+      onError: (error) => {
         setBackdrop(false);
-    }
-  }
-);
+      },
+    });
 
   const handleBack = () => {
     if (Cookies.getJSON("ob_session")) {
       let data = {};
       data = { refetchData: true, clientInfo: clientInfo };
-      if (param.previousPage === 'client') {
+      if (param.previousPage === "client") {
         history.push(routeConstant.CLIENT, data);
         localStorage.removeItem("name");
         localStorage.removeItem("targetId");
@@ -138,19 +128,19 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         localStorage.removeItem("WinTargetName");
         localStorage.removeItem("LinuxTargetName");
       } else {
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem("re-runTargetName");
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
+        history.push(routeConstant.RA_REPORT_LISTING, data);
+        localStorage.removeItem("name");
+        localStorage.removeItem("targetId");
+        localStorage.removeItem("ipRange");
+        localStorage.removeItem("ipAddress");
+        localStorage.removeItem("re-runTargetName");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("password");
+        localStorage.removeItem("vpnUserName");
+        localStorage.removeItem("vpnPassword");
+        localStorage.removeItem("vpnFilePath");
+        localStorage.removeItem("WinTargetName");
+        localStorage.removeItem("LinuxTargetName");
       }
     } else {
       logout();
@@ -170,7 +160,6 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   const handleTargetToolTipOpen = () => {
     setTargetOpen(true);
   };
-  
 
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIpRange(event.target.value);
@@ -185,20 +174,20 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-    if(!/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
-    let value = event.target.value;
-    let isErrName = value.length <= 0 ? "Required" : "";
-    setIsError((isError: any) => ({
-      ...isError,
-      name: isErrName,
-    }));
-  }
-  if(/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
-    setIsError((isError: any) => ({
-      ...isError,
-      name: "Invalid Scan Name",
-    }));
-  }
+    if (!/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
+      let value = event.target.value;
+      let isErrName = value.length <= 0 ? "Required" : "";
+      setIsError((isError: any) => ({
+        ...isError,
+        name: isErrName,
+      }));
+    }
+    if (/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
+      setIsError((isError: any) => ({
+        ...isError,
+        name: "Invalid Scan Name",
+      }));
+    }
     // setSubmitDisabled(checkValidation);
   };
 
@@ -224,97 +213,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
   };
 
   const handleSubmitDialogBox = () => {
-    setBackdrop(true);
-    if (handleInputErrors()) {
-      if (/[^a-zA-Z0-9\- \/]/.test(name.toString())) {
-        setBackdrop(false);
-      } else {
-        // Check Domain Connectipn
-        let input = {
-          "host" : ipRange,
-          "scanType": "External"
-        };
-        if(parseInt(ipRange)){
-            IPVerify({
-            variables: {
-              input,
-            },
-          })
-          .then((userRes) => {
-            if(userRes.data.IPVerify.status === 'Valid IP address') {
-              submitAction()
-            } 
-            else if (userRes.data.IPVerify.status === 'Provide single ip address'){
-              setBackdrop(false)
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: " Please Enter Single IP Address",
-              }));
-            } 
-            else {
-              setBackdrop(false)
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: " Please Enter Valid IP Address",
-              }));
-            }
-          })
-          .catch((err) => {
-            setBackdrop(false);
-            let error = err.message;
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: false,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: true,
-              errMessage: error,
-            }));
-          });
-        }else {
-        domainVerify({
-          variables: {
-            input
-          },
-        })
-        .then((userRes) => {
-          if(userRes.data.domainVerify.status === 'Domain name is registered') {
-            submitAction()
-          } else {
-            setBackdrop(false)
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: false,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: true,
-              errMessage: " Please Enter Valid Domain Name",
-            }));
-          }
-        })
-        .catch((err) => {
-          setBackdrop(false);
-          let error = err.message;
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-      }
-      }
-    } else {
+    if (handleInputErrors() === false) {
       setBackdrop(false);
       setFormState((formState) => ({
         ...formState,
@@ -322,10 +221,134 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         isUpdate: false,
         isDelete: false,
         isFailed: true,
-        errMessage: " Please fill in all the required fields ",
+        errMessage: " Please fill in all the required fields",
       }));
     }
-  }
+    if (handleInputErrors()) {
+      setBackdrop(true);
+      if (/[^a-zA-Z0-9\- \/]/.test(name.toString())) {
+        setBackdrop(false);
+      } else {
+        // Check Domain Connectipn
+        let input = {
+          host: ipRange,
+          scanType: "External",
+        };
+        if (parseInt(ipRange)) {
+          IPVerify({
+            variables: {
+              input,
+            },
+          })
+            .then((userRes) => {
+              if (userRes.data.IPVerify.status === "Valid IP address") {
+                // setcreateTargetFlag(true);
+                submitAction();
+              } else if (
+                userRes.data.IPVerify.status === "Provide single ip address"
+              ) {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Please Enter Single IP Address",
+                }));
+              } else if (userRes.data.IPVerify.status === "IP is not working") {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage:
+                    " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
+                }));
+              } else {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Please fill in all the required fields",
+                }));
+              }
+            })
+            .catch((err) => {
+              setBackdrop(false);
+              let error = err.message;
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: error,
+              }));
+            });
+        } else {
+          domainVerify({
+            variables: {
+              input,
+            },
+          })
+            .then((userRes) => {
+              console.log("userRes", userRes);
+              if (
+                userRes.data.domainVerify.status === "Domain name is registered"
+              ) {
+                submitAction();
+              } else if (
+                userRes.data.domainVerify.status ===
+                "Domain name is not registered"
+              ) {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage:
+                    " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
+                }));
+              } else {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Please fill in all the required fields ",
+                }));
+              }
+            })
+            .catch((err) => {
+              setBackdrop(false);
+              let error = err.message;
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: error,
+              }));
+            });
+        }
+      }
+    }
+  };
+
+  const [createTarget] = useMutation(CREATE_TARGET, {
+    client: customClient,
+  });
 
   const submitAction = () => {
     handleAlertClose();
@@ -335,7 +358,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
       targetName: name,
       host: ipRange,
       startDate: startDate,
-      scanType: "External"
+      scanType: "External",
     };
     createTarget({
       variables: {
@@ -344,7 +367,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
     })
       .then((userRes) => {
         //   setBackdrop(false);
-        if(userRes.data.createTarget.status === "Duplicate") {
+        if (userRes.data.createTarget.status === "Duplicate") {
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -355,15 +378,14 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             errMessage: " Scan name exists. Add another name",
           }));
           // setSubmitDisabled(true)
-        }
-        else if(userRes.data.createTarget.status === "Success") {
-        // else {
-          //   setSubmitDisabled(false)        
+        } else if (userRes.data.createTarget.status === "Success") {
+          // else {
+          //   setSubmitDisabled(false)
           getScanConfigData({
             variables: {
               clientId: userRes.data.createTarget.targetField.client.clientName,
             },
-          })
+          });
           //   setFormState((formState) => ({
           //     ...formState,
           //     isSuccess: true,
@@ -372,8 +394,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           //     isFailed: false,
           //     errMessage: "Target Created Successfully !",
           //   }));
-        }
-        else {
+        } else {
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -389,17 +410,12 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         //   setSubmitDisabled(false)
         setBackdrop(false);
         let error = err.message;
-        if (
-          error.includes("duplicate key value violates unique constraint")
-        ) {
+        if (error.includes("duplicate key value violates unique constraint")) {
           error = " Name already present.";
         }
-        if (
-          error.includes("Response Error 400. Target exists already")
-        ) {
+        if (error.includes("Response Error 400. Target exists already")) {
           error = " Scan Name already present.";
-        }
-        else {
+        } else {
           error = err.message;
         }
         setFormState((formState) => ({
@@ -411,32 +427,32 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           errMessage: error,
         }));
       });
-  }
+  };
   const createTasks = () => {
-      console.log("clientInfo",clientInfo);
+    console.log("clientInfo", clientInfo);
     let input = {
-        partner: parseInt(partner.partnerId.id),
-        client: clientInfo.name,
-        taskName: "Task"+ " " + name,
-        vatTarget: name,
-        vatScanConfig: scanConfig,
-        // vatScanConfig : "599ff530-0dbf-4edb-a54a-0d49f0ca67d3",
-        scheduleDate: tempScheduleDate,
-      };
-      createTask({
-        variables: {
-          input,
-        },
-      })
-        .then((userRes) => {
-          if(userRes.data.createTask.status === "Success") {
+      partner: parseInt(partner.partnerId.id),
+      client: clientInfo.name,
+      taskName: "Task" + " " + name,
+      vatTarget: name,
+      vatScanConfig: scanConfig,
+      // vatScanConfig : "599ff530-0dbf-4edb-a54a-0d49f0ca67d3",
+      scheduleDate: tempScheduleDate,
+    };
+    createTask({
+      variables: {
+        input,
+      },
+    })
+      .then((userRes) => {
+        if (userRes.data.createTask.status === "Success") {
           let formState2 = {
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
             errMessage: msgConstant.SCAN_SUCCESS_MSG,
-          }
+          };
           setBackdrop(false);
           setFormState((formState) => ({
             ...formState,
@@ -447,7 +463,11 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             errMessage: "",
           }));
           let data = {};
-          data = { refetchData: true, clientInfo: clientInfo ,formState : formState2 };
+          data = {
+            refetchData: true,
+            clientInfo: clientInfo,
+            formState: formState2,
+          };
           history.push(routeConstant.RA_REPORT_LISTING, data);
           localStorage.removeItem("name");
           localStorage.removeItem("targetId");
@@ -471,82 +491,79 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
             errMessage: "Failed to create Scan Please Try Again",
           }));
         }
-        })
-        .catch((err) => {
-          setBackdrop(false);
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          } 
-          else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-  }
-  
+      })
+      .catch((err) => {
+        setBackdrop(false);
+        let error = err.message;
+        if (error.includes("duplicate key value violates unique constraint")) {
+          error = " Name already present.";
+        } else {
+          error = err.message;
+        }
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
+  };
+
   const theme = createMuiTheme({
     overrides: {
       MuiTooltip: {
         tooltip: {
-          backgroundColor:"rgb(240, 102, 1, 0.8)",
-          borderRadius : "12px",
+          backgroundColor: "rgb(240, 102, 1, 0.8)",
+          borderRadius: "12px",
           position: "relative",
-          "&:before" : {
-          content: "' '",
-          width: "0px",
-          height: "0px",
-          zIndex: 9999,
-          position:"absolute",
-          }
+          "&:before": {
+            content: "' '",
+            width: "0px",
+            height: "0px",
+            zIndex: 9999,
+            position: "absolute",
+          },
         },
         tooltipPlacementRight: {
-          "&:before" : {
-          borderTop: "6px solid transparent",
-          borderBottom: "6px solid transparent",
-          borderRight:"6px solid rgba(240, 102, 1, 0.8)",
-          left:"-6px",
-          top:"45%",
-          }
-        },
-        tooltipPlacementLeft: {
-          "&:before" : { 
+          "&:before": {
             borderTop: "6px solid transparent",
             borderBottom: "6px solid transparent",
-            borderLeft: "6px solid rgba(240, 102, 1, 0.8)", 
-            right:"-6px",
-            top:"45%",
-          }
+            borderRight: "6px solid rgba(240, 102, 1, 0.8)",
+            left: "-6px",
+            top: "45%",
+          },
+        },
+        tooltipPlacementLeft: {
+          "&:before": {
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderLeft: "6px solid rgba(240, 102, 1, 0.8)",
+            right: "-6px",
+            top: "45%",
+          },
         },
         tooltipPlacementBottom: {
-          "&:before" : { 
+          "&:before": {
             borderLeft: "6px solid transparent",
             borderRight: "6px solid transparent",
             borderBottom: "6px solid rgba(240, 102, 1, 0.8)",
-            left :"45%",
-            top:"-6px",
-          }
+            left: "45%",
+            top: "-6px",
+          },
         },
         tooltipPlacementTop: {
-          "&:before" : { 
+          "&:before": {
             borderLeft: "6px solid transparent",
             borderRight: "6px solid transparent",
             borderTop: "6px solid rgba(240, 102, 1, 0.8)",
-            left :"45%",
-            bottom:"-6px",
-          }
-        }
-      }
-    }
+            left: "45%",
+            bottom: "-6px",
+          },
+        },
+      },
+    },
   });
 
   return (
@@ -559,7 +576,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           ? props.location.state.clientInfo.name
           : null}
       </Typography>
-      {backdrop ? <SimpleBackdrop/>: null}
+      {backdrop ? <SimpleBackdrop /> : null}
       <Grid container className={styles.backToListButtonPanel}>
         <Grid item xs={12} md={12} className={styles.backToListButton}>
           {/* {userRole === "SuperUser" ? ( */}
@@ -579,7 +596,7 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
         </Grid>
       </Grid>
       <Grid container spacing={3} className={styles.AlertWrap}>
-      <Grid item xs={12}>
+        <Grid item xs={12}>
           {formState.isSuccess ? (
             <Alert
               severity="success"
@@ -636,8 +653,8 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
           ) : null}
         </Grid>
         <Grid item xs={12} md={6}>
-        <span className={styles.IPTooltip}>
-          {/* <MuiThemeProvider theme={theme}> */}
+          <span className={styles.IPTooltip}>
+            {/* <MuiThemeProvider theme={theme}> */}
             <Tooltip
               open={targetOpen}
               onClose={handleTargetToolTipClose}
@@ -647,30 +664,29 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                 <React.Fragment>
                   <p>
                     <b> Scan Name can't contain any special characters. </b>{" "}
-                  </p>
-                  {" "}
+                  </p>{" "}
                 </React.Fragment>
               }
             >
-          <Input
-            type="text"
-            label="Scan Name"
-            value={name}
-            onChange={handleNameChange}
-            required
-            error={isError.name}
-            helperText={isError.name}
-          >
-            Scan Name
-          </Input>
-          </Tooltip>
+              <Input
+                type="text"
+                label="Scan Name"
+                value={name}
+                onChange={handleNameChange}
+                required
+                error={isError.name}
+                helperText={isError.name}
+              >
+                Scan Name
+              </Input>
+            </Tooltip>
             {/* </MuiThemeProvider> */}
           </span>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <span className={styles.IPTooltip}>
-          {/* <MuiThemeProvider theme={theme}> */}
+            {/* <MuiThemeProvider theme={theme}> */}
 
             <Tooltip
               open={open}
@@ -688,10 +704,8 @@ const [getScanConfigData, { data: taskData, loading: taskLoading }] = useLazyQue
                     <b>{" Multiple IP Address"}</b> {"(e.g. 192.168.x.0-255 or 192.168.x.0, 192.168.x.2)"}
                   </p> */}
                   <p>
-                    <b>For Domain/URL </b>{" "}
-                  <em>{"(e.g. domainname.com)"}</em>{" "}
-                  </p>
-                  {" "}
+                    <b>For Domain/URL </b> <em>{"(e.g. domainname.com)"}</em>{" "}
+                  </p>{" "}
                 </React.Fragment>
               }
             >
