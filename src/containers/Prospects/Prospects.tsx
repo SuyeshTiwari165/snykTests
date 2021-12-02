@@ -28,7 +28,7 @@ import {
   FAILED,
   ALERT_MESSAGE_TIMER,
 } from "../../common/MessageConstants";
-
+import { saveAs } from "file-saver";
 export const Prospects: React.FC = (props: any) => {
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const user = Cookies.getJSON("ob_user") || "";
