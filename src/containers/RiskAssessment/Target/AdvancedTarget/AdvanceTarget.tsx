@@ -9,6 +9,7 @@ import * as routeConstant from "../../../../common/RouteConstants";
 import { useHistory } from "react-router-dom";
 import Input from "../../../../components/UI/Form/Input/Input";
 import SimpleBackdrop from "../../../../components/UI/Layout/Backdrop/Backdrop";
+import { GET_AVAILABLE_SERVER } from "../../../../graphql/queries/Target";
 import { CREATE_TARGET } from "../../../../graphql/mutations/Target";
 import {
   DOMAIN_VERIFY,
@@ -28,10 +29,13 @@ import { CREATE_TASK } from "../../../../graphql/mutations/Task";
 import moment from "moment";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import * as msgConstant from "../../../../common/MessageConstants";
-import { customClient } from "../../../../config/customClient";
+// import { customClient } from "../../../../config/customClient";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/link-context";
 
 export const AdvanceTarget: React.FC = (props: any) => {
   const history = useHistory();
+  const [backendUrl, setBackendurl] = useState<any>("");
   const [open, setOpen] = React.useState(false);
   const [targetOpen, setTargetOpen] = React.useState(false);
   const [isError, setIsError] = useState<any>({
@@ -60,6 +64,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
   const tempScheduleDate = new Date().toISOString();
   const [createTargetFlag, setcreateTargetFlag] = useState(false);
   const [flagtrue, setflagtrue] = useState(false);
+  // const [httpLink, sethttpLink] = useState<any>();
   useEffect(() => {
     if (props?.location.state) {
       setParams(props.location.state);
@@ -83,15 +88,61 @@ export const AdvanceTarget: React.FC = (props: any) => {
     }));
   };
 
+  const session = Cookies.getJSON("ob_session");
+  const accessToken = session ? session : null;
+  const authLink = setContext((_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        Authorization: accessToken ? "jwt" + " " + accessToken : null,
+      },
+    };
+  });
+  useEffect(() => {
+    if (availableServer && backendUrl !== "") {
+      submitAction();
+    }
+  }, [backendUrl]);
+  console.log("backendUrl", backendUrl);
+  let link: any;
+  let httpLink: any;
+  httpLink = createHttpLink({
+    uri: backendUrl + "/graphql/",
+  });
+  const [
+    getAvailableServer,
+    {
+      data: availableServer,
+      loading: availableServerLoading,
+      error: availableServerError,
+    },
+  ] = useLazyQuery(GET_AVAILABLE_SERVER, {
+    onCompleted: (data: any) => {
+      if (data?.getAvailableServer[0].url) {
+        setBackendurl(data?.getAvailableServer[0].url);
+      }
+    },
+    fetchPolicy: "network-only",
+  });
+
+  link = accessToken ? authLink.concat(httpLink) : httpLink;
+
+  const customClient: any = new ApolloClient({
+    link: link,
+    cache: new InMemoryCache(),
+  });
+
   // const [createTarget] = useMutation(CREATE_TARGET);
-  const [createTask] = useMutation(CREATE_TASK);
+  const [createTask] = useMutation(CREATE_TASK, {
+    client: customClient,
+  });
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
   const [urlVerify] = useMutation(URL_VERIFY);
 
   const [getScanConfigData, { data: taskData, loading: taskLoading }] =
     useLazyQuery(GET_SCAN_CONFIG, {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "network-only",
       onCompleted: (data: any) => {
         if (data.getScanConfigurationdata.edges[0]) {
           let arr: any = [];
@@ -174,7 +225,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-    if (!/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
+    if (!/[^a-zA-Z0-9\- ]/.test(event.target.value)) {
       let value = event.target.value;
       let isErrName = value.length <= 0 ? "Required" : "";
       setIsError((isError: any) => ({
@@ -182,7 +233,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
         name: isErrName,
       }));
     }
-    if (/[^a-zA-Z0-9\- \/]/.test(event.target.value)) {
+    if (/[^a-zA-Z0-9\- ]/.test(event.target.value)) {
       setIsError((isError: any) => ({
         ...isError,
         name: "Invalid Scan Name",
@@ -212,6 +263,10 @@ export const AdvanceTarget: React.FC = (props: any) => {
     return error;
   };
 
+  // const testfunc = () => {
+  //   getAvailableServer();
+  // }
+
   const handleSubmitDialogBox = () => {
     if (handleInputErrors() === false) {
       setBackdrop(false);
@@ -225,6 +280,9 @@ export const AdvanceTarget: React.FC = (props: any) => {
       }));
     }
     if (handleInputErrors()) {
+      //   console.log("getAvailableServer", backendUrl);
+      // }
+      // if (backendUrl !== "") {
       setBackdrop(true);
       if (/[^a-zA-Z0-9\- \/]/.test(name.toString())) {
         setBackdrop(false);
@@ -243,7 +301,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
             .then((userRes) => {
               if (userRes.data.IPVerify.status === "Valid IP address") {
                 // setcreateTargetFlag(true);
-                submitAction();
+                getAvailableServer();
               } else if (
                 userRes.data.IPVerify.status === "Provide single ip address"
               ) {
@@ -302,7 +360,8 @@ export const AdvanceTarget: React.FC = (props: any) => {
               if (
                 userRes.data.domainVerify.status === "Domain name is registered"
               ) {
-                submitAction();
+                console.log("status", userRes.data.domainVerify.status);
+                getAvailableServer();
               } else if (
                 userRes.data.domainVerify.status ===
                 "Domain name is not registered"
@@ -381,6 +440,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
         } else if (userRes.data.createTarget.status === "Success") {
           // else {
           //   setSubmitDisabled(false)
+          console.log("status", userRes.data.createTarget.status);
           getScanConfigData({
             variables: {
               clientId: userRes.data.createTarget.targetField.client.clientName,
