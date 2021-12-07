@@ -16,6 +16,7 @@ export const Logout: any = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("name");
   localStorage.removeItem("targetId");
+  localStorage.removeItem("customClientUrl");
   localStorage.removeItem("ipRange");
   localStorage.removeItem("ipAddress");
   localStorage.removeItem('re-runTargetName');

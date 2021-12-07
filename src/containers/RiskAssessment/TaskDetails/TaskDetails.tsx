@@ -23,6 +23,7 @@ import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import Alert from "../../../components/UI/Alert/Alert";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import { customClient } from "../../../config/customClient";
 import {
   SUCCESS,
   UPDATE,
@@ -44,10 +45,8 @@ import { useApolloClient } from "@apollo/client";
 import stepper from "../common/raStepperList.json";
 import SimpleBackdrop from "../../../components/UI/Layout/Backdrop/Backdrop";
 import rerunstepper from "../common/raRerunStepperList.json";
-import {
-  setActiveFormStep,
-} from "../../../services/Data";
-import Cookies from 'js-cookie';
+import { setActiveFormStep } from "../../../services/Data";
+import Cookies from "js-cookie";
 import logout from "../../Auth/Logout/Logout";
 import { ContactSupportOutlined, SelectAll } from "@material-ui/icons";
 import {
@@ -56,18 +55,29 @@ import {
   DELETE_TARGET,
 } from "../../../graphql/mutations/Target";
 import * as msgConstant from "../../../common/MessageConstants";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/link-context";
 
 export const TaskDetails: React.FC = (props: any) => {
   let scanArr: any = [];
+  const obUser = Cookies.getJSON("ob_user");
   const history = useHistory();
   const client = useApolloClient();
-  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
+  const ReRunTargetName = JSON.parse(
+    localStorage.getItem("re-runTargetName") || "{}"
+  );
   // const localName = JSON.stringify(localStorage.getItem("name")) || "{}";
-  const localName = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
-  const [showbackdrop,setShowbackdrop] = useState(true);
+  const localName = localStorage.getItem("name")
+    ? JSON.parse(localStorage.getItem("name") || "")
+    : null;
+  const [showbackdrop, setShowbackdrop] = useState(true);
   // const classes = useStyles(theme);
-  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
-  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
+  const clientInfo = props.location.state
+    ? props.location.state.clientInfo
+    : undefined;
+  const targetInfo = props.location.state
+    ? props.location.state.targetInfo
+    : undefined;
   const targetName = JSON.parse(localStorage.getItem("name") || "{}");
   let scanConfigListItems = props.location.state
     ? props.location.state.scanConfigList
@@ -96,11 +106,15 @@ export const TaskDetails: React.FC = (props: any) => {
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
   const partnerId = partner.partnerId.id;
   const clientId = clientInfo ? clientInfo.name : undefined;
-  const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
-  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
+  const WinTargetName = localStorage.getItem("WinTargetName")
+    ? JSON.parse(localStorage.getItem("WinTargetName") || "")
+    : null;
+  const LinuxTargetName = localStorage.getItem("LinuxTargetName")
+    ? JSON.parse(localStorage.getItem("LinuxTargetName") || "")
+    : null;
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const [backdrop, setBackdrop] = useState(false);
-   const [emailUpdates, setEmailUpdates] = React.useState({
+  const [emailUpdates, setEmailUpdates] = React.useState({
     checkedB: false,
   });
   //table
@@ -128,13 +142,42 @@ export const TaskDetails: React.FC = (props: any) => {
 
   useEffect(() => {
     if (props.location.state) {
-      setParams(props.location.state)
+      setParams(props.location.state);
     }
-  }, [])
-  const [deleteTarget] = useMutation(DELETE_TARGET);
+  }, []);
 
-  const { data: taskData, loading: taskLoading } = useQuery(
-    GET_TASK_DETAILS, {
+  const session = Cookies.getJSON("ob_session");
+  const backendUrl = localStorage.getItem("customClientUrl") || "";
+  console.log("backendUrl", backendUrl);
+
+  const customBackendUrl = backendUrl ? backendUrl : null;
+  let httpLink: any;
+  let link: any;
+  httpLink = createHttpLink({
+    uri: customBackendUrl + "/graphql/",
+  });
+
+  const accessToken = session ? session : null;
+  const authLink = setContext((_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        Authorization: accessToken ? "jwt" + " " + accessToken : null,
+      },
+    };
+  });
+
+  link = accessToken ? authLink.concat(httpLink) : httpLink;
+  const customClient: any = new ApolloClient({
+    link: link,
+    cache: new InMemoryCache(),
+  });
+
+  const [deleteTarget] = useMutation(DELETE_TARGET, {
+    client: customClient,
+  });
+
+  const { data: taskData, loading: taskLoading } = useQuery(GET_TASK_DETAILS, {
     variables: {
       targetName: ReRunTargetName ? ReRunTargetName : targetName,
       client_ClientName: clientInfo.name,
@@ -146,11 +189,12 @@ export const TaskDetails: React.FC = (props: any) => {
       }
     },
     fetchPolicy: "cache-and-network",
-  }
-  );
+  });
 
   //queries
-  const [createTask] = useMutation(CREATE_TASK);
+  const [createTask] = useMutation(CREATE_TASK, {
+    client: customClient,
+  });
 
   if (
     scanListCheckBox !== undefined &&
@@ -170,8 +214,8 @@ export const TaskDetails: React.FC = (props: any) => {
     variables: {
       clientId: clientId,
     },
-    onCompleted:()=>{
-      setShowbackdrop(false)
+    onCompleted: () => {
+      setShowbackdrop(false);
     },
     onError: (err) => {
       setShowbackdrop(false);
@@ -204,14 +248,33 @@ export const TaskDetails: React.FC = (props: any) => {
   if (targetName !== {} && target === "") {
     let substring = "_linux";
     let substring2 = "_windows";
-    localName.substring(localName.lastIndexOf(substring2)+1, localName.length)
-    if(localName.includes(substring)) {
-      setTarget(localName.replace("_"+localName.substring(localName.lastIndexOf(substring)+1, localName.length),''))
-    }
-    else if(localName.includes(substring2)) {
-      setTarget(localName.replace("_"+localName.substring(localName.lastIndexOf(substring2)+1, localName.length),''))
-    }
-     else {
+    localName.substring(
+      localName.lastIndexOf(substring2) + 1,
+      localName.length
+    );
+    if (localName.includes(substring)) {
+      setTarget(
+        localName.replace(
+          "_" +
+            localName.substring(
+              localName.lastIndexOf(substring) + 1,
+              localName.length
+            ),
+          ""
+        )
+      );
+    } else if (localName.includes(substring2)) {
+      setTarget(
+        localName.replace(
+          "_" +
+            localName.substring(
+              localName.lastIndexOf(substring2) + 1,
+              localName.length
+            ),
+          ""
+        )
+      );
+    } else {
       setTarget(localName);
     }
   }
@@ -233,50 +296,104 @@ export const TaskDetails: React.FC = (props: any) => {
   }, [name, scanConfig, submitDisabled]);
 
   useEffect(() => {
-try {
-  if(ReRunTargetName.includes("_windows")) {
-    let data = {
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-      editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-      clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-      targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName : ReRunTargetName ? ReRunTargetName : targetName
+    try {
+      if (ReRunTargetName.includes("_windows")) {
+        let data = {
+          LinuxNetwork:
+            props.location.state && props.location.state.LinuxNetwork
+              ? props.location.state.LinuxNetwork
+              : false,
+          windowsNetwork:
+            props.location.state && props.location.state.windowsNetwork
+              ? props.location.state.windowsNetwork
+              : true,
+          editData:
+            props.location.state && props.location.state.editData
+              ? props.location.state.editData
+              : false,
+          clientInfo:
+            props.location.state && props.location.state.clientInfo
+              ? props.location.state.clientInfo
+              : null,
+          targetInfo:
+            props.location.state && props.location.state.targetInfo
+              ? props.location.state.targetInfo
+              : null,
+          editLinuxData: props.location.state.editLinuxData
+            ? props.location.state.editLinuxData
+            : false,
+          editWindowsData: props.location.state.editWindowsData
+            ? props.location.state.editWindowsData
+            : false,
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        };
+        setRaStepper(
+          client,
+          stepper.ScanConfiguration.name,
+          stepper.ScanConfiguration.value,
+          data
+        );
+      } else {
+        setRaStepper(
+          client,
+          stepper.ScanConfiguration.name,
+          stepper.ScanConfiguration.value,
+          props.location.state
+        );
+      }
+    } catch {
+      let data = {
+        LinuxNetwork:
+          props.location.state && props.location.state.LinuxNetwork
+            ? props.location.state.LinuxNetwork
+            : false,
+        windowsNetwork:
+          props.location.state && props.location.state.windowsNetwork
+            ? props.location.state.windowsNetwork
+            : true,
+        editData: true,
+        clientInfo:
+          props.location.state && props.location.state.clientInfo
+            ? props.location.state.clientInfo
+            : null,
+        targetInfo:
+          props.location.state && props.location.state.targetInfo
+            ? props.location.state.targetInfo
+            : null,
+        editLinuxData: props.location.state.editLinuxData
+          ? props.location.state.editLinuxData
+          : false,
+        editWindowsData: props.location.state.editWindowsData
+          ? props.location.state.editWindowsData
+          : false,
+        targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      };
+      setRaStepper(
+        client,
+        stepper.ScanConfiguration.name,
+        stepper.ScanConfiguration.value,
+        data
+      );
     }
-    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
-  } else {
-  setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, props.location.state);
-  }
-}catch {
-  let data = {
-    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-    windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-    editData: true,
-    clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-    targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-    editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-    editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    targetName : ReRunTargetName ? ReRunTargetName : targetName
-  }
-    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
-}
   }, []);
 
   useEffect(() => {
     if (getScanConfigList.length === 0 && dataScanConfig) {
-      let arr : any = []
-      dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast') && !name.node.scanConfigName.includes('External scan config')).map((filteredName: any) => {
-        arr.push(filteredName)
-      });
+      let arr: any = [];
+      dataScanConfig.getScanConfigurationdata.edges
+        .filter(
+          (name: any) =>
+            !name.node.scanConfigName.includes("Full and fast") &&
+            !name.node.scanConfigName.includes("External scan config")
+        )
+        .map((filteredName: any) => {
+          arr.push(filteredName);
+        });
       setScanConfigList(arr);
     }
   }, [dataScanConfig]);
 
   // if (showbackdrop) return <SimpleBackdrop />;
-
-
 
   const handleSubmitDialogBox = () => {
     if (Cookies.getJSON("ob_session")) {
@@ -285,7 +402,7 @@ try {
       let input = {
         partner: partnerId,
         client: clientId,
-        taskName: "Task"+ " " + target,
+        taskName: "Task" + " " + target,
         vatTarget: target,
         vatScanConfig: scanConfig,
         scheduleDate: tempScheduleDate,
@@ -296,51 +413,54 @@ try {
         },
       })
         .then((userRes) => {
-          if(userRes.data.createTask.status === "Success") {
-
-          setBackdrop(false);
-          setSubmitDisabled(false);
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: true,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "",
-          }));
-          setShowForm(false);
-          let formState2 = {
-            isSuccess: true,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: false,
-            errMessage: msgConstant.SCAN_SUCCESS_MSG,
-          }     
-          let data = {};
-          data = { refetchData: true, clientInfo: clientInfo , formState : formState2 };
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem("re-runTargetName");
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        } else {
-          setBackdrop(false);
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: "Failed to create Scan Please Try Again",
-          }));
-        }
+          if (userRes.data.createTask.status === "Success") {
+            setBackdrop(false);
+            setSubmitDisabled(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "",
+            }));
+            setShowForm(false);
+            let formState2 = {
+              isSuccess: true,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: false,
+              errMessage: msgConstant.SCAN_SUCCESS_MSG,
+            };
+            let data = {};
+            data = {
+              refetchData: true,
+              clientInfo: clientInfo,
+              formState: formState2,
+            };
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: "Failed to create Scan Please Try Again",
+            }));
+          }
         })
         .catch((err) => {
           setBackdrop(false);
@@ -398,7 +518,7 @@ try {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
-            previousPage: props.location.state?.previousPage
+            previousPage: props.location.state?.previousPage,
           };
           // if (WinTargetName) {
           //   setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
@@ -460,7 +580,7 @@ try {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
-            previousPage: props.location.state?.previousPage
+            previousPage: props.location.state?.previousPage,
           };
           if (WinTargetName) {
             history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -499,7 +619,7 @@ try {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
-          previousPage: props.location.state?.previousPage
+          previousPage: props.location.state?.previousPage,
         };
         if (WinTargetName) {
           history.push(routeConstant.WINDOWS_NETWORK, data);
@@ -547,11 +667,11 @@ try {
     } else {
       scanArr.push(val);
     }
-    if(scanArr.length === 11){
-      setEmailUpdates({...emailUpdates, ["checkedB"] : true})
+    if (scanArr.length === 11) {
+      setEmailUpdates({ ...emailUpdates, ["checkedB"]: true });
     }
-    if(scanArr.length !== 11){
-      setEmailUpdates({...emailUpdates, ["checkedB"] : false})
+    if (scanArr.length !== 11) {
+      setEmailUpdates({ ...emailUpdates, ["checkedB"]: false });
     }
     setScanConfig(scanArr);
     let isErrScanArr = scanArr.length === 0 ? "Required" : "";
@@ -562,97 +682,108 @@ try {
     setSubmitDisabled(checkValidation);
   };
   const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.checked === true) {
-    let arr : any = []
-    dataScanConfig.getScanConfigurationdata.edges.filter((name :any) => !name.node.scanConfigName.includes('Full and fast') && !name.node.scanConfigName.includes('External scan config')).map((filteredName: any) => {
-      arr.push(filteredName.node.vatScanConfigId)
+    if (event.target.checked === true) {
+      let arr: any = [];
+      dataScanConfig.getScanConfigurationdata.edges
+        .filter(
+          (name: any) =>
+            !name.node.scanConfigName.includes("Full and fast") &&
+            !name.node.scanConfigName.includes("External scan config")
+        )
+        .map((filteredName: any) => {
+          arr.push(filteredName.node.vatScanConfigId);
+        });
+      setScanConfig(arr);
+    }
+    if (event.target.checked === false) {
+      let arr: any = [];
+      setScanConfig(arr);
+    }
+    setEmailUpdates({
+      ...emailUpdates,
+      [event.target.name]: event.target.checked,
     });
-    setScanConfig(arr);
-  }
-  if(event.target.checked === false) {
-    let arr : any = []
-    setScanConfig(arr);
-  }    
-    setEmailUpdates({ ...emailUpdates, [event.target.name]: event.target.checked });
   };
-
+  let obuserData = JSON.parse(obUser);
+  let firstName = obuserData.data.getUserDetails.edges[0].node.firstName;
+  let lastName = obuserData.data.getUserDetails.edges[0].node.lastName;
   const handleCancel = () => {
-    if(Cookies.getJSON('ob_session'))  {
+    if (Cookies.getJSON("ob_session")) {
       deleteTarget({
         variables: {
-          id: Number(targetId)
+          id: Number(targetId),
+          lastName,
+          firstName,
         },
-      }).then((res: any) => { 
-        let data = {};
-        
-      data = { refetchData: true, clientInfo: clientInfo };
-      if (params.previousPage === 'client') {
-          history.push(routeConstant.CLIENT, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        } else {
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        }
-      
-    })
-    .catch((err) => {
-      let data = {};
-      data = { refetchData: true, clientInfo: clientInfo };
-      if (params.previousPage === 'client') {
-          history.push(routeConstant.CLIENT, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        } else {
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        }
-    });
-    }
-  
-    else {
+      })
+        .then((res: any) => {
+          let data = {};
+
+          data = { refetchData: true, clientInfo: clientInfo };
+          if (params.previousPage === "client") {
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
+        })
+        .catch((err) => {
+          let data = {};
+          data = { refetchData: true, clientInfo: clientInfo };
+          if (params.previousPage === "client") {
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
+        });
+    } else {
       logout();
     }
   };
@@ -662,8 +793,8 @@ try {
       {/* <Typography component="h5" variant="h1">
         Task
       </Typography> */}
-    <Typography component="h5" variant="h1">
-      Vulnerability Test for {" "}
+      <Typography component="h5" variant="h1">
+        Vulnerability Test for{" "}
         {props.location.state !== undefined &&
         props.location.state.clientInfo !== undefined
           ? props.location.state.clientInfo.name
@@ -671,7 +802,7 @@ try {
       </Typography>
       <RaStepper />
       <Grid container spacing={3}>
-      { showbackdrop || backdrop ? <SimpleBackdrop /> : null }
+        {showbackdrop || backdrop ? <SimpleBackdrop /> : null}
         <Grid item xs={12}>
           {formState.isFailed ? (
             <Alert
@@ -719,22 +850,26 @@ try {
           </Input>
         </Grid> */}
         <Grid item xs={12} md={12} className={styles.mainCheck}>
-          <label className={styles.HeaderLabel}>Select Scan Configuration</label>
+          <label className={styles.HeaderLabel}>
+            Select Scan Configuration
+          </label>
           <Grid container spacing={1}>
-          <Grid item xs={6} md={12}><div className={styles.cbox}>
-          <FormControlLabel
-            className={styles.CheckboxLabel}
-        control={
-          <Checkbox
-            checked={emailUpdates.checkedB}
-            onChange={handleCheckBoxChange}
-            name="checkedB"
-            // value={emailUpdates}
-          />
-        }
-        label="Select All"
-      /></div>
-      </Grid>
+            <Grid item xs={6} md={12}>
+              <div className={styles.cbox}>
+                <FormControlLabel
+                  className={styles.CheckboxLabel}
+                  control={
+                    <Checkbox
+                      checked={emailUpdates.checkedB}
+                      onChange={handleCheckBoxChange}
+                      name="checkedB"
+                      // value={emailUpdates}
+                    />
+                  }
+                  label="Select All"
+                />
+              </div>
+            </Grid>
             <Grid item xs={12} className={styles.ConfigItem}>
               {getScanConfigList.map((obj: any, i: any) => {
                 // console.log("obj.node",getScanConfigList)
@@ -744,7 +879,11 @@ try {
                     key={obj.node ? obj.node.vatScanConfigId : null}
                     control={
                       <Checkbox
-                        checked={scanConfig.includes(obj.node ? obj.node.vatScanConfigId : null) || emailUpdates.checkedB}
+                        checked={
+                          scanConfig.includes(
+                            obj.node ? obj.node.vatScanConfigId : null
+                          ) || emailUpdates.checkedB
+                        }
                         onChange={handleCheckElement}
                         name={obj.node ? obj.node.scanConfigName : null}
                         value={obj.node ? obj.node.vatScanConfigId : null}

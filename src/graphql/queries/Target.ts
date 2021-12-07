@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client";
 
+export const GET_AVAILABLE_SERVER = gql`
+  query {
+    getAvailableServer {
+      url
+    }
+  }
+`;
+
 export const GET_TARGET = gql`
 query getTarget($targetName: String) {
   getCredentialsDetails(vatTarget_TargetName: $targetName) {
