@@ -59,6 +59,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import { ZIP_FILE } from "../../../graphql/mutations/Upload";
 import PenTest from "../../PenTest/PenTest";
+import { saveAs } from "file-saver";
 
 export const Client: React.FC = (props: any) => {
   const history = useHistory();
