@@ -212,6 +212,21 @@ export const AdvanceTarget: React.FC = (props: any) => {
     setTargetOpen(true);
   };
 
+
+  const validURL = (str: any) => {
+    var pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(str);
+  };
+
+  console.log("validURL", validURL(ipRange));
   const handleIpRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIpRange(event.target.value);
     let value = event.target.value;
@@ -292,115 +307,126 @@ export const AdvanceTarget: React.FC = (props: any) => {
           host: ipRange,
           scanType: "External",
         };
-        if (parseInt(ipRange)) {
-          IPVerify({
-            variables: {
-              input,
-            },
-          })
-            .then((userRes) => {
-              if (userRes.data.IPVerify.status === "Valid IP address") {
-                // setcreateTargetFlag(true);
-                getAvailableServer();
-              } else if (
-                userRes.data.IPVerify.status === "Provide single ip address"
-              ) {
-                setBackdrop(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " Please Enter Single IP Address",
-                }));
-              } else if (userRes.data.IPVerify.status === "IP is not working") {
-                setBackdrop(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
-                }));
-              } else {
-                setBackdrop(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " Please fill in all the required fields",
-                }));
-              }
-            })
-            .catch((err) => {
-              setBackdrop(false);
-              let error = err.message;
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: error,
-              }));
-            });
+        if (validURL(ipRange)) {
+          // IPVerify({
+          //   variables: {
+          //     input,
+          //   },
+          // })
+          //   .then((userRes) => {
+          //     if (userRes.data.IPVerify.status === "Valid IP address") {
+          //       // setcreateTargetFlag(true);
+          getAvailableServer();
+          //     } else if (
+          //       userRes.data.IPVerify.status === "Provide single ip address"
+          //     ) {
+          //       setBackdrop(false);
+          //       setFormState((formState) => ({
+          //         ...formState,
+          //         isSuccess: false,
+          //         isUpdate: false,
+          //         isDelete: false,
+          //         isFailed: true,
+          //         errMessage: " Please Enter Single IP Address",
+          //       }));
+          //     } else if (userRes.data.IPVerify.status === "IP is not working") {
+          //       setBackdrop(false);
+          //       setFormState((formState) => ({
+          //         ...formState,
+          //         isSuccess: false,
+          //         isUpdate: false,
+          //         isDelete: false,
+          //         isFailed: true,
+          //         errMessage:
+          //           " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
+          //       }));
+          //     } else {
+          //       setBackdrop(false);
+          //       setFormState((formState) => ({
+          //         ...formState,
+          //         isSuccess: false,
+          //         isUpdate: false,
+          //         isDelete: false,
+          //         isFailed: true,
+          //         errMessage: " Please fill in all the required fields",
+          //       }));
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     setBackdrop(false);
+          //     let error = err.message;
+          // setFormState((formState) => ({
+          //   ...formState,
+          //   isSuccess: false,
+          //   isUpdate: false,
+          //   isDelete: false,
+          //   isFailed: true,
+          //   errMessage: error,
+          // }));
+          //   });
         } else {
-          domainVerify({
-            variables: {
-              input,
-            },
-          })
-            .then((userRes) => {
-              console.log("userRes", userRes);
-              if (
-                userRes.data.domainVerify.status === "Domain name is registered"
-              ) {
-                console.log("status", userRes.data.domainVerify.status);
-                getAvailableServer();
-              } else if (
-                userRes.data.domainVerify.status ===
-                "Domain name is not registered"
-              ) {
-                setBackdrop(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage:
-                    " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
-                }));
-              } else {
-                setBackdrop(false);
-                setFormState((formState) => ({
-                  ...formState,
-                  isSuccess: false,
-                  isUpdate: false,
-                  isDelete: false,
-                  isFailed: true,
-                  errMessage: " Please fill in all the required fields ",
-                }));
-              }
-            })
-            .catch((err) => {
-              setBackdrop(false);
-              let error = err.message;
-              setFormState((formState) => ({
-                ...formState,
-                isSuccess: false,
-                isUpdate: false,
-                isDelete: false,
-                isFailed: true,
-                errMessage: error,
-              }));
-            });
+          setBackdrop(false);
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: "Please enter Valid IP ",
+          }));
         }
+        // else {
+        //   domainVerify({
+        //     variables: {
+        //       input,
+        //     },
+        //   })
+        //     .then((userRes) => {
+        //       console.log("userRes", userRes);
+        //       if (
+        //         userRes.data.domainVerify.status === "Domain name is registered"
+        //       ) {
+        //         console.log("status", userRes.data.domainVerify.status);
+        //         getAvailableServer();
+        //       } else if (
+        //         userRes.data.domainVerify.status ===
+        //         "Domain name is not registered"
+        //       ) {
+        //         setBackdrop(false);
+        //         setFormState((formState) => ({
+        //           ...formState,
+        //           isSuccess: false,
+        //           isUpdate: false,
+        //           isDelete: false,
+        //           isFailed: true,
+        //           errMessage:
+        //             " Please provide a valid URL or IP address and ensure that it is publicly hosted and accessible",
+        //         }));
+        //       } else {
+        //         setBackdrop(false);
+        //         setFormState((formState) => ({
+        //           ...formState,
+        //           isSuccess: false,
+        //           isUpdate: false,
+        //           isDelete: false,
+        //           isFailed: true,
+        //           errMessage: " Please fill in all the required fields ",
+        //         }));
+        //       }
+        //     })
+        //     .catch((err) => {
+        //       setBackdrop(false);
+        //       let error = err.message;
+        //       setFormState((formState) => ({
+        //         ...formState,
+        //         isSuccess: false,
+        //         isUpdate: false,
+        //         isDelete: false,
+        //         isFailed: true,
+        //         errMessage: error,
+        //       }));
+        //     });
+        // }
       }
     }
   };
@@ -410,83 +436,98 @@ export const AdvanceTarget: React.FC = (props: any) => {
   });
 
   const submitAction = () => {
-    handleAlertClose();
-    let input = {
-      partner: partnerId.id,
-      client: clientId,
-      targetName: name,
-      host: ipRange,
-      startDate: startDate,
-      scanType: "External",
-    };
-    createTarget({
-      variables: {
-        input,
-      },
-    })
-      .then((userRes) => {
-        //   setBackdrop(false);
-        if (userRes.data.createTarget.status === "Duplicate") {
-          setBackdrop(false);
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: " Scan name exists. Add another name",
-          }));
-          // setSubmitDisabled(true)
-        } else if (userRes.data.createTarget.status === "Success") {
-          // else {
-          //   setSubmitDisabled(false)
-          console.log("status", userRes.data.createTarget.status);
-          getScanConfigData({
-            variables: {
-              clientId: userRes.data.createTarget.targetField.client.clientName,
-            },
-          });
-          //   setFormState((formState) => ({
-          //     ...formState,
-          //     isSuccess: true,
-          //     isUpdate: false,
-          //     isDelete: false,
-          //     isFailed: false,
-          //     errMessage: "Target Created Successfully !",
-          //   }));
-        } else {
-          setBackdrop(false);
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: " Failed to create Scan Please Try Again",
-          }));
-        }
+    if (validURL(ipRange)) {
+      handleAlertClose();
+      let input = {
+        partner: partnerId.id,
+        client: clientId,
+        targetName: name,
+        host: ipRange,
+        startDate: startDate,
+        scanType: "External",
+      };
+      createTarget({
+        variables: {
+          input,
+        },
       })
-      .catch((err) => {
-        //   setSubmitDisabled(false)
-        setBackdrop(false);
-        let error = err.message;
-        if (error.includes("duplicate key value violates unique constraint")) {
-          error = " Name already present.";
-        }
-        if (error.includes("Response Error 400. Target exists already")) {
-          error = " Scan Name already present.";
-        } else {
-          error = err.message;
-        }
-        setFormState((formState) => ({
-          ...formState,
-          isSuccess: false,
-          isUpdate: false,
-          isDelete: false,
-          isFailed: true,
-          errMessage: error,
-        }));
-      });
+        .then((userRes) => {
+          //   setBackdrop(false);
+          if (userRes.data.createTarget.status === "Duplicate") {
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Scan name exists. Add another name",
+            }));
+            // setSubmitDisabled(true)
+          } else if (userRes.data.createTarget.status === "Success") {
+            // else {
+            //   setSubmitDisabled(false)
+            console.log("status", userRes.data.createTarget.status);
+            getScanConfigData({
+              variables: {
+                clientId:
+                  userRes.data.createTarget.targetField.client.clientName,
+              },
+            });
+            //   setFormState((formState) => ({
+            //     ...formState,
+            //     isSuccess: true,
+            //     isUpdate: false,
+            //     isDelete: false,
+            //     isFailed: false,
+            //     errMessage: "Target Created Successfully !",
+            //   }));
+          } else {
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Failed to create Scan Please Try Again",
+            }));
+          }
+        })
+        .catch((err) => {
+          //   setSubmitDisabled(false)
+          setBackdrop(false);
+          let error = err.message;
+          if (
+            error.includes("duplicate key value violates unique constraint")
+          ) {
+            error = " Name already present.";
+          }
+          if (error.includes("Response Error 400. Target exists already")) {
+            error = " Scan Name already present.";
+          } else {
+            error = err.message;
+          }
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    } else {
+      setBackdrop(false);
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: "Please Enter Valid IP ",
+      }));
+    }
   };
   const createTasks = () => {
     console.log("clientInfo", clientInfo);
