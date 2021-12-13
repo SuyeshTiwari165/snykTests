@@ -474,14 +474,6 @@ export const AdvanceTarget: React.FC = (props: any) => {
                   userRes.data.createTarget.targetField.client.clientName,
               },
             });
-            //   setFormState((formState) => ({
-            //     ...formState,
-            //     isSuccess: true,
-            //     isUpdate: false,
-            //     isDelete: false,
-            //     isFailed: false,
-            //     errMessage: "Target Created Successfully !",
-            //   }));
           } else {
             setBackdrop(false);
             setFormState((formState) => ({
