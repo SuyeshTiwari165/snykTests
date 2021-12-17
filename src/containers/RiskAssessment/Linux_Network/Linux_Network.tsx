@@ -85,32 +85,31 @@ export const Linux_Network: React.FC = (props: any) => {
   const [open, setOpen] = React.useState(false);
   const session = Cookies.getJSON("ob_session");
   const [params, setParams] = useState<any>({});
-  const backendUrl = localStorage.getItem("customClientUrl") || "";
-  console.log("backendUrl", backendUrl);
+  // const backendUrl = localStorage.getItem("customClientUrl") || "";
+  // console.log("backendUrl", backendUrl);
 
-  const customBackendUrl = backendUrl ? backendUrl : null;
-  let httpLink: any;
-  let link: any;
-  httpLink = createHttpLink({
-    uri: customBackendUrl + "/graphql/",
-  });
+  // const customBackendUrl = backendUrl ? backendUrl : null;
+  // let httpLink: any;
+  // let link: any;
+  // httpLink = createHttpLink({
+  //   uri: customBackendUrl + "/graphql/",
+  // });
 
-  const accessToken = session ? session : null;
-  const authLink = setContext((_, { headers }) => {
-    return {
-      headers: {
-        ...headers,
-        Authorization: accessToken ? "jwt" + " " + accessToken : null,
-      },
-    };
-  });
+  // const accessToken = session ? session : null;
+  // const authLink = setContext((_, { headers }) => {
+  //   return {
+  //     headers: {
+  //       ...headers,
+  //       Authorization: accessToken ? "jwt" + " " + accessToken : null,
+  //     },
+  //   };
+  // });
 
-  link = accessToken ? authLink.concat(httpLink) : httpLink;
-  const customClient: any = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache(),
-  });
-
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
 
   if (props.location.state) {
     if (
@@ -122,12 +121,8 @@ export const Linux_Network: React.FC = (props: any) => {
   }
 
   const startDate = new Date();
-  const [updateTarget] = useMutation(UPDATE_TARGET, {
-    client: customClient,
-  });
-  const [deleteTarget] = useMutation(DELETE_TARGET, {
-    client: customClient,
-  });
+  const [updateTarget] = useMutation(UPDATE_TARGET);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
 
@@ -754,7 +749,7 @@ export const Linux_Network: React.FC = (props: any) => {
       let url;
       if (targetData.getCredentialsDetails.edges) {
         url =
-          backendUrl +
+          OB_URI +
           "/target/testlinuxcredentails/?cid=" +
           clientID +
           "&tname= " +
@@ -773,7 +768,7 @@ export const Linux_Network: React.FC = (props: any) => {
           password;
       } else {
         url =
-          backendUrl +
+          OB_URI +
           "/target/testlinuxcredentails/?cid=" +
           clientID +
           "&tname= " +
@@ -892,7 +887,7 @@ export const Linux_Network: React.FC = (props: any) => {
       };
       let url;
       url =
-        backendUrl +
+        OB_URI +
         "/target/testlinuxcredentails/?cid=" +
         clientID +
         "&tname= " +

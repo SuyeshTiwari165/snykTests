@@ -147,35 +147,33 @@ export const TaskDetails: React.FC = (props: any) => {
   }, []);
 
   const session = Cookies.getJSON("ob_session");
-  const backendUrl = localStorage.getItem("customClientUrl") || "";
-  console.log("backendUrl", backendUrl);
+  // const backendUrl = localStorage.getItem("customClientUrl") || "";
+  // console.log("backendUrl", backendUrl);
 
-  const customBackendUrl = backendUrl ? backendUrl : null;
-  let httpLink: any;
-  let link: any;
-  httpLink = createHttpLink({
-    uri: customBackendUrl + "/graphql/",
-  });
+  // const customBackendUrl = backendUrl ? backendUrl : null;
+  // let httpLink: any;
+  // let link: any;
+  // httpLink = createHttpLink({
+  //   uri: customBackendUrl + "/graphql/",
+  // });
 
-  const accessToken = session ? session : null;
-  const authLink = setContext((_, { headers }) => {
-    return {
-      headers: {
-        ...headers,
-        Authorization: accessToken ? "jwt" + " " + accessToken : null,
-      },
-    };
-  });
+  // const accessToken = session ? session : null;
+  // const authLink = setContext((_, { headers }) => {
+  //   return {
+  //     headers: {
+  //       ...headers,
+  //       Authorization: accessToken ? "jwt" + " " + accessToken : null,
+  //     },
+  //   };
+  // });
 
-  link = accessToken ? authLink.concat(httpLink) : httpLink;
-  const customClient: any = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache(),
-  });
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
 
-  const [deleteTarget] = useMutation(DELETE_TARGET, {
-    client: customClient,
-  });
+  const [deleteTarget] = useMutation(DELETE_TARGET);
 
   const { data: taskData, loading: taskLoading } = useQuery(GET_TASK_DETAILS, {
     variables: {
@@ -192,9 +190,7 @@ export const TaskDetails: React.FC = (props: any) => {
   });
 
   //queries
-  const [createTask] = useMutation(CREATE_TASK, {
-    client: customClient,
-  });
+  const [createTask] = useMutation(CREATE_TASK);
 
   if (
     scanListCheckBox !== undefined &&

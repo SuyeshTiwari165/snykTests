@@ -129,41 +129,35 @@ export const Windows_Network: React.FC = (props: any) => {
     errMessage: "",
   });
 
+  // const backendUrl = localStorage.getItem("customClientUrl") || "";
+  // console.log("backendUrl", backendUrl);
 
-  const backendUrl = localStorage.getItem("customClientUrl") || "";
-  console.log("backendUrl", backendUrl);
+  // const customBackendUrl = backendUrl ? backendUrl : null;
+  // let httpLink: any;
+  // let link: any;
+  // httpLink = createHttpLink({
+  //   uri: customBackendUrl + "/graphql/",
+  // });
 
-  const customBackendUrl = backendUrl ? backendUrl : null;
-  let httpLink: any;
-  let link: any;
-  httpLink = createHttpLink({
-    uri: customBackendUrl + "/graphql/",
-  });
+  // const accessToken = session ? session : null;
+  // const authLink = setContext((_, { headers }) => {
+  //   return {
+  //     headers: {
+  //       ...headers,
+  //       Authorization: accessToken ? "jwt" + " " + accessToken : null,
+  //     },
+  //   };
+  // });
 
-  const accessToken = session ? session : null;
-  const authLink = setContext((_, { headers }) => {
-    return {
-      headers: {
-        ...headers,
-        Authorization: accessToken ? "jwt" + " " + accessToken : null,
-      },
-    };
-  });
-
-  link = accessToken ? authLink.concat(httpLink) : httpLink;
-  const customClient: any = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache(),
-  });
-
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
 
   const startDate = new Date();
-  const [updateTarget] = useMutation(UPDATE_TARGET, {
-    client: customClient,
-  });
-  const [deleteTarget] = useMutation(DELETE_TARGET, {
-    client: customClient,
-  });
+  const [updateTarget] = useMutation(UPDATE_TARGET);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
 
@@ -760,10 +754,10 @@ export const Windows_Network: React.FC = (props: any) => {
         "Content-Type": "application/json",
         Authorization: "jwt" + " " + session,
       };
-      console.log("backendUrl", backendUrl);
+
       let url;
       url =
-        backendUrl +
+        OB_URI +
         "/target/testwincredentails/?cid=" +
         clientId +
         "&tname= " +
@@ -875,7 +869,7 @@ export const Windows_Network: React.FC = (props: any) => {
       };
       let url;
       url =
-        backendUrl +
+        OB_URI +
         "/target/testwincredentails/?cid=" +
         clientId +
         "&tname= " +

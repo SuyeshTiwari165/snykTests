@@ -30,7 +30,7 @@ import moment from "moment";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import * as msgConstant from "../../../../common/MessageConstants";
 // import { customClient } from "../../../../config/customClient";
-import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+// import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/link-context";
 
 export const AdvanceTarget: React.FC = (props: any) => {
@@ -98,44 +98,45 @@ export const AdvanceTarget: React.FC = (props: any) => {
       },
     };
   });
-  useEffect(() => {
-    if (availableServer && backendUrl !== "") {
-      submitAction();
-    }
-  }, [backendUrl]);
-  console.log("backendUrl", backendUrl);
-  let link: any;
-  let httpLink: any;
-  httpLink = createHttpLink({
-    uri: backendUrl + "/graphql/",
-  });
-  const [
-    getAvailableServer,
-    {
-      data: availableServer,
-      loading: availableServerLoading,
-      error: availableServerError,
-    },
-  ] = useLazyQuery(GET_AVAILABLE_SERVER, {
-    onCompleted: (data: any) => {
-      if (data?.getAvailableServer[0].url) {
-        setBackendurl(data?.getAvailableServer[0].url);
-      }
-    },
-    fetchPolicy: "network-only",
-  });
+  // useEffect(() => {
+  //   if (availableServer && backendUrl !== "") {
+  //     submitAction();
+  //   }
+  // }, [backendUrl]);
+  // console.log("backendUrl", backendUrl);
+  // let link: any;
+  // let httpLink: any;
+  // httpLink = createHttpLink({
+  //   uri: backendUrl + "/graphql/",
+  // });
+  // const [
+  //   getAvailableServer,
+  //   {
+  //     data: availableServer,
+  //     loading: availableServerLoading,
+  //     error: availableServerError,
+  //   },
+  // ] = useLazyQuery(GET_AVAILABLE_SERVER, {
+  //   onCompleted: (data: any) => {
+  //     if (data?.getAvailableServer[0].url) {
+  //       setBackendurl(data?.getAvailableServer[0].url);
+  //     }
+  //     if (availableServer && backendUrl !== "") {
+  //       submitAction();
+  //     }
+  //   },
+  //   fetchPolicy: "network-only",
+  // });
 
-  link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
 
-  const customClient: any = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache(),
-  });
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
 
   // const [createTarget] = useMutation(CREATE_TARGET);
-  const [createTask] = useMutation(CREATE_TASK, {
-    client: customClient,
-  });
+  const [createTask] = useMutation(CREATE_TASK);
   const [domainVerify] = useMutation(DOMAIN_VERIFY);
   const [IPVerify] = useMutation(IP_VERIFY);
   const [urlVerify] = useMutation(URL_VERIFY);
@@ -212,14 +213,13 @@ export const AdvanceTarget: React.FC = (props: any) => {
     setTargetOpen(true);
   };
 
-
   const validURL = (str: any) => {
     var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      // "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
         "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
         "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        // "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
         "(\\#[-a-z\\d_]*)?$",
       "i"
     ); // fragment locator
@@ -316,7 +316,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
           //   .then((userRes) => {
           //     if (userRes.data.IPVerify.status === "Valid IP address") {
           //       // setcreateTargetFlag(true);
-          getAvailableServer();
+          submitAction();
           //     } else if (
           //       userRes.data.IPVerify.status === "Provide single ip address"
           //     ) {
@@ -431,9 +431,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
     }
   };
 
-  const [createTarget] = useMutation(CREATE_TARGET, {
-    client: customClient,
-  });
+  const [createTarget] = useMutation(CREATE_TARGET);
 
   const submitAction = () => {
     if (validURL(ipRange)) {
