@@ -113,12 +113,6 @@ export const Target: React.FC = (props: any) => {
   const session = Cookies.getJSON("ob_session");
   const obUser = Cookies.getJSON("ob_user");
   const [param, setParam] = useState<any>({});
-  //     [
-  //     // {
-  //     // name : "",
-  //     // lastModifiedDate: null,
-  //   // }
-  // ])
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const [backdrop, setBackdrop] = useState(false);
   //static values for partner and client are given.
@@ -146,7 +140,6 @@ export const Target: React.FC = (props: any) => {
   const [uploadDisabled, setUploadDisabled] = useState(true);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [targetOpen, setTargetOpen] = React.useState(false);
-  const [backendUrl, setBackendurl] = useState<any>("");
   const customClientUrl = localStorage.getItem("customClientUrl") || "";
   //validation and error handelling
   const [isError, setIsError] = useState<any>({
@@ -179,78 +172,67 @@ export const Target: React.FC = (props: any) => {
     if (props?.location.state) {
       setParam(props.location.state);
     }
-    if (!props.location.state.editData) getAvailableServer();
   }, []);
 
-  const accessToken = session ? session : null;
-  const authLink = setContext((_, { headers }) => {
-    return {
-      headers: {
-        ...headers,
-        Authorization: accessToken ? "jwt" + " " + accessToken : null,
-      },
-    };
-  });
-  let link: any;
-  let httpLink: any;
-  httpLink = createHttpLink({
-    uri: backendUrl ? backendUrl + "/graphql/" : customClientUrl + "/graphql/",
-  });
-  const [
-    getAvailableServer,
-    {
-      data: availableServer,
-      loading: availableServerLoading,
-      error: availableServerError,
-      // refetch: refetchDataAvailableServer,
-    },
-  ] = useLazyQuery(GET_AVAILABLE_SERVER, {
-    onCompleted: (data: any) => {
-      console.log("data", data.getAvailableServer[0].url);
-      if (availableServer) {
-        setBackendurl(data?.getAvailableServer[0].url);
-        localStorage.setItem("customClientUrl", data.getAvailableServer[0].url);
-      }
-      // if (data?.getAvailableServer[0].url) {
-      //   localStorage.setItem("customClientUrl", data.getAvailableServer[0].url);
-      // }
-      // if (availableServer) {
-      //   setTimeout(() => {
-      //     handleSubmitDialogBox();
-      //   }, 1000);
-      // }
-    },
-    fetchPolicy: "network-only",
-  });
-  link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // const accessToken = session ? session : null;
+  // const authLink = setContext((_, { headers }) => {
+  //   return {
+  //     headers: {
+  //       ...headers,
+  //       Authorization: accessToken ? "jwt" + " " + accessToken : null,
+  //     },
+  //   };
+  // });
+  // let link: any;
+  // let httpLink: any;
+  // httpLink = createHttpLink({
+  //   uri: OB_URI ? OB_URI + "/graphql/" : customClientUrl + "/graphql/",
+  // });
+  // const [
+  //   getAvailableServer,
+  //   {
+  //     data: availableServer,
+  //     loading: availableServerLoading,
+  //     error: availableServerError,
+  //     // refetch: refetchDataAvailableServer,
+  //   },
+  // ] = useLazyQuery(GET_AVAILABLE_SERVER, {
+  //   onCompleted: (data: any) => {
+  //     console.log("data", data.getAvailableServer[0].url);
+  //     if (availableServer) {
+  //       setOB_URI(data?.getAvailableServer[0].url);
+  //       localStorage.setItem("customClientUrl", data.getAvailableServer[0].url);
+  //     }
+  //     // if (data?.getAvailableServer[0].url) {
+  //     //   localStorage.setItem("customClientUrl", data.getAvailableServer[0].url);
+  //     // }
+  //     // if (availableServer) {
+  //     //   setTimeout(() => {
+  //     //     handleSubmitDialogBox();
+  //     //   }, 1000);
+  //     // }
+  //   },
+  //   fetchPolicy: "network-only",
+  // });
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
 
-  const customClient: any = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache(),
-  });
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
   // useEffect(() => {
-  //   if (availableServer && backendUrl !== "") {
+  //   if (availableServer && OB_URI !== "") {
   //     submitAction();
   //   }
-  // }, [backendUrl]);
+  // }, [OB_URI]);
 
-  const [updateTarget] = useMutation(UPDATE_TARGET, {
-    client: customClient,
-  });
-  const [deleteTarget] = useMutation(DELETE_TARGET, {
-    client: customClient,
-  });
+  const [updateTarget] = useMutation(UPDATE_TARGET);
+  const [deleteTarget] = useMutation(DELETE_TARGET);
 
-  const [uploadFile] = useMutation(UPLOAD_VPN_FILE, {
-    client: customClient,
-  });
+  const [uploadFile] = useMutation(UPLOAD_VPN_FILE);
 
-  const [createTarget] = useMutation(CREATE_TARGET, {
-    client: customClient,
-  });
-  const [createReRunTarget] = useMutation(CREATE_TARGET_RERUN, {
-    client: customClient,
-  });
+  const [createTarget] = useMutation(CREATE_TARGET);
+  const [createReRunTarget] = useMutation(CREATE_TARGET_RERUN);
   const [
     getTargetData,
     { data: targetData, loading: targetLoading, error: targetError },
@@ -612,7 +594,6 @@ export const Target: React.FC = (props: any) => {
             if (ReRunTargetName != {} && ReRunTargetName.includes("_windows")) {
               console.log("RErun of Windows");
               data = {
-                clientURL: customClient,
                 LinuxNetwork:
                   props.location.state && props.location.state.LinuxNetwork
                     ? props.location.state.LinuxNetwork
@@ -642,7 +623,6 @@ export const Target: React.FC = (props: any) => {
             else {
               console.log("Rerun of Linux");
               data = {
-                clientURL: customClient,
                 LinuxNetwork:
                   props.location.state && props.location.state.LinuxNetwork
                     ? props.location.state.LinuxNetwork
@@ -784,7 +764,6 @@ export const Target: React.FC = (props: any) => {
               if (winIpAddress != null) {
                 console.log("RErun of Windows");
                 data = {
-                  clientURL: customClient,
                   LinuxNetwork:
                     props.location.state && props.location.state.LinuxNetwork
                       ? props.location.state.LinuxNetwork
@@ -813,7 +792,6 @@ export const Target: React.FC = (props: any) => {
               if (linuxUsername != null) {
                 console.log("Rerun of Linux");
                 data = {
-                  clientURL: customClient,
                   LinuxNetwork:
                     props.location.state && props.location.state.LinuxNetwork
                       ? props.location.state.LinuxNetwork
@@ -1807,7 +1785,6 @@ export const Target: React.FC = (props: any) => {
   };
 
   const onClickTestConnection = async () => {
-    console.log("Vulnerability Test for Multipl", backendUrl);
     // onClickHandler2();
     if (props.location.state.clientInfo) {
       if (props.location.state && props.location.state.reRun === true) {
@@ -1834,57 +1811,31 @@ export const Target: React.FC = (props: any) => {
           props.location.state != undefined &&
           props.location.state.editData
         ) {
-          url = backendUrl
-            ? backendUrl+
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New"
-            : customClientUrl +
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "Retry" +
-              "&tid=" +
-              targetData.getCredentialsDetails.edges[0].node.vatTarget.id;
+          url =
+            OB_URI +
+            "target/testcredentails/?cid=" +
+            props.location.state.clientInfo.clientId +
+            "&tname= " +
+            name +
+            "&vusername=" +
+            vpnUserName +
+            "&vpasswords=" +
+            vpnPassword +
+            "&testConnectType=" +
+            "New";
         } else {
-          url = backendUrl
-            ? backendUrl+
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New"
-            : customClientUrl +
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New" +
-              "&tid=" +
-              targetData.getCredentialsDetails.edges[0].node.vatTarget.id;
+          url =
+            OB_URI +
+            "target/testcredentails/?cid=" +
+            props.location.state.clientInfo.clientId +
+            "&tname= " +
+            name +
+            "&vusername=" +
+            vpnUserName +
+            "&vpasswords=" +
+            vpnPassword +
+            "&testConnectType=" +
+            "New";
         }
         await fetch(url, {
           method: "GET",
@@ -1999,53 +1950,31 @@ export const Target: React.FC = (props: any) => {
           props.location.state != undefined &&
           props.location.state.editData
         ) {
-          url = backendUrl
-            ? backendUrl+
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New"
-            : customClientUrl +
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "Retry";
+          url =
+            OB_URI +
+            "target/testcredentails/?cid=" +
+            props.location.state.clientInfo.clientId +
+            "&tname= " +
+            name +
+            "&vusername=" +
+            vpnUserName +
+            "&vpasswords=" +
+            vpnPassword +
+            "&testConnectType=" +
+            "New";
         } else {
-          url = backendUrl
-            ? backendUrl +
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New"
-            : customClientUrl +
-              "/target/testcredentails/?cid=" +
-              props.location.state.clientInfo.clientId +
-              "&tname= " +
-              name +
-              "&vusername=" +
-              vpnUserName +
-              "&vpasswords=" +
-              vpnPassword +
-              "&testConnectType=" +
-              "New";
+          url =
+            OB_URI +
+            "target/testcredentails/?cid=" +
+            props.location.state.clientInfo.clientId +
+            "&tname= " +
+            name +
+            "&vusername=" +
+            vpnUserName +
+            "&vpasswords=" +
+            vpnPassword +
+            "&testConnectType=" +
+            "New";
         }
         await fetch(url, {
           method: "GET",
