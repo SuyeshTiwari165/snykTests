@@ -758,7 +758,7 @@ export const Windows_Network: React.FC = (props: any) => {
       let url;
       url =
         OB_URI +
-        "/target/testwincredentails/?cid=" +
+        "target/testwincredentails/?cid=" +
         clientId +
         "&tname= " +
         targetName +
@@ -870,7 +870,7 @@ export const Windows_Network: React.FC = (props: any) => {
       let url;
       url =
         OB_URI +
-        "/target/testwincredentails/?cid=" +
+        "target/testwincredentails/?cid=" +
         clientId +
         "&tname= " +
         targetName +
