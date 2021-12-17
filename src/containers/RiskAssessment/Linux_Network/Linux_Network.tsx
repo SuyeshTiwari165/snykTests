@@ -750,7 +750,7 @@ export const Linux_Network: React.FC = (props: any) => {
       if (targetData.getCredentialsDetails.edges) {
         url =
           OB_URI +
-          "/target/testlinuxcredentails/?cid=" +
+          "target/testlinuxcredentails/?cid=" +
           clientID +
           "&tname= " +
           targetName +
@@ -769,7 +769,7 @@ export const Linux_Network: React.FC = (props: any) => {
       } else {
         url =
           OB_URI +
-          "/target/testlinuxcredentails/?cid=" +
+          "target/testlinuxcredentails/?cid=" +
           clientID +
           "&tname= " +
           targetName +
@@ -888,7 +888,7 @@ export const Linux_Network: React.FC = (props: any) => {
       let url;
       url =
         OB_URI +
-        "/target/testlinuxcredentails/?cid=" +
+        "target/testlinuxcredentails/?cid=" +
         clientID +
         "&tname= " +
         targetName +
