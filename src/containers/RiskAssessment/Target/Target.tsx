@@ -524,7 +524,7 @@ export const Target: React.FC = (props: any) => {
       }
     }
   }, []);
-
+  console.log("props.location.state", props.location.state);
   if (targetError) {
     return <div className="error">Error!</div>;
   }
@@ -538,6 +538,8 @@ export const Target: React.FC = (props: any) => {
       setSubmitDisabled(true);
       setBackdrop(true);
       let input = {
+        partner: partnerId.id,
+        client: clientId,
         targetName: name,
         host: ipRange,
         vpnUsername: vpnUserName,
