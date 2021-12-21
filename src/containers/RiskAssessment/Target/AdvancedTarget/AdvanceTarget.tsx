@@ -466,12 +466,7 @@ export const AdvanceTarget: React.FC = (props: any) => {
             // else {
             //   setSubmitDisabled(false)
             console.log("status", userRes.data.createTarget.status);
-            getScanConfigData({
-              variables: {
-                clientId:
-                  userRes.data.createTarget.targetField.client.clientName,
-              },
-            });
+            getScanConfigData();
           } else {
             setBackdrop(false);
             setFormState((formState) => ({

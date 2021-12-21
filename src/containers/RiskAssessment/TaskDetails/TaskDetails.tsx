@@ -207,9 +207,6 @@ export const TaskDetails: React.FC = (props: any) => {
     loading: loadingScanConfig,
     refetch: refetchScanConfig,
   } = useQuery(GET_SCAN_CONFIG, {
-    variables: {
-      clientId: clientId,
-    },
     onCompleted: () => {
       setShowbackdrop(false);
     },
