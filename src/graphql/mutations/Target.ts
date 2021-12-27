@@ -59,6 +59,25 @@ mutation deleteTarget($id:Int!,$firstName:String,$lastName:String){
    }
  }
 `;
+
+export const DELETE_TARGET_FROM_LIST = gql`
+  mutation deleteTargetFromList(
+    $id: Int!
+    $firstName: String
+    $lastName: String
+    $token: String
+  ) {
+    deleteTargetFromList(
+      id: $id
+      firstName: $firstName
+      lastName: $lastName
+      token: $token
+    ) {
+      status
+    }
+  }
+`;
+
 export const CREATE_TARGET_RERUN = gql`
 mutation createTargetRerun($input:TargetInput!) {
   createTargetRerun(input:$input){

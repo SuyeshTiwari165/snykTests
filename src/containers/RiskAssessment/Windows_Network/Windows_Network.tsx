@@ -26,6 +26,7 @@ import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import CloseIcon from "@material-ui/icons/Close";
 import Alert from "../../../components/UI/Alert/Alert";
 import stepper from "../common/raStepperList.json";
+import { GET_AVAILABLE_SERVER } from "../../../graphql/queries/Target";
 import {
   CREATE_TARGET,
   UPDATE_TARGET,
@@ -40,21 +41,19 @@ import {
 } from "../../../common/MessageConstants";
 import { TEST_WINDOWS_CONNECTION } from "../../../graphql/mutations/VPNConnection";
 import rerunstepper from "../common/raRerunStepperList.json";
-import {
-  setActiveFormStep,
-} from "../../../services/Data";
-import Tooltip from '@material-ui/core/Tooltip';
-import Cookies from 'js-cookie';
+import { setActiveFormStep } from "../../../services/Data";
+import Tooltip from "@material-ui/core/Tooltip";
+import Cookies from "js-cookie";
 import logout from "../../Auth/Logout/Logout";
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-} from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import {
   DOMAIN_VERIFY,
-  IP_VERIFY
+  IP_VERIFY,
 } from "../../../graphql/mutations/DomainVerify";
 import { OB_URI } from "../../../config";
+// import { customClient } from "../../../config/customClient";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/link-context";
 
 export const Windows_Network: React.FC = (props: any) => {
   const history = useHistory();
@@ -68,36 +67,51 @@ export const Windows_Network: React.FC = (props: any) => {
   const [dialogBoxMsg, setDialogBoxMsg] = useState("");
   const [linuxDomain, setWindowsDomain] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState<boolean>(false);
-  const clientInfo = props.location.state ? props.location.state.clientInfo : undefined;
+  const clientInfo = props.location.state
+    ? props.location.state.clientInfo
+    : undefined;
   const [editDataId, setEditDataId] = useState<Number | null>();
   const [ipAddress, setIpAddress] = useState<any>("");
   const [connectionSuccess, SetConnectionSuccess] = useState(false);
   const partner = JSON.parse(localStorage.getItem("partnerData") || "{}");
-  const ReRunTargetName = JSON.parse(localStorage.getItem("re-runTargetName") || "{}");
+  const ReRunTargetName = JSON.parse(
+    localStorage.getItem("re-runTargetName") || "{}"
+  );
   const targetId = JSON.parse(localStorage.getItem("targetId") || "{}");
   const VPNUsername = JSON.parse(localStorage.getItem("vpnUserName") || "{}");
   const VPNPassword = JSON.parse(localStorage.getItem("vpnPassword") || "{}");
   // const WinTargetName = JSON.parse(localStorage.getItem("WinTargetName") || "{}");
-  const WinTargetName = localStorage.getItem("WinTargetName") ? JSON.parse(localStorage.getItem("WinTargetName") || '') :  null;
-  const LinuxTargetName = localStorage.getItem("LinuxTargetName") ? JSON.parse(localStorage.getItem("LinuxTargetName") || '') :  null;
-  const name = localStorage.getItem("name") ? JSON.parse(localStorage.getItem("name") || '') :  null;
-  const[showBackdrop, setShowbackdrop]= useState(true);
+  const WinTargetName = localStorage.getItem("WinTargetName")
+    ? JSON.parse(localStorage.getItem("WinTargetName") || "")
+    : null;
+  const LinuxTargetName = localStorage.getItem("LinuxTargetName")
+    ? JSON.parse(localStorage.getItem("LinuxTargetName") || "")
+    : null;
+  const name = localStorage.getItem("name")
+    ? JSON.parse(localStorage.getItem("name") || "")
+    : null;
+  const [showBackdrop, setShowbackdrop] = useState(true);
   // const name = JSON.parse(localStorage.getItem("name")|| "{}")
-  const targetInfo = props.location.state ? props.location.state.targetInfo : undefined;
+  const targetInfo = props.location.state
+    ? props.location.state.targetInfo
+    : undefined;
   const partnerId = partner.partnerId.id;
   const [targetName, setTargetName] = useState<String>("");
   const clientId = clientInfo ? parseInt(clientInfo.clientId) : undefined;
   const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = React.useState(false);
-  const session = Cookies.getJSON('ob_session');
+  const session = Cookies.getJSON("ob_session");
   const [params, setParams] = useState<any>({});
-
   if (props.location.state) {
-    if (editDataId === null || editDataId === undefined && localStorage.getItem("targetId") !== "{") {
+    if (
+      editDataId === null ||
+      (editDataId === undefined && localStorage.getItem("targetId") !== "{")
+    ) {
       setEditDataId(JSON.parse(localStorage.getItem("targetId") || "{}"));
     }
-  };
+  }
   const [testWindowsConnection] = useMutation(TEST_WINDOWS_CONNECTION);
+
   const [isError, setIsError] = useState<any>({
     name: "",
     ipRange: "",
@@ -115,6 +129,32 @@ export const Windows_Network: React.FC = (props: any) => {
     errMessage: "",
   });
 
+  // const backendUrl = localStorage.getItem("customClientUrl") || "";
+  // console.log("backendUrl", backendUrl);
+
+  // const customBackendUrl = backendUrl ? backendUrl : null;
+  // let httpLink: any;
+  // let link: any;
+  // httpLink = createHttpLink({
+  //   uri: customBackendUrl + "/graphql/",
+  // });
+
+  // const accessToken = session ? session : null;
+  // const authLink = setContext((_, { headers }) => {
+  //   return {
+  //     headers: {
+  //       ...headers,
+  //       Authorization: accessToken ? "jwt" + " " + accessToken : null,
+  //     },
+  //   };
+  // });
+
+  // link = accessToken ? authLink.concat(httpLink) : httpLink;
+  // const customClient: any = new ApolloClient({
+  //   link: link,
+  //   cache: new InMemoryCache(),
+  // });
+
   const startDate = new Date();
   const [updateTarget] = useMutation(UPDATE_TARGET);
   const [deleteTarget] = useMutation(DELETE_TARGET);
@@ -124,8 +164,8 @@ export const Windows_Network: React.FC = (props: any) => {
   useEffect(() => {
     if (props.location.state) {
       setParams(props?.location.state);
-    };
-  }, [])
+    }
+  }, []);
 
   const checkValidation = () => {
     if (
@@ -145,7 +185,6 @@ export const Windows_Network: React.FC = (props: any) => {
     return false;
   };
 
-
   const handleAlertClose = () => {
     setFormState((formState) => ({
       ...formState,
@@ -157,105 +196,186 @@ export const Windows_Network: React.FC = (props: any) => {
     }));
   };
 
-  const
-    { data: targetData, loading: targetLoading, error: targetError }
-      = useQuery(GET_TARGET, {
-        variables: {
-          targetName: props.location.state && props.location.state.editData ? (targetName ? targetName : ReRunTargetName) : (ReRunTargetName ? ReRunTargetName : targetName),
-        },
-        onCompleted: (data: any) => {
-          setShowbackdrop(false)
-          if (targetData && data.getCredentialsDetails.edges[0]) {
-            setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
-            setUserName(
-              data.getCredentialsDetails.edges[0].node
-                ? data.getCredentialsDetails.edges[0].node.winUsername
-                : null
-            );
-            setDomainName(data.getCredentialsDetails.edges[0].node
-              ? data.getCredentialsDetails.edges[0].node.winName
-              : null);
-          }
-        },
-        onError: (err) => {
-          setShowbackdrop(false)
-          let error = err.message;
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-          history.push(routeConstant.RA_REPORT_LISTING);
-        },
-        fetchPolicy: "cache-and-network",
-      });
+  const {
+    data: targetData,
+    loading: targetLoading,
+    error: targetError,
+  } = useQuery(GET_TARGET, {
+    variables: {
+      targetName:
+        props.location.state && props.location.state.editData
+          ? targetName
+            ? targetName
+            : ReRunTargetName
+          : ReRunTargetName
+          ? ReRunTargetName
+          : targetName,
+    },
+    onCompleted: (data: any) => {
+      setShowbackdrop(false);
+      if (targetData && data.getCredentialsDetails.edges[0]) {
+        setIpAddress(data.getCredentialsDetails.edges[0].node.winIpAddress);
+        setUserName(
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.winUsername
+            : null
+        );
+        setDomainName(
+          data.getCredentialsDetails.edges[0].node
+            ? data.getCredentialsDetails.edges[0].node.winName
+            : null
+        );
+      }
+    },
+    onError: (err) => {
+      setShowbackdrop(false);
+      let error = err.message;
+      setFormState((formState) => ({
+        ...formState,
+        isSuccess: false,
+        isUpdate: false,
+        isDelete: false,
+        isFailed: true,
+        errMessage: error,
+      }));
+      history.push(routeConstant.RA_REPORT_LISTING);
+    },
+    fetchPolicy: "cache-and-network",
+  });
 
   useEffect(() => {
     // setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, props.location.state);
     try {
-    if(ReRunTargetName.includes("_windows")) {
-      setActiveFormStep(1);
-      let data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
+      if (ReRunTargetName.includes("_windows")) {
+        setActiveFormStep(1);
+        let data = {
+          LinuxNetwork:
+            props.location.state && props.location.state.LinuxNetwork
+              ? props.location.state.LinuxNetwork
+              : false,
+          windowsNetwork:
+            props.location.state && props.location.state.windowsNetwork
+              ? props.location.state.windowsNetwork
+              : true,
+          editData:
+            props.location.state && props.location.state.editData
+              ? props.location.state.editData
+              : false,
+          clientInfo:
+            props.location.state && props.location.state.clientInfo
+              ? props.location.state.clientInfo
+              : null,
+          targetInfo:
+            props.location.state && props.location.state.targetInfo
+              ? props.location.state.targetInfo
+              : null,
+          editLinuxData: props.location.state.editLinuxData
+            ? props.location.state.editLinuxData
+            : false,
+          editWindowsData: props.location.state.editWindowsData
+            ? props.location.state.editWindowsData
+            : false,
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        };
+        setRaStepper(
+          client,
+          rerunstepper.WindowsNetwork.name,
+          rerunstepper.WindowsNetwork.value,
+          data
+        );
+        console.log("WINDOWS RERUN ");
+      } else {
+        let data = {
+          LinuxNetwork:
+            props.location.state && props.location.state.LinuxNetwork
+              ? props.location.state.LinuxNetwork
+              : false,
+          windowsNetwork:
+            props.location.state && props.location.state.windowsNetwork
+              ? props.location.state.windowsNetwork
+              : true,
+          editData: true,
+          clientInfo:
+            props.location.state && props.location.state.clientInfo
+              ? props.location.state.clientInfo
+              : null,
+          targetInfo:
+            props.location.state && props.location.state.targetInfo
+              ? props.location.state.targetInfo
+              : null,
+          editLinuxData: props.location.state.editLinuxData
+            ? props.location.state.editLinuxData
+            : false,
+          editWindowsData: props.location.state.editWindowsData
+            ? props.location.state.editWindowsData
+            : false,
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        };
+        setRaStepper(
+          client,
+          stepper.WindowsNetwork.name,
+          stepper.WindowsNetwork.value,
+          data
+        );
+        setActiveFormStep(2);
       }
-      setRaStepper(client, rerunstepper.WindowsNetwork.name, rerunstepper.WindowsNetwork.value, data);
-      console.log("WINDOWS RERUN ")
-    } else {
+    } catch {
       let data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
+        LinuxNetwork:
+          props.location.state && props.location.state.LinuxNetwork
+            ? props.location.state.LinuxNetwork
+            : false,
+        windowsNetwork:
+          props.location.state && props.location.state.windowsNetwork
+            ? props.location.state.windowsNetwork
+            : true,
         editData: true,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-        targetName : ReRunTargetName ? ReRunTargetName : targetName
-      }
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, data);
-    setActiveFormStep(2);
+        clientInfo:
+          props.location.state && props.location.state.clientInfo
+            ? props.location.state.clientInfo
+            : null,
+        targetInfo:
+          props.location.state && props.location.state.targetInfo
+            ? props.location.state.targetInfo
+            : null,
+        editLinuxData: props.location.state.editLinuxData
+          ? props.location.state.editLinuxData
+          : false,
+        editWindowsData: props.location.state.editWindowsData
+          ? props.location.state.editWindowsData
+          : false,
+        targetName: ReRunTargetName ? ReRunTargetName : targetName,
+      };
+      setRaStepper(
+        client,
+        stepper.WindowsNetwork.name,
+        stepper.WindowsNetwork.value,
+        data
+      );
+      setActiveFormStep(2);
     }
-  }catch {
-    let data = {
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-      windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-      editData: true,
-      clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-      targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName : ReRunTargetName ? ReRunTargetName : targetName
-    }
-    setRaStepper(client, stepper.WindowsNetwork.name, stepper.WindowsNetwork.value, data);
-    setActiveFormStep(2);
-    }
-    if(props.location.state != undefined && props.location.state.editWindowsData && props.location.state.editWindowsData === true) {
+    if (
+      props.location.state != undefined &&
+      props.location.state.editWindowsData &&
+      props.location.state.editWindowsData === true
+    ) {
       SetConnectionSuccess(true);
-      setFormState(formState => ({
+      setFormState((formState) => ({
         ...formState,
         isSuccess: true,
         isUpdate: false,
         isDelete: false,
         isFailed: false,
-        errMessage: "Connection has been validated"
+        errMessage: "Connection has been validated",
       }));
     }
   }, []);
 
   useEffect(() => {
     if (targetId && editDataId !== undefined) {
-      setTargetName(WinTargetName ? WinTargetName : name)
+      setTargetName(WinTargetName ? WinTargetName : name);
       setIpRange(JSON.parse(localStorage.getItem("ipRange") || ""));
-    };
+    }
   }, []);
 
   // useEffect(() => {
@@ -275,170 +395,276 @@ export const Windows_Network: React.FC = (props: any) => {
 
   const handleOkay = () => {
     setWindowsDomain(true);
-    setShowDialogBox(true)
+    setShowDialogBox(true);
     setDialogBoxMsg(msgConstant.WINDOWS_NETWORK_CREDENTIALS);
   };
 
   const handleSubmitDialogBox = () => {
     setBackdrop(true);
     handleAlertClose();
-    if(Cookies.getJSON('ob_session'))  {
-    if (editDataId) {
-      // setSubmitDisabled(true)
-      let input = {
-        partner: partnerId,
-        client: clientId,
-        targetName: targetName,
-        host: ipRange,
-        winName: domainName,
-        winIpAddress: ipAddress,
-        winUsername: userName,
-        winPassword: password,
-        startDate: startDate,
-        vpnUsername: VPNUsername,
-        vpnPassword: VPNPassword,
-      };
-      let id = editDataId;
-      updateTarget({
-        variables: {
-          input,
-          id,
-        },
-      })
-        .then((userRes) => {
-          setBackdrop(false);
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: true,
-            isDelete: false,
-            isFailed: false,
-            errMessage: "Windows Credentials Updated Successfully .",
-          }));
-          setSubmitDisabled(false)
-          setEditDataId(null);
-          localStorage.setItem("winUsername", JSON.stringify(userName));
-          localStorage.setItem("winPassword", JSON.stringify(password));
-          localStorage.setItem("WinTargetName", JSON.stringify(userRes.data.updateTarget.targetField.targetName));
-          setShowDialogBox(false)
-          let data = {};
-          // setTimeout(() => {
-            if(connectionSuccess) {
-            data = {
-              LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-              windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-              editData: props.location.state && props.location.state.editData ? props.location.state.editData : true,
-              clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-              editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-              editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : true,
-              previousPage: props.location.state?.previousPage
-            }
-          }else {
-            data = {
-              LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-              windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-              editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-              clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-              targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-              editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-              editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-              previousPage: props.location.state?.previousPage
-            }
-          }
-          setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
-          try {
-            if (ReRunTargetName != {} && ReRunTargetName.includes("_windows") ) {
-            history.push(routeConstant.LINUX_NETWORK, data);
+    if (Cookies.getJSON("ob_session")) {
+      if (editDataId) {
+        // setSubmitDisabled(true)
+        let input = {
+          partner: partnerId,
+          client: clientId,
+          targetName: targetName,
+          host: ipRange,
+          winName: domainName,
+          winIpAddress: ipAddress,
+          winUsername: userName,
+          winPassword: password,
+          startDate: startDate,
+          vpnUsername: VPNUsername,
+          vpnPassword: VPNPassword,
+        };
+        let id = editDataId;
+        updateTarget({
+          variables: {
+            input,
+            id,
+          },
+        })
+          .then((userRes) => {
+            setBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: true,
+              isDelete: false,
+              isFailed: false,
+              errMessage: "Windows Credentials Updated Successfully .",
+            }));
+            setSubmitDisabled(false);
+            setEditDataId(null);
+            localStorage.setItem("winUsername", JSON.stringify(userName));
+            localStorage.setItem("winPassword", JSON.stringify(password));
+            localStorage.setItem(
+              "WinTargetName",
+              JSON.stringify(userRes.data.updateTarget.targetField.targetName)
+            );
+            setShowDialogBox(false);
+            let data = {};
+            // setTimeout(() => {
+            if (connectionSuccess) {
+              data = {
+                LinuxNetwork:
+                  props.location.state && props.location.state.LinuxNetwork
+                    ? props.location.state.LinuxNetwork
+                    : false,
+                windowsNetwork:
+                  props.location.state && props.location.state.windowsNetwork
+                    ? props.location.state.windowsNetwork
+                    : true,
+                editData:
+                  props.location.state && props.location.state.editData
+                    ? props.location.state.editData
+                    : true,
+                clientInfo:
+                  props.location.state && props.location.state.clientInfo
+                    ? props.location.state.clientInfo
+                    : null,
+                targetInfo:
+                  props.location.state && props.location.state.targetInfo
+                    ? props.location.state.targetInfo
+                    : null,
+                editLinuxData: props.location.state.editLinuxData
+                  ? props.location.state.editLinuxData
+                  : false,
+                editWindowsData: props.location.state.editWindowsData
+                  ? props.location.state.editWindowsData
+                  : true,
+                previousPage: props.location.state?.previousPage,
+              };
             } else {
+              data = {
+                LinuxNetwork:
+                  props.location.state && props.location.state.LinuxNetwork
+                    ? props.location.state.LinuxNetwork
+                    : false,
+                windowsNetwork:
+                  props.location.state && props.location.state.windowsNetwork
+                    ? props.location.state.windowsNetwork
+                    : true,
+                editData:
+                  props.location.state && props.location.state.editData
+                    ? props.location.state.editData
+                    : false,
+                clientInfo:
+                  props.location.state && props.location.state.clientInfo
+                    ? props.location.state.clientInfo
+                    : null,
+                targetInfo:
+                  props.location.state && props.location.state.targetInfo
+                    ? props.location.state.targetInfo
+                    : null,
+                editLinuxData: props.location.state.editLinuxData
+                  ? props.location.state.editLinuxData
+                  : false,
+                editWindowsData: props.location.state.editWindowsData
+                  ? props.location.state.editWindowsData
+                  : false,
+                previousPage: props.location.state?.previousPage,
+              };
+            }
+            setRaStepper(
+              client,
+              stepper.ScanConfiguration.name,
+              stepper.ScanConfiguration.value,
+              data
+            );
+            try {
+              if (
+                ReRunTargetName != {} &&
+                ReRunTargetName.includes("_windows")
+              ) {
+                history.push(routeConstant.LINUX_NETWORK, data);
+              } else {
+                history.push(routeConstant.TASK_DETAILS, data);
+              }
+            } catch {
               history.push(routeConstant.TASK_DETAILS, data);
             }
-          }
-          catch {
-            history.push(routeConstant.TASK_DETAILS, data);
-          }
-          // }, 1000);
-        })
-        .catch((err) => {
-          setBackdrop(false);
-          setShowDialogBox(false)
-          setSubmitDisabled(true)
-          let error = err.message;
-          if (
-            error.includes("duplicate key value violates unique constraint")
-          ) {
-            error = " Name already present.";
-          } else {
-            error = err.message;
-          }
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-    }
-  }
-    else {
+            // }, 1000);
+          })
+          .catch((err) => {
+            setBackdrop(false);
+            setShowDialogBox(false);
+            setSubmitDisabled(true);
+            let error = err.message;
+            if (
+              error.includes("duplicate key value violates unique constraint")
+            ) {
+              error = " Name already present.";
+            } else {
+              error = err.message;
+            }
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: error,
+            }));
+          });
+      }
+    } else {
       logout();
     }
   };
 
   const handleSkip = () => {
     try {
-    if (ReRunTargetName != {} && ReRunTargetName.includes("_windows") ) {
-      console.log("ReRunTargetName if ",ReRunTargetName)
-    let  data = {
-        LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-        windowsNetwork: props.location.state && props.location.state.windowsNetwork ? props.location.state.windowsNetwork : true,
-        editData: props.location.state && props.location.state.editData ? props.location.state.editData : false,
-        clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-        targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-        editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-        editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName: ReRunTargetName ? ReRunTargetName : targetName,
-        previousPage: props.location.state?.previousPage
-      }
-      setRaStepper(client, rerunstepper.LinuxNetwork.name, rerunstepper.LinuxNetwork.value, data);
-      history.push(routeConstant.LINUX_NETWORK, data);
-    }
-    else {
-    // let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-    let data = {
-    LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-    windowsNetwork: true, 
-    editData: true,
-    clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-    targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-    editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-    editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-    targetName: ReRunTargetName ? ReRunTargetName : targetName,
-    previousPage: props.location.state?.previousPage
-    }
+      if (ReRunTargetName != {} && ReRunTargetName.includes("_windows")) {
+        console.log("ReRunTargetName if ", ReRunTargetName);
+        let data = {
+          LinuxNetwork:
+            props.location.state && props.location.state.LinuxNetwork
+              ? props.location.state.LinuxNetwork
+              : false,
+          windowsNetwork:
+            props.location.state && props.location.state.windowsNetwork
+              ? props.location.state.windowsNetwork
+              : true,
+          editData:
+            props.location.state && props.location.state.editData
+              ? props.location.state.editData
+              : false,
+          clientInfo:
+            props.location.state && props.location.state.clientInfo
+              ? props.location.state.clientInfo
+              : null,
+          targetInfo:
+            props.location.state && props.location.state.targetInfo
+              ? props.location.state.targetInfo
+              : null,
+          editLinuxData: props.location.state.editLinuxData
+            ? props.location.state.editLinuxData
+            : false,
+          editWindowsData: props.location.state.editWindowsData
+            ? props.location.state.editWindowsData
+            : false,
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+          previousPage: props.location.state?.previousPage,
+        };
+        setRaStepper(
+          client,
+          rerunstepper.LinuxNetwork.name,
+          rerunstepper.LinuxNetwork.value,
+          data
+        );
+        history.push(routeConstant.LINUX_NETWORK, data);
+      } else {
+        // let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+        let data = {
+          LinuxNetwork:
+            props.location.state && props.location.state.LinuxNetwork
+              ? props.location.state.LinuxNetwork
+              : false,
+          windowsNetwork: true,
+          editData: true,
+          clientInfo:
+            props.location.state && props.location.state.clientInfo
+              ? props.location.state.clientInfo
+              : null,
+          targetInfo:
+            props.location.state && props.location.state.targetInfo
+              ? props.location.state.targetInfo
+              : null,
+          editLinuxData: props.location.state.editLinuxData
+            ? props.location.state.editLinuxData
+            : false,
+          editWindowsData: props.location.state.editWindowsData
+            ? props.location.state.editWindowsData
+            : false,
+          targetName: ReRunTargetName ? ReRunTargetName : targetName,
+          previousPage: props.location.state?.previousPage,
+        };
 
-    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
-    history.push(routeConstant.TASK_DETAILS, data);
-    }
-  }catch {
-    // let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
-    let data = {
-      LinuxNetwork: props.location.state && props.location.state.LinuxNetwork ? props.location.state.LinuxNetwork : false,
-      windowsNetwork: true, 
-      editData: true,
-      clientInfo: props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo : null,
-      targetInfo: props.location.state && props.location.state.targetInfo ? props.location.state.targetInfo : null,
-      editLinuxData: props.location.state.editLinuxData ? props.location.state.editLinuxData : false,
-      editWindowsData: props.location.state.editWindowsData ? props.location.state.editWindowsData : false,
-      targetName: ReRunTargetName ? ReRunTargetName : targetName,
-      previousPage: props.location.state?.previousPage
+        setRaStepper(
+          client,
+          stepper.ScanConfiguration.name,
+          stepper.ScanConfiguration.value,
+          data
+        );
+        history.push(routeConstant.TASK_DETAILS, data);
       }
-  
-    setRaStepper(client,stepper.ScanConfiguration.name,stepper.ScanConfiguration.value, data);
-    history.push(routeConstant.TASK_DETAILS, data);
-  }
+    } catch {
+      // let data = { windowsNetwork: true, editData: true, clientInfo: props.location.state.clientInfo, targetInfo: props.location.state.targetInfo }
+      let data = {
+        LinuxNetwork:
+          props.location.state && props.location.state.LinuxNetwork
+            ? props.location.state.LinuxNetwork
+            : false,
+        windowsNetwork: true,
+        editData: true,
+        clientInfo:
+          props.location.state && props.location.state.clientInfo
+            ? props.location.state.clientInfo
+            : null,
+        targetInfo:
+          props.location.state && props.location.state.targetInfo
+            ? props.location.state.targetInfo
+            : null,
+        editLinuxData: props.location.state.editLinuxData
+          ? props.location.state.editLinuxData
+          : false,
+        editWindowsData: props.location.state.editWindowsData
+          ? props.location.state.editWindowsData
+          : false,
+        targetName: ReRunTargetName ? ReRunTargetName : targetName,
+        previousPage: props.location.state?.previousPage,
+      };
+
+      setRaStepper(
+        client,
+        stepper.ScanConfiguration.name,
+        stepper.ScanConfiguration.value,
+        data
+      );
+      history.push(routeConstant.TASK_DETAILS, data);
+    }
   };
 
   const handleMouseDownPassword = (
@@ -524,24 +750,41 @@ export const Windows_Network: React.FC = (props: any) => {
       //   },
       // })
       //   .then((response: any) => {
-        const headerObj = {
-          "Content-Type": "application/json",
-          "Authorization": "jwt" + " " + session,
-        };
-        let url;
-          url = OB_URI + "target/testwincredentails/?cid=" + clientId +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&whost=" + ipAddress + "&wusername=" +  userName + "&wpassword=" + password + "&wname=" +  domainName + "&tid=" + targetData.getCredentialsDetails.edges[0].node.vatTarget.id
-        await fetch(url, {
-          method: "GET",
-          headers: headerObj,
-          // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
-        })
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+
+      let url;
+      url =
+        OB_URI +
+        "target/testwincredentails/?cid=" +
+        clientId +
+        "&tname= " +
+        targetName +
+        "&vusername=" +
+        VPNUsername +
+        "&vpasswords=" +
+        VPNPassword +
+        "&whost=" +
+        ipAddress +
+        "&wusername=" +
+        userName +
+        "&wpassword=" +
+        password +
+        "&wname=" +
+        domainName +
+        "&tid=" +
+        targetData.getCredentialsDetails.edges[0].node.vatTarget.id;
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
         .then((data) => data.json())
-          .then((response) => {
+        .then((response) => {
           setBackdrop(false);
-          if (
-            response ==
-            "Authentication succeeded, connection successful"
-          ) {
+          if (response == "Authentication succeeded, connection successful") {
             SetConnectionSuccess(true);
             setSubmitDisabled(false);
             setFormState((formState) => ({
@@ -552,10 +795,7 @@ export const Windows_Network: React.FC = (props: any) => {
               isFailed: false,
               errMessage: "Test connection successful",
             }));
-          } else if (
-            response ==
-            "VPN is Connected,Please Disconnect"
-          ) {
+          } else if (response == "VPN is Connected,Please Disconnect") {
             SetConnectionSuccess(false);
             setSubmitDisabled(true);
             setFormState((formState) => ({
@@ -567,10 +807,11 @@ export const Windows_Network: React.FC = (props: any) => {
               errMessage:
                 "You are already connected with another VPN. Please disconnect then try again",
             }));
-          }       
-          else if(response == "Authentication failed, please verify your credentials") {
-            SetConnectionSuccess(false)
-            setSubmitDisabled(true)
+          } else if (
+            response == "Authentication failed, please verify your credentials"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
@@ -579,8 +820,7 @@ export const Windows_Network: React.FC = (props: any) => {
               isFailed: true,
               errMessage: " Authentication Failed",
             }));
-          }
-          else {
+          } else {
             SetConnectionSuccess(false);
             setSubmitDisabled(true);
             setFormState((formState) => ({
@@ -622,25 +862,39 @@ export const Windows_Network: React.FC = (props: any) => {
       //     },
       //   },
       // })
-        // .then((response: any) => {
-          const headerObj = {
-            "Content-Type": "application/json",
-            "Authorization": "jwt" + " " + session,
-          };
-          let url;
-            url = OB_URI + "target/testwincredentails/?cid=" + clientId +  "&tname= " + targetName  + "&vusername=" + VPNUsername + "&vpasswords=" + VPNPassword + "&whost=" + ipAddress + "&wusername=" +  userName + "&wpassword=" + password + "&wname=" +  domainName
-          await fetch(url, {
-            method: "GET",
-            headers: headerObj,
-            // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
-          })
-          .then((data) => data.json())
-            .then((response) => {
+      // .then((response: any) => {
+      const headerObj = {
+        "Content-Type": "application/json",
+        Authorization: "jwt" + " " + session,
+      };
+      let url;
+      url =
+        OB_URI +
+        "target/testwincredentails/?cid=" +
+        clientId +
+        "&tname= " +
+        targetName +
+        "&vusername=" +
+        VPNUsername +
+        "&vpasswords=" +
+        VPNPassword +
+        "&whost=" +
+        ipAddress +
+        "&wusername=" +
+        userName +
+        "&wpassword=" +
+        password +
+        "&wname=" +
+        domainName;
+      await fetch(url, {
+        method: "GET",
+        headers: headerObj,
+        // body: JSON.stringify({ UserId: 0, Assessment_ID: id }),
+      })
+        .then((data) => data.json())
+        .then((response) => {
           setBackdrop(false);
-          if (
-            response ==
-            "Authentication succeeded, connection successful"
-          ) {
+          if (response == "Authentication succeeded, connection successful") {
             SetConnectionSuccess(true);
             setSubmitDisabled(false);
             setFormState((formState) => ({
@@ -651,10 +905,7 @@ export const Windows_Network: React.FC = (props: any) => {
               isFailed: false,
               errMessage: "Test connection successful",
             }));
-          } else if (
-            response ==
-            "VPN is Connected,Please Disconnect"
-          ) {
+          } else if (response == "VPN is Connected,Please Disconnect") {
             SetConnectionSuccess(false);
             setSubmitDisabled(true);
             setFormState((formState) => ({
@@ -666,10 +917,11 @@ export const Windows_Network: React.FC = (props: any) => {
               errMessage:
                 "You are already connected with another VPN. Please disconnect then try again",
             }));
-          }
-          else if(response == "Authentication failed, please verify your credentials") {
-            SetConnectionSuccess(false)
-            setSubmitDisabled(true)
+          } else if (
+            response == "Authentication failed, please verify your credentials"
+          ) {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
@@ -678,10 +930,9 @@ export const Windows_Network: React.FC = (props: any) => {
               isFailed: true,
               errMessage: " Authentication Failed",
             }));
-          }
-          else if(response == "Openvpn File is invalid") {
-            SetConnectionSuccess(false)
-            setSubmitDisabled(true)
+          } else if (response == "Openvpn File is invalid") {
+            SetConnectionSuccess(false);
+            setSubmitDisabled(true);
             setFormState((formState) => ({
               ...formState,
               isSuccess: false,
@@ -690,8 +941,7 @@ export const Windows_Network: React.FC = (props: any) => {
               isFailed: true,
               errMessage: " Invalid File",
             }));
-          }              
-          else {
+          } else {
             SetConnectionSuccess(false);
             setSubmitDisabled(true);
             setFormState((formState) => ({
@@ -717,81 +967,83 @@ export const Windows_Network: React.FC = (props: any) => {
           }));
         });
     }
-  }
+  };
 
   const onClickTestConnection = () => {
     if (Cookies.getJSON("ob_session")) {
       if (handleInputErrors()) {
         handleAlertClose();
         let input = {
-          "host": ipAddress
+          host: ipAddress,
         };
-        if(parseInt(ipAddress)){
+        if (parseInt(ipAddress)) {
           IPVerify({
-          variables: {
-            input
-          },
-        })
-        .then((userRes) => {
-          if(userRes.data.IPVerify.status === 'Valid IP address') {
-            submitAction()
-          } else {
-            setBackdrop(false)
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: false,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: true,
-              errMessage: " Please Enter Valid IP Address",
-            }));
-          }
-        })
-        .catch((err) => {
-          setBackdrop(false);
-          let error = err.message;
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
-        });
-      }else {
-        domainVerify({
-          variables: {
-            input
-          },
-        })
-          .then((userRes : any) => {
-            if (userRes.data.domainVerify.status === 'Domain name is registered') {
-              submitAction();
-            } else {
-              setBackdrop(false)
+            variables: {
+              input,
+            },
+          })
+            .then((userRes) => {
+              if (userRes.data.IPVerify.status === "Valid IP address") {
+                submitAction();
+              } else {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Please Enter Valid IP Address",
+                }));
+              }
+            })
+            .catch((err) => {
+              setBackdrop(false);
+              let error = err.message;
               setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: " Please Enter Valid Domain Name",
+                errMessage: error,
               }));
-            }
+            });
+        } else {
+          domainVerify({
+            variables: {
+              input,
+            },
           })
-          .catch((err : any) => {
-            console.log("doMAIN api FAILED");
-            setBackdrop(false);
-            setFormState((formState) => ({
-              ...formState,
-              isSuccess: false,
-              isUpdate: false,
-              isDelete: false,
-              isFailed: true,
-              errMessage: " ",
-            }));
-          });
+            .then((userRes: any) => {
+              if (
+                userRes.data.domainVerify.status === "Domain name is registered"
+              ) {
+                submitAction();
+              } else {
+                setBackdrop(false);
+                setFormState((formState) => ({
+                  ...formState,
+                  isSuccess: false,
+                  isUpdate: false,
+                  isDelete: false,
+                  isFailed: true,
+                  errMessage: " Please Enter Valid Domain Name",
+                }));
+              }
+            })
+            .catch((err: any) => {
+              console.log("doMAIN api FAILED");
+              setBackdrop(false);
+              setFormState((formState) => ({
+                ...formState,
+                isSuccess: false,
+                isUpdate: false,
+                isDelete: false,
+                isFailed: true,
+                errMessage: " ",
+              }));
+            });
         }
       } else {
         setFormState((formState) => ({
@@ -807,7 +1059,6 @@ export const Windows_Network: React.FC = (props: any) => {
       logout();
     }
   };
-
 
   const handleClose = () => {
     setShowDialogBox(false);
@@ -842,7 +1093,7 @@ export const Windows_Network: React.FC = (props: any) => {
               ? props.location.state.editWindowsData
               : false,
             targetName: ReRunTargetName ? ReRunTargetName : targetName,
-            previousPage: props.location.state?.previousPage
+            previousPage: props.location.state?.previousPage,
           };
           setRaStepper(
             client,
@@ -870,7 +1121,7 @@ export const Windows_Network: React.FC = (props: any) => {
             editWindowsData: props.location.state.editWindowsData
               ? props.location.state.editWindowsData
               : false,
-            previousPage: props.location.state?.previousPage
+            previousPage: props.location.state?.previousPage,
           };
           if (LinuxTargetName) {
             history.push(routeConstant.LINUX_NETWORK, data);
@@ -897,7 +1148,7 @@ export const Windows_Network: React.FC = (props: any) => {
           editWindowsData: props.location.state.editWindowsData
             ? props.location.state.editWindowsData
             : false,
-          previousPage: props.location.state?.previousPage
+          previousPage: props.location.state?.previousPage,
         };
         if (LinuxTargetName) {
           history.push(routeConstant.LINUX_NETWORK, data);
@@ -927,15 +1178,15 @@ export const Windows_Network: React.FC = (props: any) => {
       // let isErrVpnUserName = userName.length <= 0 ? "Required" : "";
       setIsError((isError: any) => ({
         ...isError,
-        userName:  "Required",
+        userName: "Required",
       }));
     }
-    if (ipAddress === "" || ipAddress  === null) {
+    if (ipAddress === "" || ipAddress === null) {
       error = false;
       // let isErrName = ipAddress.length <= 0 ? "Required" : "";
       setIsError((error: any) => ({
         ...error,
-        ipRange:  "Required",
+        ipRange: "Required",
       }));
     }
     if (domainName === "" || domainName === null) {
@@ -946,7 +1197,7 @@ export const Windows_Network: React.FC = (props: any) => {
         domainName: "Required",
       }));
     }
-    if (password === "" ||password === null) {
+    if (password === "" || password === null) {
       error = false;
       // let isErrName = ipAddress.length <= 0 ? "Required" : "";
       setIsError((isError: any) => ({
@@ -954,13 +1205,13 @@ export const Windows_Network: React.FC = (props: any) => {
         password: "Required",
       }));
     }
-    
+
     return error;
   };
   const handleToolTipClose = () => {
     setOpen(false);
   };
-  
+
   const handleToolTipOpen = () => {
     setOpen(true);
   };
@@ -969,136 +1220,137 @@ export const Windows_Network: React.FC = (props: any) => {
     overrides: {
       MuiTooltip: {
         tooltip: {
-          backgroundColor:"rgb(240, 102, 1, 0.8)",
-          borderRadius : "12px",
+          backgroundColor: "rgb(240, 102, 1, 0.8)",
+          borderRadius: "12px",
           position: "relative",
-          "&:before" : {
-          content: "' '",
-          width: "0px",
-          height: "0px",
-          zIndex: 9999,
-          position:"absolute",
-          }
+          "&:before": {
+            content: "' '",
+            width: "0px",
+            height: "0px",
+            zIndex: 9999,
+            position: "absolute",
+          },
         },
         tooltipPlacementRight: {
-          "&:before" : {
-          borderTop: "6px solid transparent",
-          borderBottom: "6px solid transparent",
-          borderRight:"6px solid rgba(240, 102, 1, 0.8)",
-          left:"-6px",
-          top:"45%",
-          }
-        },
-        tooltipPlacementLeft: {
-          "&:before" : { 
+          "&:before": {
             borderTop: "6px solid transparent",
             borderBottom: "6px solid transparent",
-            borderLeft: "6px solid rgba(240, 102, 1, 0.8)", 
-            right:"-6px",
-            top:"45%",
-          }
+            borderRight: "6px solid rgba(240, 102, 1, 0.8)",
+            left: "-6px",
+            top: "45%",
+          },
+        },
+        tooltipPlacementLeft: {
+          "&:before": {
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderLeft: "6px solid rgba(240, 102, 1, 0.8)",
+            right: "-6px",
+            top: "45%",
+          },
         },
         tooltipPlacementBottom: {
-          "&:before" : { 
+          "&:before": {
             borderLeft: "6px solid transparent",
             borderRight: "6px solid transparent",
             borderBottom: "6px solid rgba(240, 102, 1, 0.8)",
-            left :"45%",
-            top:"-6px",
-          }
+            left: "45%",
+            top: "-6px",
+          },
         },
         tooltipPlacementTop: {
-          "&:before" : { 
+          "&:before": {
             borderLeft: "6px solid transparent",
             borderRight: "6px solid transparent",
             borderTop: "6px solid rgba(240, 102, 1, 0.8)",
-            left :"45%",
-            bottom:"-6px",
-          }
-        }
-      }
-    }
+            left: "45%",
+            bottom: "-6px",
+          },
+        },
+      },
+    },
   });
 
   const handleCancel = () => {
-    if(Cookies.getJSON('ob_session'))  {
-      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
+    if (Cookies.getJSON("ob_session")) {
+      let userData = JSON.parse(Cookies.getJSON("ob_user"));
       deleteTarget({
         variables: {
           id: Number(targetId),
           firstName: userData.data.getUserDetails.edges[0].node.firstName,
-          lastName: userData.data.getUserDetails.edges[0].node.lastName
+          lastName: userData.data.getUserDetails.edges[0].node.lastName,
         },
-      }).then((res: any) => { 
-      let data = {};
-        data = { refetchData: true, clientInfo: clientInfo };
-        if (params.previousPage === 'client') {
-          history.push(routeConstant.CLIENT, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        } else {
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-        }
-    })
-    .catch((err) => {
-      let data = {};
-      data = { refetchData: true, clientInfo: clientInfo };
-       if (params.previousPage == 'client') {
-        console.log("CLIENT",params)
-        history.push(routeConstant.CLIENT, data);
-        localStorage.removeItem("name");
-        localStorage.removeItem("targetId");
-        localStorage.removeItem("ipRange");
-        localStorage.removeItem("ipAddress");
-        localStorage.removeItem('re-runTargetName');
-        localStorage.removeItem("userName");
-        localStorage.removeItem("password");
-        localStorage.removeItem("vpnUserName");
-        localStorage.removeItem("vpnPassword");
-        localStorage.removeItem("vpnFilePath");
-        localStorage.removeItem("WinTargetName");
-        localStorage.removeItem("LinuxTargetName");
-      } else {
-        console.log("RA_REPORT_LISTING",params)
-          history.push(routeConstant.RA_REPORT_LISTING, data);
-          localStorage.removeItem("name");
-          localStorage.removeItem("targetId");
-          localStorage.removeItem("ipRange");
-          localStorage.removeItem("ipAddress");
-          localStorage.removeItem('re-runTargetName');
-          localStorage.removeItem("userName");
-          localStorage.removeItem("password");
-          localStorage.removeItem("vpnUserName");
-          localStorage.removeItem("vpnPassword");
-          localStorage.removeItem("vpnFilePath");
-          localStorage.removeItem("WinTargetName");
-          localStorage.removeItem("LinuxTargetName");
-      }
-    });
-    }
-    else {
+      })
+        .then((res: any) => {
+          let data = {};
+          data = { refetchData: true, clientInfo: clientInfo };
+          if (params.previousPage === "client") {
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("customClientUrl");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
+        })
+        .catch((err) => {
+          let data = {};
+          data = { refetchData: true, clientInfo: clientInfo };
+          if (params.previousPage == "client") {
+            console.log("CLIENT", params);
+            history.push(routeConstant.CLIENT, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          } else {
+            console.log("RA_REPORT_LISTING", params);
+            history.push(routeConstant.RA_REPORT_LISTING, data);
+            localStorage.removeItem("name");
+            localStorage.removeItem("targetId");
+            localStorage.removeItem("ipRange");
+            localStorage.removeItem("ipAddress");
+            localStorage.removeItem("re-runTargetName");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("password");
+            localStorage.removeItem("vpnUserName");
+            localStorage.removeItem("vpnPassword");
+            localStorage.removeItem("vpnFilePath");
+            localStorage.removeItem("WinTargetName");
+            localStorage.removeItem("LinuxTargetName");
+          }
+        });
+    } else {
       logout();
     }
   };
@@ -1106,14 +1358,14 @@ export const Windows_Network: React.FC = (props: any) => {
     <React.Fragment>
       <CssBaseLine />
       <Typography component="h5" variant="h1">
-      Vulnerability Test for {" "}
+        Vulnerability Test for{" "}
         {props.location.state !== undefined &&
         props.location.state.clientInfo !== undefined
           ? props.location.state.clientInfo.name
           : null}
       </Typography>
       <RaStepper />
-      {backdrop || targetLoading  ? <SimpleBackdrop/>: null}
+      {backdrop || targetLoading ? <SimpleBackdrop /> : null}
       <Grid container spacing={3} className={styles.AlertWrap}>
         <Grid item xs={12}>
           {formState.isSuccess ? (
@@ -1224,7 +1476,6 @@ export const Windows_Network: React.FC = (props: any) => {
               </FormHelperText>
             ) : null}
           </FormControl>
-
         </Grid>
         <Grid item xs={12} md={6}>
           <Input
@@ -1239,27 +1490,42 @@ export const Windows_Network: React.FC = (props: any) => {
             Domain Name
           </Input>
         </Grid>
-    
+
         <Grid item xs={12} md={6}>
-        <span className={styles.IPTooltip}>
-        {/* <MuiThemeProvider theme={theme}> */}
-        <Tooltip open={open} onClose={handleToolTipClose} onOpen={handleToolTipOpen} placement="bottom-end" title= { <React.Fragment>
-            <p><b>Please enter data in the below formats</b> </p>
-            <b>{'Single IP Address'}</b><em>{"(e.g. 192.168.x.xx)"}</em> <p><b>{' Multiple IP Address'}</b> {'(e.g. 192.168.x.x,192.168.x.x)'}</p>{' '}
-          </React.Fragment>}>
-          <Input
-            type="text"
-            label="IP List"
-            value={ipAddress}
-            onChange={handleIpRangeChange}
-            required
-            error={isError.ipRange}
-            helperText={isError.ipRange}
-          >
-            IP Range
-          </Input>
-          </Tooltip>
-          {/* </MuiThemeProvider> */}
+          <span className={styles.IPTooltip}>
+            {/* <MuiThemeProvider theme={theme}> */}
+            <Tooltip
+              open={open}
+              onClose={handleToolTipClose}
+              onOpen={handleToolTipOpen}
+              placement="bottom-end"
+              title={
+                <React.Fragment>
+                  <p>
+                    <b>Please enter data in the below formats</b>{" "}
+                  </p>
+                  <b>{"Single IP Address"}</b>
+                  <em>{"(e.g. 192.168.x.xx)"}</em>{" "}
+                  <p>
+                    <b>{" Multiple IP Address"}</b>{" "}
+                    {"(e.g. 192.168.x.x,192.168.x.x)"}
+                  </p>{" "}
+                </React.Fragment>
+              }
+            >
+              <Input
+                type="text"
+                label="IP List"
+                value={ipAddress}
+                onChange={handleIpRangeChange}
+                required
+                error={isError.ipRange}
+                helperText={isError.ipRange}
+              >
+                IP Range
+              </Input>
+            </Tooltip>
+            {/* </MuiThemeProvider> */}
           </span>
         </Grid>
         <Grid item xs={12} className={styles.ActionButtons}>
@@ -1272,26 +1538,30 @@ export const Windows_Network: React.FC = (props: any) => {
           >
             back
           </Button>
-          {props.location.state != undefined && !props.location.state.editWindowsData ?
-          <Button
-            className={styles.borderLess}
-            variant={"contained"}
-            onClick={handleSkip}
-            color="primary"
-            data-testid="cancel-button"
-          >
-            skip
-          </Button>
-          :null }
+          {props.location.state != undefined &&
+          !props.location.state.editWindowsData ? (
+            <Button
+              className={styles.borderLess}
+              variant={"contained"}
+              onClick={handleSkip}
+              color="primary"
+              data-testid="cancel-button"
+            >
+              skip
+            </Button>
+          ) : null}
           <Button
             type="button"
             color="primary"
             variant={"contained"}
             onClick={onClickTestConnection}
           >
-            {props.location.state != undefined && props.location.state.editWindowsData ?  "Retry" : "Test Connection"}
-        </Button>
-        <Button
+            {props.location.state != undefined &&
+            props.location.state.editWindowsData
+              ? "Retry"
+              : "Test Connection"}
+          </Button>
+          <Button
             onClick={handleSubmitDialogBox}
             color="primary"
             variant={"contained"}
@@ -1312,6 +1582,6 @@ export const Windows_Network: React.FC = (props: any) => {
         </Grid>
       </Grid>
     </React.Fragment>
-  )
-}
+  );
+};
 export default Windows_Network;

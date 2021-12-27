@@ -35,21 +35,22 @@ import {
 } from "../../../common/MessageConstants";
 import Switch from "../../../components/UI/Switch/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { DELETE_TARGET } from "../../../graphql/mutations/Target";
+import { DELETE_TARGET_FROM_LIST } from "../../../graphql/mutations/Target";
 import { DialogBox } from "../../../components/UI/DialogBox/DialogBox";
 import AlertBox from "../../../components/UI/AlertBox/AlertBox";
 import * as msgConstant from "../../../common/MessageConstants";
 import logout from "../../Auth/Logout/Logout";
-import Cookies from 'js-cookie';
-import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import Cookies from "js-cookie";
+import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import ComputerIcon from "@material-ui/icons/Computer";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import DehazeSharpIcon from "@material-ui/icons/DehazeSharp";
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import Tooltip from '@material-ui/core/Tooltip';
+import ContactSupportIcon from "@material-ui/icons/ContactSupport";
+import Tooltip from "@material-ui/core/Tooltip";
 
 export const RaReportListing: React.FC = (props: any) => {
+  const session = Cookies.getJSON("ob_session");
   const [published, setPublished] = useState<any>({});
   const [backdrop, setBackdrop] = useState<Boolean>(false);
   const [showBackdrop, setShowBackdrop] = useState<Boolean>(true);
@@ -77,43 +78,50 @@ export const RaReportListing: React.FC = (props: any) => {
     { title: "Company Name", field: "clientName" },
     { title: "Scan Name", field: "target" },
     { title: "Scan Type", field: "scanType" },
-    { title: "Status", field: "status"  },
-    { title: '', field: 'img', render: (item:any) => 
-    // item.status === "Scan Completed" ? (
-      <div>
-    <Tooltip
-    // open={targetOpen}
-    // onClose={handleTargetToolTipClose}
-    // onOpen={handleTargetToolTipOpen}
-    placement="right"
-    title={
-      <React.Fragment>
-        <p>
-          <b className = {styles.tooltiptext}> {item.details} </b>{" "}
-        </p>
-        {" "}
-      </React.Fragment>
-    }
-  > 
-  <ContactSupportIcon className={styles.CircleIcon2} /> 
-  </Tooltip>
-  </div>
-    // ): null,
-  },
-
+    { title: "Status", field: "status" },
+    {
+      title: "",
+      field: "img",
+      render: (item: any) => (
+        // item.status === "Scan Completed" ? (
+        <div>
+          <Tooltip
+            // open={targetOpen}
+            // onClose={handleTargetToolTipClose}
+            // onOpen={handleTargetToolTipOpen}
+            placement="right"
+            title={
+              <React.Fragment>
+                <p>
+                  <b className={styles.tooltiptext}> {item.details} </b>{" "}
+                </p>{" "}
+              </React.Fragment>
+            }
+          >
+            <ContactSupportIcon className={styles.CircleIcon2} />
+          </Tooltip>
+        </div>
+      ),
+      // ): null,
+    },
   ];
-  const AdminColumns = [{ title: "Scan Name", field: "target" },
-  { title: "Status", field: "status" },
-  { title: "Report Status", field: "report_status" }
+  const AdminColumns = [
+    { title: "Scan Name", field: "target" },
+    { title: "Status", field: "status" },
+    { title: "Report Status", field: "report_status" },
   ];
   const columns = partner.partnerId ? CompnyUserColumns : AdminColumns;
   const title = "Listing of Reports";
   const [orderBy, setOrderBy] = useState<String>();
   //static values
-  const propsClientName = props.location.state && props.location.state.clientInfo ? props.location.state.clientInfo.name : undefined;
-  const propsClientId = props.location.state && props.location.state.clientInfo
-    ? parseInt(props.location.state.clientInfo.clientId)
-    : undefined;
+  const propsClientName =
+    props.location.state && props.location.state.clientInfo
+      ? props.location.state.clientInfo.name
+      : undefined;
+  const propsClientId =
+    props.location.state && props.location.state.clientInfo
+      ? parseInt(props.location.state.clientInfo.clientId)
+      : undefined;
   const clientInfo = props.location.state
     ? props.location.state.clientInfo
     : undefined;
@@ -122,7 +130,7 @@ export const RaReportListing: React.FC = (props: any) => {
     isUpdate: false,
     isFailed: false,
     isDelete: false,
-    errMessage: ""
+    errMessage: "",
   });
   const [targetDeleted, SetTargetDeleted] = useState(false);
   const [rowData2, setRowData] = useState<any>({});
@@ -131,58 +139,56 @@ export const RaReportListing: React.FC = (props: any) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   //filter query condition declaration
-  const [getReportListingData, {
-    data: dataReportListing,
-    loading: loadingReportListing,
-  }] = useLazyQuery(GET_REPORT_LISTING_STATUS,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted:(data)=>{
-        setShowBackdrop(false);
-        createTableDataObject(data.getTargetStatus);
-      },
-      onError: error => {
-         logout()
-        // history.push(routeConstant.DASHBOARD);
-      }
-    });
+  const [
+    getReportListingData,
+    { data: dataReportListing, loading: loadingReportListing },
+  ] = useLazyQuery(GET_REPORT_LISTING_STATUS, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setShowBackdrop(false);
+      createTableDataObject(data.getTargetStatus);
+    },
+    onError: (error) => {
+      logout();
+      // history.push(routeConstant.DASHBOARD);
+    },
+  });
 
   const [uploadFile] = useMutation(ZIP_FILE);
   const [publishReport] = useMutation(PUBLISH_REPORT);
-  const [deleteTarget] = useMutation(DELETE_TARGET);
-
+  const [deleteTarget] = useMutation(DELETE_TARGET_FROM_LIST);
 
   useEffect(() => {
     if (Cookies.getJSON("ob_session")) {
-    getReportListingData({
-      variables: {
-        clientname: propsClientName,
-      },
-    });
-    if(props.location.state && props.location.state.formState) {
-      // setFormState(props.location.state.formState)
-      setFormState(formState => ({
-        ...formState,
-        isSuccess: props.location.state.formState.isSuccess,
-        isUpdate: props.location.state.formState.isUpdate,
-        isDelete: props.location.state.formState.isDelete,
-        isFailed: props.location.state.formState.isFailed,
-        errMessage: props.location.state.formState.errMessage
-      }));
+      getReportListingData({
+        variables: {
+          clientname: propsClientName,
+        },
+      });
+      if (props.location.state && props.location.state.formState) {
+        // setFormState(props.location.state.formState)
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: props.location.state.formState.isSuccess,
+          isUpdate: props.location.state.formState.isUpdate,
+          isDelete: props.location.state.formState.isDelete,
+          isFailed: props.location.state.formState.isFailed,
+          errMessage: props.location.state.formState.errMessage,
+        }));
+      }
+    } else {
+      logout();
     }
-  } else{
-     logout();
-  }
   }, []);
 
   const handleAlertClose = () => {
-    setFormState(formState => ({
+    setFormState((formState) => ({
       ...formState,
       isSuccess: false,
       isUpdate: false,
       isDelete: false,
       isFailed: false,
-      errMessage: ""
+      errMessage: "",
     }));
   };
 
@@ -198,7 +204,6 @@ export const RaReportListing: React.FC = (props: any) => {
   //     }, ALERT_MESSAGE_TIMER);
   //   }
   // }, [formState]);
-  
 
   useEffect(() => {
     // if (dataReportListing) {
@@ -221,23 +226,22 @@ export const RaReportListing: React.FC = (props: any) => {
     //   setNewData(temp);
     // }
     // if (partner.partnerId && propsClientName!= undefined) {
-      getReportListingData({
-        variables: {
-          clientname: propsClientName,
-        }
-      })
+    getReportListingData({
+      variables: {
+        clientname: propsClientName,
+      },
+    });
     // }
     // if (partner.partnerId == undefined) {
     //   getReportListingData({
     //     variables: {
     //       clientname: propsClientName,
     //       // status: "Done",
-    //       // reportCreationFlag : "Processed" 
+    //       // reportCreationFlag : "Processed"
     //     }
     //   })
     // }
   }, [targetDeleted]);
-
 
   //for task data
   // if (loadingReportListing || backdrop || showBackdrop) return <SimpleBackdrop />;
@@ -282,7 +286,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   //         if (partner.partnerId == undefined) {
   //           if (data[j].node.scanRunStatus == "Done") {
-              
+
   //             tempArr["status"] = "Done";
   //           }
   //           if (data[j].node.scanRunStatus == "In Progress") {
@@ -343,56 +347,60 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const createTableDataObject = (data: any) => {
     let arr: any = [];
-    if(partner.partnerId == undefined) {
-    data.map((element: any) => {
-      if(element.status == "Generating Report" || element.status === "Report Generated") {
-      let obj: any = {};
-      obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
-      obj["host"] = element.host;
-      obj["target"] = element.targetName;
-      obj["scanType"] = element.scanType;
-      obj["status"] = element.status;
-      obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
-      obj["report_status"] = element.publishedFlag;
-      obj["clientName"] = element.clientName;
-      arr.push(obj);
-      }
-    });
-  }     
-    if(partner.partnerId != undefined) {
+    if (partner.partnerId == undefined) {
+      data.map((element: any) => {
+        if (
+          element.status == "Generating Report" ||
+          element.status === "Report Generated"
+        ) {
+          let obj: any = {};
+          obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
+          obj["host"] = element.host;
+          obj["target"] = element.targetName;
+          obj["scanType"] = element.scanType;
+          obj["status"] = element.status;
+          obj["publish"] =
+            element.publishedFlag == "Unpublished" ? false : true;
+          obj["report_status"] = element.publishedFlag;
+          obj["clientName"] = element.clientName;
+          arr.push(obj);
+        }
+      });
+    }
+    if (partner.partnerId != undefined) {
       data.map((element: any) => {
         let obj: any = {};
-      obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
-      obj["host"] = element.host;
-      obj["target"] = element.targetName;
-      obj["scanType"] = element.scanType;
-      obj["status"] = element.status;
-      obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
-      obj["report_status"] = element.publishedFlag;
-      obj["clientName"] = element.clientName;
-      if(element.status === "Scheduled") {
-        obj["details"] = msgConstant.Scheduled
-      }
-      if(element.status === "Scan Completed") {
-        obj["details"] = msgConstant.ScanCompleted
-      }
-      if(element.status === "Generating Report") {
-        obj["details"] = msgConstant.GeneratingReport
-      }
-      if(element.status === "Result Generated") {
-        obj["details"] = msgConstant.ResultGenerated
-      }
-      if(element.status === "Report Generated") {
-        obj["details"] = msgConstant.ReportGenerated
-      }
-      if(element.status === "Failed") {
-        obj["details"] = msgConstant.TestFailed
-      }
-      if(element.status === "In Progress") {
-        obj["details"] = msgConstant.InProgress
-      }
-      arr.push(obj);
-    });
+        obj["targetId"] = element.targetId !== 0 ? element.targetId : null;
+        obj["host"] = element.host;
+        obj["target"] = element.targetName;
+        obj["scanType"] = element.scanType;
+        obj["status"] = element.status;
+        obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
+        obj["report_status"] = element.publishedFlag;
+        obj["clientName"] = element.clientName;
+        if (element.status === "Scheduled") {
+          obj["details"] = msgConstant.Scheduled;
+        }
+        if (element.status === "Scan Completed") {
+          obj["details"] = msgConstant.ScanCompleted;
+        }
+        if (element.status === "Generating Report") {
+          obj["details"] = msgConstant.GeneratingReport;
+        }
+        if (element.status === "Result Generated") {
+          obj["details"] = msgConstant.ResultGenerated;
+        }
+        if (element.status === "Report Generated") {
+          obj["details"] = msgConstant.ReportGenerated;
+        }
+        if (element.status === "Failed") {
+          obj["details"] = msgConstant.TestFailed;
+        }
+        if (element.status === "In Progress") {
+          obj["details"] = msgConstant.InProgress;
+        }
+        arr.push(obj);
+      });
     }
 
     setNewData(arr);
@@ -416,42 +424,46 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleClickOpen = (rowData: any) => {
     history.push({
       pathname: routeConstant.TARGET,
-      state: { reRun: true, targetName: rowData.target, targetData: rowData, clientInfo: clientInfo }
+      state: {
+        reRun: true,
+        targetName: rowData.target,
+        targetData: rowData,
+        clientInfo: clientInfo,
+      },
     });
   };
 
-
-
   const handleDownload = (rowData: any) => {
     handleAlertClose();
-    if (Cookies.getJSON("ob_session")) { 
-    setBackdrop(true)
-    let intTargetId = parseInt(rowData.targetId);
-    const DocUrl =
-      RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
-    fetch(DocUrl, {
-      method: "GET"
-    }).then((response: any) => {
-      response.blob().then((blobData: any) => {
-        saveAs(blobData, rowData.target);
-        setBackdrop(false)
-      });
-    })
-    .catch((err) => {
-      setBackdrop(false);
-      let error = err.message;
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: error,
-      }));
-    });
-  } else {
-    logout();
-  }
+    if (Cookies.getJSON("ob_session")) {
+      setBackdrop(true);
+      let intTargetId = parseInt(rowData.targetId);
+      const DocUrl =
+        RA_REPORT_DOWNLOAD + "?cid=" + propsClientId + "&tid=" + intTargetId;
+      fetch(DocUrl, {
+        method: "GET",
+      })
+        .then((response: any) => {
+          response.blob().then((blobData: any) => {
+            saveAs(blobData, rowData.target);
+            setBackdrop(false);
+          });
+        })
+        .catch((err) => {
+          setBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
+        });
+    } else {
+      logout();
+    }
   };
 
   const getBase64 = (file: any, cb: any) => {
@@ -469,7 +481,7 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handleUpload = (rowData: any) => {
     if (selectedFile[rowData.targetId]) {
-      setBackdrop(true)
+      setBackdrop(true);
       let idCardBase64 = "";
       getBase64(selectedFile[rowData.targetId], (result: any) => {
         idCardBase64 = result;
@@ -479,45 +491,45 @@ export const RaReportListing: React.FC = (props: any) => {
             input: {
               client: parseInt(props.location.state.clientInfo.clientId),
               targetName: rowData.target,
-              file: res
-            }
-          }
+              file: res,
+            },
+          },
         })
           .then((response: any) => {
             if (response.data.uploadZipFile.success == "File Uploaded Failed") {
-              setFormState(formState => ({
+              setFormState((formState) => ({
                 ...formState,
                 isSuccess: false,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: true,
-                errMessage: " File Upload Failed."
+                errMessage: " File Upload Failed.",
               }));
               setSelectedFile({});
-              setBackdrop(false)
+              setBackdrop(false);
             } else {
-              setFormState(formState => ({
+              setFormState((formState) => ({
                 ...formState,
                 isSuccess: true,
                 isUpdate: false,
                 isDelete: false,
                 isFailed: false,
-                errMessage: "File Uploaded Successfully !!"
+                errMessage: "File Uploaded Successfully !!",
               }));
               setSelectedFile({});
-              setBackdrop(false)
+              setBackdrop(false);
             }
           })
           .catch((error: Error) => {
-            setFormState(formState => ({
+            setFormState((formState) => ({
               ...formState,
               isSuccess: false,
               isUpdate: false,
               isDelete: false,
               isFailed: true,
-              errMessage: ""
+              errMessage: "",
             }));
-            setBackdrop(false)
+            setBackdrop(false);
           });
       });
     }
@@ -530,29 +542,30 @@ export const RaReportListing: React.FC = (props: any) => {
 
   const handlePublishchange = (event: any, rowData: any) => {
     // if (event.target.checked !== undefined) {
-      setBackdrop(true)
-      publishReport({
-        variables: {
-          input: {
-            client: parseInt(props.location.state.clientInfo.clientId),
-            targetName: rowData.target,
-            // partner: props.location.state.clientInfo.partnerId,
-            flagStatus: true
-          }
-        }
-      }).then((response: any) => {
-        setBackdrop(false)
+    setBackdrop(true);
+    publishReport({
+      variables: {
+        input: {
+          client: parseInt(props.location.state.clientInfo.clientId),
+          targetName: rowData.target,
+          // partner: props.location.state.clientInfo.partnerId,
+          flagStatus: true,
+        },
+      },
+    })
+      .then((response: any) => {
+        setBackdrop(false);
         if (
           response.data.publishedReport.success ==
           "Report Published Successfully "
         ) {
-          setFormState(formState => ({
+          setFormState((formState) => ({
             ...formState,
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: "Report Published Successfully !!"
+            errMessage: "Report Published Successfully !!",
           }));
           getReportListingData({
             variables: {
@@ -566,27 +579,28 @@ export const RaReportListing: React.FC = (props: any) => {
           //     clientname: propsClientName,
           //   },
           // });
-          setFormState(formState => ({
+          setFormState((formState) => ({
             ...formState,
             isSuccess: true,
             isUpdate: false,
             isDelete: false,
             isFailed: false,
-            errMessage: " Report Un-Published Successfully !!"
+            errMessage: " Report Un-Published Successfully !!",
           }));
         }
-      }).catch((err: any) => {
-        setBackdrop(false)
-          let error = err.message;
-          setFormState((formState) => ({
-            ...formState,
-            isSuccess: false,
-            isUpdate: false,
-            isDelete: false,
-            isFailed: true,
-            errMessage: error,
-          }));
       })
+      .catch((err: any) => {
+        setBackdrop(false);
+        let error = err.message;
+        setFormState((formState) => ({
+          ...formState,
+          isSuccess: false,
+          isUpdate: false,
+          isDelete: false,
+          isFailed: true,
+          errMessage: error,
+        }));
+      });
   };
 
   const handleAddNewReport = () => {
@@ -608,7 +622,7 @@ export const RaReportListing: React.FC = (props: any) => {
     data = { clientInfo: clientInfo };
     history.push(routeConstant.PEN_TEST, data);
   };
-  
+
   const orderFunc = (orderedColumnId: any, orderDirection: any) => {
     let orderByColumn;
     let orderBy = "";
@@ -634,67 +648,69 @@ export const RaReportListing: React.FC = (props: any) => {
     // setDialogBoxMsg(msgConstant.LINUX_NETWORK_CREDENTIALS);
     setDialogBoxMsg("Are you sure you want to remove " + rowData.target + "?");
     setRowData(rowData);
-  }
+  };
 
   const confirmDelete = async () => {
     if (Cookies.getJSON("ob_session")) {
-      let userData = JSON.parse(Cookies.getJSON("ob_user")) 
-    closeDialogBox();
+      let userData = JSON.parse(Cookies.getJSON("ob_user"));
+      closeDialogBox();
       SetTargetDeleted(false);
-    deleteTarget({
-      variables: {
-        id: rowData2.targetId,
-        firstName: userData.data.getUserDetails.edges[0].node.firstName,
-        lastName: userData.data.getUserDetails.edges[0].node.lastName,
-        type:'Cancel'
-      },
-    }).then((res: any) => {
-      setShowBackdrop(false);
-      if(res.data.deleteTarget.status == "Target Deleted Successfully") {
-        if(propsClientName != undefined) {
-        getReportListingData({
-          variables: {
-            clientname: propsClientName,
-          },
+      deleteTarget({
+        variables: {
+          id: rowData2.targetId,
+          firstName: userData.data.getUserDetails.edges[0].node.firstName,
+          lastName: userData.data.getUserDetails.edges[0].node.lastName,
+          type: "Cancel",
+          token: session,
+        },
+      })
+        .then((res: any) => {
+          setShowBackdrop(false);
+          if (res.data.deleteTarget.status == "Target Deleted Successfully") {
+            if (propsClientName != undefined) {
+              getReportListingData({
+                variables: {
+                  clientname: propsClientName,
+                },
+              });
+            }
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: true,
+              isFailed: false,
+              errMessage: "  " + rowData2.target + "  ",
+            }));
+          }
+          if (res.data.deleteTarget.status === "Target Not Deleted") {
+            setShowBackdrop(false);
+            setFormState((formState) => ({
+              ...formState,
+              isSuccess: false,
+              isUpdate: false,
+              isDelete: false,
+              isFailed: true,
+              errMessage: " Unable to delete  " + rowData2.target + " ",
+            }));
+          }
+        })
+        .catch((err) => {
+          setShowBackdrop(false);
+          let error = err.message;
+          setFormState((formState) => ({
+            ...formState,
+            isSuccess: false,
+            isUpdate: false,
+            isDelete: false,
+            isFailed: true,
+            errMessage: error,
+          }));
         });
-      }
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: true,
-        isFailed: false,
-        errMessage: "  " + rowData2.target + "  " ,
-      }));
+    } else {
+      logout();
     }
-    if(res.data.deleteTarget.status === "Target Not Deleted") {
-      setShowBackdrop(false);
-      setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: " Unable to delete  " + rowData2.target + " " ,
-      }));
-    }
-    })
-    .catch((err) => {
-      setShowBackdrop(false);
-      let error = err.message;
-         setFormState((formState) => ({
-        ...formState,
-        isSuccess: false,
-        isUpdate: false,
-        isDelete: false,
-        isFailed: true,
-        errMessage: error,
-      }));
-    });
-  } else {
-    logout();
-  }
-  }
+  };
   const closeDialogBox = () => {
     setShowBackdrop(false);
     setOpenDialogBox(false);
@@ -703,7 +719,7 @@ export const RaReportListing: React.FC = (props: any) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleClick = (event :any) => {
+  const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
   return (
@@ -714,31 +730,31 @@ export const RaReportListing: React.FC = (props: any) => {
         Vulnerability List
       </Typography>
       <Grid>
-      {loadingReportListing || backdrop || showBackdrop  ? <SimpleBackdrop/>: null}
-      <DialogBox
-        open={openDialogBox}
-        handleOk={confirmDelete}
-        handleCancel={closeDialogBox}
-        buttonOk={"Yes"}
-        buttonCancel={"No"}
-        classes={{
-          root: styles.MainOfficeDialogRoot,
-          container: styles.MainOfficeDialogboxContainer,
-          paper: styles.MainOfficeDialogboxPaper,
-          scrollPaper: styles.MainOfficeScrollPaper,
-        }}
-      >
-        <div className={styles.DialogBoxTitle}>
-          <Typography component="h1" variant="h1">
-            Please Confirm
-          </Typography>
-        </div>
-        <div className={styles.DialogBoxContext}>
-          <p>
-            {dialogBoxMsg}
-          </p>
-        </div>
-      </DialogBox>
+        {loadingReportListing || backdrop || showBackdrop ? (
+          <SimpleBackdrop />
+        ) : null}
+        <DialogBox
+          open={openDialogBox}
+          handleOk={confirmDelete}
+          handleCancel={closeDialogBox}
+          buttonOk={"Yes"}
+          buttonCancel={"No"}
+          classes={{
+            root: styles.MainOfficeDialogRoot,
+            container: styles.MainOfficeDialogboxContainer,
+            paper: styles.MainOfficeDialogboxPaper,
+            scrollPaper: styles.MainOfficeScrollPaper,
+          }}
+        >
+          <div className={styles.DialogBoxTitle}>
+            <Typography component="h1" variant="h1">
+              Please Confirm
+            </Typography>
+          </div>
+          <div className={styles.DialogBoxContext}>
+            <p>{dialogBoxMsg}</p>
+          </div>
+        </DialogBox>
 
         <Grid container className={styles.backToListButtonPanel}>
           <Grid item xs={12} md={12} className={styles.backToListButton}>
@@ -761,102 +777,106 @@ export const RaReportListing: React.FC = (props: any) => {
               &nbsp; Back to List
             </Button>
             {/* ) : null} */}
-            {partner.partnerId ? 
-             <> 
-            <Button
+            {partner.partnerId ? (
+              <>
+                <Button
                   aria-controls="simple-menu"
                   aria-haspopup="true"
                   onClick={handleClick}
                   className={styles.ActionButton}
-
                 >
                   <AddCircleIcon className={styles.CircleIcon} />
                   &nbsp; CREATE TEST
                 </Button>
-            <Menu
-               id="simple-menu"
-               anchorEl={anchorEl}
-               keepMounted
-               open={Boolean(anchorEl)}
-               onClose={handleClose}
-               className={styles.MenuButton}
-
-             >
-               <MenuItem onClick={handleAddNewReport}> &nbsp; External Vulnerability Test</MenuItem>
-               <MenuItem onClick={handleAddNewAdvanceReport}> &nbsp; Advanced Vulnerability Test</MenuItem>
-               <MenuItem onClick={handleAddNewPentest}> &nbsp; Pentest</MenuItem>
-             </Menu>
-             </>
-              : null}
-      
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  className={styles.MenuButton}
+                >
+                  <MenuItem onClick={handleAddNewReport}>
+                    {" "}
+                    &nbsp; External Vulnerability Test
+                  </MenuItem>
+                  <MenuItem onClick={handleAddNewAdvanceReport}>
+                    {" "}
+                    &nbsp; Advanced Vulnerability Test
+                  </MenuItem>
+                  <MenuItem onClick={handleAddNewPentest}>
+                    {" "}
+                    &nbsp; Pentest
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : null}
           </Grid>
         </Grid>
         <Paper className={styles.paper}>
-        <Grid item xs={12} className={styles.AlertWrap}>
-          {formState.isSuccess ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              <strong>{formState.errMessage}</strong>
-              {/* {SUCCESS} */}
-            </Alert>
-          ) : null}
-          {formState.isFailed ? (
-            <Alert
-              severity="error"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              {FAILED}
-              {formState.errMessage}
-            </Alert>
-          ) : null}
+          <Grid item xs={12} className={styles.AlertWrap}>
+            {formState.isSuccess ? (
+              <Alert
+                severity="success"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={handleAlertClose}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+              >
+                <strong>{formState.errMessage}</strong>
+                {/* {SUCCESS} */}
+              </Alert>
+            ) : null}
+            {formState.isFailed ? (
+              <Alert
+                severity="error"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={handleAlertClose}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+              >
+                {FAILED}
+                {formState.errMessage}
+              </Alert>
+            ) : null}
             {formState.isDelete ? (
-            <Alert
-              severity="success"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={handleAlertClose}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              <strong>{formState.errMessage}</strong>
-              {DELETE}
-            </Alert>
-          ) : null}
-        </Grid>
+              <Alert
+                severity="success"
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={handleAlertClose}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+              >
+                <strong>{formState.errMessage}</strong>
+                {DELETE}
+              </Alert>
+            ) : null}
+          </Grid>
           <MaterialTable
             title={title}
             columns={columns}
             data={newData}
             options={{
               headerStyle: {
-                background: 'linear-gradient(#fef9f5,#fef9f5)',
-              
-               
+                background: "linear-gradient(#fef9f5,#fef9f5)",
               },
               rowHover: true,
               actionsColumnIndex: -1,
@@ -874,17 +894,21 @@ export const RaReportListing: React.FC = (props: any) => {
             actions={[
               partner.partnerId
                 ? (rowData: any) =>
-                 rowData.scanType != "Pentest" ? {
-                    icon: () => <VisibilityIcon />,
-                    tooltip: "View Data",
-                    onClick: (event: any, rowData: any) => {
-                      handleClickView(rowData);
-                    },
-                  } : null
+                    rowData.scanType != "Pentest"
+                      ? {
+                          icon: () => <VisibilityIcon />,
+                          tooltip: "View Data",
+                          onClick: (event: any, rowData: any) => {
+                            handleClickView(rowData);
+                          },
+                        }
+                      : null
                 : null,
               partner.partnerId
                 ? (rowData: any) =>
-                    rowData.status == "Report Generated" && rowData.scanType != "External" && rowData.scanType != "Pentest"
+                    rowData.status == "Report Generated" &&
+                    rowData.scanType != "External" &&
+                    rowData.scanType != "Pentest"
                       ? {
                           // disabled: rowData.status !== "Done",
                           icon: () => <SyncIcon />,
@@ -895,19 +919,19 @@ export const RaReportListing: React.FC = (props: any) => {
                         }
                       : null
                 : null,
-                partner.partnerId
-?
-              (rowData: any) =>
-                rowData.status == "Report Generated"
-                  ? {
-                      // disabled: rowData.status !== "Done",
-                      icon: () => <GetAppIcon />,
-                      tooltip: "Download",
-                      onClick: (event: any, rowData: any) => {
-                        handleDownload(rowData);
-                      },
-                    }
-                  : null :  {
+              partner.partnerId
+                ? (rowData: any) =>
+                    rowData.status == "Report Generated"
+                      ? {
+                          // disabled: rowData.status !== "Done",
+                          icon: () => <GetAppIcon />,
+                          tooltip: "Download",
+                          onClick: (event: any, rowData: any) => {
+                            handleDownload(rowData);
+                          },
+                        }
+                      : null
+                : {
                     // disabled: rowData.status !== "Done",
                     icon: () => <GetAppIcon />,
                     tooltip: "Download",
@@ -919,27 +943,34 @@ export const RaReportListing: React.FC = (props: any) => {
                 ? null
                 : (rowData: any) => ({
                     // disabled: rowData.status !== "Done",
-                    icon: () => !rowData.publish ? ( 
-                      <div>
-                        <input
-                          type="file"
-                          name={rowData.targetId}
-                          id={rowData.targetId}
-                          className={styles.uploadButton}
-                          hidden
-                          onChange={(event: any) => {
-                            setSelectedFile({
-                              [rowData.targetId]: event.target.files[0],
-                            });
+                    icon: () =>
+                      !rowData.publish ? (
+                        <div>
+                          <input
+                            type="file"
+                            name={rowData.targetId}
+                            id={rowData.targetId}
+                            className={styles.uploadButton}
+                            hidden
+                            onChange={(event: any) => {
+                              setSelectedFile({
+                                [rowData.targetId]: event.target.files[0],
+                              });
+                            }}
+                          />
+                          <label htmlFor={rowData.targetId}>
+                            <CloudUploadIcon />
+                          </label>
+                        </div>
+                      ) : (
+                        <CloudUploadIcon
+                          style={{
+                            fill: "grey",
+                            position: "relative",
+                            top: "10px",
                           }}
                         />
-                        <label htmlFor={rowData.targetId}>
-                          <CloudUploadIcon />
-                        </label>
-                      </div>
-                    ): (
-                      <CloudUploadIcon style={{ fill: "grey",position: "relative", top: "10px"}} />
-                    ),
+                      ),
                     tooltip: "Browse",
                     name: "file",
                     type: "file",
@@ -953,11 +984,17 @@ export const RaReportListing: React.FC = (props: any) => {
                 : (rowData: any) => ({
                     // disabled: selectedFile == {} ? false : true,
                     icon: () =>
-                    rowData.publish ? (
-                      <PublishIcon style={{ fill: "grey", position: "relative", top: "10px" }} />
-                    ) : (
-                      <PublishIcon />
-                    ),
+                      rowData.publish ? (
+                        <PublishIcon
+                          style={{
+                            fill: "grey",
+                            position: "relative",
+                            top: "10px",
+                          }}
+                        />
+                      ) : (
+                        <PublishIcon />
+                      ),
                     // <PublishIcon />,
                     tooltip: "Upload",
                     name: "file",
@@ -967,25 +1004,26 @@ export const RaReportListing: React.FC = (props: any) => {
                       handleUpload(rowData);
                     },
                   }),
-                  (rowData: any) =>
-                  rowData ?
-                  {
-                    // icon: () => <DeleteIcon />,
-                    icon: () => (
-                      <img
-                        className={styles.EditIcon}
-                        src={
-                          process.env.PUBLIC_URL +
-                          "/icons/svg-icon/delete.svg"
-                        }
-                        alt="delete icon"
-                      />
-                    ),
-                    tooltip: "Delete",
-                    onClick: (event: any, rowData: any) => {
-                      handleClickDelete(event, rowData);
-                    },
-                  } : null,
+              (rowData: any) =>
+                rowData
+                  ? {
+                      // icon: () => <DeleteIcon />,
+                      icon: () => (
+                        <img
+                          className={styles.EditIcon}
+                          src={
+                            process.env.PUBLIC_URL +
+                            "/icons/svg-icon/delete.svg"
+                          }
+                          alt="delete icon"
+                        />
+                      ),
+                      tooltip: "Delete",
+                      onClick: (event: any, rowData: any) => {
+                        handleClickDelete(event, rowData);
+                      },
+                    }
+                  : null,
               partner.partnerId
                 ? null
                 : (rowData: any) => ({
