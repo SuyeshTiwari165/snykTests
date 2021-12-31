@@ -79,6 +79,7 @@ export const RaReportListing: React.FC = (props: any) => {
     { title: "Scan Name", field: "target" },
     { title: "Scan Type", field: "scanType" },
     { title: "Status", field: "status" },
+    // { title: "Report Date", field: "reportCreationDate" },
     {
       title: "",
       field: "img",
@@ -345,6 +346,32 @@ export const RaReportListing: React.FC = (props: any) => {
   //   return tempArr;
   // }
 
+  function convertDate(inputFormat: any) {
+    function pad(s: any) {
+      return s < 10 ? "0" + s : s;
+    }
+    var d = new Date(inputFormat);
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("/");
+  }
+
+  const getDateAndTime = (utcDate: any) => {
+    if (utcDate === "" || utcDate === null) {
+      return null;
+    } else {
+      var dateFormat: any = new Date(utcDate);
+      var hours = dateFormat.getHours();
+      var minutes = dateFormat.getMinutes();
+      var ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      var strTime = hours + ":" + minutes + " " + ampm;
+      var dateAndTime = convertDate(new Date(utcDate)) + " " + strTime;
+      console.log(convertDate(new Date(utcDate)));
+      return dateAndTime;
+    }
+  };
+
   const createTableDataObject = (data: any) => {
     let arr: any = [];
     if (partner.partnerId == undefined) {
@@ -375,6 +402,7 @@ export const RaReportListing: React.FC = (props: any) => {
         obj["target"] = element.targetName;
         obj["scanType"] = element.scanType;
         obj["status"] = element.status;
+        // obj["reportCreationDate"] = getDateAndTime(element.reportCreationDate);
         obj["publish"] = element.publishedFlag == "Unpublished" ? false : true;
         obj["report_status"] = element.publishedFlag;
         obj["clientName"] = element.clientName;
@@ -445,7 +473,7 @@ export const RaReportListing: React.FC = (props: any) => {
       })
         .then((response: any) => {
           response.blob().then((blobData: any) => {
-            saveAs(blobData, rowData.target);
+            saveAs(blobData, rowData.target.replace(/[^a-zA-Z0-9]/g, ""));
             setBackdrop(false);
           });
         })
