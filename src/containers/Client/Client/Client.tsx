@@ -94,7 +94,7 @@ export const Client: React.FC = (props: any) => {
     { title: "Company Name", field: "name" },
     // { title: "Email", field: "email" },
     { title: "Scan Name", field: "targetName" },
-    { title: "Last Target Generated on", field: "lastReportGenerated" },
+    { title: "Last Report Generated on", field: "lastReportGenerated" },
     // { title: "Phone", field: "phone" },
     // { title: "Created on", field: "createdOn" }
   ];
@@ -487,9 +487,11 @@ export const Client: React.FC = (props: any) => {
           for (let i in ClientReportData.reportForPg) {
             ClientReportData.reportForPg[i].data.map((data: any) => {
               if (element.node.id === data.clientId.toString()) {
-                obj["lastReportGenerated"] = moment(
-                  data.targetCreationDate
-                ).format("MM/DD/YYYY hh:mm a");
+                if (data.targetCreationDate !== "") {
+                  obj["lastReportGenerated"] = moment(
+                    data.targetCreationDate
+                  ).format("MM/DD/YYYY hh:mm a");
+                }
                 obj["targetName"] = data.targetName;
               }
             });
